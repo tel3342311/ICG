@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="AppMaterialTheme" parent="AppMaterialTheme.Base">
+    </style>
+    <!-- general theme for all API -->
+    <style name="AppMaterialTheme.Base" parent="Theme.AppCompat">
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+        <!-- No "ActionBar", change to Toolbar -->
+        <item name="windowActionBar">false</item>
+        <!-- Main color -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <!-- status bar background color -->
+        <item name="colorPrimaryDark">@color/color_primaryDark</item>
+        <item name="colorAccent">@color/color_accent</item>
+        <item name="colorControlHighlight">@color/color_ControlHighlight</item>
+        <!-- other colors could changed colorControlNormal, colorControlActivated, colorControlHighlight, colorSwitchThumbNormal -->
+    </style>
+</resources>

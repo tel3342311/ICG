@@ -1,13 +1,5 @@
 package com.liteon.icampusguardian;
 
-import com.facebook.accountkit.AccessToken;
-import com.facebook.accountkit.AccountKit;
-import com.facebook.accountkit.AccountKit.InitializeCallback;
-import com.facebook.accountkit.AccountKitLoginResult;
-import com.facebook.accountkit.LoginModel;
-import com.facebook.accountkit.ui.AccountKitActivity;
-import com.facebook.accountkit.ui.AccountKitConfiguration;
-import com.facebook.accountkit.ui.LoginType;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -34,14 +26,11 @@ public class MainActivity extends AppCompatActivity {
 	private Button signInButtonGoogle;
 	private Button signInButtonFacebook;
 	//facebook login
-	private LoginModel mFBLoginKit;
 	private final static int RC_GOOGLE_SIGNIN = 1000;
 	private final static int RC_FACEBOOK_SIGNIN = 1001;
-	private AccountKit mAccountKit;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setupFacebookSignIn();
 		setContentView(R.layout.activity_main);
 		setupGoogleSignIn();
 		
@@ -68,10 +57,6 @@ public class MainActivity extends AppCompatActivity {
 		        .build();
 	}
 	
-	private void setupFacebookSignIn() {
-		AccountKit.initialize(getApplicationContext(), mInitializeCallback);
-	};
-	
 	private OnConnectionFailedListener mOnConnectionFailedListener = new OnConnectionFailedListener() {
 
 		@Override
@@ -94,33 +79,8 @@ public class MainActivity extends AppCompatActivity {
 		@Override
 		public void onClick(View v) {
 			
-			//Check for Existing Sessions
-			AccessToken accessToken = AccountKit.getCurrentAccessToken();
-
-			if (accessToken != null) {
-			  //Handle Returning User
-				Log.d(TAG, "Returning User");
-			} else {
-			  //Handle new or logged out user
-				Log.d(TAG, "New User, or logged out user");
-			}
-			 
-			signInFacebook();
 		}
 	};
-	
-	private void signInFacebook() {
-		  final Intent intent = new Intent(this, AccountKitActivity.class);
-		  AccountKitConfiguration.AccountKitConfigurationBuilder configurationBuilder =
-		    new AccountKitConfiguration.AccountKitConfigurationBuilder(
-		      LoginType.EMAIL,
-		      AccountKitActivity.ResponseType.TOKEN); // or .ResponseType.CODE
-		  // ... perform additional configuration ...
-		  intent.putExtra(
-		    AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION,
-		    configurationBuilder.build());
-		  startActivityForResult(intent, RC_FACEBOOK_SIGNIN);
-	}
 	
 	private void signInGoogle() {
 		Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
@@ -136,36 +96,7 @@ public class MainActivity extends AppCompatActivity {
 	        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 	        handleSignInResult(result);
 	    } else if (requestCode == RC_FACEBOOK_SIGNIN) {
-	    	AccountKitLoginResult loginResult = data.getParcelableExtra(AccountKitLoginResult.RESULT_KEY);
-	        String toastMessage;
-	        if (loginResult.getError() != null) {
-	            toastMessage = loginResult.getError().getErrorType().getMessage();
-	            //showErrorActivity(loginResult.getError());
-	        } else if (loginResult.wasCancelled()) {
-	            toastMessage = "Login Cancelled";
-	        } else {
-	            if (loginResult.getAccessToken() != null) {
-	                toastMessage = "Success:" + loginResult.getAccessToken().getAccountId();
-	            } else {
-	                toastMessage = String.format(
-	                        "Success:%s...",
-	                        loginResult.getAuthorizationCode().substring(0,10));
-	            }
-
-	            // If you have an authorization code, retrieve it from
-	            // loginResult.getAuthorizationCode()
-	            // and pass it to your server and exchange it for an access token.
-
-	            // Success! Start your next activity...
-	            //goToMyLoggedInActivity();
-	        }
-
-	        // Surface the result to your user in an appropriate way.
-	        Toast.makeText(
-	                this,
-	                toastMessage,
-	                Toast.LENGTH_LONG)
-	                .show();
+	    	
 	    }
 	}
 	
@@ -182,16 +113,4 @@ public class MainActivity extends AppCompatActivity {
 	        //updateUI(false);
 	    }
 	}
-	
-	private InitializeCallback mInitializeCallback = new InitializeCallback() {
-
-		@Override
-		public void onInitialized() {
-			Log.d(TAG, "Facebook SDK initialized");
-			Toast.makeText(MainActivity.this, "Facebook SDK is initialed", Toast.LENGTH_LONG).show();
-			if (AccountKit.isInitialized()) {
-				signInFacebook();
-			}
-		}
-	};
 }

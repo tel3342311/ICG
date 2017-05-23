@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 	private LoginModel mFBLoginKit;
 	private final static int RC_GOOGLE_SIGNIN = 1000;
 	private final static int RC_FACEBOOK_SIGNIN = 1001;
-	
+	private AccountKit mAccountKit;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
 	}
 	
 	private void setupFacebookSignIn() {
-		
 		AccountKit.initialize(getApplicationContext(), mInitializeCallback);
 	};
 	
@@ -115,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 		  AccountKitConfiguration.AccountKitConfigurationBuilder configurationBuilder =
 		    new AccountKitConfiguration.AccountKitConfigurationBuilder(
 		      LoginType.EMAIL,
-		      AccountKitActivity.ResponseType.CODE); // or .ResponseType.TOKEN
+		      AccountKitActivity.ResponseType.TOKEN); // or .ResponseType.CODE
 		  // ... perform additional configuration ...
 		  intent.putExtra(
 		    AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION,
@@ -189,6 +188,10 @@ public class MainActivity extends AppCompatActivity {
 		@Override
 		public void onInitialized() {
 			Log.d(TAG, "Facebook SDK initialized");
+			Toast.makeText(MainActivity.this, "Facebook SDK is initialed", Toast.LENGTH_LONG).show();
+			if (AccountKit.isInitialized()) {
+				signInFacebook();
+			}
 		}
 	};
 }

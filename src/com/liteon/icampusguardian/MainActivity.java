@@ -1,5 +1,14 @@
 package com.liteon.icampusguardian;
 
+import java.util.Arrays;
+
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -11,10 +20,10 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.Toast;
 
 
@@ -23,8 +32,10 @@ public class MainActivity extends AppCompatActivity {
 	private final static String TAG = MainActivity.class.getName();
 	//google login
 	private GoogleApiClient mGoogleApiClient;
-	private Button signInButtonGoogle;
-	private Button signInButtonFacebook;
+	private AppCompatButton signInButtonGoogle;
+	private AppCompatButton signInButtonFacebook;
+	private CallbackManager mFBcallbackManager;
+	private AccessToken mFBAccessToken;
 	//facebook login
 	private final static int RC_GOOGLE_SIGNIN = 1000;
 	private final static int RC_FACEBOOK_SIGNIN = 1001;
@@ -33,13 +44,16 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		setupGoogleSignIn();
+		setupFacebookSignIn();
 		
-		
-		signInButtonGoogle = (Button) findViewById(R.id.login_button);
+		signInButtonGoogle = (AppCompatButton) findViewById(R.id.login_button_google);
 		signInButtonGoogle.setOnClickListener(mGoogleSignInClickListener);
 		
-		signInButtonFacebook = (Button) findViewById(R.id.login_button_fb);
+		signInButtonFacebook = (AppCompatButton) findViewById(R.id.login_button_fb);
 		signInButtonFacebook.setOnClickListener(mFacebookSignInClickListener);
+		Intent intent = new Intent();
+		intent.setClass(MainActivity.this, WelcomeActivity.class);
+		startActivity(intent);
 	}
 	
 	private void setupGoogleSignIn(){
@@ -55,6 +69,30 @@ public class MainActivity extends AppCompatActivity {
 		        .enableAutoManage(this, mOnConnectionFailedListener)
 		        .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
 		        .build();
+	}
+	
+	private void setupFacebookSignIn() {
+		FacebookSdk.sdkInitialize(getApplicationContext());
+		mFBcallbackManager = CallbackManager.Factory.create();
+		LoginManager.getInstance().registerCallback(mFBcallbackManager,
+	            new FacebookCallback<LoginResult>() {
+
+					@Override
+					public void onSuccess(LoginResult result) {
+						mFBAccessToken = result.getAccessToken();
+					}
+
+					@Override
+					public void onCancel() {
+				        Toast.makeText(MainActivity.this, "Facebook sign in canceled!", Toast.LENGTH_LONG).show();
+					}
+
+					@Override
+					public void onError(FacebookException error) {
+				        Toast.makeText(MainActivity.this, "Facebook sign in Error" + error.getMessage(), Toast.LENGTH_LONG).show();
+					}
+
+	    });
 	}
 	
 	private OnConnectionFailedListener mOnConnectionFailedListener = new OnConnectionFailedListener() {
@@ -78,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 		
 		@Override
 		public void onClick(View v) {
-			
+			LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile", "user_friends"));
 		}
 	};
 	
@@ -95,8 +133,11 @@ public class MainActivity extends AppCompatActivity {
 	    if (requestCode == RC_GOOGLE_SIGNIN) {
 	        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 	        handleSignInResult(result);
-	    } else if (requestCode == RC_FACEBOOK_SIGNIN) {
-	    	
+	    } else {
+	    	if(mFBcallbackManager.onActivityResult(requestCode, resultCode, data)) {
+	            return;
+	        }
+	    	//else if (requestCode == RC_FACEBOOK_SIGNIN) { 
 	    }
 	}
 	
@@ -105,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 	    if (result.isSuccess()) {
 	        // Signed in successfully, show authenticated UI.
 	        GoogleSignInAccount acct = result.getSignInAccount();
-	        Toast.makeText(this, "Google sign in " + acct.getDisplayName() + ", Email : " + acct.getEmail(), Toast.LENGTH_LONG);
+	        Toast.makeText(this, "Google sign in " + acct.getDisplayName() + ", Email : " + acct.getEmail(), Toast.LENGTH_LONG).show();
 	        //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 	        //updateUI(true);
 	    } else {

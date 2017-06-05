@@ -6,25 +6,118 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-	<ProgressBar
-        style="?android:attr/progressBarStyleLarge"
+    <TextView 
+        android:id="@+id/login_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/page_title_margin_bottom"
+        android:text="請登入家長帳號"
+        android:textSize="@dimen/page_title_text_size"
+        android:textColor="@color/md_black_1000"
+        android:layout_centerHorizontal="true"/>
+
+	<EditText
+	    android:id="@+id/login_account"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/login_edit_text_height"
+	    android:layout_below="@id/login_title"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:hint="帳號(電子郵件地址)"
+	    android:maxLines="1"
+	    android:textCursorDrawable="@null"
+	    android:textSize="@dimen/login_edit_text_size"/>
+	<EditText
+	    android:id="@+id/login_password"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/login_edit_text_height"
+	   	android:layout_below="@id/login_account"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:layout_marginBottom="@dimen/page_title_margin_bottom"
+	    android:hint="密碼"
+	    android:maxLines="1"
+	    android:textCursorDrawable="@null"
+	    android:textSize="@dimen/login_edit_text_size" />
+
+	<TextView
+	    android:id="@+id/create_account"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/login_password"
+	    android:layout_alignParentLeft="true"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"	    
+	    android:text="註冊新的帳號"
+	    android:textSize="@dimen/login_option_text_size"
+	    android:textColor="@color/md_blue_700"/>
+	<TextView
+	    android:id="@+id/forget_password"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/login_password"
+	    android:layout_alignParentRight="true"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:text="忘記密碼？"
+	    android:textSize="@dimen/login_option_text_size"
+	    android:textColor="@color/md_blue_700"/>
+
+	<android.support.v7.widget.AppCompatButton
+	    android:id="@+id/ap_login"
+        android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	   	android:layout_below="@id/forget_password"
+	   	android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:background="@color/md_green_700"
+        android:text="登  入"
+        android:textSize="@dimen/login_option_text_size"/>
 	
-	<Button 
-	    android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Login Google"/>
-	
-	<Button 
-	    android:id="@+id/login_button_fb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/login_button"
-        android:text="Login Facebook"/>
+	<LinearLayout 
+	    android:id="@+id/login_btn_group"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:layout_marginBottom="@dimen/activity_vertical_margin"
+	    android:orientation="vertical"
+	    android:layout_alignParentBottom="true">
+
+	    <TextView
+	        android:id="@+id/social_signin_title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="start"
+	       	android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
+	        android:text="使用外部帳號登入"
+        	android:textColor="@color/md_black_1000"
+	        android:textSize="@dimen/login_option_text_size" />
+
+	    <android.support.v7.widget.AppCompatButton
+	        android:id="@+id/login_button_google"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
+	        android:background="@color/md_red_700"
+	        android:text="Google" />
+
+	    <android.support.v7.widget.AppCompatButton
+	        android:id="@+id/login_button_fb"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
+	        android:background="@color/md_blue_700"
+	        android:text="Facebook" />
+
+	    <android.support.v7.widget.AppCompatButton
+	        android:id="@+id/login_button_quit"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
+	        android:background="@color/md_green_700"
+	        android:text="退  出" />
+
+	</LinearLayout>
 
 </RelativeLayout>

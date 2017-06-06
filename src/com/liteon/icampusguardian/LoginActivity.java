@@ -16,9 +16,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.liteon.icampusguardian.util.CustomDialog;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.util.Log;
@@ -27,9 +29,9 @@ import android.view.View.OnClickListener;
 import android.widget.Toast;
 
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
-	private final static String TAG = MainActivity.class.getName();
+	private final static String TAG = LoginActivity.class.getName();
 	//google login
 	private GoogleApiClient mGoogleApiClient;
 	private AppCompatButton signInButtonGoogle;
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_login);
 		setupGoogleSignIn();
 		setupFacebookSignIn();
 		
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 		signInButtonFacebook = (AppCompatButton) findViewById(R.id.login_button_fb);
 		signInButtonFacebook.setOnClickListener(mFacebookSignInClickListener);
 		Intent intent = new Intent();
-		intent.setClass(MainActivity.this, WelcomeActivity.class);
+		intent.setClass(LoginActivity.this, WelcomeActivity.class);
 		startActivity(intent);
 	}
 	
@@ -84,12 +86,12 @@ public class MainActivity extends AppCompatActivity {
 
 					@Override
 					public void onCancel() {
-				        Toast.makeText(MainActivity.this, "Facebook sign in canceled!", Toast.LENGTH_LONG).show();
+				        Toast.makeText(LoginActivity.this, "Facebook sign in canceled!", Toast.LENGTH_LONG).show();
 					}
 
 					@Override
 					public void onError(FacebookException error) {
-				        Toast.makeText(MainActivity.this, "Facebook sign in Error" + error.getMessage(), Toast.LENGTH_LONG).show();
+				        Toast.makeText(LoginActivity.this, "Facebook sign in Error" + error.getMessage(), Toast.LENGTH_LONG).show();
 					}
 
 	    });
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
 		@Override
 		public void onConnectionFailed(ConnectionResult arg0) {
 			
+			new CustomDialog().show(getSupportFragmentManager(), "dialog_fragment");
 		}
 		
 	};
@@ -108,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
 		
 		@Override
 		public void onClick(View v) {
+			new CustomDialog().show(getSupportFragmentManager(), "dialog_fragment");
 			signInGoogle();
 		}
 	};
@@ -116,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 		
 		@Override
 		public void onClick(View v) {
-			LoginManager.getInstance().logInWithReadPermissions(MainActivity.this, Arrays.asList("public_profile", "user_friends"));
+			LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends"));
 		}
 	};
 	

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+	<TextView
+	    android:id="@+id/title"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/page_title_height"
+	    android:background="@color/md_grey_500"
+	    android:gravity="center"
+	    android:textColor="@color/md_white_1000"
+	    android:text="使用者協議及隱私政策"
+	    android:textSize="@dimen/page_title_text_size"/>
+
+	<TextView
+	    android:id="@+id/content"
+	   	android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_below="@id/title"
+	    android:textColor="@color/md_black_1000"
+	    android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
+	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
+	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
+	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
+	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
+	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n"/>
+
+	 <include 
+	     android:id="@+id/bottom_bar"
+	     android:layout_width="match_parent"
+         android:layout_height="@dimen/welcome_bottom_option_height"
+	     layout="@layout/component_bottom"
+	     android:layout_alignParentBottom="true" />
+	 
+	 <RadioButton
+        android:id="@+id/user_improve_plan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bottom_bar"
+        android:text="參與使用者體驗改善計畫" />
+
+</RelativeLayout>

@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 	private GoogleApiClient mGoogleApiClient;
 	private AppCompatButton signInButtonGoogle;
 	private AppCompatButton signInButtonFacebook;
+	private AppCompatButton signInButtonNormal;
 	private CallbackManager mFBcallbackManager;
 	private AccessToken mFBAccessToken;
 	//facebook login
@@ -48,16 +49,36 @@ public class LoginActivity extends AppCompatActivity {
 		setupGoogleSignIn();
 		setupFacebookSignIn();
 		
-		signInButtonGoogle = (AppCompatButton) findViewById(R.id.login_button_google);
-		signInButtonGoogle.setOnClickListener(mGoogleSignInClickListener);
+		findViews();
+		setListener();
 		
-		signInButtonFacebook = (AppCompatButton) findViewById(R.id.login_button_fb);
-		signInButtonFacebook.setOnClickListener(mFacebookSignInClickListener);
 		Intent intent = new Intent();
 		intent.setClass(LoginActivity.this, WelcomeActivity.class);
 		startActivity(intent);
 	}
 	
+	private void findViews() {
+		signInButtonNormal = (AppCompatButton) findViewById(R.id.ap_login);
+		signInButtonGoogle = (AppCompatButton) findViewById(R.id.login_button_google);
+		signInButtonFacebook = (AppCompatButton) findViewById(R.id.login_button_fb);
+
+	}
+	
+	private void setListener() {
+		signInButtonNormal.setOnClickListener(mOnNormalSignInListener);
+		signInButtonGoogle.setOnClickListener(mGoogleSignInClickListener);
+		signInButtonFacebook.setOnClickListener(mFacebookSignInClickListener);
+	}
+	
+	private View.OnClickListener mOnNormalSignInListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.setClass(getApplicationContext(), MainActivity.class);
+			startActivity(intent);
+		}
+	};
 	private void setupGoogleSignIn(){
 		// Configure sign-in to request the user's ID, email address, and basic
 		// profile. ID and basic profile are included in DEFAULT_SIGN_IN.

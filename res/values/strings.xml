@@ -3,4 +3,12 @@
 	<string name="facebook_app_id">838943992930614</string>
 	<string name="ak_login_protocol_scheme">ak838943992930614</string>
 	<string name="ACCOUNT_KIT_CLIENT_TOKEN">48e671402aca5e0484ea2fcff5ba160e</string>
+	<!-- Bottom Bar -->
+	<string name="safty_tab">安心</string>
+	<string name="health_tab">健康</string>
+	<string name="eating_tab">飲食</string>
+	<string name="alarm_tab">鬧鈴</string>
+	<string name="setting_tab">設定</string>
+	
+	
 </resources>

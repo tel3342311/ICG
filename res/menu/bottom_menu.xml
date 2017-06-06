@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_safty"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/safty_tab"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_health"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/health_tab"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_eating"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/eating_tab"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_alarm"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/alarm_tab"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_setting"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:title="@string/setting_tab"
+        app:showAsAction="ifRoom"/>
+
+</menu>

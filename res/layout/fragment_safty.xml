@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin">
+    
+    <RelativeLayout
+        	android:id="@+id/map_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/safty_map_view_height"
+            android:background="@color/md_black_1000" 
+            android:padding="1dp">
+		    <com.google.android.gms.maps.MapView
+		        android:id="@+id/map_view"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent" />
+	</RelativeLayout>
+	
+    <TextView 
+        android:id="@+id/gps_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/map_container"
+        android:layout_alignStart="@id/map_container"
+        android:text="此為GPS最後更新位置"
+        android:textColor="@color/md_black_1000"/>
+    
+    <TextView 
+        android:id="@+id/gps_update_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/map_container"
+        android:layout_alignEnd="@id/map_container"
+        android:text="2017/06/06 週二 07:50"
+		android:textColor="@color/md_black_1000"/>
+    
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/daily_event_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:layout_below="@id/gps_update_time"/>
+
+</RelativeLayout>

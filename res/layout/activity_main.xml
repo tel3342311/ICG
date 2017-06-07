@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!-- Content Container -->
-
+	
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
@@ -15,5 +13,14 @@
         app:itemIconTint="@color/md_white_1000"
         app:itemTextColor="@color/md_white_1000"
         app:menu="@menu/bottom_menu" />
+    
+    <!-- Content Container -->
+	<FrameLayout 
+	    android:id="@+id/container"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_above="@id/bottom_navigation">
+	    
+	</FrameLayout>
 
 </RelativeLayout>

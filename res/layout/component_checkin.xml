@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/md_grey_100"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/geo_event_detail_item_height" >
+
+        <TextView
+            android:id="@+id/enter_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="07:00"
+            android:textColor="@color/md_black_1000" />
+
+        <TextView
+            android:id="@+id/enter_text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignBaseline="@+id/enter_text"
+            android:layout_alignBottom="@+id/enter_text"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="到校"
+            android:textColor="@color/md_black_1000" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@color/md_grey_400" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/geo_event_detail_item_height" >
+
+        <TextView
+            android:id="@+id/leave_text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="離校"
+            android:textColor="@color/md_black_1000" />
+
+        <TextView
+            android:id="@+id/leave_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="16:00"
+            android:textColor="@color/md_black_1000" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@color/md_grey_400" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/geo_event_detail_item_height" >
+
+        <TextView
+            android:id="@+id/emergency_text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="緊急求救"
+            android:textColor="@color/md_red_900" />
+
+        <TextView
+            android:id="@+id/emergency_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="07:00"
+            android:textColor="@color/md_red_900" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@color/md_grey_400" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/geo_event_detail_item_height" >
+
+        <TextView
+            android:id="@+id/emergency_release_text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="緊急解除"
+            android:textColor="@color/md_red_900" />
+
+        <TextView
+            android:id="@+id/emergency_release_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="08:00"
+            android:textColor="@color/md_red_900" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="@color/md_grey_400" />
+    </RelativeLayout>
+
+</LinearLayout>

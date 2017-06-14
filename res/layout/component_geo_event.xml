@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="4dp"
+    android:layout_margin="5dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/md_white_1000">
+
+        <ImageView
+            android:id="@+id/arrow"
+            android:layout_width="wrap_content"
+        	android:layout_height="@dimen/geo_event_view_fix_height"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_launcher" />
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="wrap_content"
+        	android:layout_height="@dimen/geo_event_view_fix_height"
+            android:layout_margin="5dp"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/md_black_1000"
+            android:gravity="center"
+            android:text="2017/06/14 週二"/>
+        
+        <include 
+            android:id="@+id/detail_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_text"
+        	layout="@layout/component_checkin"/>
+    </RelativeLayout>
+    
+</android.support.v7.widget.CardView>

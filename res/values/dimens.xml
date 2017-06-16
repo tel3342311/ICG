@@ -24,4 +24,10 @@
 	<dimen name="safty_map_view_height">250dp</dimen>
 	<dimen name="geo_event_view_fix_height">65dp</dimen>
 	<dimen name="geo_event_detail_item_height">35dp</dimen>
+	<!-- Health page -->
+	<dimen name="healthy_item_height">90dp</dimen>
+	<dimen name="healthy_item_icon_size">45dp</dimen>
+	<dimen name="healthy_more_icon_size">30dp</dimen>
+	<dimen name="healthy_item_icon_margin_right">15dp</dimen>
+	<dimen name="healthy_bottom_line_margin">15dp</dimen>
 </resources>

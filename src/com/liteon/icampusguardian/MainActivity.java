@@ -3,6 +3,7 @@ package com.liteon.icampusguardian;
 import com.liteon.icampusguardian.fragment.AlarmFragment;
 import com.liteon.icampusguardian.fragment.HealthFragment;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
+import com.liteon.icampusguardian.fragment.SettingFragment;
 import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
 
 import android.os.Bundle;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 					fragment = new AlarmFragment();
 					break;
 				case R.id.action_setting:
+					fragment = new SettingFragment();
 					break;
 			}
 			if (fragment == null) {

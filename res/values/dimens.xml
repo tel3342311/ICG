@@ -10,6 +10,7 @@
 	<dimen name="login_option_text_height">30dp</dimen>
 	<dimen name="login_option_btn_width">120dp</dimen>
 	<dimen name="login_option_btn_margin_bottom">8dp</dimen>
+	<dimen name="more_icon_size">30dp</dimen>
 	<!-- welcome -->
 	<dimen name="welcome_icon_size">80dp</dimen>
 	<dimen name="welcome_bottom_option_height">40dp</dimen>
@@ -27,11 +28,16 @@
 	<!-- Health page -->
 	<dimen name="healthy_item_height">90dp</dimen>
 	<dimen name="healthy_item_icon_size">45dp</dimen>
-	<dimen name="healthy_more_icon_size">30dp</dimen>
 	<dimen name="healthy_item_icon_margin_right">15dp</dimen>
 	<dimen name="healthy_bottom_line_margin">15dp</dimen>
 	<!-- Alarm page -->
 	<dimen name="alarm_button_height">50dp</dimen>
 	<dimen name="alarm_button_magin_horizon">10dp</dimen>
 	<dimen name="alarm_item_icon_size">25dp</dimen>
+	<!-- Setting page -->
+	<dimen name="setting_child_info_height">260dp</dimen>
+	<dimen name="setting_circular_icon_size">125dp</dimen>
+	<dimen name="setting_child_name_margin_top">10dp</dimen>
+	<dimen name="setting_child_name_max_width">150dp</dimen>
+	<dimen name="setting_child_name_min_width">50dp</dimen>
 </resources>

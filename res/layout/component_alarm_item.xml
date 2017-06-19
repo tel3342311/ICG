@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/healthy_item_height">
+    <ImageView
+    	android:id="@+id/alarm_icon" 
+   		android:layout_width="@dimen/alarm_item_icon_size"
+    	android:layout_height="@dimen/alarm_item_icon_size"
+    	android:layout_centerVertical="true"
+    	android:layout_alignParentStart="true"
+    	android:background="@drawable/relieved_btn_alarm"/>
+    	
+     <LinearLayout 
+         android:id="@+id/text_area"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerVertical="true"
+         android:layout_marginStart="@dimen/healthy_item_icon_margin_right"
+         android:layout_toEndOf="@id/alarm_icon"
+         android:orientation="vertical">
+         
+         <TextView
+            android:id="@+id/title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="未命名"
+            android:textColor="@color/md_black_1000" />
+
+        <TextView
+            android:id="@+id/date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="06:00"
+            android:textColor="@color/md_black_1000" />
+        
+        <TextView
+            android:id="@+id/period_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="週一、二、三、四、五"
+            android:textColor="@color/md_black_1000" />
+     </LinearLayout>
+     
+     <android.support.v7.widget.SwitchCompat
+         android:id="@+id/switch_alarm_icon"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentEnd="true"
+         android:layout_centerVertical="true"
+         android:backgroundTint="@color/md_cyan_A700"/>
+     
+     <View 
+         android:layout_width="match_parent"
+         android:layout_height="1dp"
+         android:background="@color/md_grey_400"
+         android:layout_alignParentBottom="true"
+         android:layout_alignLeft="@id/text_area"
+         android:layout_alignRight="@id/switch_alarm_icon"
+         android:layout_marginEnd="@dimen/healthy_bottom_line_margin"/>
+</RelativeLayout>

@@ -30,4 +30,8 @@
 	<dimen name="healthy_more_icon_size">30dp</dimen>
 	<dimen name="healthy_item_icon_margin_right">15dp</dimen>
 	<dimen name="healthy_bottom_line_margin">15dp</dimen>
+	<!-- Alarm page -->
+	<dimen name="alarm_button_height">50dp</dimen>
+	<dimen name="alarm_button_magin_horizon">10dp</dimen>
+	<dimen name="alarm_item_icon_size">25dp</dimen>
 </resources>

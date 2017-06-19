@@ -2,7 +2,7 @@
 <resources>
     <color name="color_primary">@color/md_grey_800</color>
     <color name="color_primaryDark">@color/md_grey_800</color>
-    <color name="color_accent">@color/md_grey_800</color>
+    <color name="color_accent">#00BD70</color>
     <color name="color_ControlHighlight">@color/md_grey_400</color>
     <color name="color_primaryText">@color/md_black_1000</color>
     <color name="color_windowBackground">@android:color/white</color>

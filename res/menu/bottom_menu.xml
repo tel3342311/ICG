@@ -12,11 +12,6 @@
         android:icon="@drawable/ic_launcher"
         android:title="@string/health_tab"/>
     <item
-        android:id="@+id/action_eating"
-        android:enabled="true"
-        android:icon="@drawable/ic_launcher"
-        android:title="@string/eating_tab"/>
-    <item
         android:id="@+id/action_alarm"
         android:enabled="true"
         android:icon="@drawable/ic_launcher"

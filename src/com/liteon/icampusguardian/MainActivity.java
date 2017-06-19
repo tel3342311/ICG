@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
 				case R.id.action_health:
 					fragment = new HealthFragment();
 					break;
-				case R.id.action_eating:
-					break;
 				case R.id.action_alarm:
 					break;
 				case R.id.action_setting:

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin">
+    
+	<View 
+	    android:id="@+id/pie_chart_view"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/healthy_detail_pie_chart_height"/>
+	
+   	<com.liteon.icampusguardian.util.HealthHistogramView
+        android:id="@+id/healthy_histogram_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/pie_chart_view"
+        android:clickable="true"/>
+
+</RelativeLayout>
+    

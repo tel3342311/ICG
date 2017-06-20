@@ -1,13 +1,16 @@
 package com.liteon.icampusguardian.util;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,21 +18,37 @@ import android.widget.TextView;
 public class HealthyItemAdapter extends Adapter<HealthyItemAdapter.ViewHolder> {
 
 	private List<HealthyItem> mDataset;
+	public WeakReference<IHealthViewHolderClicks> mClickListener;
 	
-	public static class ViewHolder extends RecyclerView.ViewHolder {
+	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
         // each data item is just a string in this case
         public View mRootView;
         public TextView mTitleTextView;
         public TextView mValueTextView;
         public ImageView mItemIcon;
-        public ViewHolder(View v) {
+        public HealthyItem.TYPE mType;
+        public WeakReference<IHealthViewHolderClicks> mClicks;
+        public ViewHolder(View v, IHealthViewHolderClicks itemClickListener) {
             super(v);
             mRootView = v;
+            mClicks = new WeakReference<IHealthViewHolderClicks>(itemClickListener);
         }
+        
+		@Override
+		public void onClick(View v) {
+			if (mClicks.get() != null ) {
+				mClicks.get().onClick(mType);
+			}
+		}
+		
+		public static interface IHealthViewHolderClicks {
+	        public void onClick(HealthyItem.TYPE type);
+	    }
     }
 
-    public HealthyItemAdapter(List<HealthyItem> healthDataset) {
+    public HealthyItemAdapter(List<HealthyItem> healthDataset, IHealthViewHolderClicks ItemClickListener) {
         mDataset = healthDataset;
+        mClickListener = new WeakReference<IHealthViewHolderClicks>(ItemClickListener);
     }
     
 	@Override
@@ -43,6 +62,7 @@ public class HealthyItemAdapter extends Adapter<HealthyItemAdapter.ViewHolder> {
         holder.mTitleTextView.setText(item.getTitle());
         holder.mValueTextView.setText(item.toString());
         holder.mItemIcon.setImageResource(item.getIconId());
+        holder.mType = item.getItemType();
 	}
 
 	@Override
@@ -51,11 +71,11 @@ public class HealthyItemAdapter extends Adapter<HealthyItemAdapter.ViewHolder> {
         View v = LayoutInflater.from(parent.getContext())
                                .inflate(R.layout.component_healthy_item, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        ViewHolder vh = new ViewHolder(v);
+        ViewHolder vh = new ViewHolder(v, mClickListener.get());
         vh.mTitleTextView = (TextView) v.findViewById(R.id.title_text);
         vh.mValueTextView = (TextView) v.findViewById(R.id.value_text);
         vh.mItemIcon = (ImageView) v.findViewById(R.id.healthy_icon);
-
+        v.setOnClickListener(vh);
         return vh;
 	}
 }

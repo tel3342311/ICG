@@ -5,11 +5,5 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/android-support-v7-appcompat"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/android-google-play-services-auth"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/android-google-play-services-auth-base"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/android-google-play-services-base"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/android-google-play-services-basement"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/android-google-play-services-tasks"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

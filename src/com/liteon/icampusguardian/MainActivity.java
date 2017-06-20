@@ -1,10 +1,13 @@
 package com.liteon.icampusguardian;
 
 import com.liteon.icampusguardian.fragment.AlarmFragment;
+import com.liteon.icampusguardian.fragment.DailyHealthFragment;
 import com.liteon.icampusguardian.fragment.HealthFragment;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
 import com.liteon.icampusguardian.fragment.SettingFragment;
 import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
+import com.liteon.icampusguardian.util.HealthyItem.TYPE;
+import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -15,7 +18,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IHealthViewHolderClicks {
 
 	private BottomNavigationView mBottomView;
 	@Override
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 				    fragment = new SafetyFragment();
 					break;
 				case R.id.action_health:
-					fragment = new HealthFragment();
+					fragment = new HealthFragment(MainActivity.this);
 					break;
 				case R.id.action_alarm:
 					fragment = new AlarmFragment();
@@ -67,5 +70,11 @@ public class MainActivity extends AppCompatActivity {
 	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 	    fragmentTransaction.replace(R.id.container, frag);
 	    fragmentTransaction.commit();
+	}
+
+	@Override
+	public void onClick(TYPE type) {
+		Fragment fragment = new DailyHealthFragment();
+		changeFragment(fragment);
 	}
 }

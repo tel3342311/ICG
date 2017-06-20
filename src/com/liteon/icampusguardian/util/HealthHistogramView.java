@@ -1,0 +1,184 @@
+package com.liteon.icampusguardian.util;
+
+import java.util.List;
+
+import com.liteon.icampusguardian.R;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
+import android.graphics.Paint.Cap;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.Path.FillType;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
+
+public class HealthHistogramView extends View {
+
+	private Paint paintSelected;
+	private Paint paintOthers;
+	private Paint textPaint;
+	private Paint baseLinePaint;
+	private Paint paintTriangle;
+	//Text size for graph
+	private int textFontSize;
+	//bottom dash line
+	private Path mBottomPath;
+	//magin left& right
+	private int mGraphMarginHorizon;
+	private int mGraphMarginVertical;
+	private int mHistogramWidth;
+	private int mHistogramGap;
+	private static final int HISTOGRAM_NUM = 7;
+	private int mSelectedHistogram = HISTOGRAM_NUM - 1;
+	private Rect mRectList[];
+	private int mTargetNum = 99;
+	private List<Integer> mValueList;
+	public HealthHistogramView(Context context) {
+		super(context);
+	}
+
+	public HealthHistogramView(Context context, AttributeSet attrs)
+	{
+		this(context, attrs, R.attr.circularImageViewStyle);
+	}
+
+	public HealthHistogramView(Context context, AttributeSet attrs, int defStyle)
+	{
+		super(context, attrs, defStyle);
+		init(context, attrs, defStyle);
+	}
+	
+	private void init(Context context, AttributeSet attrs, int defStyle)
+	{
+		// Initialize paint objects
+		paintSelected = new Paint();
+		paintSelected.setColor(getResources().getColor(R.color.md_amber_700));
+		paintSelected.setAntiAlias(true);
+		paintOthers = new Paint();
+		paintOthers.setColor(getResources().getColor(R.color.md_amber_700));
+		paintOthers.setAlpha(128);
+		paintOthers.setAntiAlias(true);
+		//Text size
+		textFontSize = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_font_size);
+		//Paint for text
+		textPaint = new Paint();  
+		textPaint.setColor(Color.BLACK);
+		textPaint.setTextSize(textFontSize);
+		textPaint.setAntiAlias(true);
+		textPaint.setStrokeCap(Cap.ROUND);
+		textPaint.setStrokeWidth(1);
+		//Paint for base line
+		baseLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);  
+		baseLinePaint.setStyle(Style.STROKE);
+		baseLinePaint.setStrokeCap(Cap.ROUND);
+		baseLinePaint.setColor(Color.BLACK);  
+		baseLinePaint.setStrokeWidth(5);  
+		float[] intervals = new float[] {5.0f, 20.0f};
+		float phase = 1.f;
+		DashPathEffect effects = new DashPathEffect(intervals, phase);  
+		baseLinePaint.setPathEffect(effects);  
+		//Paint for Triangle
+		paintTriangle = new Paint();
+	    paintTriangle.setColor(android.graphics.Color.BLACK);
+	    paintTriangle.setStyle(Paint.Style.FILL);
+	    paintTriangle.setAntiAlias(true);	
+	    //Def. for Histogram 
+		mGraphMarginVertical = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_magin_vertical);
+		mGraphMarginHorizon = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_magin_horizon);
+		mHistogramWidth = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_width);
+		mRectList = new Rect[HISTOGRAM_NUM];
+		
+	}
+	
+	@Override
+	public void onDraw(Canvas canvas)
+	{
+		int width = canvas.getWidth();
+		int height = canvas.getHeight();
+		int graph_bottom = height - textFontSize * 2;
+		mHistogramGap = (width - (mGraphMarginHorizon * 2) - (mHistogramWidth * HISTOGRAM_NUM)) / (HISTOGRAM_NUM - 1);
+
+		canvas.drawText("近七天狀態", 50, height - textFontSize, textPaint);
+		canvas.drawText("今天", width - 100, height - textFontSize, textPaint);
+		
+		mBottomPath = new Path();
+		mBottomPath.moveTo(0, graph_bottom);
+		mBottomPath.lineTo(mGraphMarginHorizon, graph_bottom);
+		for (int i = 0; i < HISTOGRAM_NUM; i++) {
+			if (mRectList[i] == null) {
+				int left = mGraphMarginHorizon + i * (mHistogramWidth + mHistogramGap);
+				int right = left + mHistogramWidth;
+				mRectList[i] = new Rect(left, mGraphMarginVertical, right , graph_bottom);
+			}
+			if (mSelectedHistogram == i) {
+				canvas.drawRect(mRectList[i], paintSelected);
+			} else {
+				canvas.drawRect(mRectList[i], paintOthers);
+			}
+			mBottomPath.moveTo(mRectList[i].right + 10 , graph_bottom);  
+			mBottomPath.lineTo(mRectList[i].right + mHistogramGap, graph_bottom);
+		}
+        canvas.drawPath(mBottomPath, baseLinePaint);
+		canvas.drawText(Integer.toString(mTargetNum), 0, 30, textPaint);
+
+	    Path path = new Path();
+		Point a = new Point(0, 45);
+	    Point b = new Point(30, 45);
+	    Point c = new Point(15, (int)(height * 0.09) + mGraphMarginVertical);
+	    path.moveTo(a.x, a.y);
+	    path.lineTo(b.x, b.y);
+	    path.lineTo(c.x, c.y);
+	   
+	    path.close();
+	    canvas.drawPath(path, paintTriangle);
+	    
+		canvas.drawLine(0.f, (float) (height * 0.09) + mGraphMarginVertical, (float)width, (float)(height * 0.09) + mGraphMarginVertical, textPaint);
+		
+	}
+	
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent event)
+	{
+		// Check for clickable state and do nothing if disabled
+		if(!this.isClickable()) {
+			return super.onTouchEvent(event);
+		}
+		int touchX = (int)event.getX();
+	    int touchY = (int)event.getY();
+		// Set selected state based on Motion Event
+		switch(event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				for (int i = 0; i < HISTOGRAM_NUM; i++) {
+	                if(mRectList[i].contains(touchX,touchY)){
+	                    mSelectedHistogram = i;
+	                	break;
+	                }
+	            }
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_SCROLL:
+			case MotionEvent.ACTION_OUTSIDE:
+			case MotionEvent.ACTION_CANCEL:
+				break;
+		}
+		
+		// Redraw image and return super type
+		this.invalidate();
+		return super.dispatchTouchEvent(event);
+	}
+	
+	public void setTargetNumber(int num) {
+		mTargetNum = num;
+	}
+	
+	public void setValuesByDay(List<Integer> values) {
+		mValueList = values;
+	}
+}

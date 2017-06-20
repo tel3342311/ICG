@@ -2,16 +2,11 @@ package com.liteon.icampusguardian.fragment;
 
 import java.util.ArrayList;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.util.GeoEventAdapter;
-import com.liteon.icampusguardian.util.GeoEventItem;
 import com.liteon.icampusguardian.util.HealthyItem;
 import com.liteon.icampusguardian.util.HealthyItemAdapter;
+import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 
-import android.icu.text.DisplayContext.Type;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +21,13 @@ public class HealthFragment extends Fragment {
 	private RecyclerView mRecyclerView;
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
+	private IHealthViewHolderClicks mOnItemClickListener;
+	
+	public HealthFragment(IHealthViewHolderClicks listener) {
+		super();
+		mOnItemClickListener = listener;
+		
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,7 +43,7 @@ public class HealthFragment extends Fragment {
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		testData();
-		mAdapter = new HealthyItemAdapter(myDataset);
+		mAdapter = new HealthyItemAdapter(myDataset, mOnItemClickListener);
 		mRecyclerView.setAdapter(mAdapter);
 	}
 

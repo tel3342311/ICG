@@ -9,10 +9,10 @@
     android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:layout_marginTop="@dimen/activity_vertical_margin">
     
-	<View 
+	<com.liteon.icampusguardian.util.HealthPieChartView 
 	    android:id="@+id/pie_chart_view"
 	    android:layout_width="match_parent"
-	    android:layout_height="@dimen/healthy_detail_pie_chart_height"/>
+	    android:layout_height="@dimen/healthy_detail_pie_chart_view_height"/>
 	
    	<com.liteon.icampusguardian.util.HealthHistogramView
         android:id="@+id/healthy_histogram_view"

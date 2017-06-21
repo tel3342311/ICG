@@ -31,7 +31,13 @@
 	<dimen name="healthy_item_icon_margin_right">15dp</dimen>
 	<dimen name="healthy_bottom_line_margin">15dp</dimen>
 	<!-- Health detail -->
-	<dimen name="healthy_detail_pie_chart_height">270dp</dimen>
+	<dimen name="healthy_detail_pie_chart_view_height">270dp</dimen>
+	<dimen name="healthy_detail_pie_chart_size">220dp</dimen>
+	<dimen name="healthy_detail_pie_chart_icon_size">55dp</dimen>
+	<dimen name="healthy_detail_pie_chart_icon_location_y">70dp</dimen>
+	<dimen name="healthy_detail_pie_chart_target_offset_y">15dp</dimen>
+	<dimen name="healthy_detail_pie_chart_date_offset_y">45dp</dimen>
+	<dimen name="healthy_detail_pie_chart_target_font_size">40sp</dimen>
 	<dimen name="healthy_detail_histogram_chart_height">270dp</dimen>
 	<dimen name="healthy_detail_histogram_font_size">14sp</dimen>
 	<dimen name="healthy_detail_histogram_magin_horizon">18dp</dimen>

@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 
 	@Override
 	public void onClick(TYPE type) {
-		Fragment fragment = new DailyHealthFragment();
+		Fragment fragment = new DailyHealthFragment(type);
 		changeFragment(fragment);
 	}
 }

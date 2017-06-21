@@ -21,6 +21,8 @@ import android.view.View;
 
 public class HealthHistogramView extends View {
 
+	private int mWidth;
+	private int mHeight;
 	private Paint paintSelected;
 	private Paint paintOthers;
 	private Paint textPaint;
@@ -40,6 +42,7 @@ public class HealthHistogramView extends View {
 	private Rect mRectList[];
 	private int mTargetNum = 99;
 	private List<Integer> mValueList;
+	private OnHistogramChangeListener mHistogramChangeListener;
 	public HealthHistogramView(Context context) {
 		super(context);
 	}
@@ -100,22 +103,21 @@ public class HealthHistogramView extends View {
 	@Override
 	public void onDraw(Canvas canvas)
 	{
-		int width = canvas.getWidth();
-		int height = canvas.getHeight();
-		int graph_bottom = height - textFontSize * 2;
-		mHistogramGap = (width - (mGraphMarginHorizon * 2) - (mHistogramWidth * HISTOGRAM_NUM)) / (HISTOGRAM_NUM - 1);
+		int graph_bottom = mHeight - textFontSize * 2;
+		mHistogramGap = (mWidth - (mGraphMarginHorizon * 2) - (mHistogramWidth * HISTOGRAM_NUM)) / (HISTOGRAM_NUM - 1);
 
-		canvas.drawText("近七天狀態", 50, height - textFontSize, textPaint);
-		canvas.drawText("今天", width - 100, height - textFontSize, textPaint);
+		canvas.drawText("近七天狀態", 50, mHeight - textFontSize, textPaint);
+		canvas.drawText("今天", mWidth - 100, mHeight - textFontSize, textPaint);
 		
 		mBottomPath = new Path();
 		mBottomPath.moveTo(0, graph_bottom);
 		mBottomPath.lineTo(mGraphMarginHorizon, graph_bottom);
 		for (int i = 0; i < HISTOGRAM_NUM; i++) {
 			if (mRectList[i] == null) {
+				float margin = (graph_bottom - mGraphMarginVertical) * (1 - (mValueList.get(i) / mTargetNum));
 				int left = mGraphMarginHorizon + i * (mHistogramWidth + mHistogramGap);
 				int right = left + mHistogramWidth;
-				mRectList[i] = new Rect(left, mGraphMarginVertical, right , graph_bottom);
+				mRectList[i] = new Rect(left, (int) (mGraphMarginVertical + margin), right , graph_bottom);
 			}
 			if (mSelectedHistogram == i) {
 				canvas.drawRect(mRectList[i], paintSelected);
@@ -131,7 +133,7 @@ public class HealthHistogramView extends View {
 	    Path path = new Path();
 		Point a = new Point(0, 45);
 	    Point b = new Point(30, 45);
-	    Point c = new Point(15, (int)(height * 0.09) + mGraphMarginVertical);
+	    Point c = new Point(15, (int)(mHeight * 0.09) + mGraphMarginVertical);
 	    path.moveTo(a.x, a.y);
 	    path.lineTo(b.x, b.y);
 	    path.lineTo(c.x, c.y);
@@ -139,7 +141,7 @@ public class HealthHistogramView extends View {
 	    path.close();
 	    canvas.drawPath(path, paintTriangle);
 	    
-		canvas.drawLine(0.f, (float) (height * 0.09) + mGraphMarginVertical, (float)width, (float)(height * 0.09) + mGraphMarginVertical, textPaint);
+		canvas.drawLine(0.f, (float) (mHeight * 0.09) + mGraphMarginVertical, (float)mWidth, (float)(mHeight * 0.09) + mGraphMarginVertical, textPaint);
 		
 	}
 	
@@ -158,6 +160,7 @@ public class HealthHistogramView extends View {
 				for (int i = 0; i < HISTOGRAM_NUM; i++) {
 	                if(mRectList[i].contains(touchX,touchY)){
 	                    mSelectedHistogram = i;
+	                    mHistogramChangeListener.onHistogramChanged(i, mValueList.indexOf(i));
 	                	break;
 	                }
 	            }
@@ -180,5 +183,20 @@ public class HealthHistogramView extends View {
 	
 	public void setValuesByDay(List<Integer> values) {
 		mValueList = values;
+	}
+	
+	@Override 
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+	{
+	    mWidth = View.MeasureSpec.getSize(widthMeasureSpec);
+	    mHeight = View.MeasureSpec.getSize(heightMeasureSpec);
+
+	    setMeasuredDimension(mWidth, mHeight);
+	}
+	public void setOnHistogramClickListener(OnHistogramChangeListener listener) {
+		mHistogramChangeListener = listener;
+	}
+	public static interface OnHistogramChangeListener {
+		public void onHistogramChanged(int idx, int value);
 	}
 }

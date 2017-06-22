@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
@@ -30,6 +31,9 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	private Paint textTargetPaint;
 	private Paint arcPaintBackground;
 	private Paint arcPaintPrimary;
+	private Paint arcClockPaint;
+	private Paint arcClockMinPaint;
+	private Paint arcClockBackGroundPaint;
 	private HealthyItem.TYPE mType;
 	private int mTargetValue;
 	private int mPieChartSize;
@@ -59,7 +63,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	private void init(Context context, AttributeSet attrs, int defStyle)
 	{
 		// Initialize paint objects
-		mCurrentValue = 68;
+		mCurrentValue = 0;
 		//Text size
 		textFontSize = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_font_size);
 		textTargetSize = getResources().getDimensionPixelSize(R.dimen.healthy_detail_pie_chart_target_font_size);
@@ -104,6 +108,44 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		arcPaintPrimary.setColor(getResources().getColor(R.color.md_amber_700,null));
 		arcPaintPrimary.setStrokeWidth(25);
 		arcPaintPrimary.setAntiAlias(true);
+		//Paint for sleep
+		arcClockPaint = new Paint();
+		arcClockPaint.setDither(true);
+		arcClockPaint.setStyle(Paint.Style.STROKE);
+		arcClockPaint.setStrokeCap(Cap.BUTT);
+		arcClockPaint.setColor(getResources().getColor(R.color.md_grey_500,null));
+		arcClockPaint.setStrokeWidth(40);
+		arcClockPaint.setAntiAlias(true);
+		float radius = (float)(mPieChartSize * Math.PI / 12.f);
+		float[] intervals = new float[] {14.0f, radius - 14.0f};
+		float phase = 0.f;
+		DashPathEffect effects = new DashPathEffect(intervals, phase);  
+		arcClockPaint.setPathEffect(effects);  
+		
+		arcClockMinPaint = new Paint();
+		arcClockMinPaint.setDither(true);
+		arcClockMinPaint.setStyle(Paint.Style.STROKE);
+		arcClockMinPaint.setStrokeCap(Cap.ROUND);
+		arcClockMinPaint.setColor(getResources().getColor(R.color.md_grey_500,null));
+		arcClockMinPaint.setStrokeWidth(10);
+		arcClockMinPaint.setAntiAlias(true);
+		radius = (float)(mPieChartSize * Math.PI / 60.f);
+		intervals = new float[] { 0.f , radius + 1.f,
+											1.f , radius - 1.0f,
+											1.f , radius - 1.0f,
+											1.f , radius - 1.0f,
+											1.f , radius - 1.0f};
+		phase = 0.f;
+		DashPathEffect effects2 = new DashPathEffect(intervals, phase);  
+		arcClockMinPaint.setPathEffect(effects2);  
+		
+		arcClockBackGroundPaint = new Paint(); 
+		arcClockBackGroundPaint.setDither(true);
+		arcClockBackGroundPaint.setStyle(Paint.Style.STROKE);
+		arcClockBackGroundPaint.setStrokeCap(Cap.BUTT);
+		arcClockBackGroundPaint.setColor(getResources().getColor(R.color.md_deep_purple_A700, null));
+		arcClockBackGroundPaint.setStrokeWidth(41);
+		arcClockBackGroundPaint.setAntiAlias(true);
 	}
 	
 	@Override 
@@ -165,7 +207,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         canvas.drawArc(rect, 270, 360, false, arcPaintBackground);
 
         // draw starting at top of circle in the clockwise direction
-        canvas.drawArc(rect, 270, (360 * (60 / 100f)), false, arcPaintPrimary);
+        canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
         drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "分", mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);			
@@ -188,15 +230,35 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         canvas.drawArc(rect, 270, 360, false, arcPaintBackground);
 
         // draw starting at top of circle in the clockwise direction
-        canvas.drawArc(rect, 270, (360 * (60 / 100f)), false, arcPaintPrimary);
+        canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
         drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "步", mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);		
 	}
 
 	private void onDrawSleeping(Canvas canvas) {
-		// TODO Auto-generated method stub
+		if (mTypeIcon == null) {
+			mTypeIcon = getBitmap(R.drawable.health_img_sleep, mTypeIconSize, mTypeIconSize);
+		}
 		
+		int cx = (mWidth - mTypeIcon.getWidth()) >> 1; // same as (...) / 2
+	    int cy = mTypeIconLocationY;//(mHeight - mTypeIcon.getHeight()) >> 1;
+	    canvas.drawBitmap(mTypeIcon, cx, cy, null);
+	    
+	    cx = (mWidth - mPieChartSize) >> 1; // same as (...) / 2
+	    cy = (mHeight - mPieChartSize) >> 1;
+	    RectF rect = new RectF(cx, cy, cx + mPieChartSize, cy + mPieChartSize);
+
+	    
+	    
+		// background full circle arc
+	    canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcClockBackGroundPaint);
+        canvas.drawArc(rect, 270, 360, false, arcClockPaint);
+        canvas.drawArc(rect, 270, 360, false, arcClockMinPaint);
+        
+        
+        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "步", mTargetOffsetY);
+        drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);		
 	}
 
 	private void onDrawRunning(Canvas canvas) {
@@ -216,22 +278,31 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         canvas.drawArc(rect, 270, 360, false, arcPaintBackground);
 
         // draw starting at top of circle in the clockwise direction
-        canvas.drawArc(rect, 270, (360 * (60 / 100f)), false, arcPaintPrimary);
+        canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
         drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "步", mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);			
 	}
 
 	private void onDrawHeartRate(Canvas canvas) {
+		if (mBackground == null) {
+			int resId = R.drawable.activity_gnd_heartbeat;
+			mBackground = getBitmap(resId, mPieChartSize, mPieChartSize);
+		}
 		if (mTypeIcon == null) {
 			mTypeIcon = getBitmap(R.drawable.health_img_heartbeat, mTypeIconSize, mTypeIconSize);
 		}
 		
-		int cx = (mWidth - mTypeIcon.getWidth()) >> 1; // same as (...) / 2
-	    int cy = mTypeIconLocationY;//(mHeight - mTypeIcon.getHeight()) >> 1;
+		int cx = (mWidth - mBackground.getWidth()) >> 1; 
+	    int cy = (mHeight - mBackground.getHeight()) >> 1;
+	    
+	    canvas.drawBitmap(mBackground, cx, cy, null);
+	    
+		cx = (mWidth - mTypeIcon.getWidth()) >> 1;
+	    cy = mTypeIconLocationY;
 	    canvas.drawBitmap(mTypeIcon, cx, cy, null);
         
-        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "步", mTargetOffsetY);
+        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "bpm", mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);			
 	}
 
@@ -252,30 +323,33 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         canvas.drawArc(rect, 270, 360, false, arcPaintBackground);
 
         // draw starting at top of circle in the clockwise direction
-        canvas.drawArc(rect, 270, (360 * (60 / 100f)), false, arcPaintPrimary);
+        canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
         drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "分", mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);			
 	}
-
+	private static int currentResId;
 	private void onDrawActivity(Canvas canvas) {
-		if (mBackground == null) {
-			int resId;
-			if (mCurrentValue >= 80) {
-				resId = R.drawable.activity_img_scale5;
-			} else if (mCurrentValue >= 60) {
-				resId = R.drawable.activity_img_scale4;
-			} else if (mCurrentValue >= 40) {
-				resId = R.drawable.activity_img_scale3;
-			} else if (mCurrentValue >= 20) {
-				resId = R.drawable.activity_img_scale2;
-			} else if (mCurrentValue >= 10) {
-				resId = R.drawable.activity_img_scale1;
-			} else {
-				resId = R.drawable.activity_img_scale;
-			}
-			mBackground = getBitmap(resId, mPieChartSize, mPieChartSize);
+		float ratio = ((float) mCurrentValue / mTargetValue) * 100;
+		int resId;
+		if (ratio >= 80) {
+			resId = R.drawable.activity_img_scale5;
+		} else if (ratio >= 60) {
+			resId = R.drawable.activity_img_scale4;
+		} else if (ratio >= 40) {
+			resId = R.drawable.activity_img_scale3;
+		} else if (ratio >= 20) {
+			resId = R.drawable.activity_img_scale2;
+		} else if (ratio >= 10) {
+			resId = R.drawable.activity_img_scale1;
+		} else {
+			resId = R.drawable.activity_img_scale;
 		}
+		if (mBackground == null || resId != currentResId) {
+			mBackground = getBitmap(resId, mPieChartSize, mPieChartSize);
+			currentResId = resId;
+		}
+		
 		if (mTypeIcon == null) {
 			mTypeIcon = getBitmap(R.drawable.health_img_activity, mTypeIconSize, mTypeIconSize);
 		}
@@ -316,7 +390,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         canvas.drawArc(rect, 270, 360, false, arcPaintBackground);
 
         // draw starting at top of circle in the clockwise direction
-        canvas.drawArc(rect, 270, (360 * (60 / 100f)), false, arcPaintPrimary);
+        canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
         drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "卡", mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);
@@ -354,7 +428,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		
 	}
 	
-	private void drawCenter(Canvas canvas, Paint paint, String text, int yOffset) {
+	private Rect drawCenter(Canvas canvas, Paint paint, String text, int yOffset) {
 		Rect r = new Rect();
 		canvas.getClipBounds(r);
 	    int cHeight = r.height();
@@ -364,6 +438,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	    float x = cWidth / 2f - r.width() / 2f - r.left;
 	    float y = cHeight / 2f + r.height() / 2f - r.bottom + yOffset;
 	    canvas.drawText(text, x, y, paint);
+	    return r;
 	}
 	
 	public void setDate(String date) {
@@ -377,9 +452,14 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	public void setType(TYPE type) {
 		mType = type;
 	}
+	
+	public void setTargetValue(int targetValue) {
+		this.mTargetValue = targetValue;
+	}
 
 	@Override
 	public void onHistogramChanged(int idx, int value) {
 		mCurrentValue = value;
+		invalidate();
 	}
 }

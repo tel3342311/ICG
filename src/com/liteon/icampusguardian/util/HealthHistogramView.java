@@ -114,7 +114,8 @@ public class HealthHistogramView extends View {
 		mBottomPath.lineTo(mGraphMarginHorizon, graph_bottom);
 		for (int i = 0; i < HISTOGRAM_NUM; i++) {
 			if (mRectList[i] == null) {
-				float margin = (graph_bottom - mGraphMarginVertical) * (1 - (mValueList.get(i) / mTargetNum));
+				float ratio = 1 - ((float)mValueList.get(i) / mTargetNum);
+				float margin = (graph_bottom - mGraphMarginVertical) * ratio;
 				int left = mGraphMarginHorizon + i * (mHistogramWidth + mHistogramGap);
 				int right = left + mHistogramWidth;
 				mRectList[i] = new Rect(left, (int) (mGraphMarginVertical + margin), right , graph_bottom);
@@ -160,7 +161,7 @@ public class HealthHistogramView extends View {
 				for (int i = 0; i < HISTOGRAM_NUM; i++) {
 	                if(mRectList[i].contains(touchX,touchY)){
 	                    mSelectedHistogram = i;
-	                    mHistogramChangeListener.onHistogramChanged(i, mValueList.indexOf(i));
+	                    mHistogramChangeListener.onHistogramChanged(i, mValueList.get(i));
 	                	break;
 	                }
 	            }
@@ -183,6 +184,7 @@ public class HealthHistogramView extends View {
 	
 	public void setValuesByDay(List<Integer> values) {
 		mValueList = values;
+		mHistogramChangeListener.onHistogramChanged(mSelectedHistogram, mValueList.get(mSelectedHistogram));
 	}
 	
 	@Override 

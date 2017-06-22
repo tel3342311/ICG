@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 
 public class DailyHealthFragment extends Fragment {
 	
+	private List<Integer> mDataList;
 	private HealthHistogramView mHistogramView;
 	private HealthPieChartView mPiechartView;
 	private TYPE mType;
@@ -38,19 +39,21 @@ public class DailyHealthFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_daily_healthy, container, false);
 		findView(rootView);
+		mDataList = testData();
 		setupPieChart();
 		setupHistogram();
 		return rootView;
 	}
 
 	private void setupHistogram() {
-		List<Integer> list = testData();
-		mHistogramView.setValuesByDay(list);
-		mHistogramView.setTargetNumber(list.get(0));
 		mHistogramView.setOnHistogramClickListener(mPiechartView);
+		mHistogramView.setValuesByDay(mDataList);
+		mHistogramView.setTargetNumber(mDataList.get(0));
 	}
 	private void setupPieChart() {
 		mPiechartView.setType(mType);
+		mPiechartView.setTargetValue(mDataList.get(0));
+		mPiechartView.setValue(mDataList.get(mDataList.size() - 1));
 	}
 	private void findView(View rootView) {
 		mHistogramView = (HealthHistogramView) rootView.findViewById(R.id.healthy_histogram_view);

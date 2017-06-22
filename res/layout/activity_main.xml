@@ -41,13 +41,18 @@
 
 
 	<!-- The navigation drawer -->
+
 	<android.support.design.widget.NavigationView
-        android:id="@+id/navigation_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
- 		app:headerLayout="@layout/component_navigation_header"
-		app:menu="@menu/drawer_menu">
+	    android:id="@+id/navigation"
+	    android:layout_width="wrap_content"
+	    android:layout_height="match_parent"
+	    android:layout_gravity="start"
+	    android:background="@color/md_grey_100"
+	    app:headerLayout="@layout/component_navigation_header"
+	    app:itemIconTint="@color/color_primaryText"
+	    app:itemTextColor="@color/color_primaryText"
+	    app:menu="@menu/drawer_menu" >
+
     </android.support.design.widget.NavigationView>
     
 </android.support.v4.widget.DrawerLayout>

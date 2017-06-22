@@ -1,17 +1,9 @@
 package com.liteon.icampusguardian;
 
-import com.liteon.icampusguardian.fragment.AlarmFragment;
-import com.liteon.icampusguardian.fragment.DailyHealthFragment;
-import com.liteon.icampusguardian.fragment.HealthFragment;
-import com.liteon.icampusguardian.fragment.SafetyFragment;
-import com.liteon.icampusguardian.fragment.SettingFragment;
-import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
-import com.liteon.icampusguardian.util.HealthyItem.TYPE;
-import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
-
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -21,15 +13,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.EditText;
+
+import com.liteon.icampusguardian.fragment.AlarmFragment;
+import com.liteon.icampusguardian.fragment.DailyHealthFragment;
+import com.liteon.icampusguardian.fragment.HealthFragment;
+import com.liteon.icampusguardian.fragment.SafetyFragment;
+import com.liteon.icampusguardian.fragment.SettingFragment;
+import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
+import com.liteon.icampusguardian.util.CircularImageView;
+import com.liteon.icampusguardian.util.HealthyItem.TYPE;
+import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 
 public class MainActivity extends AppCompatActivity implements IHealthViewHolderClicks {
 
+	private CircularImageView mChildIcon;
+	private EditText mChildName;
 	private Toolbar mToolbar;
 	private BottomNavigationView mBottomView;
 	private DrawerLayout mDrawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
+	private NavigationView mNavigationView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 		findViews();
 		setListener();
 		setupToolbar();
+		initChildInfo();
 		BottomNavigationViewHelper.disableShiftMode(mBottomView);
 	}
 	
@@ -63,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		mBottomView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mNavigationView = (NavigationView) findViewById(R.id.navigation);
+		mChildIcon = (CircularImageView) mNavigationView.getHeaderView(0).findViewById(R.id.child_icon);
+		mChildName = (EditText) mNavigationView.getHeaderView(0).findViewById(R.id.child_name);
 	}
 	
 	private void setListener() {
@@ -107,5 +115,16 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 	public void onClick(TYPE type) {
 		Fragment fragment = new DailyHealthFragment(type);
 		changeFragment(fragment);
+	}
+	
+	private void initChildInfo() {
+		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher, null));
+		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000));
+		mChildIcon.setBorderWidth(10);
+		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400));
+		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800));
+		mChildIcon.setSelectorStrokeWidth(10);
+		mChildIcon.addShadow();
+		mChildName.setText("王小明");
 	}
 }

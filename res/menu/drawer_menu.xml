@@ -2,24 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_safty"
+        android:id="@+id/action_switch_account"
         android:enabled="true"
         android:icon="@drawable/relieved_btn_relieved"
-        android:title="@string/safty_tab" />
+        android:title="@string/switch_account" />
     <item
-        android:id="@+id/action_health"
+        android:id="@+id/action_add_child"
         android:enabled="true"
         android:icon="@drawable/relieved_btn_health"
-        android:title="@string/health_tab"/>
+        android:title="@string/add_child"/>
     <item
-        android:id="@+id/action_alarm"
+        android:id="@+id/action_delete_account"
         android:enabled="true"
         android:icon="@drawable/relieved_btn_alarm"
-        android:title="@string/alarm_tab"/>
+        android:title="@string/delete_account"/>
     <item
         android:id="@+id/action_setting"
         android:enabled="true"
         android:icon="@drawable/relieved_btn_setup"
-        android:title="@string/setting_tab"/>
+        android:title="@string/drawer_setting"/>
 
 </menu>

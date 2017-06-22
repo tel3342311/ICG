@@ -3,12 +3,18 @@
 	<string name="facebook_app_id">838943992930614</string>
 	<string name="ak_login_protocol_scheme">ak838943992930614</string>
 	<string name="ACCOUNT_KIT_CLIENT_TOKEN">48e671402aca5e0484ea2fcff5ba160e</string>
+	<string name="open">open</string>
+	<string name="close">close</string>
 	<!-- Bottom Bar -->
 	<string name="safty_tab">安心</string>
 	<string name="health_tab">健康</string>
 	<string name="eating_tab">飲食</string>
 	<string name="alarm_tab">鬧鈴</string>
 	<string name="setting_tab">設定</string>
-	
+	<!-- Drawer -->
+	<string name="switch_account">切換至%s帳號</string>
+	<string name="add_child">新增寶貝</string>
+	<string name="delete_account">刪除%s帳號</string>
+	<string name="drawer_setting">App資訊與設定</string>
 	
 </resources>

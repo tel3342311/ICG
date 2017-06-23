@@ -54,5 +54,7 @@
 	<dimen name="setting_child_name_max_width">150dp</dimen>
 	<dimen name="setting_child_name_min_width">50dp</dimen>
 	<!-- Drawer  -->
-	<dimen name="navigation_header_height">150dp</dimen>
+	<dimen name="navigation_header_height">175dp</dimen>
+	<dimen name="navigation_header_circular_icon_size">66dp</dimen>
+	<dimen name="navigation_header_child_name_margin_top">10dp</dimen>
 </resources>

@@ -1,20 +1,5 @@
 package com.liteon.icampusguardian;
 
-import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-
 import com.liteon.icampusguardian.fragment.AlarmFragment;
 import com.liteon.icampusguardian.fragment.DailyHealthFragment;
 import com.liteon.icampusguardian.fragment.HealthFragment;
@@ -25,15 +10,30 @@ import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 
-public class MainActivity extends AppCompatActivity implements IHealthViewHolderClicks {
+import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity implements IHealthViewHolderClicks, NavigationView.OnNavigationItemSelectedListener {
 
 	private CircularImageView mChildIcon;
-	private EditText mChildName;
+	private TextView mChildName;
 	private Toolbar mToolbar;
 	private BottomNavigationView mBottomView;
 	private DrawerLayout mDrawerLayout;
-	private ActionBarDrawerToggle mDrawerToggle;
 	private NavigationView mNavigationView;
+	private Fragment mCurrentFragment;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -49,32 +49,52 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 		setSupportActionBar(mToolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar, R.string.open, R.string.close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
 
-            }
+        mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
+            public void onClick(View v) {
+            	
+            	mDrawerLayout.openDrawer(Gravity.LEFT);
             }
-        };
-        mDrawerToggle.syncState();
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        });
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		changeFragment(new SafetyFragment());
+	}
+	@Override
+	public void onBackPressed() {
+		if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+			mDrawerLayout.closeDrawer(Gravity.LEFT);
+			return;
+		}
+		
+		if (mCurrentFragment != null) {
+			if (mCurrentFragment instanceof DailyHealthFragment) {
+				changeFragment(new HealthFragment(this));
+				return;
+			} else {
+				finish();
+				return;
+			}
+		}
+		super.onBackPressed();
+	}
 	private void findViews() {
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		mBottomView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mNavigationView = (NavigationView) findViewById(R.id.navigation);
 		mChildIcon = (CircularImageView) mNavigationView.getHeaderView(0).findViewById(R.id.child_icon);
-		mChildName = (EditText) mNavigationView.getHeaderView(0).findViewById(R.id.child_name);
+		mChildName = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.child_name);
 	}
 	
 	private void setListener() {
 		mBottomView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+		mNavigationView.setNavigationItemSelectedListener(this);
 	}
 	
 	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
@@ -85,26 +105,34 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 			switch (item.getItemId()) {
 				case R.id.action_safty:
 				    fragment = new SafetyFragment();
+				    mToolbar.setTitle(getString(R.string.safty_tab));
 					break;
 				case R.id.action_health:
 					fragment = new HealthFragment(MainActivity.this);
+					mToolbar.setTitle(getString(R.string.health_tab));
 					break;
 				case R.id.action_alarm:
 					fragment = new AlarmFragment();
+					mToolbar.setTitle(getString(R.string.alarm_tab));
 					break;
 				case R.id.action_setting:
 					fragment = new SettingFragment();
+					mToolbar.setTitle(getString(R.string.setting_tab));
 					break;
 			}
 			if (fragment == null) {
 				return false;
 			}
+			getSupportActionBar().setDisplayShowHomeEnabled(true);
+	        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+	        mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
 			changeFragment(fragment);
 			return true;
 		}
 	};
 	
 	private void changeFragment(Fragment frag) {
+		mCurrentFragment = frag;
 		FragmentManager fragmentManager = getSupportFragmentManager();
 	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 	    fragmentTransaction.replace(R.id.container, frag);
@@ -115,16 +143,34 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 	public void onClick(TYPE type) {
 		Fragment fragment = new DailyHealthFragment(type);
 		changeFragment(fragment);
+		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
+
 	}
 	
 	private void initChildInfo() {
 		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher, null));
-		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000));
+		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000, null));
 		mChildIcon.setBorderWidth(10);
-		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400));
-		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800));
+		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400, null));
+		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800, null));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
 		mChildName.setText("王小明");
+	}
+
+	@Override
+	public boolean onNavigationItemSelected(MenuItem item) {
+		int id = item.getItemId();
+		if (id == R.id.action_switch_account) {
+			
+		} else if (id == R.id.action_add_child) {
+			
+		} else if (id == R.id.action_delete_account) {
+			
+		} else if (id == R.id.action_setting) {
+			
+		}
+		mDrawerLayout.closeDrawers();
+		return true;
 	}
 }

@@ -340,7 +340,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 			resId = R.drawable.activity_img_scale3;
 		} else if (ratio >= 20) {
 			resId = R.drawable.activity_img_scale2;
-		} else if (ratio >= 10) {
+		} else if (ratio > 0) {
 			resId = R.drawable.activity_img_scale1;
 		} else {
 			resId = R.drawable.activity_img_scale;

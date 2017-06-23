@@ -9,8 +9,8 @@
     
     <com.liteon.icampusguardian.util.CircularImageView
         android:id="@+id/child_icon"
-        android:layout_width="@dimen/setting_circular_icon_size"
-        android:layout_height="@dimen/setting_circular_icon_size"
+        android:layout_width="@dimen/navigation_header_circular_icon_size"
+        android:layout_height="@dimen/navigation_header_circular_icon_size"
         android:layout_centerInParent="true"
         android:clickable="true"
         app:border="true"
@@ -18,17 +18,16 @@
         app:border_width="4dp"
         app:shadow="true" />
 
-    <EditText
+    <TextView
         android:id="@+id/child_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/child_icon"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/setting_child_name_margin_top"
+        android:layout_marginTop="@dimen/navigation_header_child_name_margin_top"
         android:maxHeight="@dimen/setting_child_name_max_width"
         android:minHeight="@dimen/setting_child_name_min_width"
         android:singleLine="true"
-        android:text="王小明"
         android:textColor="@color/md_black_1000" />
 
 </RelativeLayout>

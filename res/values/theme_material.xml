@@ -15,7 +15,10 @@
         <item name="colorAccent">@color/color_accent</item>
         <item name="colorControlHighlight">@color/color_ControlHighlight</item>
         <item name="android:windowBackground">@color/color_windowBackground</item>
-        
         <!-- other colors could changed colorControlNormal, colorControlActivated, colorControlHighlight, colorSwitchThumbNormal -->
+        <!-- Inactive thumb color -->
+	   <item name="colorSwitchThumbNormal">@color/md_grey_50</item>
+	   <!-- Inactive track color(30% transparency) -->
+	   <item name="android:colorForeground">@color/md_grey_600</item>
     </style>
 </resources>

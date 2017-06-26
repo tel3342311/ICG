@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmItemAdapter;
+import com.liteon.icampusguardian.util.HealthyItem;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,7 +24,10 @@ public class AlarmFragment extends Fragment {
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
 	private AppCompatButton mAddAlarm;
-	
+	private IAddAlarmClicks mAddAlarmClicks;
+	public AlarmFragment(IAddAlarmClicks listener) {
+		mAddAlarmClicks = listener;
+	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	
@@ -56,7 +60,7 @@ public class AlarmFragment extends Fragment {
 		
 		@Override
 		public void onClick(View v) {
-			
+			mAddAlarmClicks.onAddAlarmClick();
 		}
 	};
 	
@@ -68,4 +72,9 @@ public class AlarmFragment extends Fragment {
 		item.setEnabled(true);
 		myDataset.add(item);
 	}
+	
+	public static interface IAddAlarmClicks {
+        public void onAddAlarmClick();
+        public void onEditAlarm(int idx);
+    }
 }

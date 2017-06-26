@@ -4,6 +4,7 @@ public class AlarmItem {
 
 	public String Title;
 	public String Date;
+	public AlarmPeriodItem PeriodItem;
 	public String Period;
 	public Boolean Enabled;
 	
@@ -54,6 +55,18 @@ public class AlarmItem {
 	 */
 	public void setEnabled(Boolean enabled) {
 		Enabled = enabled;
+	}
+	/**
+	 * @return the periodItem
+	 */
+	public AlarmPeriodItem getPeriodItem() {
+		return PeriodItem;
+	}
+	/**
+	 * @param periodItem the periodItem to set
+	 */
+	public void setPeriodItem(AlarmPeriodItem periodItem) {
+		PeriodItem = periodItem;
 	}
 	
 	

@@ -18,7 +18,7 @@ import android.widget.TextView;
 public class HealthyItemAdapter extends Adapter<HealthyItemAdapter.ViewHolder> {
 
 	private List<HealthyItem> mDataset;
-	public WeakReference<IHealthViewHolderClicks> mClickListener;
+	private WeakReference<IHealthViewHolderClicks> mClickListener;
 	
 	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
         // each data item is just a string in this case

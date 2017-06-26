@@ -1,10 +1,14 @@
 package com.liteon.icampusguardian;
 
+import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment;
+import com.liteon.icampusguardian.fragment.AlarmFragment.IAddAlarmClicks;
 import com.liteon.icampusguardian.fragment.DailyHealthFragment;
 import com.liteon.icampusguardian.fragment.HealthFragment;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
 import com.liteon.icampusguardian.fragment.SettingFragment;
+import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
+import com.liteon.icampusguardian.util.AlarmPeriodItem;
 import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
@@ -25,7 +29,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements IHealthViewHolderClicks, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks, IAlarmPeriodViewHolderClicks, NavigationView.OnNavigationItemSelectedListener {
 
 	private CircularImageView mChildIcon;
 	private TextView mChildName;
@@ -112,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 					mToolbar.setTitle(getString(R.string.health_tab));
 					break;
 				case R.id.action_alarm:
-					fragment = new AlarmFragment();
+					fragment = new AlarmFragment(MainActivity.this);
 					mToolbar.setTitle(getString(R.string.alarm_tab));
 					break;
 				case R.id.action_setting:
@@ -123,8 +127,6 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 			if (fragment == null) {
 				return false;
 			}
-			getSupportActionBar().setDisplayShowHomeEnabled(true);
-	        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	        mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
 			changeFragment(fragment);
 			return true;
@@ -172,5 +174,22 @@ public class MainActivity extends AppCompatActivity implements IHealthViewHolder
 		}
 		mDrawerLayout.closeDrawers();
 		return true;
+	}
+
+	@Override
+	public void onAddAlarmClick() {
+		changeFragment(new AlarmEditingFragment(this));
+	}
+
+	@Override
+	public void onEditAlarm(int idx) {
+		changeFragment(new AlarmEditingFragment(idx, this));		
+	}
+
+	@Override
+	public void onClick(AlarmPeriodItem.TYPE type) {
+		if (type == AlarmPeriodItem.TYPE.CUSTOMIZE) {
+			//changeFragment(new AlarmCustomPeriodFragment;
+		}
 	}
 }

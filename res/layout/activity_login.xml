@@ -26,7 +26,8 @@
 	    android:hint="帳號(電子郵件地址)"
 	    android:maxLines="1"
 	    android:textCursorDrawable="@null"
-	    android:textSize="@dimen/login_edit_text_size"/>
+	    android:textSize="@dimen/login_edit_text_size"
+	    android:textColor="@color/md_black_1000"/>
 	<EditText
 	    android:id="@+id/login_password"
 	    android:layout_width="match_parent"
@@ -38,7 +39,8 @@
 	    android:hint="密碼"
 	    android:maxLines="1"
 	    android:textCursorDrawable="@null"
-	    android:textSize="@dimen/login_edit_text_size" />
+	    android:textSize="@dimen/login_edit_text_size" 
+	    android:textColor="@color/md_black_1000"/>
 
 	<TextView
 	    android:id="@+id/create_account"

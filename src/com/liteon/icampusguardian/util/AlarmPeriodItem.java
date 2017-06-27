@@ -9,7 +9,7 @@ public class AlarmPeriodItem {
 
 	
 	public static enum TYPE {
-		WEEK_DAY("平日", 0x0111110),
+		WEEK_DAY("週一至週五", 0x0111110),
 		WEEKEND("假日",  0x1000001),
 		EVERYDAY("每日",  0x1111111),
 		ONCE("只提醒一次", 0x00000000),
@@ -25,7 +25,6 @@ public class AlarmPeriodItem {
 	
 	TYPE itemType;
 	long value;
-	String title;
 	/**
 	 * @return the itemType
 	 */
@@ -36,14 +35,13 @@ public class AlarmPeriodItem {
 	 * @return the title
 	 */
 	public String getTitle() {
-		return title;
+		return itemType.name;
 	}
 	/**
 	 * @param itemType the itemType to set
 	 */
 	public void setItemType(TYPE itemType) {
 		this.itemType = itemType;
-		this.title = itemType.name();
 	}
 	/**
 	 * @return the value

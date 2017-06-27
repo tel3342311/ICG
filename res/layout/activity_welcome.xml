@@ -54,13 +54,13 @@
         android:textColor="@color/md_blue_700"
         android:textAlignment="center"
         android:gravity="center"/>
-     <RadioButton
+     <android.support.v7.widget.AppCompatRadioButton
          android:id="@+id/user_improve_plan"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:text="參與使用者體驗改善計畫"
          android:layout_below="@id/user_term_click"/>
-     <RadioButton
+     <android.support.v7.widget.AppCompatRadioButton
          android:id="@+id/user_teacher_plan"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"

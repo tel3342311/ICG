@@ -3,7 +3,7 @@
     <style name="AppMaterialTheme" parent="AppMaterialTheme.Base">
     </style>
     <!-- general theme for all API -->
-    <style name="AppMaterialTheme.Base" parent="Theme.AppCompat">
+    <style name="AppMaterialTheme.Base" parent="Theme.AppCompat.Light">
         <item name="android:windowNoTitle">true</item>
         <item name="windowNoTitle">true</item>
         <!-- No "ActionBar", change to Toolbar -->
@@ -12,7 +12,9 @@
         <item name="colorPrimary">@color/color_primary</item>
         <!-- status bar background color -->
         <item name="colorPrimaryDark">@color/color_primaryDark</item>
+        <item name="android:textColorPrimary">@color/md_white_1000</item>
         <item name="colorAccent">@color/color_accent</item>
+        <item name="colorControlNormal">@color/color_primaryDark</item>
         <item name="colorControlHighlight">@color/color_ControlHighlight</item>
         <item name="android:windowBackground">@color/color_windowBackground</item>
         <!-- other colors could changed colorControlNormal, colorControlActivated, colorControlHighlight, colorSwitchThumbNormal -->

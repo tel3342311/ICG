@@ -78,7 +78,15 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		
 		if (mCurrentFragment != null) {
 			if (mCurrentFragment instanceof DailyHealthFragment) {
-				changeFragment(new HealthFragment(this));
+				mBottomView.setSelectedItemId(R.id.action_health);
+				return;
+			} else if (mCurrentFragment instanceof AlarmFragment){
+				if (((AlarmFragment) mCurrentFragment).isEditMode()) {
+					((AlarmFragment) mCurrentFragment).exitEditMode();
+					return;
+				}
+			} else if (mCurrentFragment instanceof AlarmEditingFragment){
+				mBottomView.setSelectedItemId(R.id.action_alarm);
 				return;
 			} else {
 				finish();
@@ -128,6 +136,13 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 				return false;
 			}
 	        mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
+	        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+	            @Override
+	            public void onClick(View v) {
+	            	
+	            	mDrawerLayout.openDrawer(Gravity.LEFT);
+	            }
+	        });
 			changeFragment(fragment);
 			return true;
 		}
@@ -146,7 +161,12 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		Fragment fragment = new DailyHealthFragment(type);
 		changeFragment(fragment);
 		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {	
+            	onBackPressed();
+            }
+        });
 	}
 	
 	private void initChildInfo() {
@@ -179,11 +199,13 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	@Override
 	public void onAddAlarmClick() {
 		changeFragment(new AlarmEditingFragment(this));
+		mToolbar.setTitle("設定鬧鈴");
 	}
 
 	@Override
 	public void onEditAlarm(int idx) {
-		changeFragment(new AlarmEditingFragment(idx, this));		
+		changeFragment(new AlarmEditingFragment(idx, this));	
+		mToolbar.setTitle("設定鬧鈴");
 	}
 
 	@Override

@@ -1,8 +1,11 @@
 package com.liteon.icampusguardian.util;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks;
+import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -10,14 +13,18 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
 
 	private List<AlarmItem> mDataset;
-	
-	public static class ViewHolder extends RecyclerView.ViewHolder {
+	private static boolean isEditMode;
+	public WeakReference<IAlarmViewHolderClicks> mClicks;
+	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener, OnCheckedChangeListener{
         // each data item is just a string in this case
         public View mRootView;
         public TextView mTitleTextView;
@@ -25,14 +32,45 @@ public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
         public TextView mPeriodTextView;
         public SwitchCompat mAlarmEnableView;
         public ImageView mItemIcon;
-        public ViewHolder(View v) {
+        public ImageView mMoreIcon;
+        public WeakReference<IAlarmViewHolderClicks> mClicks;
+        public int position;
+        public ViewHolder(View v, IAlarmViewHolderClicks clicks) {
             super(v);
             mRootView = v;
+            mClicks = new WeakReference<IAlarmViewHolderClicks>(clicks);
         }
+        
+		public static interface IAlarmViewHolderClicks {
+	        public void onEditAlarm(int position);
+	        public void onDeleteAlarm(int position);
+	        public void onEnableAlarm(int position, boolean enable);
+	    }
+
+		@Override
+		public void onClick(View v) {
+			if (v.getId() == R.id.alarm_icon) {
+				if (isEditMode) {
+					mClicks.get().onDeleteAlarm(position);
+				} else {
+					mClicks.get().onEditAlarm(position);
+				}
+			} else {
+				if (isEditMode) {
+					mClicks.get().onEditAlarm(position);
+				}
+			}
+		}
+
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			mClicks.get().onEnableAlarm(position, isChecked);
+		}
     }
 
-    public AlarmItemAdapter(List<AlarmItem> alarmDataset) {
+    public AlarmItemAdapter(List<AlarmItem> alarmDataset, IAlarmViewHolderClicks clicks) {
         mDataset = alarmDataset;
+        mClicks = new WeakReference<AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks>(clicks);
     }
     
 	@Override
@@ -43,10 +81,20 @@ public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
     	AlarmItem item = mDataset.get(position);
+    	holder.position = position;
         holder.mTitleTextView.setText(item.getTitle());
         holder.mDateTextView.setText(item.getDate());
         holder.mPeriodTextView.setText(item.getPeriod());
         holder.mAlarmEnableView.setChecked(item.getEnabled());
+        if (isEditMode) {
+        	holder.mItemIcon.setBackgroundResource(R.drawable.health_btnf_cancel);
+        	holder.mMoreIcon.setVisibility(View.VISIBLE);
+        	holder.mAlarmEnableView.setVisibility(View.INVISIBLE);
+        } else {
+        	holder.mItemIcon.setBackgroundResource(R.drawable.alarm_img_alarm);
+        	holder.mMoreIcon.setVisibility(View.INVISIBLE);
+        	holder.mAlarmEnableView.setVisibility(View.VISIBLE);
+        }
 	}
 
 	@Override
@@ -55,12 +103,21 @@ public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
         View v = LayoutInflater.from(parent.getContext())
                                .inflate(R.layout.component_alarm_item, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        ViewHolder vh = new ViewHolder(v);
+        ViewHolder vh = new ViewHolder(v, mClicks.get());
+        vh.mItemIcon = (ImageView) v.findViewById(R.id.alarm_icon);
         vh.mTitleTextView = (TextView) v.findViewById(R.id.title_text);
         vh.mDateTextView = (TextView) v.findViewById(R.id.date_text);
         vh.mPeriodTextView = (TextView) v.findViewById(R.id.period_text);
         vh.mAlarmEnableView = (SwitchCompat) v.findViewById(R.id.switch_alarm_icon);
-
+        vh.mMoreIcon = (ImageView) v.findViewById(R.id.more_info_icon);
+        v.setOnClickListener(vh);
+        vh.mItemIcon.setOnClickListener(vh);
+        vh.mAlarmEnableView.setOnCheckedChangeListener(vh);
         return vh;
+	}
+
+	public void setEditMode(boolean b) {
+		isEditMode = b;
+		notifyDataSetChanged();
 	}
 }

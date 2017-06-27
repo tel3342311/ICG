@@ -6,8 +6,6 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
     android:layout_marginTop="@dimen/activity_vertical_margin">
 
 	<EditText
@@ -15,18 +13,21 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_marginTop="@dimen/setting_child_name_margin_top"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    	android:layout_marginRight="@dimen/activity_horizontal_margin"
 	    android:hint="鬧鈴名稱(英數8字元，中文字4個字為限)"
 	    android:maxHeight="@dimen/setting_child_name_max_width"
 	    android:minHeight="@dimen/setting_child_name_min_width"
 	    android:singleLine="true"
 	    android:text="上學"
-	    android:textColor="@color/md_black_1000"
-	    android:textColorHint="@color/md_grey_300" />
+	    android:textColor="@color/md_black_1000"/>
 	
 	<LinearLayout
 	    android:id="@+id/wheel"
 	    android:layout_width="match_parent"
 	    android:layout_height="@dimen/alarm_setting_wheel_time_height"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    	android:layout_marginRight="@dimen/activity_horizontal_margin"
 	    android:orientation="horizontal" 
 	    android:layout_below="@id/alarm_name">
 
@@ -61,6 +62,7 @@
 	    android:layout_height="@dimen/alarm_setting_period_title_height"
 	    android:layout_below="@id/wheel"
 	    android:gravity="center_vertical"
+	    android:paddingStart="@dimen/activity_horizontal_margin"
 	    android:background="@color/md_grey_200"
 	    android:textColor="@color/md_black_1000"
 	    android:text="鬧鈴週期"/>
@@ -69,6 +71,8 @@
         android:id="@+id/alarm_period_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    	android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:scrollbars="vertical"
         android:layout_below="@id/period_title"/>
 	

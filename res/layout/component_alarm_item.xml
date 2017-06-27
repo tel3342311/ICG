@@ -8,7 +8,7 @@
     	android:layout_height="@dimen/alarm_item_icon_size"
     	android:layout_centerVertical="true"
     	android:layout_alignParentStart="true"
-    	android:background="@drawable/relieved_btn_alarm"/>
+    	android:background="@drawable/alarm_img_alarm"/>
     	
      <LinearLayout 
          android:id="@+id/text_area"
@@ -49,6 +49,14 @@
          android:layout_centerVertical="true"
          android:backgroundTint="@color/switch_color"/>
      
+     <ImageView
+         android:id="@+id/more_info_icon"
+         android:layout_width="@dimen/more_icon_size"
+         android:layout_height="@dimen/more_icon_size"
+         android:layout_alignParentEnd="true"
+         android:layout_centerVertical="true"
+         android:background="@drawable/health_btn_enter"/>
+          
      <View 
          android:layout_width="match_parent"
          android:layout_height="1dp"

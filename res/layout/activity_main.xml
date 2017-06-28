@@ -24,8 +24,8 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentBottom="true"
 	        app:itemBackground="@color/md_grey_100"
-	        app:itemIconTint="@color/color_primaryText"
-	        app:itemTextColor="@color/color_primaryText"
+	        app:itemIconTint="@drawable/bottom_bar_color" 
+	        app:itemTextColor="@drawable/bottom_bar_color" 
 	        app:menu="@menu/bottom_menu"/>
 	    	    
 		<FrameLayout 

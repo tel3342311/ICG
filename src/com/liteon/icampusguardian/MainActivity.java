@@ -3,10 +3,12 @@ package com.liteon.icampusguardian;
 import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment.IAddAlarmClicks;
+import com.liteon.icampusguardian.fragment.AlarmPeriodFragment;
 import com.liteon.icampusguardian.fragment.DailyHealthFragment;
 import com.liteon.icampusguardian.fragment.HealthFragment;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
 import com.liteon.icampusguardian.fragment.SettingFragment;
+import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
 import com.liteon.icampusguardian.util.AlarmPeriodItem;
 import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
@@ -38,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	private DrawerLayout mDrawerLayout;
 	private NavigationView mNavigationView;
 	private Fragment mCurrentFragment;
+	private static final int NAVIGATION_DRAWER = 1;
+	private static final int NAVIGATION_BACK = 2;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -114,36 +118,30 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		@Override
 		public boolean onNavigationItemSelected(MenuItem item) {
 			Fragment fragment = null;
+			String title = ""; 
 			switch (item.getItemId()) {
 				case R.id.action_safty:
 				    fragment = new SafetyFragment();
-				    mToolbar.setTitle(getString(R.string.safty_tab));
+				    title = getString(R.string.safty_tab);
 					break;
 				case R.id.action_health:
 					fragment = new HealthFragment(MainActivity.this);
-					mToolbar.setTitle(getString(R.string.health_tab));
+					title = getString(R.string.health_tab);
 					break;
 				case R.id.action_alarm:
 					fragment = new AlarmFragment(MainActivity.this);
-					mToolbar.setTitle(getString(R.string.alarm_tab));
+					title = getString(R.string.alarm_tab);
 					break;
 				case R.id.action_setting:
 					fragment = new SettingFragment();
-					mToolbar.setTitle(getString(R.string.setting_tab));
+					title = getString(R.string.setting_tab);
 					break;
 			}
 			if (fragment == null) {
 				return false;
 			}
-	        mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
-	        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-	            @Override
-	            public void onClick(View v) {
-	            	
-	            	mDrawerLayout.openDrawer(Gravity.LEFT);
-	            }
-	        });
-			changeFragment(fragment);
+
+			changeFragment(fragment, title, NAVIGATION_DRAWER);
 			return true;
 		}
 	};
@@ -155,18 +153,42 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	    fragmentTransaction.replace(R.id.container, frag);
 	    fragmentTransaction.commit();
 	}
+	
+	private void changeFragment(Fragment frag, String title, int navigation) {
+		mCurrentFragment = frag;
+		FragmentManager fragmentManager = getSupportFragmentManager();
+	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+	    fragmentTransaction.replace(R.id.container, frag);
+	    fragmentTransaction.commit();
+	    
+	    if (mToolbar != null) {
+	    	
+	    	mToolbar.setTitle(title);
+	    	if (navigation == NAVIGATION_BACK) {
+	    		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
+	            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+	                @Override
+	                public void onClick(View v) {	
+	                	onBackPressed();
+	                }
+	            });
+	    	} else if (navigation == NAVIGATION_DRAWER) {
+	    		mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
+	            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+	                @Override
+	                public void onClick(View v) {
+	                	
+	                	mDrawerLayout.openDrawer(Gravity.LEFT);
+	                }
+	            });
+	    	}
+	    }
+	}
 
 	@Override
 	public void onClick(TYPE type) {
 		Fragment fragment = new DailyHealthFragment(type);
-		changeFragment(fragment);
-		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {	
-            	onBackPressed();
-            }
-        });
+		changeFragment(fragment, type.getName(), NAVIGATION_BACK);
 	}
 	
 	private void initChildInfo() {
@@ -198,20 +220,21 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 
 	@Override
 	public void onAddAlarmClick() {
-		changeFragment(new AlarmEditingFragment(this));
-		mToolbar.setTitle("設定鬧鈴");
+		changeFragment(new AlarmEditingFragment(this), "設定鬧鈴", 0);
 	}
 
 	@Override
 	public void onEditAlarm(int idx) {
-		changeFragment(new AlarmEditingFragment(idx, this));	
-		mToolbar.setTitle("設定鬧鈴");
+		changeFragment(new AlarmEditingFragment(idx, this),"設定鬧鈴", 0);
 	}
 
 	@Override
-	public void onClick(AlarmPeriodItem.TYPE type) {
-		if (type == AlarmPeriodItem.TYPE.CUSTOMIZE) {
-			//changeFragment(new AlarmCustomPeriodFragment;
+	public void onClick(AlarmPeriodItem item) {
+		if (item.getItemType() == AlarmPeriodItem.TYPE.CUSTOMIZE) {
+			//TODO get current AlarmItem
+			AlarmItem alarmItem = new AlarmItem();
+			alarmItem.setPeriodItem(item);
+			changeFragment(new AlarmPeriodFragment(alarmItem), "設定鬧鈴週期", NAVIGATION_BACK);
 		}
 	}
 }

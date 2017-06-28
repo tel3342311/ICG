@@ -50,9 +50,11 @@
 	<dimen name="alarm_setting_wheel_time_height">188dp</dimen>
 	<dimen name="alarm_setting_period_title_height">50dp</dimen>
 	<!-- Setting page -->
-	<dimen name="setting_child_info_height">260dp</dimen>
-	<dimen name="setting_circular_icon_size">125dp</dimen>
-	<dimen name="setting_child_name_margin_top">10dp</dimen>
+	<dimen name="setting_child_info_height">250dp</dimen>
+	<dimen name="setting_circular_icon_size">133dp</dimen>
+	<dimen name="setting_circular_icon_margin_top">40dp</dimen>
+	<dimen name="setting_item_margin_horizontal">10dp</dimen>
+    <dimen name="setting_child_name_margin_top">0dp</dimen>
 	<dimen name="setting_child_name_max_width">150dp</dimen>
 	<dimen name="setting_child_name_min_width">50dp</dimen>
 	<!-- Drawer  -->

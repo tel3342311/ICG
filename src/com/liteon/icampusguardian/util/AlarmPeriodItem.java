@@ -9,11 +9,11 @@ public class AlarmPeriodItem {
 
 	
 	public static enum TYPE {
-		WEEK_DAY("週一至週五", 0x0111110),
-		WEEKEND("假日",  0x1000001),
-		EVERYDAY("每日",  0x1111111),
-		ONCE("只提醒一次", 0x00000000),
-		CUSTOMIZE("自訂", 0x00000000);
+		WEEK_DAY("週一至週五", 0x1),
+		WEEKEND("假日",       0x10),
+		EVERYDAY("每日",      0x100),
+		ONCE("只提醒一次",     0x1000),
+		CUSTOMIZE("自訂",     0x10000);
 		
 		String name;
 		long value;

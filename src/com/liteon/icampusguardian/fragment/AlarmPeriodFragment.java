@@ -7,6 +7,9 @@ import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmItemAdapter;
 import com.liteon.icampusguardian.util.AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks;
 import com.liteon.icampusguardian.util.HealthyItem;
+import com.liteon.icampusguardian.util.WeekAdapter;
+import com.liteon.icampusguardian.util.WeekAdapter.ViewHolder.IWeekViewHolderClicks;
+import com.liteon.icampusguardian.util.WeekPeriodItem;
 
 import android.R.integer;
 import android.os.Bundle;
@@ -24,9 +27,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 
-public class AlarmPeriodFragment extends Fragment {
+public class AlarmPeriodFragment extends Fragment implements IWeekViewHolderClicks{
 
-	private static ArrayList<AlarmItem> myDataset = new ArrayList<>();
+	private static ArrayList<WeekPeriodItem> myDataset = new ArrayList<>();
 	private RecyclerView mRecyclerView;
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
@@ -39,7 +42,7 @@ public class AlarmPeriodFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
-		View rootView = inflater.inflate(R.layout.fragment_alarm, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_alarm_period, container, false);
 		findView(rootView);
 		initRecycleView();
 		setupListener();
@@ -58,28 +61,15 @@ public class AlarmPeriodFragment extends Fragment {
 		mRecyclerView.setHasFixedSize(true);
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
-		testData();
-		mAdapter = new AlarmItemAdapter(myDataset, this);
+		mAdapter = new WeekAdapter(mItem, this);
 		mRecyclerView.setAdapter(mAdapter);
 	}
 	
 	private void setupListener() {
 	}
-	
-	private OnClickListener mAddAlarmClickListener = new OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-			mAddAlarmClicks.onAddAlarmClick();
-		}
-	};
-	
-	public void testData() {
-		AlarmItem item = new AlarmItem();
-		item.setTitle("上學");
-		item.setDate("06:10");
-		item.setPeriod("週一");
-		item.setEnabled(true);
-		myDataset.add(item);
+
+	@Override
+	public void onWeekItemClick(long value) {
+		mItem.PeriodItem.setValue(value);
 	}
 }

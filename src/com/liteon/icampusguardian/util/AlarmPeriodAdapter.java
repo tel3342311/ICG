@@ -8,14 +8,17 @@ import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPerio
 import com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE;
 import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AlarmPeriodAdapter extends Adapter<AlarmPeriodAdapter.ViewHolder> {
 
@@ -29,7 +32,7 @@ public class AlarmPeriodAdapter extends Adapter<AlarmPeriodAdapter.ViewHolder> {
         public TextView mTitleTextView;
         public TextView mValueTextView;
         public ImageView mMoreIcon;
-        private TYPE mType;
+        private AlarmPeriodItem mItem;
         public WeakReference<IAlarmPeriodViewHolderClicks> mClicks;
         public ViewHolder(View v, IAlarmPeriodViewHolderClicks click) {
             super(v);
@@ -39,11 +42,15 @@ public class AlarmPeriodAdapter extends Adapter<AlarmPeriodAdapter.ViewHolder> {
 		@Override
 		public void onClick(View v) {
 			
-			mClicks.get().onClick(mType);			
+			Snackbar snackbar = Snackbar
+			        .make(mRootView, "click on " + mItem.getTitle(), Snackbar.LENGTH_LONG);
+			 
+			snackbar.show();			
+			mClicks.get().onClick(mItem);			
 		}
 		
 		public static interface IAlarmPeriodViewHolderClicks {
-	        public void onClick(AlarmPeriodItem.TYPE type);
+	        public void onClick(AlarmPeriodItem item);
 	    }
     }
 
@@ -70,8 +77,8 @@ public class AlarmPeriodAdapter extends Adapter<AlarmPeriodAdapter.ViewHolder> {
         if (mAlarmItem.getPeriodItem().getItemType() == item.getItemType()) {
         	holder.mTitleTextView.setTextColor(holder.mTitleTextView.getResources().getColor(R.color.color_accent,null));
         }
-        holder.mType = item.getItemType();
-        mAlarmItem.PeriodItem.itemType = item.getItemType();
+        holder.mItem = item;
+        mAlarmItem.PeriodItem = item;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.liteon.icampusguardian.fragment.DailyHealthFragment;
 import com.liteon.icampusguardian.fragment.HealthFragment;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
 import com.liteon.icampusguardian.fragment.SettingFragment;
+import com.liteon.icampusguardian.fragment.SettingProfileFragment;
 import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
 import com.liteon.icampusguardian.util.AlarmPeriodItem;
@@ -15,6 +16,7 @@ import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
+import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -31,7 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks, IAlarmPeriodViewHolderClicks, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks, IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener {
 
 	private CircularImageView mChildIcon;
 	private TextView mChildName;
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	private DrawerLayout mDrawerLayout;
 	private NavigationView mNavigationView;
 	private Fragment mCurrentFragment;
+	private int mCurrentAlarmIdx;
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
 	@Override
@@ -73,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		super.onResume();
 		changeFragment(new SafetyFragment());
 	}
+	
 	@Override
 	public void onBackPressed() {
 		if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
@@ -92,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			} else if (mCurrentFragment instanceof AlarmEditingFragment){
 				mBottomView.setSelectedItemId(R.id.action_alarm);
 				return;
+			} else if (mCurrentFragment instanceof AlarmPeriodFragment){
+				changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this),"設定鬧鈴", 0);				
+				return;
 			} else {
 				finish();
 				return;
@@ -99,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		}
 		super.onBackPressed();
 	}
+	
 	private void findViews() {
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		mBottomView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
@@ -133,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 					title = getString(R.string.alarm_tab);
 					break;
 				case R.id.action_setting:
-					fragment = new SettingFragment();
+					fragment = new SettingFragment(MainActivity.this);
 					title = getString(R.string.setting_tab);
 					break;
 			}
@@ -192,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	}
 	
 	private void initChildInfo() {
-		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher, null));
+		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
 		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000, null));
 		mChildIcon.setBorderWidth(10);
 		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400, null));
@@ -225,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 
 	@Override
 	public void onEditAlarm(int idx) {
+		mCurrentAlarmIdx = idx;
 		changeFragment(new AlarmEditingFragment(idx, this),"設定鬧鈴", 0);
 	}
 
@@ -235,6 +244,25 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			AlarmItem alarmItem = new AlarmItem();
 			alarmItem.setPeriodItem(item);
 			changeFragment(new AlarmPeriodFragment(alarmItem), "設定鬧鈴週期", NAVIGATION_BACK);
+		}
+	}
+
+	@Override
+	public void onSettingItemClick(com.liteon.icampusguardian.util.SettingItem.TYPE type) {
+		switch (type) {
+		case BASIC_INFO:
+			changeFragment(new SettingProfileFragment(), "基本資料", NAVIGATION_BACK);
+			break;
+		case GOAL_SETTING:
+			break;
+		case PAIRING:
+			break;
+		case PRIVACY_INFO:
+			break;
+		case WATCH_THEME:
+			break;
+		default:
+			break;
 		}
 	}
 }

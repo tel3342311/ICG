@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/profile_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setting_profile_list_height"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    	android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:scrollbars="vertical"
+        android:layout_below="@id/period_title"/>  
+           
+  	<android.support.v7.widget.CardView
+  	    android:id="@+id/option_wheel"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/setting_profile_option_height"
+        android:elevation="40dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible">
+	
+		<include 
+		    android:id="@+id/three_wheel"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    layout="@layout/popup_three_wheel"
+		    android:visibility="invisible"/>
+		
+	    <include 
+		    android:id="@+id/one_wheel"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    layout="@layout/popup_three_wheel"
+		    android:visibility="invisible"/>
+	</android.support.v7.widget.CardView>
+</RelativeLayout>

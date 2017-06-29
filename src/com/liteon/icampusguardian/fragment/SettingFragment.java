@@ -1,11 +1,13 @@
 package com.liteon.icampusguardian.fragment;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.SettingItem;
 import com.liteon.icampusguardian.util.SettingItemAdapter;
+import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,6 +28,11 @@ public class SettingFragment extends Fragment {
 	private AppCompatButton mAddAlarm;
 	private CircularImageView mChildIcon;
 	private TextView mChildName;
+	private WeakReference<ISettingItemClickListener> mClicks;
+	
+	public SettingFragment(ISettingItemClickListener clicks) {
+		mClicks = new WeakReference<ISettingItemClickListener>(clicks);
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,16 +55,16 @@ public class SettingFragment extends Fragment {
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		testData();
-		mAdapter = new SettingItemAdapter(myDataset);
+		mAdapter = new SettingItemAdapter(myDataset, mClicks.get());
 		mRecyclerView.setAdapter(mAdapter);
 	}
 
 	private void initChildInfo() {
-		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_launcher, null));
-		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000));
+		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
+		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000,null));
 		mChildIcon.setBorderWidth(10);
-		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400));
-		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800));
+		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400,null));
+		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800,null));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
 		mChildName.setText("王小明");

@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.ProfileItemAdapter.ViewHolder.IProfileItemClickListener;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
 import android.support.v7.widget.RecyclerView;
@@ -15,10 +16,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
+public class ProfileItemAdapter extends Adapter<ProfileItemAdapter.ViewHolder> {
 
-	private List<SettingItem> mDataset;
-    public WeakReference<ISettingItemClickListener> mClicks;
+	private List<ProfileItem> mDataset;
+    public WeakReference<IProfileItemClickListener> mClicks;
 
 	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener{
         // each data item is just a string in this case
@@ -26,27 +27,27 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
         public TextView mTitleTextView;
         public TextView mValueTextView;
         public ImageView mMoreIcon;
-        public WeakReference<ISettingItemClickListener> mClicks;
-        public SettingItem.TYPE mType;
-        public ViewHolder(View v, ISettingItemClickListener clicks) {
+        public WeakReference<IProfileItemClickListener> mClicks;
+        public ProfileItem.TYPE mType;
+        public ViewHolder(View v, IProfileItemClickListener clicks) {
             super(v);
             mRootView = v;
-            mClicks = new WeakReference<ISettingItemClickListener>(clicks);
+            mClicks = new WeakReference<IProfileItemClickListener>(clicks);
         }
         
-        public static interface ISettingItemClickListener {
-        	public void onSettingItemClick(SettingItem.TYPE type);
+        public static interface IProfileItemClickListener {
+        	public void onProfileItemClick(ProfileItem.TYPE type);
         }
 
 		@Override
 		public void onClick(View v) {
-			mClicks.get().onSettingItemClick(mType);
+			mClicks.get().onProfileItemClick(mType);
 		}
     }
 
-    public SettingItemAdapter(List<SettingItem> healthDataset, ISettingItemClickListener clicks) {
-        mDataset = healthDataset;
-        mClicks = new WeakReference<ISettingItemClickListener>(clicks);
+    public ProfileItemAdapter(List<ProfileItem> dataset, IProfileItemClickListener clicks) {
+        mDataset = dataset;
+        mClicks = new WeakReference<IProfileItemClickListener>(clicks);
     }
     
 	@Override
@@ -56,15 +57,9 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
 
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
-		SettingItem item = mDataset.get(position);
+		ProfileItem item = mDataset.get(position);
         holder.mTitleTextView.setText(item.getTitle());
-        if (item.getItemType() == SettingItem.TYPE.PAIRING) {
-        	holder.mValueTextView.setText("解除綁定");
-        	holder.mMoreIcon.setVisibility(View.INVISIBLE);
-        } else {
-        	holder.mValueTextView.setText("");
-        	holder.mMoreIcon.setVisibility(View.VISIBLE);
-        }
+        holder.mValueTextView.setText(item.getValue());
         holder.mType = item.getItemType();
 	}
 
@@ -72,12 +67,11 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int arg1) {
 		// create a new view
         View v = LayoutInflater.from(parent.getContext())
-                               .inflate(R.layout.component_setting_item, parent, false);
+                               .inflate(R.layout.component_profile_item, parent, false);
         // set the view's size, margins, paddings and layout parameters
         ViewHolder vh = new ViewHolder(v, mClicks.get());
         vh.mTitleTextView = (TextView) v.findViewById(R.id.title_text);
         vh.mValueTextView = (TextView) v.findViewById(R.id.value_text);
-        vh.mMoreIcon = (ImageView) v.findViewById(R.id.more_info_icon);
         v.setOnClickListener(vh);
         return vh;
 	}

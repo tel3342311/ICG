@@ -114,6 +114,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 			gender.add("男生");
 			gender.add("女生");
 			mWheel_single.setData(gender);
+			mWheel_single.setCyclic(false);
 			break;
 		case HEIGHT:
 			one_wheel.setVisibility(View.VISIBLE);

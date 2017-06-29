@@ -34,7 +34,7 @@
 		    android:id="@+id/one_wheel"
 		    android:layout_width="match_parent"
 		    android:layout_height="match_parent"
-		    layout="@layout/popup_three_wheel"
+		    layout="@layout/popup_one_wheel"
 		    android:visibility="invisible"/>
 	</android.support.v7.widget.CardView>
 </RelativeLayout>

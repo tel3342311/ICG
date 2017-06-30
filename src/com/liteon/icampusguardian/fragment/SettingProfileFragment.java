@@ -18,6 +18,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
 public class SettingProfileFragment extends Fragment implements IProfileItemClickListener {
@@ -59,8 +61,29 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	}
 	
 	private void setupListener() {
-
+		mWheel_left.setOnItemSelectedListener(mWheelClickListener);
+		mWheel_center.setOnItemSelectedListener(mWheelClickListener);
+		mWheel_right.setOnItemSelectedListener(mWheelClickListener);
+		mWheel_single.setOnItemSelectedListener(mWheelClickListener);
 	}
+	
+	private WheelPicker.OnItemSelectedListener mWheelClickListener = new WheelPicker.OnItemSelectedListener() {
+
+		@Override
+		public void onItemSelected(WheelPicker wheel, Object data, int position) {
+			if (three_wheel.getVisibility() == View.VISIBLE) {
+				if (R.id.main_wheel_left == wheel.getId()) {
+					
+				} else if (R.id.main_wheel_center == wheel.getId()) {
+					
+				} else if (R.id.main_wheel_right == wheel.getId()) {
+					
+				}
+			} else if (one_wheel.getVisibility() == View.VISIBLE) {
+				
+			}
+		}		
+	};
 	
 	private void testData(){
 		mDataSet = new ArrayList<>();

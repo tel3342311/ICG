@@ -17,15 +17,21 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
+import com.liteon.icampusguardian.util.JSONResponse.Return;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.Toast;
 
 
@@ -39,6 +45,9 @@ public class LoginActivity extends AppCompatActivity {
 	private AppCompatButton signInButtonNormal;
 	private CallbackManager mFBcallbackManager;
 	private AccessToken mFBAccessToken;
+	private EditText mUserName;
+	private EditText mPassword;
+	private GuardianApiClient mApiClient;
 	//facebook login
 	private final static int RC_GOOGLE_SIGNIN = 1000;
 	private final static int RC_FACEBOOK_SIGNIN = 1001;
@@ -48,20 +57,27 @@ public class LoginActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_login);
 		setupGoogleSignIn();
 		setupFacebookSignIn();
-		
+		mApiClient = new GuardianApiClient();
 		findViews();
 		setListener();
 		
-		Intent intent = new Intent();
-		intent.setClass(LoginActivity.this, WelcomeActivity.class);
-		startActivity(intent);
+//		Intent intent = new Intent();
+//		intent.setClass(LoginActivity.this, WelcomeActivity.class);
+//		startActivity(intent);
 	}
 	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mUserName.setText(Def.USER);
+		mPassword.setText(Def.PASSWORD);
+	}
 	private void findViews() {
 		signInButtonNormal = (AppCompatButton) findViewById(R.id.ap_login);
 		signInButtonGoogle = (AppCompatButton) findViewById(R.id.login_button_google);
 		signInButtonFacebook = (AppCompatButton) findViewById(R.id.login_button_fb);
-
+		mUserName = (EditText) findViewById(R.id.login_account);
+		mPassword = (EditText) findViewById(R.id.login_password);
 	}
 	
 	private void setListener() {
@@ -74,9 +90,7 @@ public class LoginActivity extends AppCompatActivity {
 		
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(getApplicationContext(), MainActivity.class);
-			startActivity(intent);
+			new LoginTask().execute(mUserName.getText().toString(), mPassword.getText().toString());
 		}
 	};
 	private void setupGoogleSignIn(){
@@ -179,4 +193,25 @@ public class LoginActivity extends AppCompatActivity {
 	        //updateUI(false);
 	    }
 	}
+	
+	class LoginTask extends AsyncTask<String, Void, JSONResponse> {
+
+        protected JSONResponse doInBackground(String... args) {
+        	JSONResponse response = mApiClient.login(args[0], args[1]);
+        	JSONResponse tmp = mApiClient.getChildrenList();
+        	return response;
+        }
+
+        protected void onPostExecute(JSONResponse response) {
+        	if (response != null ) {
+        		String statusCode = response.getReturn().getResponseSummary().getStatusCode();
+        		if (TextUtils.isEmpty(statusCode)) {
+        			String sessionId = response.getReturn().getResponseSummary().getSessionId();
+        			Intent intent = new Intent();
+        			intent.setClass(getApplicationContext(), MainActivity.class);
+        			startActivity(intent);
+        		}
+        	}
+        }
+    }
 }

@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		changeFragment(new SafetyFragment());
+		changeFragment(new SafetyFragment(), "安心", NAVIGATION_DRAWER);
 	}
 	
 	@Override

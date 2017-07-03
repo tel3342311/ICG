@@ -1,12 +1,15 @@
 package com.liteon.icampusguardian;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.List;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.internal.CollectionMapper.Collection;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
@@ -16,13 +19,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Return;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -198,14 +204,20 @@ public class LoginActivity extends AppCompatActivity {
 
         protected JSONResponse doInBackground(String... args) {
         	JSONResponse response = mApiClient.login(args[0], args[1]);
-        	JSONResponse tmp = mApiClient.getChildrenList();
+        	//get Child list
+        	JSONResponse response_childList = mApiClient.getChildrenList();
+        	List<Student> childList = Arrays.asList(response_childList.getReturn().getResults().getStudents());
+        	DBHelper helper = DBHelper.getInstance(LoginActivity.this);
+        	helper.queryChildList(helper.getReadableDatabase());
+        	SQLiteDatabase db = helper.getWritableDatabase();
+        	helper.insertChildList(db, childList);
         	return response;
         }
 
         protected void onPostExecute(JSONResponse response) {
         	if (response != null ) {
         		String statusCode = response.getReturn().getResponseSummary().getStatusCode();
-        		if (TextUtils.isEmpty(statusCode)) {
+        		if (!TextUtils.isEmpty(statusCode) && TextUtils.equals(statusCode, Def.RET_SUCCESS)) {
         			String sessionId = response.getReturn().getResponseSummary().getSessionId();
         			Intent intent = new Intent();
         			intent.setClass(getApplicationContext(), MainActivity.class);

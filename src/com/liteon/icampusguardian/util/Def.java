@@ -1,6 +1,8 @@
 package com.liteon.icampusguardian.util;
 
 public class Def {
+	//RET CODE
+	public static final String RET_SUCCESS = "SUC01";
 	//Default user 
 	public static final String USER = "admin1@parent.com";
 	public static final String PASSWORD = "password";
@@ -21,4 +23,5 @@ public class Def {
 	
 	//API 07 get student list
 	public static final String REQUEST_GET_CHILDREN_LIST = "StudentList";
+
 }

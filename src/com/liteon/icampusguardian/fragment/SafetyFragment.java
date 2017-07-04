@@ -2,9 +2,13 @@ package com.liteon.icampusguardian.fragment;
 
 import java.util.ArrayList;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.util.GeoEventAdapter;
 import com.liteon.icampusguardian.util.GeoEventItem;
@@ -24,6 +28,7 @@ public class SafetyFragment extends Fragment {
 	private RecyclerView mRecyclerView;
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
+	private static final LatLng mLastPosition = new LatLng(25.077877, 121.571141);
 	private static ArrayList<GeoEventItem> myDataset = new ArrayList<>();
 
 	@Override
@@ -54,15 +59,17 @@ public class SafetyFragment extends Fragment {
 	}
 
 	private void testData() {
-		for (int i = 11; i < 30; i++) {
-			GeoEventItem item = new GeoEventItem();
-			item.setDate("2017/06/" + i);
-			item.setDate("2017/06/" + i);
-			item.setEnterSchool("06:" + i);
-			item.setLeaveSchool("16:" + i);
-			item.setEmergency("18:" + i);
-			item.setEmergencyRelease("18:" + i);
-			myDataset.add(item);
+		if (myDataset.size() == 0) {
+			for (int i = 11; i < 30; i++) {
+				GeoEventItem item = new GeoEventItem();
+				item.setDate("2017/06/" + i);
+				item.setDate("2017/06/" + i);
+				item.setEnterSchool("06:" + i);
+				item.setLeaveSchool("16:" + i);
+				item.setEmergency("18:" + i);
+				item.setEmergencyRelease("18:" + i);
+				myDataset.add(item);
+			}
 		}
 	}
 
@@ -100,6 +107,13 @@ public class SafetyFragment extends Fragment {
 		@Override
 		public void onMapReady(GoogleMap map) {
 			mGoogleMap = map;
+			mGoogleMap.addMarker(new MarkerOptions()
+	                .position(mLastPosition)
+	                .title("最後位置"));
+			mGoogleMap.setMaxZoomPreference(18);
+			mGoogleMap.setMinZoomPreference(12);
+			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mLastPosition, 16);
+			mGoogleMap.moveCamera(cameraUpdate);
 		}
 	};
 }

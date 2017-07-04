@@ -21,7 +21,7 @@
         	android:layout_height="@dimen/geo_event_view_fix_height"
             android:layout_alignParentEnd="true"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/relieved_btn_enter" />
 
         <TextView
             android:id="@+id/title_text"

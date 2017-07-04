@@ -1,15 +1,16 @@
 package com.liteon.icampusguardian.util;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.liteon.icampusguardian.R;
 
+import android.graphics.Matrix;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,7 +19,7 @@ public class GeoEventAdapter extends Adapter<GeoEventAdapter.ViewHolder> {
 
 	private List<GeoEventItem> mDataset;
 	
-	public static class ViewHolder extends RecyclerView.ViewHolder {
+	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
         // each data item is just a string in this case
         public View mRootView;
         public TextView mDateTextView;
@@ -27,10 +28,29 @@ public class GeoEventAdapter extends Adapter<GeoEventAdapter.ViewHolder> {
         public TextView mEmergencyCall;
         public TextView mEmergencyRelease;
         public ImageView mCollapseIcon;
-        
+        public View mDetailInfo;
         public ViewHolder(View v) {
             super(v);
             mRootView = v;
+        }
+        
+        @Override
+        public void onClick(View v) {
+        	if (mDetailInfo.getVisibility() == View.VISIBLE) {
+        		mDetailInfo.setVisibility(View.GONE);
+        		rotateCollapseIcon(mCollapseIcon, 0);
+        	} else {
+        		mDetailInfo.setVisibility(View.VISIBLE);
+        		rotateCollapseIcon(mCollapseIcon, 180);
+        	}
+        }
+        
+        private void rotateCollapseIcon(ImageView imageView, int angle) {
+
+        	Matrix matrix = new Matrix();
+        	imageView.setScaleType(ImageView.ScaleType.MATRIX);   //required
+        	matrix.postRotate((float) angle, imageView.getWidth()/2, imageView.getHeight()/2);
+        	imageView.setImageMatrix(matrix);
         }
     }
 
@@ -53,6 +73,11 @@ public class GeoEventAdapter extends Adapter<GeoEventAdapter.ViewHolder> {
         vh.mLeaveSchool = (TextView) v.findViewById(R.id.leave_text);
         vh.mEmergencyCall = (TextView) v.findViewById(R.id.emergency_text);
         vh.mEmergencyRelease = (TextView) v.findViewById(R.id.emergency_release_text);
+        vh.mDetailInfo = v.findViewById(R.id.detail_info);
+        vh.mDetailInfo.setVisibility(View.GONE);
+        vh.mCollapseIcon = (ImageView) v.findViewById(R.id.arrow);
+        vh.mCollapseIcon.setOnClickListener(vh);
+
         return vh;
     }
 

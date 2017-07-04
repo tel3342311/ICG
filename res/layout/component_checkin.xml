@@ -137,14 +137,6 @@
             android:gravity="center"
             android:text="08:00"
             android:textColor="@color/md_red_900" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="5dp"
-            android:layout_marginStart="5dp"
-            android:background="@color/md_grey_400" />
     </RelativeLayout>
 
 </LinearLayout>

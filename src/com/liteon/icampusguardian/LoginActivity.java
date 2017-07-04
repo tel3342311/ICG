@@ -19,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
@@ -27,6 +28,7 @@ import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Return;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -49,14 +51,18 @@ public class LoginActivity extends AppCompatActivity {
 	private AppCompatButton signInButtonGoogle;
 	private AppCompatButton signInButtonFacebook;
 	private AppCompatButton signInButtonNormal;
+	private AppCompatButton mQuitButton;
 	private CallbackManager mFBcallbackManager;
 	private AccessToken mFBAccessToken;
 	private EditText mUserName;
 	private EditText mPassword;
 	private GuardianApiClient mApiClient;
+
 	//facebook login
 	private final static int RC_GOOGLE_SIGNIN = 1000;
 	private final static int RC_FACEBOOK_SIGNIN = 1001;
+	
+	private final static int RC_USER_TERM = 1002;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,9 +73,9 @@ public class LoginActivity extends AppCompatActivity {
 		findViews();
 		setListener();
 		
-//		Intent intent = new Intent();
-//		intent.setClass(LoginActivity.this, WelcomeActivity.class);
-//		startActivity(intent);
+		Intent intent = new Intent();
+		intent.setClass(LoginActivity.this, WelcomeActivity.class);
+		startActivityForResult(intent, RC_USER_TERM);
 	}
 	
 	@Override
@@ -82,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
 		signInButtonNormal = (AppCompatButton) findViewById(R.id.ap_login);
 		signInButtonGoogle = (AppCompatButton) findViewById(R.id.login_button_google);
 		signInButtonFacebook = (AppCompatButton) findViewById(R.id.login_button_fb);
+		mQuitButton = (AppCompatButton) findViewById(R.id.login_button_quit);
 		mUserName = (EditText) findViewById(R.id.login_account);
 		mPassword = (EditText) findViewById(R.id.login_password);
 	}
@@ -90,6 +97,7 @@ public class LoginActivity extends AppCompatActivity {
 		signInButtonNormal.setOnClickListener(mOnNormalSignInListener);
 		signInButtonGoogle.setOnClickListener(mGoogleSignInClickListener);
 		signInButtonFacebook.setOnClickListener(mFacebookSignInClickListener);
+		mQuitButton.setOnClickListener(mOnQuitClickListener);
 	}
 	
 	private View.OnClickListener mOnNormalSignInListener = new OnClickListener() {
@@ -123,6 +131,9 @@ public class LoginActivity extends AppCompatActivity {
 					@Override
 					public void onSuccess(LoginResult result) {
 						mFBAccessToken = result.getAccessToken();
+	        			Intent intent = new Intent();
+	        			intent.setClass(getApplicationContext(), MainActivity.class);
+	        			startActivity(intent);
 					}
 
 					@Override
@@ -143,7 +154,7 @@ public class LoginActivity extends AppCompatActivity {
 		@Override
 		public void onConnectionFailed(ConnectionResult arg0) {
 			
-			new CustomDialog().show(getSupportFragmentManager(), "dialog_fragment");
+			//new CustomDialog().show(getSupportFragmentManager(), "dialog_fragment");
 		}
 		
 	};
@@ -152,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
 		
 		@Override
 		public void onClick(View v) {
-			new CustomDialog().show(getSupportFragmentManager(), "dialog_fragment");
+			//new CustomDialog().show(getSupportFragmentManager(), "dialog_fragment");
 			signInGoogle();
 		}
 	};
@@ -174,8 +185,12 @@ public class LoginActivity extends AppCompatActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
 
-	    // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-	    if (requestCode == RC_GOOGLE_SIGNIN) {
+	    if (requestCode == RC_USER_TERM) {
+	    	if (resultCode == RESULT_CANCELED) {
+	    		finish();
+	    	}
+	    } else if (requestCode == RC_GOOGLE_SIGNIN) {
+	    	// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
 	        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 	        handleSignInResult(result);
 	    } else {
@@ -191,38 +206,74 @@ public class LoginActivity extends AppCompatActivity {
 	    if (result.isSuccess()) {
 	        // Signed in successfully, show authenticated UI.
 	        GoogleSignInAccount acct = result.getSignInAccount();
-	        Toast.makeText(this, "Google sign in " + acct.getDisplayName() + ", Email : " + acct.getEmail(), Toast.LENGTH_LONG).show();
+	        //Toast.makeText(this, "Google sign in " + acct.getDisplayName() + ", Email : " + acct.getEmail(), Toast.LENGTH_LONG).show();
 	        //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 	        //updateUI(true);
+			Intent intent = new Intent();
+			intent.setClass(getApplicationContext(), MainActivity.class);
+			startActivity(intent);
 	    } else {
 	        // Signed out, show unauthenticated UI.
 	        //updateUI(false);
 	    }
 	}
 	
-	class LoginTask extends AsyncTask<String, Void, JSONResponse> {
+	private OnClickListener mOnQuitClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			finish();
+			
+		}
+	};
+	
+	class LoginTask extends AsyncTask<String, Void, String> {
 
-        protected JSONResponse doInBackground(String... args) {
-        	JSONResponse response = mApiClient.login(args[0], args[1]);
+        protected String doInBackground(String... args) {
+        	DBHelper helper = DBHelper.getInstance(LoginActivity.this);
+        	String token = "";
+        	//Account values
+        	ContentValues cv = new ContentValues();
+        	token = helper.getAccountToken(helper.getReadableDatabase(), args[0]);
+        	//TODO remove this for save token
+        	token = "";
+        	if (TextUtils.isEmpty(token)) {
+        		JSONResponse response = mApiClient.login(args[0], args[1]);
+        		if (response.getReturn().getResults() == null) {
+        			Toast.makeText(getApplicationContext(), "Status Code :" +response.getReturn().getResponseSummary().getStatusCode() + " Error is " +response.getReturn().getResponseSummary().getErrorMessage(), Toast.LENGTH_LONG).show();
+        			return null;
+        		}
+        		token = response.getReturn().getResults().getToken();
+        		
+        		cv.put(AccountEntry.COLUMN_NAME_USER_NAME, args[0]);
+        		cv.put(AccountEntry.COLUMN_NAME_PASSWORD, args[1]);
+        		cv.put(AccountEntry.COLUMN_NAME_TOKEN, token);
+        		helper.insertAccount(helper.getWritableDatabase(), cv);
+        	} else {
+        		mApiClient.setToken(token);
+        	}
+        	
         	//get Child list
         	JSONResponse response_childList = mApiClient.getChildrenList();
         	List<Student> childList = Arrays.asList(response_childList.getReturn().getResults().getStudents());
-        	DBHelper helper = DBHelper.getInstance(LoginActivity.this);
+        	
         	helper.queryChildList(helper.getReadableDatabase());
         	SQLiteDatabase db = helper.getWritableDatabase();
         	helper.insertChildList(db, childList);
-        	return response;
+        	return token;
         }
 
-        protected void onPostExecute(JSONResponse response) {
-        	if (response != null ) {
-        		String statusCode = response.getReturn().getResponseSummary().getStatusCode();
-        		if (!TextUtils.isEmpty(statusCode) && TextUtils.equals(statusCode, Def.RET_SUCCESS)) {
-        			String sessionId = response.getReturn().getResponseSummary().getSessionId();
-        			Intent intent = new Intent();
+        protected void onPostExecute(String token) {
+        	if (token != null ) {
+        		//String statusCode = response.getReturn().getResponseSummary().getStatusCode();
+        		//if (!TextUtils.isEmpty(statusCode) && TextUtils.equals(statusCode, Def.RET_SUCCESS)) {
+        			//String sessionId = response.getReturn().getResponseSummary().getSessionId();
+        		finish();	
+        		Intent intent = new Intent();
         			intent.setClass(getApplicationContext(), MainActivity.class);
         			startActivity(intent);
-        		}
+        		//}
+        			
         	}
         }
     }

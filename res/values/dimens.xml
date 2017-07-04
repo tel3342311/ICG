@@ -2,9 +2,9 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
- 	<dimen name="page_title_text_size">20sp</dimen>
+ 	<dimen name="page_title_text_size">24sp</dimen>
  	<dimen name="page_title_margin_bottom">40dp</dimen>
-	<dimen name="login_edit_text_size">20sp</dimen>
+	<dimen name="login_edit_text_size">16sp</dimen>
 	<dimen name="login_edit_text_height">45dp</dimen>
 	<dimen name="login_option_text_size">16sp</dimen>
 	<dimen name="login_option_text_height">30dp</dimen>
@@ -12,8 +12,12 @@
 	<dimen name="login_option_btn_margin_bottom">8dp</dimen>
 	<dimen name="more_icon_size">30dp</dimen>
 	<!-- welcome -->
-	<dimen name="welcome_icon_size">80dp</dimen>
+	<dimen name="welcome_icon_size">120dp</dimen>
 	<dimen name="welcome_bottom_option_height">40dp</dimen>
+	<dimen name="welcome_user_term_margin_height">120dp</dimen>
+	<dimen name="welcome_radio_btn_margin_height">20dp</dimen>
+	<dimen name="user_term_text_size">16sp</dimen>
+	
 	<!-- user term -->
 	<dimen name="page_title_height">40dp</dimen>
 	<!-- Dialog  -->

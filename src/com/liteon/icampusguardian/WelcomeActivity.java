@@ -53,11 +53,11 @@ public class WelcomeActivity extends AppCompatActivity implements OnClickListene
 		Intent intent = new Intent();
 		switch (v.getId()) {
 		case R.id.option_agree:
-
-			intent.setClass(this, LoginActivity.class);
-			startActivity(intent);
+			setResult(RESULT_OK);
+			finish();
 			break;
 		case R.id.option_quit:
+			setResult(RESULT_CANCELED);
 			finish();
 			break;
 		case R.id.user_term_click:

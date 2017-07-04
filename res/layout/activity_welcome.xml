@@ -8,7 +8,7 @@
         android:id="@+id/welcome_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/page_title_margin_bottom"
+        android:layout_marginTop="@dimen/page_title_margin_bottom"
         android:text="你好，歡迎使用\nICAMPUS GUARDIAN\n智慧手錶"
         android:textSize="@dimen/page_title_text_size"
         android:textAlignment="center"
@@ -26,7 +26,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/welcome_icon"
+        android:layout_marginTop="@dimen/welcome_user_term_margin_height"
         android:text="使用者協議及隱私政策"
+        android:textSize="@dimen/user_term_text_size"
         android:textAlignment="center"
         android:gravity="center"/>
     <ImageView
@@ -43,6 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/sep_line"
         android:text="點選同意以確認ICG智慧手錶的"
+        android:textSize="@dimen/user_term_text_size"
         android:textAlignment="center"
         android:gravity="center"/>
     <TextView 
@@ -51,6 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/user_term_click_info"
         android:text="使用者協議及隱私政策"
+        android:textSize="@dimen/user_term_text_size"
         android:textColor="@color/md_blue_700"
         android:textAlignment="center"
         android:gravity="center"/>
@@ -58,12 +62,15 @@
          android:id="@+id/user_improve_plan"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
+         android:layout_marginTop="@dimen/welcome_radio_btn_margin_height"
+         android:layout_marginStart="@dimen/activity_horizontal_margin"
          android:text="參與使用者體驗改善計畫"
          android:layout_below="@id/user_term_click"/>
      <android.support.v7.widget.AppCompatRadioButton
          android:id="@+id/user_teacher_plan"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
+         android:layout_marginStart="@dimen/activity_horizontal_margin"
          android:text="學校老師可以獲得寶貝睡眠資訊"
          android:layout_below="@id/user_improve_plan"/>
 	 <include 

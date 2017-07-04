@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.net.Uri;
+import android.text.TextUtils;
 
 public class GuardianApiClient {
 
@@ -111,8 +112,10 @@ public class GuardianApiClient {
 			int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
             	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
-            	Student[] students = result.getReturn().getResults().getStudents();
-            	return result;
+            	if (!TextUtils.isEmpty(result.getReturn().getResponseSummary().getStatusCode())) {
+            		Student[] students = result.getReturn().getResults().getStudents();
+            		return result;
+            	}
             }
 			
 		} catch (MalformedURLException e) {
@@ -121,5 +124,9 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void setToken(String token) {
+		mToken = token;
 	}
 }

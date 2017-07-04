@@ -1,5 +1,6 @@
 package com.liteon.icampusguardian.db;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.android.gms.actions.ItemListIntents;
@@ -14,6 +15,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
+import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 	private static DBHelper mInstance = null;
@@ -27,8 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String SQL_QUERY_ALL_ACCOUNT_DATA = "SELECT * FROM " + AccountEntry.TABLE_NAME;
     private static final String SQL_CREATE_ACCOUNT_TABLE =
     	    "CREATE TABLE " + AccountEntry.TABLE_NAME + " (" +
-    	    AccountEntry._ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
-    	    AccountEntry.COLUMN_NAME_USER_NAME + TEXT_TYPE + COMMA_SEP +
+    	    AccountEntry.COLUMN_NAME_USER_NAME + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP +
     	    AccountEntry.COLUMN_NAME_PASSWORD + TEXT_TYPE + COMMA_SEP +
     	    AccountEntry.COLUMN_NAME_UUID + TEXT_TYPE + COMMA_SEP +
     	    AccountEntry.COLUMN_NAME_ROLE_TYPE + TEXT_TYPE + COMMA_SEP +
@@ -38,7 +40,8 @@ public class DBHelper extends SQLiteOpenHelper {
     	    AccountEntry.COLUMN_NAME_GENDER + TEXT_TYPE + COMMA_SEP +
     	    AccountEntry.COLUMN_NAME_HEIGHT + INTEGER_TYPE + COMMA_SEP +
     	    AccountEntry.COLUMN_NAME_WEIGHT + INTEGER_TYPE + COMMA_SEP +
-    	    AccountEntry.COLUMN_NAME_DOB + TEXT_TYPE +
+    	    AccountEntry.COLUMN_NAME_DOB + TEXT_TYPE +  COMMA_SEP +
+    	    AccountEntry.COLUMN_NAME_TOKEN + TEXT_TYPE +
     	    " )";
     private static final String SQL_DELETE_ACCOUNT_TABLE =
     	    "DROP TABLE IF EXISTS " + AccountEntry.TABLE_NAME;
@@ -46,14 +49,16 @@ public class DBHelper extends SQLiteOpenHelper {
     //Child data
     public static final String SQL_QUERY_ALL_CHILDREN_DATA = "SELECT * FROM " + ChildEntry.TABLE_NAME;
     private static final String SQL_CREATE_CHILDREN_TABLE =
-    	    "CREATE TABLE " + ChildEntry.TABLE_NAME + " (" +
-    	    		ChildEntry._ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
-    	    ChildEntry.COLUMN_NAME_UUID + TEXT_TYPE + COMMA_SEP +
+    	    "CREATE TABLE " + ChildEntry.TABLE_NAME + " ("  +
+    	    ChildEntry.COLUMN_NAME_UUID + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP +
     	    ChildEntry.COLUMN_NAME_GIVEN_NAME + TEXT_TYPE + COMMA_SEP +
     	    ChildEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + COMMA_SEP +
     	    ChildEntry.COLUMN_NAME_GENDER + TEXT_TYPE + COMMA_SEP +
     	    ChildEntry.COLUMN_NAME_HEIGHT + INTEGER_TYPE + COMMA_SEP +
     	    ChildEntry.COLUMN_NAME_WEIGHT + INTEGER_TYPE + COMMA_SEP +
+    	    ChildEntry.COLUMN_NAME_CLASS + TEXT_TYPE + COMMA_SEP +
+    	    ChildEntry.COLUMN_NAME_ROLL_NO + TEXT_TYPE + COMMA_SEP +
+    	    ChildEntry.COLUMN_NAME_STUDENT_ID + TEXT_TYPE + COMMA_SEP +
     	    ChildEntry.COLUMN_NAME_DOB + TEXT_TYPE +
     	    " )";
     private static final String SQL_DELETE_CHILD_TABLE =
@@ -63,8 +68,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String SQL_QUERY_ALL_EVENT_DATA = "SELECT * FROM " + EventListEntry.TABLE_NAME;
     private static final String SQL_CREATE_EVENT_TABLE =
     	    "CREATE TABLE " + EventListEntry.TABLE_NAME + " (" +
-    	    		EventListEntry._ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
-    	    EventListEntry.COLUMN_NAME_UUID + TEXT_TYPE + COMMA_SEP +
+    	    EventListEntry.COLUMN_NAME_UUID + TEXT_TYPE + " PRIMARY KEY"+ COMMA_SEP +
     	    EventListEntry.COLUMN_NAME_EVENT_ID + TEXT_TYPE + COMMA_SEP +
     	    EventListEntry.COLUMN_NAME_EVENT_SUBSCRIBE + TEXT_TYPE +
     	    " )";
@@ -81,8 +85,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String SQL_QUERY_CHILD_LOCATION_DATA = "SELECT * FROM " + ChildLocationEntry.TABLE_NAME;
     private static final String SQL_CREATE_CHILD_LOCAITON_TABLE =
     	    "CREATE TABLE " + ChildLocationEntry.TABLE_NAME + " (" +
-    	    		ChildLocationEntry._ID + " INTEGER PRIMARY KEY" + COMMA_SEP +
-    	    ChildLocationEntry.COLUMN_NAME_UUID + TEXT_TYPE + COMMA_SEP +
+    	    ChildLocationEntry.COLUMN_NAME_UUID + TEXT_TYPE + " PRIMARY KEY"+ COMMA_SEP +
     	    ChildLocationEntry.COLUMN_NAME_LATITUDE + TEXT_TYPE + COMMA_SEP +
     	    ChildLocationEntry.COLUMN_NAME_LONGITUDE + TEXT_TYPE +
     	    " )";
@@ -109,6 +112,12 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_DELETE_CHILD_LOCATION_TABLE);
 		onCreate(db);
 	}
+	public String getAccountToken(SQLiteDatabase db, String name) {
+	    Cursor c = db.query(AccountEntry.TABLE_NAME, new String[]{AccountEntry.COLUMN_NAME_TOKEN}, "username =?",new String[]{name},null,null,null,null);
+	    if (c.moveToFirst()) //if the row exist then return the id
+	        return c.getString(c.getColumnIndex(AccountEntry.COLUMN_NAME_TOKEN));
+	    return "";
+	}
 	
 	public long insertAccount(SQLiteDatabase db, ContentValues value) {
 		return db.insert(AccountEntry.TABLE_NAME, "", value);
@@ -127,11 +136,31 @@ public class DBHelper extends SQLiteOpenHelper {
 			cv.put(ChildEntry.COLUMN_NAME_ROLL_NO, item.getRoll_no());
 			cv.put(ChildEntry.COLUMN_NAME_CLASS, item.get_class());
 			cv.put(ChildEntry.COLUMN_NAME_STUDENT_ID, item.getStudent_id());
-			db.insert(ChildEntry.TABLE_NAME, "", cv);
+			if (isChildExist(db, item.getUuid())) {
+				db.update(ChildEntry.TABLE_NAME, cv, "uuid=?", new String[] {item.getUuid()});
+			} else {
+				long ret = db.insert(ChildEntry.TABLE_NAME, null, cv);
+				Log.d(DATABASE_NAME, "insert RET is " + ret);
+			}
 		}
+		db.close();
 	}
 	
-	public void queryChildList(SQLiteDatabase db) {
+	public boolean isChildExist(SQLiteDatabase db, String uuid) {
+		if (TextUtils.isEmpty(uuid)) {
+			return false;
+		}
+		Cursor c = db.query(ChildEntry.TABLE_NAME, null, "uuid =?",new String[]{uuid},null,null,null,null);
+	    if (c.moveToFirst()) { //if the row exist then return the id
+	    	c.close();
+	        return true;
+	    }
+	    c.close();
+	    return false;
+	}
+	
+	public List<Student> queryChildList(SQLiteDatabase db) {
+		List<Student> list = new ArrayList<>();
 		Cursor cursor = db.rawQuery(SQL_QUERY_ALL_CHILDREN_DATA, null);
 		if (cursor.getCount() > 0 ) {
 			cursor.moveToFirst();
@@ -146,9 +175,13 @@ public class DBHelper extends SQLiteOpenHelper {
 				item.setWeight(cursor.getInt(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_WEIGHT)));
 				item.setRoll_no(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_ROLL_NO)));
 				item.set_class(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_CLASS)));   
-				item.setStudent_id(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_STUDENT_ID)));  
+				item.setStudent_id(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_STUDENT_ID)));
+				list.add(item);
 			} while(cursor.moveToNext());
+			cursor.close();
+			db.close();
 		}
+		return list;
 	}
 }
 

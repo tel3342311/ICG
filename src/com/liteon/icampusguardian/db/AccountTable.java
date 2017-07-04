@@ -19,6 +19,7 @@ public class AccountTable {
         public static final String COLUMN_NAME_DOB = "dob";
         public static final String COLUMN_NAME_HEIGHT = "height";
         public static final String COLUMN_NAME_WEIGHT = "weight";
+        public static final String COLUMN_NAME_TOKEN = "token";
 	}
 	
 }

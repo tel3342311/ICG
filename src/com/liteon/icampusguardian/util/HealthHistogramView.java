@@ -3,6 +3,7 @@ package com.liteon.icampusguardian.util;
 import java.util.List;
 
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -12,7 +13,6 @@ import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
-import android.graphics.Path.FillType;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -43,6 +43,7 @@ public class HealthHistogramView extends View {
 	private int mTargetNum = 99;
 	private List<Integer> mValueList;
 	private OnHistogramChangeListener mHistogramChangeListener;
+	private TYPE mType;
 	public HealthHistogramView(Context context) {
 		super(context);
 	}
@@ -200,5 +201,12 @@ public class HealthHistogramView extends View {
 	}
 	public static interface OnHistogramChangeListener {
 		public void onHistogramChanged(int idx, int value);
+	}
+	
+	public void setType(TYPE type) {
+		mType = type;
+		paintSelected.setColor(getResources().getColor(mType.getColorId(), null));
+		paintOthers.setColor(getResources().getColor(mType.getColorId(), null));
+		paintOthers.setAlpha(128);
 	}
 }

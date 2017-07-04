@@ -7,4 +7,9 @@
     <color name="color_primaryText">@color/md_black_1000</color>
     <color name="color_windowBackground">@android:color/white</color>
     <color name="color_textColorPrimary">@color/md_black_1000</color>
+    <color name="color_activity">#F8A53A</color>
+    <color name="color_calories">#F0641C</color>
+    <color name="color_execrise">#009A87</color>
+    <color name="color_heart_rate">#E10043</color>
+    <color name="color_sleep">#8500d5</color>
 </resources>

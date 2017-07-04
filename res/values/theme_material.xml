@@ -22,5 +22,6 @@
 	   <item name="colorSwitchThumbNormal">@color/md_grey_50</item>
 	   <!-- Inactive track color(30% transparency) -->
 	   <item name="android:colorForeground">@color/md_grey_600</item>
+	   <item name="android:listDivider">@color/md_black_1000</item>
     </style>
 </resources>

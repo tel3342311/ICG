@@ -46,6 +46,7 @@ public class DailyHealthFragment extends Fragment {
 	}
 
 	private void setupHistogram() {
+		mHistogramView.setType(mType);
 		mHistogramView.setOnHistogramClickListener(mPiechartView);
 		mHistogramView.setValuesByDay(mDataList);
 		mHistogramView.setTargetNumber(mDataList.get(0));

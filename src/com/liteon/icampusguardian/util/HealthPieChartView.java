@@ -257,7 +257,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         canvas.drawArc(rect, 270, 360, false, arcClockMinPaint);
         
         
-        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "步", mTargetOffsetY);
+        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "分", mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);		
 	}
 
@@ -451,6 +451,8 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	
 	public void setType(TYPE type) {
 		mType = type;
+		arcPaintPrimary.setColor(getResources().getColor(type.getColorId(), null));
+		textTargetPaint.setColor(getResources().getColor(type.getColorId(), null));
 	}
 	
 	public void setTargetValue(int targetValue) {

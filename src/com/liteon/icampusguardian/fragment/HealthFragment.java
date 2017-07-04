@@ -48,11 +48,13 @@ public class HealthFragment extends Fragment {
 	}
 
 	private void testData() {
-		for (HealthyItem.TYPE type : HealthyItem.TYPE.values()) {
-			HealthyItem item = new HealthyItem();
-			item.setItemType(type);
-			item.setValue((int) System.currentTimeMillis() % 5000); 
-			myDataset.add(item);
+		if (myDataset.size() == 0) {
+			for (HealthyItem.TYPE type : HealthyItem.TYPE.values()) {
+				HealthyItem item = new HealthyItem();
+				item.setItemType(type);
+				item.setValue((int) System.currentTimeMillis() % 5000); 
+				myDataset.add(item);
+			}
 		}
 	}
 

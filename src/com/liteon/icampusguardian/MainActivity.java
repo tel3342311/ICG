@@ -1,5 +1,8 @@
 package com.liteon.icampusguardian;
 
+import java.util.List;
+
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment.IAddAlarmClicks;
@@ -16,6 +19,7 @@ import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
 import android.os.Bundle;
@@ -29,6 +33,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -43,12 +48,17 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	private NavigationView mNavigationView;
 	private Fragment mCurrentFragment;
 	private int mCurrentAlarmIdx;
+	private List<Student> mStudents;
+	private DBHelper mDbHelper;
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		mDbHelper = DBHelper.getInstance(this);
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		findViews();
 		setListener();
 		setupToolbar();
@@ -75,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	protected void onResume() {
 		super.onResume();
 		changeFragment(new SafetyFragment(), "安心", NAVIGATION_DRAWER);
+		
 	}
 	
 	@Override
@@ -98,6 +109,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 				return;
 			} else if (mCurrentFragment instanceof AlarmPeriodFragment){
 				changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this),"設定鬧鈴", 0);				
+				return;
+			} else if (mCurrentFragment instanceof SettingProfileFragment) {
+				changeFragment(new SettingFragment(MainActivity.this), getString(R.string.setting_tab), NAVIGATION_DRAWER);				
 				return;
 			} else {
 				finish();
@@ -207,7 +221,15 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800, null));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
-		mChildName.setText("王小明");
+		mChildName.setText(mStudents.get(0).getName());
+		
+		Menu menu = mNavigationView.getMenu();
+	    MenuItem switchAccount = menu.findItem(R.id.action_switch_account);
+	    switchAccount.setTitle(String.format(getString(R.string.switch_account), mStudents.get(1).getName()));
+	   
+	    MenuItem deleteAccount = menu.findItem(R.id.action_delete_account);
+	    deleteAccount.setTitle(String.format(getString(R.string.delete_account), mStudents.get(0).getName()));
+	   
 	}
 
 	@Override

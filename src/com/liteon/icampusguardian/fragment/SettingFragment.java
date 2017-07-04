@@ -2,11 +2,14 @@ package com.liteon.icampusguardian.fragment;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.SettingItem;
 import com.liteon.icampusguardian.util.SettingItemAdapter;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
 import android.os.Bundle;
@@ -29,7 +32,9 @@ public class SettingFragment extends Fragment {
 	private CircularImageView mChildIcon;
 	private TextView mChildName;
 	private WeakReference<ISettingItemClickListener> mClicks;
-	
+	private DBHelper mDbHelper;
+	private List<Student> mStudents;
+
 	public SettingFragment(ISettingItemClickListener clicks) {
 		mClicks = new WeakReference<ISettingItemClickListener>(clicks);
 	}
@@ -40,6 +45,9 @@ public class SettingFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_setting, container, false);
 		findView(rootView);
 		initRecycleView();
+		mDbHelper = DBHelper.getInstance(getActivity());
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		initChildInfo();
 		return rootView;
 	}
@@ -67,14 +75,16 @@ public class SettingFragment extends Fragment {
 		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800,null));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
-		mChildName.setText("王小明");
+		mChildName.setText(mStudents.get(0).getName());
 	}
 	
 	private void testData() {
-		for (SettingItem.TYPE type : SettingItem.TYPE.values()) {
-			SettingItem item = new SettingItem();
-			item.setItemType(type);
-			myDataset.add(item);
+		if (myDataset.size() == 0) {
+			for (SettingItem.TYPE type : SettingItem.TYPE.values()) {
+				SettingItem item = new SettingItem();
+				item.setItemType(type);
+				myDataset.add(item);
+			}
 		}
 	}
 }

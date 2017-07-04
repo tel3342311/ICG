@@ -5,9 +5,11 @@ import java.util.List;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.ProfileItem;
 import com.liteon.icampusguardian.util.ProfileItem.TYPE;
 import com.liteon.icampusguardian.util.ProfileItemAdapter;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.ProfileItemAdapter.ViewHolder.IProfileItemClickListener;
 
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,12 +40,17 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	private TextView mWheelTitle;
 	private View three_wheel;
 	private View one_wheel;
+	private DBHelper mDbHelper;
+	private List<Student> mStudents;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	
 		View rootView = inflater.inflate(R.layout.fragment_setting_profile, container, false);
 		findView(rootView);
 		setupListener();
+		mDbHelper = DBHelper.getInstance(getActivity());
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		initRecycleView();
 		return rootView;
 	}
@@ -87,21 +95,26 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	
 	private void testData(){
 		mDataSet = new ArrayList<>();
+		Student student = mStudents.get(0);
         for (ProfileItem.TYPE type : ProfileItem.TYPE.values()) {
         	ProfileItem item = new ProfileItem();
         	item.setItemType(type);
         	switch(type) {
     		case BIRTHDAY:
-    			item.setValue("1990/01/01");
+    			item.setValue(student.getDob());
     			break;
     		case GENDER:
-    			item.setValue("男性");
+    			if (TextUtils.equals(student.getGender(), "MALE")) {
+    				item.setValue("男性");
+    			} else {
+    				item.setValue("女性");
+        		}
     			break;
     		case HEIGHT:
-    			item.setValue("150");
+    			item.setValue(Integer.toString(student.getHeight()));
     			break;
     		case WEIGHT:
-    			item.setValue("50");
+    			item.setValue(Integer.toString(student.getWeight()));
     			break;
     		default:
     			break;
@@ -129,6 +142,21 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 		switch(type) {
 		case BIRTHDAY:
 			three_wheel.setVisibility(View.VISIBLE);
+			List<String> years = new ArrayList<>();
+			for (int i = 1990; i < 2017 ; i++) {
+				years.add(Integer.toString(i));
+			}
+			mWheel_left.setData(years);
+			List<String> months = new ArrayList<>();
+			for (int i = 1; i < 13 ; i++) {
+				months.add(Integer.toString(i));
+			}
+			mWheel_center.setData(months);
+			List<String> days = new ArrayList<>();
+			for (int i = 1; i < 30; i++) {
+				days.add(Integer.toString(i));
+			}
+			mWheel_right.setData(days);
 			break;
 		case GENDER:
 			one_wheel.setVisibility(View.VISIBLE);

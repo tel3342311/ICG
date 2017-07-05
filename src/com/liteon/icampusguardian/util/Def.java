@@ -1,8 +1,9 @@
 package com.liteon.icampusguardian.util;
 
 public class Def {
-	//RET CODE
-	public static final String RET_SUCCESS = "SUC01";
+	//RET CODE there are two kind of success code
+	public static final String RET_SUCCESS_1 = "SUC01";
+	public static final String RET_SUCCESS_2 = "WSUC01";
 	//Default user 
 	public static final String USER = "admin1@parent.com";
 	public static final String PASSWORD = "password";
@@ -23,5 +24,17 @@ public class Def {
 	
 	//API 07 get student list
 	public static final String REQUEST_GET_CHILDREN_LIST = "StudentList";
+	
+	//API 19 get device event report
+	public static final String REQUEST_GET_DEVICE_EVENT_REPORT = "DeviceEventReport";
 
+	//EVENT ID LIST
+	public static final String EVENT_ID_SOS_ALERT = "11";
+	public static final String EVENT_ID_SOS_REMOVE = "12";
+	public static final String EVENT_ID_GPS_LOCATION = "17";
+	
+	//EVENT DURATION
+	public static final String EVENT_DURATION_ONE_DAY = "1";
+	public static final String EVENT_DURATION_WEEK = "7";
+	public static final String EVENT_DURATION_MONTH = "30";
 }

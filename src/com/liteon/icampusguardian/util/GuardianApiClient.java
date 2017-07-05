@@ -15,14 +15,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
+import com.liteon.icampusguardian.util.JSONResponse.Device;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 public class GuardianApiClient {
 
-	
+	private static final String TAG = GuardianApiClient.class.getName();
 	private String mUrlPrepend = "http://61.246.61.175:8080/icgwearable/mobile/%s";
 	private static String mSessionId;
 	private static String mToken;
@@ -37,11 +39,9 @@ public class GuardianApiClient {
 		    .appendPath("mobile").build();
 	}
 	public JSONResponse login(String user, String password) {
-		
-		URL url;
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USERLOGIN).build();
 		try {
-			Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USERLOGIN).build();
-			url = new URL(uri.toString());
+			URL url = new URL(uri.toString());
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("POST");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -97,11 +97,10 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse getChildrenList() {
-		URL url;
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_CHILDREN_LIST).
+				appendPath(mToken).build();
 		try {
-			Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_CHILDREN_LIST).
-					appendPath(mToken).build();
-			url = new URL(uri.toString());
+			URL url = new URL(uri.toString());
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -128,5 +127,40 @@ public class GuardianApiClient {
 	
 	public void setToken(String token) {
 		mToken = token;
+	}
+	
+	public JSONResponse getDeviceEventReport(String student_id, String event_id, String duration) {
+
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_DEVICE_EVENT_REPORT).
+				appendPath(mToken).
+				appendPath(student_id).
+				appendPath(event_id).
+				appendPath(duration).build();
+		try {
+
+			URL url = new URL(uri.toString());
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "application/json");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(false);
+			urlConnection.setUseCaches(false);
+            
+			int status = urlConnection.getResponseCode();
+            if (status == HttpURLConnection.HTTP_OK) {
+            	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
+            	if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+            		Device[] devices = result.getReturn().getResults().getDevices();
+            		return result;
+            	} else {
+            		Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
+            	}
+            }
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.style.UpdateAppearance;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	private Fragment mCurrentFragment;
 	private int mCurrentAlarmIdx;
 	private List<Student> mStudents;
+	private int mCurrentStudentIdx;
 	private DBHelper mDbHelper;
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		setListener();
 		setupToolbar();
 		initChildInfo();
+		updateMenuItem();
 		BottomNavigationViewHelper.disableShiftMode(mBottomView);
 	}
 	
@@ -221,22 +224,24 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800, null));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
-		mChildName.setText(mStudents.get(0).getName());
-		
+		mChildName.setText(mStudents.get(mCurrentStudentIdx).getName());
+	}
+	
+	private void updateMenuItem() {
 		Menu menu = mNavigationView.getMenu();
+		int nextStudent = mCurrentStudentIdx == 0 ? 1 : 0;
 	    MenuItem switchAccount = menu.findItem(R.id.action_switch_account);
-	    switchAccount.setTitle(String.format(getString(R.string.switch_account), mStudents.get(1).getName()));
+	    switchAccount.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getName()));
 	   
 	    MenuItem deleteAccount = menu.findItem(R.id.action_delete_account);
-	    deleteAccount.setTitle(String.format(getString(R.string.delete_account), mStudents.get(0).getName()));
-	   
+	    deleteAccount.setTitle(String.format(getString(R.string.delete_account), mStudents.get(mCurrentStudentIdx).getName()));
 	}
-
+	
 	@Override
 	public boolean onNavigationItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_switch_account) {
-			
+			switchAccount();
 		} else if (id == R.id.action_add_child) {
 			
 		} else if (id == R.id.action_delete_account) {
@@ -246,6 +251,12 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		}
 		mDrawerLayout.closeDrawers();
 		return true;
+	}
+
+	private void switchAccount() {
+		mCurrentStudentIdx = mCurrentStudentIdx == 0 ?  1 : 0;
+		initChildInfo();
+		updateMenuItem();
 	}
 
 	@Override

@@ -118,6 +118,55 @@ public class JSONResponse {
 		private String token;
 		@SerializedName("AccountId")
 		private String AccountId;
+		
+		@SerializedName("event_id")
+		private String event_id;
+		@SerializedName("event_name")
+		private String event_name;
+		@SerializedName("devices")
+		private Device devices[];
+		/**
+		 * @return the event_id
+		 */
+		public String getEvent_id() {
+			return event_id;
+		}
+
+		/**
+		 * @param event_id the event_id to set
+		 */
+		public void setEvent_id(String event_id) {
+			this.event_id = event_id;
+		}
+
+		/**
+		 * @return the event_name
+		 */
+		public String getEvent_name() {
+			return event_name;
+		}
+
+		/**
+		 * @param event_name the event_name to set
+		 */
+		public void setEvent_name(String event_name) {
+			this.event_name = event_name;
+		}
+
+		/**
+		 * @return the devices
+		 */
+		public Device[] getDevices() {
+			return devices;
+		}
+
+		/**
+		 * @param devices the devices to set
+		 */
+		public void setDevices(Device[] devices) {
+			this.devices = devices;
+		}
+
 		/**
 		 * @return the students
 		 */
@@ -161,7 +210,7 @@ public class JSONResponse {
 	}
 	
 	public static class Student {
-		@SerializedName("students_id")
+		@SerializedName("student_id")
 		private String student_id;
 		@SerializedName("name")
 		private String name;
@@ -180,7 +229,7 @@ public class JSONResponse {
 		@SerializedName("gender")
 		private String gender;
 		@SerializedName("uuid")
-		private String uuid; //"f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
+		private String uuid; 
 		/**
 		 * @return the student_id
 		 */
@@ -302,5 +351,107 @@ public class JSONResponse {
 			this.uuid = uuid;
 		}
 		
+	}
+	public static class Device {
+		@SerializedName("uuid")
+		private String uuid;
+		@SerializedName("device_active")
+		private String device_active;
+		@SerializedName("activation_date")
+		private String activation_date;
+		@SerializedName("device_events")
+		private DeviceEvent[] device_events;
+		/**
+		 * @return the uuid
+		 */
+		public String getUuid() {
+			return uuid;
+		}
+		/**
+		 * @param uuid the uuid to set
+		 */
+		public void setUuid(String uuid) {
+			this.uuid = uuid;
+		}
+		/**
+		 * @return the device_active
+		 */
+		public String getDevice_active() {
+			return device_active;
+		}
+		/**
+		 * @param device_active the device_active to set
+		 */
+		public void setDevice_active(String device_active) {
+			this.device_active = device_active;
+		}
+		/**
+		 * @return the activation_date
+		 */
+		public String getActivation_date() {
+			return activation_date;
+		}
+		/**
+		 * @param activation_date the activation_date to set
+		 */
+		public void setActivation_date(String activation_date) {
+			this.activation_date = activation_date;
+		}
+		/**
+		 * @return the device_events
+		 */
+		public DeviceEvent[] getDevice_events() {
+			return device_events;
+		}
+		/**
+		 * @param device_events the device_events to set
+		 */
+		public void setDevice_events(DeviceEvent[] device_events) {
+			this.device_events = device_events;
+		}
+	}
+	public static class DeviceEvent {
+        @SerializedName("gps_data_code")
+		private String gps_data_code;//"L2C",
+    	@SerializedName("gps_location_data")
+    	private String gps_location_data;//"25.0220,121.5271",
+    	@SerializedName("event_occured_date")
+    	private String event_occured_date;//"2017-07-03 10:25:27.0"
+		/**
+		 * @return the gps_data_code
+		 */
+		public String getGps_data_code() {
+			return gps_data_code;
+		}
+		/**
+		 * @param gps_data_code the gps_data_code to set
+		 */
+		public void setGps_data_code(String gps_data_code) {
+			this.gps_data_code = gps_data_code;
+		}
+		/**
+		 * @return the gps_location_data
+		 */
+		public String getGps_location_data() {
+			return gps_location_data;
+		}
+		/**
+		 * @param gps_location_data the gps_location_data to set
+		 */
+		public void setGps_location_data(String gps_location_data) {
+			this.gps_location_data = gps_location_data;
+		}
+		/**
+		 * @return the event_occured_date
+		 */
+		public String getEvent_occured_date() {
+			return event_occured_date;
+		}
+		/**
+		 * @param event_occured_date the event_occured_date to set
+		 */
+		public void setEvent_occured_date(String event_occured_date) {
+			this.event_occured_date = event_occured_date;
+		}
 	}
 }

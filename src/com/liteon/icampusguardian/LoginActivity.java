@@ -40,6 +40,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -54,6 +55,8 @@ public class LoginActivity extends AppCompatActivity {
 	private AppCompatButton mQuitButton;
 	private CallbackManager mFBcallbackManager;
 	private AccessToken mFBAccessToken;
+	private TextView mCreateAccount;
+	private TextView mForgetPassword;
 	private EditText mUserName;
 	private EditText mPassword;
 	private GuardianApiClient mApiClient;
@@ -91,6 +94,8 @@ public class LoginActivity extends AppCompatActivity {
 		mQuitButton = (AppCompatButton) findViewById(R.id.login_button_quit);
 		mUserName = (EditText) findViewById(R.id.login_account);
 		mPassword = (EditText) findViewById(R.id.login_password);
+		mCreateAccount = (TextView) findViewById(R.id.create_account);
+		mForgetPassword = (TextView) findViewById(R.id.forget_password);
 	}
 	
 	private void setListener() {
@@ -98,8 +103,29 @@ public class LoginActivity extends AppCompatActivity {
 		signInButtonGoogle.setOnClickListener(mGoogleSignInClickListener);
 		signInButtonFacebook.setOnClickListener(mFacebookSignInClickListener);
 		mQuitButton.setOnClickListener(mOnQuitClickListener);
+		mCreateAccount.setOnClickListener(mOnCreateAccountClickListener);
+		mForgetPassword.setOnClickListener(mOnForgetPasswordClickListener);
 	}
 	
+	private View.OnClickListener mOnCreateAccountClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.setClass(getApplicationContext(), UserRegistrationActivity.class);
+			startActivity(intent);
+		}
+	};
+	
+	private View.OnClickListener mOnForgetPasswordClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.setClass(getApplicationContext(), UserRegistrationActivity.class);
+			startActivity(intent);
+		}
+	};
 	private View.OnClickListener mOnNormalSignInListener = new OnClickListener() {
 		
 		@Override
@@ -260,6 +286,17 @@ public class LoginActivity extends AppCompatActivity {
         	helper.queryChildList(helper.getReadableDatabase());
         	SQLiteDatabase db = helper.getWritableDatabase();
         	helper.insertChildList(db, childList);
+        	
+        	//get Device event report
+        	String eventId = Def.EVENT_ID_GPS_LOCATION;
+        	String duration = Def.EVENT_DURATION_WEEK;
+        	for (Student student : childList) {
+        		JSONResponse response = mApiClient.getDeviceEventReport(student.getStudent_id(), eventId, duration);
+        		if (response != null) {
+        			response.getReturn().getResults().getDevices();
+        		}
+        	}
+        	
         	return token;
         }
 
@@ -270,8 +307,8 @@ public class LoginActivity extends AppCompatActivity {
         			//String sessionId = response.getReturn().getResponseSummary().getSessionId();
         		finish();	
         		Intent intent = new Intent();
-        			intent.setClass(getApplicationContext(), MainActivity.class);
-        			startActivity(intent);
+        		intent.setClass(getApplicationContext(), MainActivity.class);
+        		startActivity(intent);
         		//}
         			
         	}

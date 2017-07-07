@@ -22,6 +22,7 @@ import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthView
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		//registerNotification();
 		mDbHelper = DBHelper.getInstance(this);
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
@@ -69,6 +71,18 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		BottomNavigationViewHelper.disableShiftMode(mBottomView);
 	}
 	
+	private void registerNotification() {
+		
+//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+//            String channelId  = getString(R.string.default_notification_channel_id);
+//            String channelName = getString(R.string.default_notification_channel_name);
+//            NotificationManager notificationManager =
+//                    getSystemService(NotificationManager.class);
+//            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
+//                    channelName, NotificationManager.IMPORTANCE_LOW));
+//        }
+	}
 	private void setupToolbar() {
 		setSupportActionBar(mToolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);

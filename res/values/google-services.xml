@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">722705116065-8or2j6a5n6nniv4318ddfkaae8m8ug6s.apps.googleusercontent.com"</string>
+    <string name="gcm_defaultSenderId"   translatable="false">722705116065</string>
+    <string name="firebase_database_url" translatable="false">https://icampus-guardian-1496820423406.firebaseio.com</string>
+    <string name="google_app_id"         translatable="false">1:722705116065:android:cea7d8ba15cecf2e</string>
+    <string name="google_api_key"        translatable="false">AIzaSyBOvdzpZ4lZXMG-5reyNczboU-uWYOdKwY</string>
+    <string name="google_storage_bucket" translatable="false">icampus-guardian-1496820423406.appspot.com</string>
+</resources>

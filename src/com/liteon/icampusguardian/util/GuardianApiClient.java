@@ -25,7 +25,6 @@ import android.util.Log;
 public class GuardianApiClient {
 
 	private static final String TAG = GuardianApiClient.class.getName();
-	private String mUrlPrepend = "http://61.246.61.175:8080/icgwearable/mobile/%s";
 	private static String mSessionId;
 	private static String mToken;
 	private Uri mUri;
@@ -77,8 +76,9 @@ public class GuardianApiClient {
 		return null;
 	}
 	
-	private String concateUrl(String request) {
-		return String.format(mUrlPrepend, request);
+	public JSONResponse registerUser(String userEmail, String password, String role_type, String uuid, String account_name) {
+		
+		return null;
 	}
 	
 	private Object getResponseJSON(InputStream is, Class<?> class_type) {

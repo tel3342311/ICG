@@ -83,8 +83,10 @@ public class HealthyItem {
 			case CALORIES_BURNED:
 				output = Integer.toString(value) + " 卡";
 				break;
-			case CYCLING_TIME:	
 			case RUNNING_TIME:
+				output = Integer.toString(value) + " 分";
+				break;
+			case CYCLING_TIME:	
 			case SLEEP_TIME:
 			case WALKING_TIME:
 				SimpleDateFormat sdf = new SimpleDateFormat("HH 小時 mm 分");

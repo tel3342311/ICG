@@ -2,26 +2,6 @@ package com.liteon.icampusguardian;
 
 import java.util.List;
 
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
-import com.liteon.icampusguardian.fragment.AlarmFragment;
-import com.liteon.icampusguardian.fragment.AlarmFragment.IAddAlarmClicks;
-import com.liteon.icampusguardian.fragment.AlarmPeriodFragment;
-import com.liteon.icampusguardian.fragment.DailyHealthFragment;
-import com.liteon.icampusguardian.fragment.HealthFragment;
-import com.liteon.icampusguardian.fragment.SafetyFragment;
-import com.liteon.icampusguardian.fragment.SettingFragment;
-import com.liteon.icampusguardian.fragment.SettingProfileFragment;
-import com.liteon.icampusguardian.util.AlarmItem;
-import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
-import com.liteon.icampusguardian.util.AlarmPeriodItem;
-import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
-import com.liteon.icampusguardian.util.CircularImageView;
-import com.liteon.icampusguardian.util.HealthyItem.TYPE;
-import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
-
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
@@ -32,12 +12,32 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.style.UpdateAppearance;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
+import com.liteon.icampusguardian.fragment.AlarmFragment;
+import com.liteon.icampusguardian.fragment.AlarmFragment.IAddAlarmClicks;
+import com.liteon.icampusguardian.fragment.AlarmPeriodFragment;
+import com.liteon.icampusguardian.fragment.DailyHealthFragment;
+import com.liteon.icampusguardian.fragment.HealthFragment;
+import com.liteon.icampusguardian.fragment.SafetyFragment;
+import com.liteon.icampusguardian.fragment.SettingFragment;
+import com.liteon.icampusguardian.fragment.SettingProfileFragment;
+import com.liteon.icampusguardian.fragment.SettingTargetFragment;
+import com.liteon.icampusguardian.util.AlarmItem;
+import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
+import com.liteon.icampusguardian.util.AlarmPeriodItem;
+import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
+import com.liteon.icampusguardian.util.CircularImageView;
+import com.liteon.icampusguardian.util.HealthyItem.TYPE;
+import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
 public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks, IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -287,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			changeFragment(new SettingProfileFragment(), "基本資料", NAVIGATION_BACK);
 			break;
 		case GOAL_SETTING:
+			changeFragment(new SettingTargetFragment(), "每日目標設定", NAVIGATION_BACK);
 			break;
 		case PAIRING:
 			break;

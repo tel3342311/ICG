@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 public class DailyHealthFragment extends Fragment {
 	
 	private List<Integer> mDataList;
+	private List<String> mDateList;
 	private HealthHistogramView mHistogramView;
 	private HealthPieChartView mPiechartView;
 	private TYPE mType;
@@ -39,7 +40,7 @@ public class DailyHealthFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_daily_healthy, container, false);
 		findView(rootView);
-		mDataList = testData();
+		testData();
 		setupPieChart();
 		setupHistogram();
 		return rootView;
@@ -48,6 +49,7 @@ public class DailyHealthFragment extends Fragment {
 	private void setupHistogram() {
 		mHistogramView.setType(mType);
 		mHistogramView.setOnHistogramClickListener(mPiechartView);
+		mHistogramView.setDates(mDateList);
 		mHistogramView.setValuesByDay(mDataList);
 		mHistogramView.setTargetNumber(mDataList.get(0));
 	}
@@ -60,14 +62,20 @@ public class DailyHealthFragment extends Fragment {
 		mHistogramView = (HealthHistogramView) rootView.findViewById(R.id.healthy_histogram_view);
 		mPiechartView = (HealthPieChartView) rootView.findViewById(R.id.pie_chart_view);
 	}
-	private List<Integer> testData() {
+	private void testData() {
 		int target = (int) (System.currentTimeMillis() % 1000);
 		
-		List<Integer> list = new ArrayList<>(7);
-		list.add(target);
+		mDataList = new ArrayList<>(7);
+		mDataList.add(target);
 		for (int i = 1; i < 7; i++) {
-			list.add((int) (Math.random() * target));
+			mDataList.add((int) (Math.random() * target));
 		}
-		return list;
+
+		mDateList = new ArrayList<>(7);
+
+		for (int i = 0; i < 7; i++) {
+			mDateList.add( "2017/07/1"+ i);
+		}
+		
 	}
 }

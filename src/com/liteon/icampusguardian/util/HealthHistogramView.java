@@ -42,6 +42,7 @@ public class HealthHistogramView extends View {
 	private Rect mRectList[];
 	private int mTargetNum = 99;
 	private List<Integer> mValueList;
+	private List<String> mDateList;
 	private OnHistogramChangeListener mHistogramChangeListener;
 	private TYPE mType;
 	public HealthHistogramView(Context context) {
@@ -162,7 +163,7 @@ public class HealthHistogramView extends View {
 				for (int i = 0; i < HISTOGRAM_NUM; i++) {
 	                if(mRectList[i].contains(touchX,touchY)){
 	                    mSelectedHistogram = i;
-	                    mHistogramChangeListener.onHistogramChanged(i, mValueList.get(i));
+	                    mHistogramChangeListener.onHistogramChanged(i, mValueList.get(i), mDateList.get(i));
 	                	break;
 	                }
 	            }
@@ -185,9 +186,12 @@ public class HealthHistogramView extends View {
 	
 	public void setValuesByDay(List<Integer> values) {
 		mValueList = values;
-		mHistogramChangeListener.onHistogramChanged(mSelectedHistogram, mValueList.get(mSelectedHistogram));
+		mHistogramChangeListener.onHistogramChanged(mSelectedHistogram, mValueList.get(mSelectedHistogram), mDateList.get(mSelectedHistogram));
 	}
 	
+	public void setDates(List<String> dateList) {
+		mDateList = dateList;
+	}
 	@Override 
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
 	{
@@ -200,7 +204,7 @@ public class HealthHistogramView extends View {
 		mHistogramChangeListener = listener;
 	}
 	public static interface OnHistogramChangeListener {
-		public void onHistogramChanged(int idx, int value);
+		public void onHistogramChanged(int idx, int value, String date);
 	}
 	
 	public void setType(TYPE type) {

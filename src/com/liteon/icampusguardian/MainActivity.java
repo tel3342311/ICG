@@ -4,6 +4,20 @@ import java.util.List;
 
 import org.w3c.dom.Text;
 
+import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment;
@@ -14,6 +28,7 @@ import com.liteon.icampusguardian.fragment.HealthFragment;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
 import com.liteon.icampusguardian.fragment.SettingFragment;
 import com.liteon.icampusguardian.fragment.SettingProfileFragment;
+import com.liteon.icampusguardian.fragment.SettingTargetFragment;
 import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
 import com.liteon.icampusguardian.util.AlarmPeriodItem;
@@ -29,26 +44,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
-
 public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks,
 		IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener {
 
@@ -347,6 +346,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			changeFragment(new SettingProfileFragment(), "基本資料", NAVIGATION_BACK);
 			break;
 		case GOAL_SETTING:
+			changeFragment(new SettingTargetFragment(), "每日目標設定", NAVIGATION_BACK);
 			break;
 		case PAIRING:
 			break;

@@ -460,8 +460,9 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	}
 
 	@Override
-	public void onHistogramChanged(int idx, int value) {
+	public void onHistogramChanged(int idx, int value, String date) {
 		mCurrentValue = value;
+		mCurrentDate = date;
 		invalidate();
 	}
 }

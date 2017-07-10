@@ -75,7 +75,7 @@ public class AlarmPeriodAdapter extends Adapter<AlarmPeriodAdapter.ViewHolder> {
         	holder.mMoreIcon.setVisibility(View.INVISIBLE);
         }
         if (mAlarmItem.getPeriodItem().getItemType() == item.getItemType()) {
-        	holder.mTitleTextView.setTextColor(holder.mTitleTextView.getResources().getColor(R.color.color_accent,null));
+        	holder.mTitleTextView.setTextColor(holder.mTitleTextView.getResources().getColor(R.color.color_accent));
         }
         holder.mItem = item;
         mAlarmItem.PeriodItem = item;

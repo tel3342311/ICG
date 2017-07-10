@@ -37,4 +37,9 @@ public class Def {
 	public static final String EVENT_DURATION_ONE_DAY = "1";
 	public static final String EVENT_DURATION_WEEK = "7";
 	public static final String EVENT_DURATION_MONTH = "30";
+	
+	//Action
+	public static final String ACTION_NOTIFY = "com.liteon.icampusguardian.ACTION_NOTIFY";
+	public static final String EXTRA_NOTIFY_TYPE = "com.liteon.icampusguardian.EXTRA_NOTIFY_TYPE";
+	public static final String EXTRA_SOS_LOCATION = "com.liteon.icampusguardian.EXTRA_SOS_LOCATION"; 
 }

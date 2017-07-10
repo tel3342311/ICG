@@ -69,10 +69,10 @@ public class SettingFragment extends Fragment {
 
 	private void initChildInfo() {
 		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
-		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000,null));
+		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000));
 		mChildIcon.setBorderWidth(10);
-		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400,null));
-		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800,null));
+		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400));
+		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
 		mChildName.setText(mStudents.get(0).getName());

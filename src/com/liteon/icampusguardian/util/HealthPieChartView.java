@@ -86,7 +86,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		textPaint.setStrokeWidth(1);
 		//Paint for Target text
 		textTargetPaint = new Paint();
-		textTargetPaint.setColor(getResources().getColor(R.color.md_amber_700, null));
+		textTargetPaint.setColor(getResources().getColor(R.color.md_amber_700));
 		textTargetPaint.setTextSize(textTargetSize);
 		textTargetPaint.setAntiAlias(true);
 		
@@ -96,7 +96,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		arcPaintBackground.setStyle(Paint.Style.STROKE);
 		arcPaintBackground.setStrokeCap(Cap.BUTT);
 		arcPaintBackground.setStrokeJoin(Join.BEVEL);
-		arcPaintBackground.setColor(getResources().getColor(R.color.md_grey_400, null));
+		arcPaintBackground.setColor(getResources().getColor(R.color.md_grey_400));
 		arcPaintBackground.setStrokeWidth(25);
 		arcPaintBackground.setAntiAlias(true);
 		  
@@ -105,7 +105,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		arcPaintPrimary.setStyle(Paint.Style.STROKE);
 		arcPaintPrimary.setStrokeCap(Cap.BUTT);
 		arcPaintPrimary.setStrokeJoin(Join.BEVEL);
-		arcPaintPrimary.setColor(getResources().getColor(R.color.md_amber_700,null));
+		arcPaintPrimary.setColor(getResources().getColor(R.color.md_amber_700));
 		arcPaintPrimary.setStrokeWidth(25);
 		arcPaintPrimary.setAntiAlias(true);
 		//Paint for sleep
@@ -113,7 +113,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		arcClockPaint.setDither(true);
 		arcClockPaint.setStyle(Paint.Style.STROKE);
 		arcClockPaint.setStrokeCap(Cap.BUTT);
-		arcClockPaint.setColor(getResources().getColor(R.color.md_grey_500,null));
+		arcClockPaint.setColor(getResources().getColor(R.color.md_grey_500));
 		arcClockPaint.setStrokeWidth(40);
 		arcClockPaint.setAntiAlias(true);
 		float radius = (float)(mPieChartSize * Math.PI / 12.f);
@@ -126,7 +126,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		arcClockMinPaint.setDither(true);
 		arcClockMinPaint.setStyle(Paint.Style.STROKE);
 		arcClockMinPaint.setStrokeCap(Cap.ROUND);
-		arcClockMinPaint.setColor(getResources().getColor(R.color.md_grey_500,null));
+		arcClockMinPaint.setColor(getResources().getColor(R.color.md_grey_500));
 		arcClockMinPaint.setStrokeWidth(10);
 		arcClockMinPaint.setAntiAlias(true);
 		radius = (float)(mPieChartSize * Math.PI / 60.f);
@@ -143,7 +143,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		arcClockBackGroundPaint.setDither(true);
 		arcClockBackGroundPaint.setStyle(Paint.Style.STROKE);
 		arcClockBackGroundPaint.setStrokeCap(Cap.BUTT);
-		arcClockBackGroundPaint.setColor(getResources().getColor(R.color.md_deep_purple_A700, null));
+		arcClockBackGroundPaint.setColor(getResources().getColor(R.color.md_deep_purple_A700));
 		arcClockBackGroundPaint.setStrokeWidth(41);
 		arcClockBackGroundPaint.setAntiAlias(true);
 	}
@@ -451,8 +451,8 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	
 	public void setType(TYPE type) {
 		mType = type;
-		arcPaintPrimary.setColor(getResources().getColor(type.getColorId(), null));
-		textTargetPaint.setColor(getResources().getColor(type.getColorId(), null));
+		arcPaintPrimary.setColor(getResources().getColor(type.getColorId()));
+		textTargetPaint.setColor(getResources().getColor(type.getColorId()));
 	}
 	
 	public void setTargetValue(int targetValue) {

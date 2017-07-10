@@ -2,6 +2,8 @@ package com.liteon.icampusguardian;
 
 import java.util.List;
 
+import org.w3c.dom.Text;
+
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment;
@@ -17,12 +19,16 @@ import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPerio
 import com.liteon.icampusguardian.util.AlarmPeriodItem;
 import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
+import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
-import android.os.Build;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
@@ -30,18 +36,23 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.style.UpdateAppearance;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks, IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks,
+		IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener {
 
+	private static final String TAG = MainActivity.class.getName(); 
 	private CircularImageView mChildIcon;
 	private TextView mChildName;
 	private Toolbar mToolbar;
@@ -53,15 +64,19 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	private List<Student> mStudents;
 	private int mCurrentStudentIdx;
 	private DBHelper mDbHelper;
+	private LocalBroadcastManager mLocalBroadcastManager;
+
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//registerNotification();
+		// registerNotification();
 		mDbHelper = DBHelper.getInstance(this);
-		//get child list
+		mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
+		// get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		findViews();
 		setListener();
@@ -69,40 +84,69 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		initChildInfo();
 		updateMenuItem();
 		BottomNavigationViewHelper.disableShiftMode(mBottomView);
-	}
-	
-	private void registerNotification() {
 		
-//		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // Create channel to show notifications.
-//            String channelId  = getString(R.string.default_notification_channel_id);
-//            String channelName = getString(R.string.default_notification_channel_name);
-//            NotificationManager notificationManager =
-//                    getSystemService(NotificationManager.class);
-//            notificationManager.createNotificationChannel(new NotificationChannel(channelId,
-//                    channelName, NotificationManager.IMPORTANCE_LOW));
-//        }
+		if (getIntent().getExtras() != null) {
+			if (TextUtils.equals(Def.ACTION_NOTIFY, getIntent().getAction())) {
+				String type = getIntent().getStringExtra(Def.EXTRA_NOTIFY_TYPE);
+				if (TextUtils.equals(type, "sos")) {
+					SafetyFragment safetyFragment = new SafetyFragment(getIntent());
+					changeFragment(safetyFragment);
+				}
+			}
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d(TAG, "Key: " + key + " Value: " + value);
+                Toast.makeText(this, "Key: " + key + " Value: " + value, Toast.LENGTH_SHORT).show();
+            }
+        }
 	}
+
+	private void registerNotification() {
+
+		// if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+		// Create channel to show notifications.
+		// String channelId =
+		// getString(R.string.default_notification_channel_id);
+		// String channelName =
+		// getString(R.string.default_notification_channel_name);
+		// NotificationManager notificationManager =
+		// getSystemService(NotificationManager.class);
+		// notificationManager.createNotificationChannel(new
+		// NotificationChannel(channelId,
+		// channelName, NotificationManager.IMPORTANCE_LOW));
+		// }
+	}
+
 	private void setupToolbar() {
 		setSupportActionBar(mToolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
 
-        mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            	
-            	mDrawerLayout.openDrawer(Gravity.LEFT);
-            }
-        });
+		mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
+		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				mDrawerLayout.openDrawer(Gravity.LEFT);
+			}
+		});
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		changeFragment(new SafetyFragment(), "安心", NAVIGATION_DRAWER);
+
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(Def.ACTION_NOTIFY);
+		mLocalBroadcastManager.registerReceiver(mReceiver, filter);
 		
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mLocalBroadcastManager.unregisterReceiver(mReceiver);
 	}
 	
 	@Override
@@ -111,24 +155,25 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			mDrawerLayout.closeDrawer(Gravity.LEFT);
 			return;
 		}
-		
+
 		if (mCurrentFragment != null) {
 			if (mCurrentFragment instanceof DailyHealthFragment) {
 				mBottomView.setSelectedItemId(R.id.action_health);
 				return;
-			} else if (mCurrentFragment instanceof AlarmFragment){
+			} else if (mCurrentFragment instanceof AlarmFragment) {
 				if (((AlarmFragment) mCurrentFragment).isEditMode()) {
 					((AlarmFragment) mCurrentFragment).exitEditMode();
 					return;
 				}
-			} else if (mCurrentFragment instanceof AlarmEditingFragment){
+			} else if (mCurrentFragment instanceof AlarmEditingFragment) {
 				mBottomView.setSelectedItemId(R.id.action_alarm);
 				return;
-			} else if (mCurrentFragment instanceof AlarmPeriodFragment){
-				changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this),"設定鬧鈴", 0);				
+			} else if (mCurrentFragment instanceof AlarmPeriodFragment) {
+				changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this), "設定鬧鈴", 0);
 				return;
 			} else if (mCurrentFragment instanceof SettingProfileFragment) {
-				changeFragment(new SettingFragment(MainActivity.this), getString(R.string.setting_tab), NAVIGATION_DRAWER);				
+				changeFragment(new SettingFragment(MainActivity.this), getString(R.string.setting_tab),
+						NAVIGATION_DRAWER);
 				return;
 			} else {
 				finish();
@@ -137,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		}
 		super.onBackPressed();
 	}
-	
+
 	private void findViews() {
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		mBottomView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
@@ -146,35 +191,35 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		mChildIcon = (CircularImageView) mNavigationView.getHeaderView(0).findViewById(R.id.child_icon);
 		mChildName = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.child_name);
 	}
-	
+
 	private void setListener() {
 		mBottomView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		mNavigationView.setNavigationItemSelectedListener(this);
 	}
-	
+
 	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
-		
+
 		@Override
 		public boolean onNavigationItemSelected(MenuItem item) {
 			Fragment fragment = null;
-			String title = ""; 
+			String title = "";
 			switch (item.getItemId()) {
-				case R.id.action_safty:
-				    fragment = new SafetyFragment();
-				    title = getString(R.string.safty_tab);
-					break;
-				case R.id.action_health:
-					fragment = new HealthFragment(MainActivity.this);
-					title = getString(R.string.health_tab);
-					break;
-				case R.id.action_alarm:
-					fragment = new AlarmFragment(MainActivity.this);
-					title = getString(R.string.alarm_tab);
-					break;
-				case R.id.action_setting:
-					fragment = new SettingFragment(MainActivity.this);
-					title = getString(R.string.setting_tab);
-					break;
+			case R.id.action_safty:
+				fragment = new SafetyFragment();
+				title = getString(R.string.safty_tab);
+				break;
+			case R.id.action_health:
+				fragment = new HealthFragment(MainActivity.this);
+				title = getString(R.string.health_tab);
+				break;
+			case R.id.action_alarm:
+				fragment = new AlarmFragment(MainActivity.this);
+				title = getString(R.string.alarm_tab);
+				break;
+			case R.id.action_setting:
+				fragment = new SettingFragment(MainActivity.this);
+				title = getString(R.string.setting_tab);
+				break;
 			}
 			if (fragment == null) {
 				return false;
@@ -184,44 +229,44 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			return true;
 		}
 	};
-	
+
 	private void changeFragment(Fragment frag) {
 		mCurrentFragment = frag;
 		FragmentManager fragmentManager = getSupportFragmentManager();
-	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-	    fragmentTransaction.replace(R.id.container, frag);
-	    fragmentTransaction.commit();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.replace(R.id.container, frag);
+		fragmentTransaction.commit();
 	}
-	
+
 	private void changeFragment(Fragment frag, String title, int navigation) {
 		mCurrentFragment = frag;
 		FragmentManager fragmentManager = getSupportFragmentManager();
-	    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-	    fragmentTransaction.replace(R.id.container, frag);
-	    fragmentTransaction.commit();
-	    
-	    if (mToolbar != null) {
-	    	
-	    	mToolbar.setTitle(title);
-	    	if (navigation == NAVIGATION_BACK) {
-	    		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-	            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-	                @Override
-	                public void onClick(View v) {	
-	                	onBackPressed();
-	                }
-	            });
-	    	} else if (navigation == NAVIGATION_DRAWER) {
-	    		mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
-	            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-	                @Override
-	                public void onClick(View v) {
-	                	
-	                	mDrawerLayout.openDrawer(Gravity.LEFT);
-	                }
-	            });
-	    	}
-	    }
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.replace(R.id.container, frag);
+		fragmentTransaction.commit();
+
+		if (mToolbar != null) {
+
+			mToolbar.setTitle(title);
+			if (navigation == NAVIGATION_BACK) {
+				mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
+				mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						onBackPressed();
+					}
+				});
+			} else if (navigation == NAVIGATION_DRAWER) {
+				mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
+				mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+
+						mDrawerLayout.openDrawer(Gravity.LEFT);
+					}
+				});
+			}
+		}
 	}
 
 	@Override
@@ -229,46 +274,47 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		Fragment fragment = new DailyHealthFragment(type);
 		changeFragment(fragment, type.getName(), NAVIGATION_BACK);
 	}
-	
+
 	private void initChildInfo() {
 		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
-		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000, null));
+		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000));
 		mChildIcon.setBorderWidth(10);
-		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400, null));
-		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800, null));
+		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400));
+		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
 		mChildName.setText(mStudents.get(mCurrentStudentIdx).getName());
 	}
-	
+
 	private void updateMenuItem() {
 		Menu menu = mNavigationView.getMenu();
 		int nextStudent = mCurrentStudentIdx == 0 ? 1 : 0;
-	    MenuItem switchAccount = menu.findItem(R.id.action_switch_account);
-	    switchAccount.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getName()));
-	   
-	    MenuItem deleteAccount = menu.findItem(R.id.action_delete_account);
-	    deleteAccount.setTitle(String.format(getString(R.string.delete_account), mStudents.get(mCurrentStudentIdx).getName()));
+		MenuItem switchAccount = menu.findItem(R.id.action_switch_account);
+		switchAccount.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getName()));
+
+		MenuItem deleteAccount = menu.findItem(R.id.action_delete_account);
+		deleteAccount.setTitle(
+				String.format(getString(R.string.delete_account), mStudents.get(mCurrentStudentIdx).getName()));
 	}
-	
+
 	@Override
 	public boolean onNavigationItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_switch_account) {
 			switchAccount();
 		} else if (id == R.id.action_add_child) {
-			
+
 		} else if (id == R.id.action_delete_account) {
-			
+
 		} else if (id == R.id.action_setting) {
-			
+
 		}
 		mDrawerLayout.closeDrawers();
 		return true;
 	}
 
 	private void switchAccount() {
-		mCurrentStudentIdx = mCurrentStudentIdx == 0 ?  1 : 0;
+		mCurrentStudentIdx = mCurrentStudentIdx == 0 ? 1 : 0;
 		initChildInfo();
 		updateMenuItem();
 	}
@@ -281,13 +327,13 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	@Override
 	public void onEditAlarm(int idx) {
 		mCurrentAlarmIdx = idx;
-		changeFragment(new AlarmEditingFragment(idx, this),"設定鬧鈴", 0);
+		changeFragment(new AlarmEditingFragment(idx, this), "設定鬧鈴", 0);
 	}
 
 	@Override
 	public void onClick(AlarmPeriodItem item) {
 		if (item.getItemType() == AlarmPeriodItem.TYPE.CUSTOMIZE) {
-			//TODO get current AlarmItem
+			// TODO get current AlarmItem
 			AlarmItem alarmItem = new AlarmItem();
 			alarmItem.setPeriodItem(item);
 			changeFragment(new AlarmPeriodFragment(alarmItem), "設定鬧鈴週期", NAVIGATION_BACK);
@@ -312,4 +358,18 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			break;
 		}
 	}
+	
+
+	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (TextUtils.equals(Def.ACTION_NOTIFY, intent.getAction())) {
+				String type = intent.getStringExtra(Def.EXTRA_NOTIFY_TYPE);
+				if (TextUtils.equals(type, "sos")) {
+					SafetyFragment safetyFragment = new SafetyFragment(intent);
+					changeFragment(safetyFragment);
+				}
+			}
+		}
+	};
 }

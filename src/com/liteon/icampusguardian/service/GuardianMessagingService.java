@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.Def;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,11 +13,12 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 public class GuardianMessagingService extends FirebaseMessagingService {
 	
-	private static final String TAG = GuardianMessagingService.class.getName();
+	private static final String TAG = GuardianMessagingService.class.getName();	
 	
 	@Override
 	public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -54,10 +56,17 @@ public class GuardianMessagingService extends FirebaseMessagingService {
 	}
 	
 	private void handleNow(RemoteMessage message) {
-		Log.d(TAG, "handle Now");
+		Log.d(TAG, "FCM message handle Now, Message Body: " + message.getNotification().getBody());
 		sendNotification(message.getNotification().getBody());
+		sendBrocastToAp(message.getNotification().getBody());
 	}
 	
+	public void sendBrocastToAp(String message) {
+		Intent intent = new Intent(Def.ACTION_NOTIFY);
+		intent.putExtra(Def.EXTRA_NOTIFY_TYPE, "sos");
+		intent.putExtra(Def.EXTRA_SOS_LOCATION, "25.070108, 121.611435");
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+	}
 	/**
      * Create and show a simple notification containing the received FCM message.
      *
@@ -65,6 +74,9 @@ public class GuardianMessagingService extends FirebaseMessagingService {
      */
 	private void sendNotification(String messageBody) {
 		Intent intent = new Intent(this, MainActivity.class);
+		intent.setAction(Def.ACTION_NOTIFY);
+		intent.putExtra(Def.EXTRA_NOTIFY_TYPE, "sos");
+		intent.putExtra(Def.EXTRA_SOS_LOCATION, "25.070108, 121.611435");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);

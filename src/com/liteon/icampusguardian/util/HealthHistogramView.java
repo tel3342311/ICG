@@ -205,8 +205,8 @@ public class HealthHistogramView extends View {
 	
 	public void setType(TYPE type) {
 		mType = type;
-		paintSelected.setColor(getResources().getColor(mType.getColorId(), null));
-		paintOthers.setColor(getResources().getColor(mType.getColorId(), null));
+		paintSelected.setColor(getResources().getColor(mType.getColorId()));
+		paintOthers.setColor(getResources().getColor(mType.getColorId()));
 		paintOthers.setAlpha(128);
 	}
 }

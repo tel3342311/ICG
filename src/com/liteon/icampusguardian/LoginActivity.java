@@ -29,7 +29,9 @@ import com.liteon.icampusguardian.util.JSONResponse.Return;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -72,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_login);
 		setupGoogleSignIn();
 		setupFacebookSignIn();
-		mApiClient = new GuardianApiClient();
+		mApiClient = new GuardianApiClient(getApplicationContext());
 		findViews();
 		setListener();
 		
@@ -257,6 +259,7 @@ public class LoginActivity extends AppCompatActivity {
 
         protected String doInBackground(String... args) {
         	DBHelper helper = DBHelper.getInstance(LoginActivity.this);
+        	SharedPreferences sp = getApplicationContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
         	String token = "";
         	//Account values
         	ContentValues cv = new ContentValues();
@@ -275,6 +278,7 @@ public class LoginActivity extends AppCompatActivity {
         		cv.put(AccountEntry.COLUMN_NAME_PASSWORD, args[1]);
         		cv.put(AccountEntry.COLUMN_NAME_TOKEN, token);
         		helper.insertAccount(helper.getWritableDatabase(), cv);
+        		
         	} else {
         		mApiClient.setToken(token);
         	}
@@ -287,6 +291,7 @@ public class LoginActivity extends AppCompatActivity {
         	SQLiteDatabase db = helper.getWritableDatabase();
         	helper.insertChildList(db, childList);
         	
+
         	//get Device event report
         	String eventId = Def.EVENT_ID_GPS_LOCATION;
         	String duration = Def.EVENT_DURATION_WEEK;
@@ -296,7 +301,13 @@ public class LoginActivity extends AppCompatActivity {
         			response.getReturn().getResults().getDevices();
         		}
         	}
-        	
+    		
+    		SharedPreferences.Editor editor = sp.edit();
+    		editor.putString(Def.SP_LOGIN_TOKEN, token);
+        	if (childList.size() > 0 && !sp.contains(Def.SP_CURRENT_STUDENT)) {
+        		editor.putInt(Def.SP_CURRENT_STUDENT, 0);
+        	}
+        	editor.commit();
         	return token;
         }
 

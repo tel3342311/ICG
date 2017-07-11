@@ -65,6 +65,8 @@
 	<dimen name="setting_profile_list_height">240dp</dimen>
 	<dimen name="setting_profile_item_height">60dp</dimen>
 	<dimen name="setting_profile_option_height">160dp</dimen>
+	<dimen name="setting_target_margin_left">5dp</dimen>
+	<dimen name="setting_target_size">20sp</dimen>
 	<!-- Drawer  -->
 	<dimen name="navigation_header_height">175dp</dimen>
 	<dimen name="navigation_header_circular_icon_size">66dp</dimen>

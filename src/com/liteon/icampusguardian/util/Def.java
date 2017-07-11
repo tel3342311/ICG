@@ -1,6 +1,16 @@
 package com.liteon.icampusguardian.util;
 
 public class Def {
+	//SharePreference
+	public final static String SHARE_PREFERENCE = "com.liteon.icampusguardian.PREFERENCE_FILE_KEY";
+	public final static String SP_CURRENT_STUDENT = "com.liteon.icampusguardian.SP_CURRENT_STUDENT";
+	public static final String SP_LOGIN_TOKEN = "com.liteon.icampusguardian.SP_LOGIN_TOKEN";
+	public static final String SP_TARGET_CARLOS = "com.liteon.icampusguardian.SP_TARGET_CARLOS";
+	public static final String SP_TARGET_STEPS = "com.liteon.icampusguardian.SP_TARGET_STEPS";
+	public static final String SP_TARGET_WALKING = "com.liteon.icampusguardian.SP_TARGET_WALKING";
+	public static final String SP_TARGET_RUNNING = "com.liteon.icampusguardian.SP_TARGET_RUNNING";
+	public static final String SP_TARGET_CYCLING = "com.liteon.icampusguardian.SP_TARGET_CYCLING";
+	public static final String SP_TARGET_SLEEPING = "com.liteon.icampusguardian.SP_TARGET_SLEEPING";
 	//RET CODE there are two kind of success code
 	public static final String RET_SUCCESS_1 = "SUC01";
 	public static final String RET_SUCCESS_2 = "WSUC01";
@@ -28,6 +38,19 @@ public class Def {
 	//API 19 get device event report
 	public static final String REQUEST_GET_DEVICE_EVENT_REPORT = "DeviceEventReport";
 
+	//API 32 update child info
+	public static final String REQUEST_UPDATE_CHILD_INFO = "UpdateStudentDetails";
+	public static final String KEY_STUDENT_ID = "student_id";
+	public static final String KEY_NAME = "name";
+	public static final String KEY_NICKNAME = "nickname";
+	public static final String KEY_CLASS = "101";
+	public static final String KEY_ROLL_NO = "roll_no";
+	public static final String KEY_HEIGHT  = "height";
+	public static final String KEY_WEIGHT  = "weight";
+	public static final String KEY_DOB = "dob";
+	public static final String KEY_GENDER = "gender";
+	public static final String KEY_UUID = "uuid";
+
 	//EVENT ID LIST
 	public static final String EVENT_ID_SOS_ALERT = "11";
 	public static final String EVENT_ID_SOS_REMOVE = "12";
@@ -41,5 +64,6 @@ public class Def {
 	//Action
 	public static final String ACTION_NOTIFY = "com.liteon.icampusguardian.ACTION_NOTIFY";
 	public static final String EXTRA_NOTIFY_TYPE = "com.liteon.icampusguardian.EXTRA_NOTIFY_TYPE";
-	public static final String EXTRA_SOS_LOCATION = "com.liteon.icampusguardian.EXTRA_SOS_LOCATION"; 
+	public static final String EXTRA_SOS_LOCATION = "com.liteon.icampusguardian.EXTRA_SOS_LOCATION";
+
 }

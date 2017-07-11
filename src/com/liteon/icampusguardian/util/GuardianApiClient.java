@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -18,9 +19,12 @@ import com.google.gson.Gson;
 import com.liteon.icampusguardian.util.JSONResponse.Device;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
+import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 public class GuardianApiClient {
 
@@ -28,14 +32,16 @@ public class GuardianApiClient {
 	private static String mSessionId;
 	private static String mToken;
 	private Uri mUri;
+	private WeakReference<Context> mContext;
 	
-	public GuardianApiClient() {
+	public GuardianApiClient(Context context) {
 		//Current url "http://61.246.61.175:8080/icgwearable/mobile/%s"
 		Uri.Builder builder = new Uri.Builder();
 		mUri = builder.scheme("http")
 		    .encodedAuthority("61.246.61.175:8080")
 		    .appendPath("icgwearable")
 		    .appendPath("mobile").build();
+		mContext = new WeakReference<Context>(context);
 	}
 	public JSONResponse login(String user, String password) {
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USERLOGIN).build();
@@ -64,6 +70,8 @@ public class GuardianApiClient {
             	mSessionId = result.getReturn().getResponseSummary().getSessionId();
             	mToken = result.getReturn().getResults().getToken();
             	return result;
+            } else {
+            	showError(status);
             }
 			
 		} catch (MalformedURLException e) {
@@ -115,6 +123,8 @@ public class GuardianApiClient {
             		Student[] students = result.getReturn().getResults().getStudents();
             		return result;
             	}
+            } else {
+            	showError(status);
             }
 			
 		} catch (MalformedURLException e) {
@@ -156,11 +166,81 @@ public class GuardianApiClient {
             	} else {
             		Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
             	}
+            } else {
+            	showError(status);
             }
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public JSONResponse updateChildData(Student student) {
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_UPDATE_CHILD_INFO).
+					appendPath(mToken).build();
+		try {
+			URL url = new URL(uri.toString());
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setRequestProperty("Content-Type", "application/json");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(true);
+			urlConnection.setUseCaches(false);
+
+			JSONObject jsonParam = new JSONObject();
+			jsonParam.put(Def.KEY_STUDENT_ID, student.getStudent_id());
+			jsonParam.put(Def.KEY_NAME, student.getName());
+			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
+			jsonParam.put(Def.KEY_CLASS, student.get_class());
+			jsonParam.put(Def.KEY_ROLL_NO, student.getRoll_no());
+			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
+			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());
+			jsonParam.put(Def.KEY_DOB, student.getDob());
+			jsonParam.put(Def.KEY_GENDER, student.getGender());
+			jsonParam.put(Def.KEY_UUID ,student.getUuid());
+			
+			OutputStream os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonParam.toString());
+            writer.flush();
+            writer.close();
+            final int status = urlConnection.getResponseCode();
+            if (status == HttpURLConnection.HTTP_OK) {
+            	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	return result;
+            } else {
+            	if (mContext.get() != null) {
+            		((Activity)mContext.get()).runOnUiThread( new Runnable() {
+						
+						@Override
+						public void run() {
+							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT).show();
+						}
+					});
+            	}
+            }
+			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	private void showError(int status) {
+		final int status_code = status; 
+		if (mContext.get() != null) {
+    		((Activity)mContext.get()).runOnUiThread( new Runnable() {
+				
+				@Override
+				public void run() {
+					Toast.makeText(mContext.get(), "Error : Http response " + status_code, Toast.LENGTH_SHORT).show();
+				}
+			});
+    	}
 	}
 }

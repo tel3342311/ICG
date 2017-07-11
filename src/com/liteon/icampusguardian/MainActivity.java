@@ -2,22 +2,6 @@ package com.liteon.icampusguardian;
 
 import java.util.List;
 
-import org.w3c.dom.Text;
-
-import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment;
@@ -44,9 +28,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks,
 		IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener {
@@ -170,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			} else if (mCurrentFragment instanceof AlarmPeriodFragment) {
 				changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this), "設定鬧鈴", 0);
 				return;
-			} else if (mCurrentFragment instanceof SettingProfileFragment) {
+			} else if (mCurrentFragment instanceof SettingProfileFragment || mCurrentFragment instanceof SettingTargetFragment) {
 				changeFragment(new SettingFragment(MainActivity.this), getString(R.string.setting_tab),
 						NAVIGATION_DRAWER);
 				return;

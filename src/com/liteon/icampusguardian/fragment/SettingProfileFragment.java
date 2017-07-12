@@ -74,8 +74,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		initRecycleView();
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+
 		return rootView;
 	}
 	
@@ -338,4 +337,12 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
         	getActivity().onBackPressed();
         }
     }
+	
+	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+	}
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout 
+        android:layout_width="match_parent"
+    	android:layout_height="60dp"
+    	android:background="@color/md_red_500">
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="已於 07/11 14:17 更新"
+        android:textColor="@color/md_white_1000"/>
+
+	   	<android.support.v7.widget.AppCompatButton
+	   	    android:id="@+id/button_sync"
+	   	    android:layout_width="80dp"
+	   	    android:layout_height="match_parent"
+	   	    android:layout_margin="@dimen/navigation_bottom_btn_margin"
+        	android:layout_centerVertical="true"
+        	android:layout_alignParentRight="true"
+	   	    android:textColor="@color/md_black_1000"
+	   	    android:text="同  步" />
+	   	</RelativeLayout>
+</RelativeLayout>

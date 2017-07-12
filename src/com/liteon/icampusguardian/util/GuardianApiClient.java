@@ -68,7 +68,9 @@ public class GuardianApiClient {
             if (status == HttpURLConnection.HTTP_OK) {
             	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
             	mSessionId = result.getReturn().getResponseSummary().getSessionId();
-            	mToken = result.getReturn().getResults().getToken();
+            	if (result.getReturn().getResults() != null) {
+            		mToken = result.getReturn().getResults().getToken();
+            	}
             	return result;
             } else {
             	showError(status);
@@ -222,6 +224,121 @@ public class GuardianApiClient {
             	}
             }
 			
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public JSONResponse pairNewDevice(Student student) {
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_PAIR_NEW_DEVICE).
+				appendPath(mToken).
+				appendPath(student.getUuid()).build();
+		
+		try {
+			URL url = new URL(uri.toString());
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setRequestProperty("Content-Type", "application/json");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(true);
+			urlConnection.setUseCaches(false);
+
+			JSONObject jsonParam = new JSONObject();
+
+			jsonParam.put(Def.KEY_UUID, student.getUuid());
+			jsonParam.put(Def.KEY_NAME, student.getName());
+			jsonParam.put(Def.KEY_EMAIL, "");
+			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
+			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
+			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());
+			jsonParam.put(Def.KEY_DOB, student.getDob());
+			jsonParam.put(Def.KEY_GENDER, student.getGender());
+
+
+			OutputStream os = urlConnection.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+			writer.write(jsonParam.toString());
+			writer.flush();
+			writer.close();
+			final int status = urlConnection.getResponseCode();
+			if (status == HttpURLConnection.HTTP_OK) {
+				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
+						JSONResponse.class);
+				return result;
+			} else {
+				if (mContext.get() != null) {
+					((Activity) mContext.get()).runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
+									.show();
+						}
+					});
+				}
+			}
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public JSONResponse unpairDevice(Student student) {
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_UNPAIR_DEVICE).
+				appendPath(mToken).
+				appendPath(student.getUuid()).build();
+		
+		try {
+			URL url = new URL(uri.toString());
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setRequestProperty("Content-Type", "application/json");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(true);
+			urlConnection.setUseCaches(false);
+
+			JSONObject jsonParam = new JSONObject();
+
+			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
+			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
+			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());
+			jsonParam.put(Def.KEY_DOB, student.getDob());
+			jsonParam.put(Def.KEY_GENDER, student.getGender());
+
+
+			OutputStream os = urlConnection.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+			writer.write(jsonParam.toString());
+			writer.flush();
+			writer.close();
+			final int status = urlConnection.getResponseCode();
+			if (status == HttpURLConnection.HTTP_OK) {
+				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
+						JSONResponse.class);
+				return result;
+			} else {
+				if (mContext.get() != null) {
+					((Activity) mContext.get()).runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
+									.show();
+						}
+					});
+				}
+			}
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

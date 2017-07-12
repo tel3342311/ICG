@@ -7,11 +7,14 @@ import java.util.List;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
+import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.SettingItem;
 import com.liteon.icampusguardian.util.SettingItemAdapter;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
@@ -34,6 +37,7 @@ public class SettingFragment extends Fragment {
 	private WeakReference<ISettingItemClickListener> mClicks;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
+	private int mCurrnetStudentIdx;
 
 	public SettingFragment(ISettingItemClickListener clicks) {
 		mClicks = new WeakReference<ISettingItemClickListener>(clicks);
@@ -48,7 +52,7 @@ public class SettingFragment extends Fragment {
 		mDbHelper = DBHelper.getInstance(getActivity());
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
-		initChildInfo();
+
 		return rootView;
 	}
 	
@@ -75,7 +79,7 @@ public class SettingFragment extends Fragment {
 		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
-		mChildName.setText(mStudents.get(0).getName());
+		mChildName.setText(mStudents.get(mCurrnetStudentIdx).getName());
 	}
 	
 	private void testData() {
@@ -86,5 +90,13 @@ public class SettingFragment extends Fragment {
 				myDataset.add(item);
 			}
 		}
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
+		initChildInfo();
 	}
 }

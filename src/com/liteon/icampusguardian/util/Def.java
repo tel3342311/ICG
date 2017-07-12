@@ -3,6 +3,7 @@ package com.liteon.icampusguardian.util;
 public class Def {
 	//SharePreference
 	public final static String SHARE_PREFERENCE = "com.liteon.icampusguardian.PREFERENCE_FILE_KEY";
+	public final static String SP_USER_TERM_READ = "com.liteon.icampusguardian.SP_USER_TERM_READ";
 	public final static String SP_CURRENT_STUDENT = "com.liteon.icampusguardian.SP_CURRENT_STUDENT";
 	public static final String SP_LOGIN_TOKEN = "com.liteon.icampusguardian.SP_LOGIN_TOKEN";
 	public static final String SP_TARGET_CARLOS = "com.liteon.icampusguardian.SP_TARGET_CARLOS";
@@ -11,6 +12,7 @@ public class Def {
 	public static final String SP_TARGET_RUNNING = "com.liteon.icampusguardian.SP_TARGET_RUNNING";
 	public static final String SP_TARGET_CYCLING = "com.liteon.icampusguardian.SP_TARGET_CYCLING";
 	public static final String SP_TARGET_SLEEPING = "com.liteon.icampusguardian.SP_TARGET_SLEEPING";
+	public static final String SP_ALARM_MAP = "com.liteon.icampusguardian.SP_ALARM_MAP";
 	//RET CODE there are two kind of success code
 	public static final String RET_SUCCESS_1 = "SUC01";
 	public static final String RET_SUCCESS_2 = "WSUC01";
@@ -35,9 +37,14 @@ public class Def {
 	//API 07 get student list
 	public static final String REQUEST_GET_CHILDREN_LIST = "StudentList";
 	
+	//API 14 pair new device
+	public static final String REQUEST_PAIR_NEW_DEVICE = "ParentUserDevicePair";
+	//API 15 pair new device
+	public static final String REQUEST_UNPAIR_DEVICE = "ParentUserDeviceUnPair";
+	
 	//API 19 get device event report
 	public static final String REQUEST_GET_DEVICE_EVENT_REPORT = "DeviceEventReport";
-
+	public static final String KEY_EMAIL = "email";
 	//API 32 update child info
 	public static final String REQUEST_UPDATE_CHILD_INFO = "UpdateStudentDetails";
 	public static final String KEY_STUDENT_ID = "student_id";

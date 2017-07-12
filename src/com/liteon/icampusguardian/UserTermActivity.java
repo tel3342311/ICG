@@ -1,6 +1,10 @@
 package com.liteon.icampusguardian;
 
+import com.liteon.icampusguardian.util.Def;
+
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +18,6 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 	
 	private TextView mAgree;
 	private TextView mQuit;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,14 +41,16 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.option_agree:
-			Intent intent = new Intent();
-			intent.setClass(this, LoginActivity.class);
-			startActivity(intent);
+			userTermRead();
 			break;
 		case R.id.option_quit:
 			finish();
 			break;
 		}
 	}
-
+	private void userTermRead() {	
+		Intent intent = new Intent();
+		intent.setClass(this, LoginActivity.class);
+		startActivity(intent);
+	}
 }

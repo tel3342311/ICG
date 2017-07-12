@@ -72,22 +72,39 @@ public class LoginActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-		setupGoogleSignIn();
-		setupFacebookSignIn();
-		mApiClient = new GuardianApiClient(getApplicationContext());
 		findViews();
 		setListener();
 		
-		Intent intent = new Intent();
-		intent.setClass(LoginActivity.this, WelcomeActivity.class);
-		startActivityForResult(intent, RC_USER_TERM);
+		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
+		if (sp.getInt(Def.SP_USER_TERM_READ, 0) == 0) {
+			Intent intent = new Intent();
+			intent.setClass(LoginActivity.this, WelcomeActivity.class);
+			startActivityForResult(intent, RC_USER_TERM);
+		} else if (!TextUtils.isEmpty(token)) {
+    		
+    		Intent intent = new Intent();
+    		intent.setClass(getApplicationContext(), MainActivity.class);
+    		startActivity(intent);
+    		finish();	
+		} else {
+			setupGoogleSignIn();
+			setupFacebookSignIn();
+			mApiClient = new GuardianApiClient(this);
+		}
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mUserName.setText(Def.USER);
-		mPassword.setText(Def.PASSWORD);
+		//mUserName.setText(Def.USER);
+		//mPassword.setText(Def.PASSWORD);
+		
+		//For Dev.
+		Intent intent = new Intent();
+		intent.setClass(getApplicationContext(), MainActivity.class);
+		startActivity(intent);
+
 	}
 	private void findViews() {
 		signInButtonNormal = (AppCompatButton) findViewById(R.id.ap_login);
@@ -264,12 +281,20 @@ public class LoginActivity extends AppCompatActivity {
         	//Account values
         	ContentValues cv = new ContentValues();
         	token = helper.getAccountToken(helper.getReadableDatabase(), args[0]);
-        	//TODO remove this for save token
-        	token = "";
+
         	if (TextUtils.isEmpty(token)) {
-        		JSONResponse response = mApiClient.login(args[0], args[1]);
+        		final JSONResponse response = mApiClient.login(args[0], args[1]);
+        		if (response == null) {
+        			return null;
+        		}
         		if (response.getReturn().getResults() == null) {
-        			Toast.makeText(getApplicationContext(), "Status Code :" +response.getReturn().getResponseSummary().getStatusCode() + " Error is " +response.getReturn().getResponseSummary().getErrorMessage(), Toast.LENGTH_LONG).show();
+        			runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+		        			Toast.makeText(getApplicationContext(), "Status Code :" +response.getReturn().getResponseSummary().getStatusCode() + " Error is " +response.getReturn().getResponseSummary().getErrorMessage(), Toast.LENGTH_LONG).show();							
+						}
+					});
         			return null;
         		}
         		token = response.getReturn().getResults().getToken();
@@ -278,7 +303,6 @@ public class LoginActivity extends AppCompatActivity {
         		cv.put(AccountEntry.COLUMN_NAME_PASSWORD, args[1]);
         		cv.put(AccountEntry.COLUMN_NAME_TOKEN, token);
         		helper.insertAccount(helper.getWritableDatabase(), cv);
-        		
         	} else {
         		mApiClient.setToken(token);
         	}

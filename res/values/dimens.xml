@@ -71,4 +71,5 @@
 	<dimen name="navigation_header_height">175dp</dimen>
 	<dimen name="navigation_header_circular_icon_size">66dp</dimen>
 	<dimen name="navigation_header_child_name_margin_top">10dp</dimen>
+	<dimen name="navigation_bottom_btn_margin">10dp</dimen>
 </resources>

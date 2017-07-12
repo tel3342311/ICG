@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_white_1000">
+           
+	<TextView
+	    android:id="@+id/title"
+	    android:layout_width="match_parent"
+	    android:layout_height="@dimen/page_title_height"
+	    android:textColor="@color/md_black_1000"
+	    android:gravity="center"
+	    android:textSize="@dimen/page_title_text_size"
+	    android:layout_centerInParent="true"
+	    android:text="刪除鬧鈴"/>
+    
+    <ImageView
+        android:id="@+id/icon_error"
+        android:layout_width="@dimen/dialog_icon_size"
+        android:layout_height="@dimen/dialog_icon_size"
+        android:background="@drawable/ic_launcher"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/title"/>
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+	    <Button
+	        android:id="@+id/cancel"
+	        android:layout_width="0dp"
+	        android:layout_weight="1"
+	        android:layout_height="@dimen/dialog_confirm_btn_height"
+	        android:layout_marginStart="@dimen/activity_horizontal_margin"
+	        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+	        android:text="取消"/>
+	    <Button
+	        android:id="@+id/confirm"
+	        android:layout_width="0dp"
+	     	android:layout_weight="1"
+	        android:layout_height="@dimen/dialog_confirm_btn_height"
+	        android:layout_marginStart="@dimen/activity_horizontal_margin"
+	        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+	        android:text="確認"/>
+    </LinearLayout>
+</RelativeLayout>

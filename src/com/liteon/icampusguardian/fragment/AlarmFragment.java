@@ -1,28 +1,45 @@
 package com.liteon.icampusguardian.fragment;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmItemAdapter;
 import com.liteon.icampusguardian.util.AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks;
-import com.liteon.icampusguardian.util.HealthyItem;
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 
-import android.R.integer;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout.LayoutParams;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 
@@ -34,6 +51,11 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private IAddAlarmClicks mAddAlarmClicks;
 	private boolean isEditMode;
 	private Toolbar mToolbar;
+	private Map<String, List<AlarmItem>> mAlarmMap;
+	private DBHelper mDbHelper;
+	private List<Student> mStudents;
+	private int mCurrnetStudentIdx;
+	private ConfirmDeleteDialog mConfirmDeleteDialog;
 	public AlarmFragment(IAddAlarmClicks listener) {
 		mAddAlarmClicks = listener;
 	}
@@ -44,6 +66,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		findView(rootView);
 		initRecycleView();
 		setupListener();
+		mDbHelper = DBHelper.getInstance(getActivity());
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		return rootView;
 	}
 	
@@ -105,7 +130,6 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	}
 	
 	public void findView(View rootView) {
-
 		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.alarm_view);
 		mAddAlarm = (AppCompatButton) rootView.findViewById(R.id.add_alarm);
 		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
@@ -115,7 +139,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mRecyclerView.setHasFixedSize(true);
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
-		testData();
+		//testData();
 		mAdapter = new AlarmItemAdapter(myDataset, this);
 		mRecyclerView.setAdapter(mAdapter);
 	}
@@ -151,15 +175,114 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mAddAlarmClicks.onEditAlarm(position);
 	}
 	
+	private int mDeleteIdx = 0;
 	@Override
 	public void onDeleteAlarm(int delete) {
-		myDataset.remove(delete);
-		mAdapter.notifyDataSetChanged();
+		mConfirmDeleteDialog = new ConfirmDeleteDialog();
+		mConfirmDeleteDialog.setOnConfirmEventListener(mOnConfirmDelete);
+		mConfirmDeleteDialog.show(getActivity().getSupportFragmentManager(), "dialog_fragment");
+		mDeleteIdx = delete;
+
 	}
 	
 	@Override
 	public void onEnableAlarm(int position, boolean enable) {
 		myDataset.get(position).Enabled = enable;		
 		
+	}
+	
+	private View.OnClickListener mOnConfirmDelete = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			myDataset.remove(mDeleteIdx);
+			mAdapter.notifyDataSetChanged();
+			mConfirmDeleteDialog.dismiss();
+			if (myDataset.size() == 0) {
+				exitEditMode();
+			}
+		}
+	};
+	@Override
+	public void onResume() {
+		super.onResume();
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
+		showSyncWindow();
+		restoreAlarm();
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		saveAlarm();
+	}
+	
+	private void showSyncWindow() {
+		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View contentview = inflater.inflate(R.layout.component_popup, null);
+		contentview.setFocusable(true);
+		contentview.setFocusableInTouchMode(true);
+		final TextView title = (TextView) contentview.findViewById(R.id.title);
+		AppCompatButton button = (AppCompatButton) contentview.findViewById(R.id.button_sync);
+		button.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				title.setText("同步中");
+				Handler handler= new Handler();
+				Runnable runnable = new Runnable(){
+					   @Override
+					   public void run() {
+						   title.setText("同步完成");
+					} 
+				};
+				handler.postDelayed(runnable, 2000);
+			}
+		});
+		final PopupWindow popupWindow = new PopupWindow(contentview, LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+		popupWindow.setFocusable(true);
+		popupWindow.setOutsideTouchable(false);
+		contentview.setOnKeyListener(new OnKeyListener() {
+		    @Override
+		    public boolean onKey(View v, int keyCode, KeyEvent event) {
+		        if (keyCode == KeyEvent.KEYCODE_BACK) {
+		            popupWindow.dismiss();
+		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+		            return true;
+		        }
+		        return false;
+		    }
+		});
+		View  toolbar = getActivity().findViewById(R.id.toolbar);
+		popupWindow.showAsDropDown(toolbar);
+	}
+	
+	private void restoreAlarm() {
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		String alarmMap = sp.getString(Def.SP_ALARM_MAP, "");
+		Type typeOfHashMap = new TypeToken<Map<String, List<AlarmItem>>>() { }.getType();
+        Gson gson = new GsonBuilder().create();
+        mAlarmMap = gson.fromJson(alarmMap, typeOfHashMap);
+		if (TextUtils.isEmpty(alarmMap)) {
+			mAlarmMap = new HashMap<String, List<AlarmItem>>();
+			for (Student student : mStudents) {
+				String uuid = student.getUuid();
+				mAlarmMap.put(uuid, new ArrayList<AlarmItem>());
+			}
+		}
+		myDataset.clear();
+		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getUuid()));
+		mAdapter.notifyDataSetChanged();
+	}
+	
+	private void saveAlarm() {
+		mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getUuid(), myDataset);
+		Gson gson = new Gson();
+		String input = gson.toJson(mAlarmMap);
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putString(Def.SP_ALARM_MAP, input);
+		editor.commit();
 	}
 }

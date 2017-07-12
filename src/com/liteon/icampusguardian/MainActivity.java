@@ -28,6 +28,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
@@ -38,6 +39,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -45,6 +47,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks,
@@ -63,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	private int mCurrentStudentIdx;
 	private DBHelper mDbHelper;
 	private LocalBroadcastManager mLocalBroadcastManager;
-
+	private AppCompatButton mLogoutButton;
+	
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
 
@@ -188,13 +192,28 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		mNavigationView = (NavigationView) findViewById(R.id.navigation);
 		mChildIcon = (CircularImageView) mNavigationView.getHeaderView(0).findViewById(R.id.child_icon);
 		mChildName = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.child_name);
+		mLogoutButton = (AppCompatButton) mNavigationView.findViewById(R.id.drawer_button_logout);
 	}
 
 	private void setListener() {
 		mBottomView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		mNavigationView.setNavigationItemSelectedListener(this);
+		mLogoutButton.setOnClickListener(mOnLogoutClickListener);
 	}
-
+	private OnClickListener mOnLogoutClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = sp.edit();
+			editor.remove(Def.SP_LOGIN_TOKEN);
+			editor.commit();
+			
+			DBHelper helper = DBHelper.getInstance(MainActivity.this);
+			helper.deleteAccount(helper.getWritableDatabase());
+			finish();
+		}
+	};
 	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
 
 		@Override
@@ -315,6 +334,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		mCurrentStudentIdx = mCurrentStudentIdx == 0 ? 1 : 0;
 		initChildInfo();
 		updateMenuItem();
+		
+		SharedPreferences.Editor editor = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE).edit();
+		editor.putInt(Def.SP_CURRENT_STUDENT, mCurrentStudentIdx);
+		editor.commit();
 	}
 
 	@Override

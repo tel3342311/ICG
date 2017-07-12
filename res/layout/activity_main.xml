@@ -53,6 +53,15 @@
 	    app:itemTextColor="@color/color_primaryText"
 	    app:menu="@menu/drawer_menu" >
 
-    </android.support.design.widget.NavigationView>
+	   	<android.support.v7.widget.AppCompatButton
+	   	    android:id="@+id/drawer_button_logout"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="wrap_content"
+	   	    android:layout_margin="@dimen/navigation_bottom_btn_margin"
+	   	    android:layout_gravity="bottom"
+	   	    android:background="@color/md_white_1000"
+	   	    android:textColor="@color/md_black_1000"
+	   	    android:text="登  出" />
+</android.support.design.widget.NavigationView>
     
 </android.support.v4.widget.DrawerLayout>

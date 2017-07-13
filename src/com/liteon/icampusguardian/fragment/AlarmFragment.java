@@ -56,6 +56,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private List<Student> mStudents;
 	private int mCurrnetStudentIdx;
 	private ConfirmDeleteDialog mConfirmDeleteDialog;
+	private PopupWindow mPopupWindow;
+	private View mSyncView;
 	public AlarmFragment(IAddAlarmClicks listener) {
 		mAddAlarmClicks = listener;
 	}
@@ -133,6 +135,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.alarm_view);
 		mAddAlarm = (AppCompatButton) rootView.findViewById(R.id.add_alarm);
 		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+		mSyncView = rootView.findViewById(R.id.sync_view);
 	}
 	
 	public void initRecycleView() {
@@ -216,13 +219,16 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	public void onPause() {
 		super.onPause();
 		saveAlarm();
+		hideSyncWindow();
 	}
 	
+	private void hideSyncWindow() {
+		if (mPopupWindow != null && mPopupWindow.isShowing()) {
+			mPopupWindow.dismiss();
+		}
+	}
 	private void showSyncWindow() {
-		LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View contentview = inflater.inflate(R.layout.component_popup, null);
-		contentview.setFocusable(true);
-		contentview.setFocusableInTouchMode(true);
+		View contentview = mSyncView;
 		final TextView title = (TextView) contentview.findViewById(R.id.title);
 		AppCompatButton button = (AppCompatButton) contentview.findViewById(R.id.button_sync);
 		button.setOnClickListener(new OnClickListener() {
@@ -230,32 +236,24 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			@Override
 			public void onClick(View v) {
 				title.setText("同步中");
-				Handler handler= new Handler();
+				final Handler handler= new Handler();
+				final Runnable hideSyncView = new Runnable() {
+					
+					@Override
+					public void run() {
+						mSyncView.setVisibility(View.GONE);
+					}
+				};
 				Runnable runnable = new Runnable(){
 					   @Override
 					   public void run() {
 						   title.setText("同步完成");
+						   handler.postDelayed(hideSyncView, 3000);
 					} 
 				};
 				handler.postDelayed(runnable, 2000);
 			}
 		});
-		final PopupWindow popupWindow = new PopupWindow(contentview, LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-		popupWindow.setFocusable(true);
-		popupWindow.setOutsideTouchable(false);
-		contentview.setOnKeyListener(new OnKeyListener() {
-		    @Override
-		    public boolean onKey(View v, int keyCode, KeyEvent event) {
-		        if (keyCode == KeyEvent.KEYCODE_BACK) {
-		            popupWindow.dismiss();
-		                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-		            return true;
-		        }
-		        return false;
-		    }
-		});
-		View  toolbar = getActivity().findViewById(R.id.toolbar);
-		popupWindow.showAsDropDown(toolbar);
 	}
 	
 	private void restoreAlarm() {

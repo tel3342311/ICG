@@ -155,10 +155,10 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
         		}
     			break;
     		case HEIGHT:
-    			item.setValue(Integer.toString(student.getHeight()));
+    			item.setValue(Float.toString(student.getHeight()));
     			break;
     		case WEIGHT:
-    			item.setValue(Integer.toString(student.getWeight()));
+    			item.setValue(Float.toString(student.getWeight()));
     			break;
     		default:
     			break;
@@ -184,10 +184,10 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
         		}
     			break;
     		case HEIGHT:
-    			item.setValue(Integer.toString(student.getHeight()));
+    			item.setValue(Float.toString(student.getHeight()));
     			break;
     		case WEIGHT:
-    			item.setValue(Integer.toString(student.getWeight()));
+    			item.setValue(Float.toString(student.getWeight()));
     			break;
     		default:
     			break;
@@ -275,7 +275,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 				height.add(Integer.toString(i));
 			}
 			mWheel_single.setData(height);
-			String height_now = Integer.toString(mStudents.get(mCurrentStudentIdx).getHeight());
+			String height_now = Float.toString(mStudents.get(mCurrentStudentIdx).getHeight());
 			mWheel_single.setSelectedItemPosition(height.indexOf(height_now));
 			break;
 		case WEIGHT:
@@ -286,7 +286,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 				weight.add(Integer.toString(i));
 			}
 			mWheel_single.setData(weight);
-			String weight_now = Integer.toString(mStudents.get(mCurrentStudentIdx).getWeight());
+			String weight_now = Float.toString(mStudents.get(mCurrentStudentIdx).getWeight());
 			mWheel_single.setSelectedItemPosition(weight.indexOf(weight_now));
 			break;
 		default:

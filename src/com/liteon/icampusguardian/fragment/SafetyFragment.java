@@ -1,6 +1,9 @@
 package com.liteon.icampusguardian.fragment;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.w3c.dom.Text;
 
@@ -54,10 +57,22 @@ public class SafetyFragment extends Fragment {
 	
 	public SafetyFragment(Intent intent) {
 		String latlng = intent.getStringExtra(Def.EXTRA_SOS_LOCATION);
+		latlng = "25.070108, 121.611435";
 		if (!TextUtils.isEmpty(latlng)) {
 			String parse[] = latlng.split(","); 
 			mLastPosition = new LatLng(Double.parseDouble(parse[0]), Double.parseDouble(parse[1]));
 			isAlerted = true;
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			SimpleDateFormat sdf_item = new SimpleDateFormat("HH:mm");
+			String currentDate = sdf.format(Calendar.getInstance().getTime());
+			String currentTime = sdf_item.format(Calendar.getInstance().getTime());
+			GeoEventItem item = new GeoEventItem();
+			item.setDate(currentDate);
+			item.setEnterSchool("");
+			item.setLeaveSchool("");
+			item.setEmergency(currentTime);
+			item.setEmergencyRelease("");
+			myDataset.add(item);
 		}
 	}
 	
@@ -162,7 +177,6 @@ public class SafetyFragment extends Fragment {
 		if (myDataset.size() == 0) {
 			for (int i = 30; i > 11; i--) {
 				GeoEventItem item = new GeoEventItem();
-				item.setDate("2017/06/" + i);
 				item.setDate("2017/06/" + i);
 				item.setEnterSchool("06:" + i);
 				item.setLeaveSchool("16:" + i);

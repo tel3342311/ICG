@@ -4,15 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-    android:layout_marginRight="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin">
+    android:layout_height="match_parent">
        
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/alarm_view"
+    <include 
+        android:id="@+id/sync_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        layout="@layout/component_popup"/>
+        
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/alarm_view"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    	android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sync_view"
         android:minHeight="15dp"
         android:scrollbars="vertical"/>
         
@@ -20,8 +26,9 @@
         android:id="@+id/add_alarm"
         android:layout_width="match_parent"
         android:layout_height="@dimen/alarm_button_height"
-        android:layout_marginStart="@dimen/alarm_button_magin_horizon"
-        android:layout_marginEnd="@dimen/alarm_button_magin_horizon"
+    	android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    	android:layout_marginRight="@dimen/activity_horizontal_margin"
+    	android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="增加鬧鈴"
         android:textColor="@color/md_black_1000"
         android:background="@color/md_grey_300"

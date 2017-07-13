@@ -331,12 +331,17 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		} else if (id == R.id.action_delete_account) {
 
 		} else if (id == R.id.action_setting) {
-
+			switchSetting();
 		}
 		mDrawerLayout.closeDrawers();
 		return true;
 	}
 
+	private void switchSetting() {
+		mBottomView.setSelectedItemId(R.id.action_setting);
+		
+	}
+	
 	private void switchAccount() {
 		mCurrentStudentIdx = mCurrentStudentIdx == 0 ? 1 : 0;
 		initChildInfo();

@@ -300,18 +300,25 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
-		mChildName.setText(mStudents.get(mCurrentStudentIdx).getName());
+		if (mStudents.size() > 0) {
+			mChildName.setText(mStudents.get(mCurrentStudentIdx).getName());
+		}
 	}
 
 	private void updateMenuItem() {
 		Menu menu = mNavigationView.getMenu();
-		int nextStudent = mCurrentStudentIdx == 0 ? 1 : 0;
-		MenuItem switchAccount = menu.findItem(R.id.action_switch_account);
-		switchAccount.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getName()));
+		if (mStudents.size() == 0) {
+			
+		} else {
+			int nextStudent = mCurrentStudentIdx == 0 ? 1 : 0;
+			MenuItem switchAccount = menu.findItem(R.id.action_switch_account);
+			switchAccount
+					.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getName()));
 
-		MenuItem deleteAccount = menu.findItem(R.id.action_delete_account);
-		deleteAccount.setTitle(
-				String.format(getString(R.string.delete_account), mStudents.get(mCurrentStudentIdx).getName()));
+			MenuItem deleteAccount = menu.findItem(R.id.action_delete_account);
+			deleteAccount.setTitle(
+					String.format(getString(R.string.delete_account), mStudents.get(mCurrentStudentIdx).getName()));
+		}
 	}
 
 	@Override

@@ -99,12 +99,6 @@ public class LoginActivity extends AppCompatActivity {
 		super.onResume();
 		//mUserName.setText(Def.USER);
 		//mPassword.setText(Def.PASSWORD);
-		
-		//For Dev.
-		Intent intent = new Intent();
-		intent.setClass(getApplicationContext(), MainActivity.class);
-		startActivity(intent);
-
 	}
 	private void findViews() {
 		signInButtonNormal = (AppCompatButton) findViewById(R.id.ap_login);

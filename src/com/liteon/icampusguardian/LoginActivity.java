@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent();
-			intent.setClass(getApplicationContext(), UserRegistrationActivity.class);
+			intent.setClass(getApplicationContext(), UserResetPasswordActivity.class);
 			startActivity(intent);
 		}
 	};

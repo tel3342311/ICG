@@ -26,7 +26,9 @@ public class Def {
 	public static final String KEY_STATUSCODE = "StatusCode";
 	public static final String KEY_SESSIONID = "SessionId";
 	public static final String KEY_ERRORMESSAGE = "ErrorMessage";
-	
+	//API 01 registration
+	public static final String REQUEST_USER_REGISTRATION = "ParentUserRegistration";
+	public static final String KEY_ACCOUNT_NAME = "account_name";
 	//API 02 login
 	public static final String REQUEST_USERLOGIN = "UserLogin";
 	public static final String KEY_TYPE_USERLOGIN = "user.UserLogin";
@@ -57,6 +59,9 @@ public class Def {
 	public static final String KEY_DOB = "dob";
 	public static final String KEY_GENDER = "gender";
 	public static final String KEY_UUID = "uuid";
+	//API 33 reset password
+	public static final String REQUEST_PASSWORD_REST = "PasswordResetRequest";
+	public static final String KEY_USER_ROLE = "user_role";
 
 	//EVENT ID LIST
 	public static final String EVENT_ID_SOS_ALERT = "11";

@@ -87,10 +87,108 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse registerUser(String userEmail, String password, String role_type, String uuid, String account_name) {
-		
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_REGISTRATION).appendPath(mToken).build();
+		try {
+			URL url = new URL(uri.toString());
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setRequestProperty("Content-Type", "application/json");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(true);
+			urlConnection.setUseCaches(false);
+
+			JSONObject jsonParam = new JSONObject();
+			jsonParam.put(Def.KEY_USERNAME, userEmail);
+			jsonParam.put(Def.KEY_PASSWORD, password);
+			jsonParam.put(Def.KEY_ACCOUNT_NAME, account_name);
+			jsonParam.put(Def.KEY_UUID, uuid);
+			jsonParam.put(Def.KEY_NICKNAME, "N/A");
+			jsonParam.put(Def.KEY_GENDER, "MALE");
+			jsonParam.put(Def.KEY_DOB, "01-01-2010");
+			jsonParam.put(Def.KEY_WEIGHT, "0");
+			jsonParam.put(Def.KEY_HEIGHT, "0");
+
+			OutputStream os = urlConnection.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+			writer.write(jsonParam.toString());
+			writer.flush();
+			writer.close();
+			final int status = urlConnection.getResponseCode();
+			if (status == HttpURLConnection.HTTP_OK) {
+				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
+						JSONResponse.class);
+				return result;
+			} else {
+				if (mContext.get() != null) {
+					((Activity) mContext.get()).runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
+									.show();
+						}
+					});
+				}
+			}
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
+	public JSONResponse resetPassword(String userEmail) {
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_REGISTRATION).appendPath(mToken).build();
+		try {
+			URL url = new URL(uri.toString());
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setRequestProperty("Content-Type", "application/json");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(true);
+			urlConnection.setUseCaches(false);
+
+			JSONObject jsonParam = new JSONObject();
+			jsonParam.put(Def.KEY_USERNAME, userEmail);
+			jsonParam.put(Def.KEY_USER_ROLE, "parent_admin");
+
+
+			OutputStream os = urlConnection.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+			writer.write(jsonParam.toString());
+			writer.flush();
+			writer.close();
+			final int status = urlConnection.getResponseCode();
+			if (status == HttpURLConnection.HTTP_OK) {
+				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
+						JSONResponse.class);
+				return result;
+			} else {
+				if (mContext.get() != null) {
+					((Activity) mContext.get()).runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
+									.show();
+						}
+					});
+				}
+			}
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	private Object getResponseJSON(InputStream is, Class<?> class_type) {
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();

@@ -1,10 +1,12 @@
 package com.liteon.icampusguardian;
 
+import java.util.UUID;
+
+import com.liteon.icampusguardian.util.GuardianApiClient;
+
 import android.content.Intent;
-import android.hardware.SensorEventListener;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -13,7 +15,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class UserRegistrationActivity extends AppCompatActivity implements OnClickListener {
 
@@ -79,9 +80,8 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.confirm:
-			Intent intent = new Intent();
-			intent.setClass(this, MainActivity.class);
-			startActivity(intent);
+			registerAccount();
+			finish();
 			break;
 		case R.id.cancel:
 			finish();
@@ -106,6 +106,18 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 			return false;
 		}
 		return true;
+	}
+	
+	private void registerAccount() {
+		String strName = mName.getText().toString();
+		String strPhone = mPhone.getText().toString();
+		String strAccount = mAccount.getText().toString();
+		String strPassword = mPassword.getText().toString();
+		
+		GuardianApiClient apiClient = new GuardianApiClient(this);
+		String str = "1234";
+		UUID uuid = UUID.nameUUIDFromBytes(str.getBytes());
+		apiClient.registerUser(strAccount, strPassword, "parent_admin", uuid.toString(), strName);
 	}
 
 }

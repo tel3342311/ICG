@@ -41,6 +41,7 @@
 			android:layout_centerVertical="true"
             android:background="@drawable/ic_check_black_24dp"
             android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
             android:tint="@color/md_black_1000"/>
         </RelativeLayout>        
      </android.support.v7.widget.Toolbar>

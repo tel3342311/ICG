@@ -50,6 +50,7 @@ public class SafetyFragment extends Fragment {
 	private RecyclerView.LayoutManager mLayoutManager;
 	private static LatLng mLastPosition = new LatLng(25.077877, 121.571141);
 	private static ArrayList<GeoEventItem> myDataset = new ArrayList<>();
+	private GeoEventItem mCurrentItem;
 	private static final int DURATION = 3000;
 	private ValueAnimator mValueAnimator;
 	private FloatingActionButton mLocationOnMap;
@@ -66,13 +67,12 @@ public class SafetyFragment extends Fragment {
 			SimpleDateFormat sdf_item = new SimpleDateFormat("HH:mm");
 			String currentDate = sdf.format(Calendar.getInstance().getTime());
 			String currentTime = sdf_item.format(Calendar.getInstance().getTime());
-			GeoEventItem item = new GeoEventItem();
-			item.setDate(currentDate);
-			item.setEnterSchool("");
-			item.setLeaveSchool("");
-			item.setEmergency(currentTime);
-			item.setEmergencyRelease("");
-			myDataset.add(item);
+			mCurrentItem = new GeoEventItem();
+			mCurrentItem.setDate(currentDate);
+			mCurrentItem.setEnterSchool("");
+			mCurrentItem.setLeaveSchool("");
+			mCurrentItem.setEmergency(currentTime);
+			mCurrentItem.setEmergencyRelease("");
 		}
 	}
 	
@@ -197,6 +197,10 @@ public class SafetyFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		mMapView.onResume();
+		if (mCurrentItem != null) {
+			myDataset.add(0, mCurrentItem);
+			mAdapter.notifyDataSetChanged();
+		}
 	}
 
 	@Override

@@ -83,7 +83,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
        	android:layout_marginBottom="@dimen/page_title_margin_bottom"
-        android:hint="帳號(至少八碼英文或數字)"
+        android:hint="E-mail帳號(至少八碼英文或數字)"
         android:maxLines="1"
         android:textColor="@color/md_black_1000"
         android:textCursorDrawable="@null"

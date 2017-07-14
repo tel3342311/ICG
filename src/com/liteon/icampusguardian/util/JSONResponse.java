@@ -69,7 +69,7 @@ public class JSONResponse {
 	public static class ResponseSummary{
 		@SerializedName("StatusCode")
 		private String StatusCode;
-		@SerializedName("ErrorMessage")
+		@SerializedName("StatusMessage")
 		private String ErrorMessage;
 		@SerializedName("SessionId")
 		private String SessionId;

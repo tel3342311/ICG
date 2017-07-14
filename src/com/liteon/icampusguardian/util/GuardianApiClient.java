@@ -22,6 +22,7 @@ import com.liteon.icampusguardian.util.JSONResponse.Student;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.support.v7.view.menu.ShowableListMenu;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -87,7 +88,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse registerUser(String userEmail, String password, String role_type, String uuid, String account_name) {
-		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_REGISTRATION).appendPath(mToken).build();
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_REGISTRATION).build();
 		try {
 			URL url = new URL(uri.toString());
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -117,6 +118,8 @@ public class GuardianApiClient {
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
 						JSONResponse.class);
+				showStatus(result);
+
 				return result;
 			} else {
 				if (mContext.get() != null) {
@@ -309,6 +312,8 @@ public class GuardianApiClient {
             final int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
             	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+				showStatus(result);
+
             	return result;
             } else {
             	if (mContext.get() != null) {
@@ -367,6 +372,8 @@ public class GuardianApiClient {
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
 						JSONResponse.class);
+				showStatus(result);
+
 				return result;
 			} else {
 				if (mContext.get() != null) {
@@ -423,6 +430,8 @@ public class GuardianApiClient {
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
 						JSONResponse.class);
+				showStatus(result);
+
 				return result;
 			} else {
 				if (mContext.get() != null) {
@@ -454,6 +463,20 @@ public class GuardianApiClient {
 				@Override
 				public void run() {
 					Toast.makeText(mContext.get(), "Error : Http response " + status_code, Toast.LENGTH_SHORT).show();
+				}
+			});
+    	}
+	}
+	
+	private void showStatus(JSONResponse result) {
+		final String errorCode = result.getReturn().getResponseSummary().getStatusCode();
+    	final String errorMessage = result.getReturn().getResponseSummary().getErrorMessage();
+    	if (mContext.get() != null) {
+    		((Activity)mContext.get()).runOnUiThread( new Runnable() {
+				
+				@Override
+				public void run() {
+					Toast.makeText(mContext.get(), "Error Code " + errorCode + ", Message: " + errorMessage, Toast.LENGTH_SHORT).show();
 				}
 			});
     	}

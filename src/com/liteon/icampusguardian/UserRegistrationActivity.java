@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.liteon.icampusguardian.util.GuardianApiClient;
 
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class UserRegistrationActivity extends AppCompatActivity implements OnClickListener {
 
@@ -54,7 +55,14 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 	private void setListener() {
 		mCancel.setOnClickListener(this);
 		mConfirm.setOnClickListener(this);
+		
+		mName.addTextChangedListener(mTextWatcher);
+		mPhone.addTextChangedListener(mTextWatcher);
+		mAccount.addTextChangedListener(mTextWatcher);
+		mPassword.addTextChangedListener(mTextWatcher);
+		mConfirmPassword.addTextChangedListener(mTextWatcher);
 	}
+	
 	private TextWatcher mTextWatcher = new TextWatcher() {
 		
 		@Override
@@ -81,7 +89,6 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		switch (v.getId()) {
 		case R.id.confirm:
 			registerAccount();
-			finish();
 			break;
 		case R.id.cancel:
 			finish();
@@ -98,7 +105,10 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 			return false;
 		}
 		//check if acount email is valid
-		if (!Patterns.EMAIL_ADDRESS.matcher(mAccount.getText()).matches()) {
+		String email = mAccount.getText().toString();
+		email = email.trim();
+		if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+			Toast.makeText(this, "invalid Email Account" , Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		//check if password & password confirm is match
@@ -112,12 +122,27 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		String strName = mName.getText().toString();
 		String strPhone = mPhone.getText().toString();
 		String strAccount = mAccount.getText().toString();
+		strAccount = strAccount.trim();
 		String strPassword = mPassword.getText().toString();
 		
 		GuardianApiClient apiClient = new GuardianApiClient(this);
 		String str = "1234";
 		UUID uuid = UUID.nameUUIDFromBytes(str.getBytes());
-		apiClient.registerUser(strAccount, strPassword, "parent_admin", uuid.toString(), strName);
+		new RegisterTask().execute(strAccount, strPassword, "parent_admin", uuid.toString(), strName);
+		
 	}
 
+	class RegisterTask extends AsyncTask<String, Void, String> {
+
+        protected String doInBackground(String... args) {
+
+        	GuardianApiClient apiClient = new GuardianApiClient(UserRegistrationActivity.this);
+        	apiClient.registerUser(args[0], args[1], args[2], args[3], args[4]);
+        	return null;
+        }
+
+        protected void onPostExecute(String token) {
+        	finish();
+        }
+    }
 }

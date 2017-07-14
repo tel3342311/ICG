@@ -58,6 +58,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private ConfirmDeleteDialog mConfirmDeleteDialog;
 	private PopupWindow mPopupWindow;
 	private View mSyncView;
+	
 	public AlarmFragment(IAddAlarmClicks listener) {
 		mAddAlarmClicks = listener;
 	}

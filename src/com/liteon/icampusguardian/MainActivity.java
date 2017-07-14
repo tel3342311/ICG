@@ -51,7 +51,7 @@ import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks,
-		IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener {
+		IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener, IAppInfoPrivacyViewHolderClicks {
 
 	private static final String TAG = MainActivity.class.getName(); 
 	private CircularImageView mChildIcon;

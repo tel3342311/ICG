@@ -135,7 +135,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		inflater.inflate(R.menu.alarm_edit_menu, menu);
+		inflater.inflate(R.menu.one_confirm_menu, menu);
 		mToolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
 		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

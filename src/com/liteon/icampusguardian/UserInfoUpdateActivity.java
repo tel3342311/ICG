@@ -2,45 +2,78 @@ package com.liteon.icampusguardian;
 
 import java.util.UUID;
 
+import com.liteon.icampusguardian.util.AlarmItemAdapter;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Patterns;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class UserRegistrationActivity extends AppCompatActivity implements OnClickListener {
+public class UserInfoUpdateActivity extends AppCompatActivity {
 
-	
-	private ImageView mCancel;
-	private ImageView mConfirm;
+	private boolean mIsEditMode;
 	private EditText mName;
 	private EditText mPhone;
 	private EditText mAccount;
 	private EditText mPassword;
 	private EditText mConfirmPassword;
+	private Toolbar mToolbar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_user_registration);
+		setContentView(R.layout.activity_user_update);
 		findViews();
+		setupToolbar();
 		setListener();
 	}
 	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.one_confirm_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		
+		if (mIsEditMode) {
+			menu.findItem(R.id.action_confirm).setVisible(true);
+		} else {
+			menu.findItem(R.id.action_confirm).setVisible(false);
+		}
+		return true;
+	};
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mConfirm.setEnabled(false);
+		mToolbar.setTitle("家長資料");
+	}
+	
+	private void setupToolbar() {
+		setSupportActionBar(mToolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
+		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				onBackPressed();
+			}
+		});
 	}
 	
 	private void findViews() {
@@ -49,21 +82,33 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		mAccount = (EditText) findViewById(R.id.login_account);
 		mPassword = (EditText) findViewById(R.id.login_password);
 		mConfirmPassword = (EditText) findViewById(R.id.login_password_confirm);
-		mCancel = (ImageView) findViewById(R.id.cancel);
-		mConfirm = (ImageView) findViewById(R.id.confirm);
+		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 	}
 	
 	private void setListener() {
-		mCancel.setOnClickListener(this);
-		mConfirm.setOnClickListener(this);
 		
 		mName.addTextChangedListener(mTextWatcher);
 		mPhone.addTextChangedListener(mTextWatcher);
 		mAccount.addTextChangedListener(mTextWatcher);
 		mPassword.addTextChangedListener(mTextWatcher);
 		mConfirmPassword.addTextChangedListener(mTextWatcher);
+		
+		mName.setOnFocusChangeListener(mOnFocusChangeListener);
+		mPhone.setOnFocusChangeListener(mOnFocusChangeListener);
+		mAccount.setOnFocusChangeListener(mOnFocusChangeListener);
+		mPassword.setOnFocusChangeListener(mOnFocusChangeListener);
+		mConfirmPassword.setOnFocusChangeListener(mOnFocusChangeListener);
 	}
 	
+	private OnFocusChangeListener mOnFocusChangeListener = new OnFocusChangeListener() {
+		
+		@Override
+		public void onFocusChange(View v, boolean hasFocus) {
+			if (hasFocus) {
+				enterEditMode();
+			}
+		}
+	};
 	private TextWatcher mTextWatcher = new TextWatcher() {
 		
 		@Override
@@ -79,23 +124,12 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		@Override
 		public void afterTextChanged(Editable s) {
 			if (validateInput()) {
-				mConfirm.setEnabled(true);
+				//mConfirm.setEnabled(true);
 			} else {
-				mConfirm.setEnabled(false);
+				//mConfirm.setEnabled(false);
 			}
 		}
 	};
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.confirm:
-			registerAccount();
-			break;
-		case R.id.cancel:
-			finish();
-			break;
-		}
-	}
 	
 	private boolean validateInput() {
 		if (TextUtils.isEmpty(mName.getText()) || 
@@ -119,7 +153,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		return true;
 	}
 	
-	private void registerAccount() {
+	private void updateAccount() {
 		String strName = mName.getText().toString();
 		String strPhone = mPhone.getText().toString();
 		String strAccount = mAccount.getText().toString();
@@ -129,15 +163,15 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		GuardianApiClient apiClient = new GuardianApiClient(this);
 		String str = "1234";
 		UUID uuid = UUID.nameUUIDFromBytes(str.getBytes());
-		new RegisterTask().execute(strAccount, strPassword, "parent_admin", uuid.toString(), strName);
+		new UpdateInfoTask().execute(strAccount, strPassword, "parent_admin", uuid.toString(), strName);
 		
 	}
 
-	class RegisterTask extends AsyncTask<String, Void, String> {
+	class UpdateInfoTask extends AsyncTask<String, Void, String> {
 
         protected String doInBackground(String... args) {
 
-        	GuardianApiClient apiClient = new GuardianApiClient(UserRegistrationActivity.this);
+        	GuardianApiClient apiClient = new GuardianApiClient(UserInfoUpdateActivity.this);
         	apiClient.registerUser(args[0], args[1], args[2], args[3], args[4]);
         	return null;
         }
@@ -146,4 +180,14 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
         	finish();
         }
     }
+	
+	public void exitEditMode() {
+		mIsEditMode = false;
+		invalidateOptionsMenu();
+	}
+	
+	public void enterEditMode() {
+		mIsEditMode = true;
+		invalidateOptionsMenu();
+	}
 }

@@ -5,21 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     
-	<TextView
-	    android:id="@+id/title"
-	    android:layout_width="match_parent"
-	    android:layout_height="@dimen/page_title_height"
-	    android:background="@color/md_grey_500"
-	    android:gravity="center"
-	    android:textColor="@color/md_white_1000"
-	    android:text="使用者協議及隱私政策"
-	    android:textSize="@dimen/page_title_text_size"/>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" >
+   
+     </android.support.v7.widget.Toolbar>
+
 
 	<TextView
 	    android:id="@+id/content"
 	   	android:layout_width="match_parent"
 	    android:layout_height="match_parent"
-	    android:layout_below="@id/title"
+	    android:layout_below="@id/toolbar"
 	    android:textColor="@color/md_black_1000"
 	    android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
 	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
@@ -35,11 +35,12 @@
 	     layout="@layout/component_bottom"
 	     android:layout_alignParentBottom="true" />
 	 
-	 <RadioButton
+	 <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/user_improve_plan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/bottom_bar"
+        android:layout_above="@id/bottom_bar"
+        android:layout_margin="@dimen/activity_vertical_margin"
         android:text="參與使用者體驗改善計畫" />
 
 </RelativeLayout>

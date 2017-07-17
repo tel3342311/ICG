@@ -2,11 +2,13 @@ package com.liteon.icampusguardian;
 
 import java.util.List;
 
+import com.facebook.share.model.AppGroupCreationContent.AppGroupPrivacy;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment.IAddAlarmClicks;
 import com.liteon.icampusguardian.fragment.AlarmPeriodFragment;
+import com.liteon.icampusguardian.fragment.AppInfoPrivacyFragment;
 import com.liteon.icampusguardian.fragment.DailyHealthFragment;
 import com.liteon.icampusguardian.fragment.HealthFragment;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
@@ -16,6 +18,8 @@ import com.liteon.icampusguardian.fragment.SettingTargetFragment;
 import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
 import com.liteon.icampusguardian.util.AlarmPeriodItem;
+import com.liteon.icampusguardian.util.AppInfoPrivacyItem;
+import com.liteon.icampusguardian.util.AppInfoPrivacyItemAdapter.ViewHolder.IAppInfoPrivacyViewHolderClicks;
 import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.Def;
@@ -338,8 +342,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	}
 
 	private void switchSetting() {
-		mBottomView.setSelectedItemId(R.id.action_setting);
-		
+		AppInfoPrivacyFragment frag = new AppInfoPrivacyFragment(this);
+		changeFragment(frag, getString(R.string.drawer_setting), NAVIGATION_BACK);
 	}
 	
 	private void switchAccount() {
@@ -406,4 +410,18 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			}
 		}
 	};
+
+	@Override
+	public void onClick(AppInfoPrivacyItem item) {
+		if (item.getItemType() == AppInfoPrivacyItem.TYPE.USER_TERM) {
+			Intent intent = new Intent();
+			intent.setClass(this, UserTermActivity.class);
+			intent.putExtra(Def.EXTRA_DISABLE_USERTREM_BOTTOM, true);
+			startActivity(intent);
+		} else if (item.getItemType() == AppInfoPrivacyItem.TYPE.PARENT_INFO) {
+			Intent intent = new Intent();
+			intent.setClass(this, UserInfoUpdateActivity.class);
+			startActivity(intent);
+		}
+	}
 }

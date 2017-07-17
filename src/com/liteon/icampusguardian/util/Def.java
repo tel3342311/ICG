@@ -13,6 +13,7 @@ public class Def {
 	public static final String SP_TARGET_CYCLING = "com.liteon.icampusguardian.SP_TARGET_CYCLING";
 	public static final String SP_TARGET_SLEEPING = "com.liteon.icampusguardian.SP_TARGET_SLEEPING";
 	public static final String SP_ALARM_MAP = "com.liteon.icampusguardian.SP_ALARM_MAP";
+	public static final String SP_IMPROVE_PLAN = "com.liteon.icampusguardian.SP_IMPROVE_PLAN";
 	//RET CODE there are two kind of success code
 	public static final String RET_SUCCESS_1 = "SUC01";
 	public static final String RET_SUCCESS_2 = "WSUC01";
@@ -78,4 +79,7 @@ public class Def {
 	public static final String EXTRA_NOTIFY_TYPE = "com.liteon.icampusguardian.EXTRA_NOTIFY_TYPE";
 	public static final String EXTRA_SOS_LOCATION = "com.liteon.icampusguardian.EXTRA_SOS_LOCATION";
 
+	//Intent EXTRA
+	public static final String EXTRA_DISABLE_USERTREM_BOTTOM = "com.liteon.icampusguardian.EXTRA_DISABLE_USERTREM_BOTTOM";
+	
 }

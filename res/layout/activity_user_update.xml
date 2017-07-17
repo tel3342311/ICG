@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" >
+   
+    </android.support.v7.widget.Toolbar>
+     
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:focusable="true"
+        android:focusableInTouchMode="true" 
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/login_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_edit_text_height"
+            android:layout_below="@id/toolbar"
+            android:layout_marginBottom="@dimen/page_title_margin_bottom"
+            android:hint="姓名"
+            android:maxLines="1"
+            android:textColor="@color/md_black_1000"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/login_edit_text_size" />
+
+        <EditText
+            android:id="@+id/login_phone"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_edit_text_height"
+            android:layout_below="@id/login_name"
+            android:layout_marginBottom="@dimen/page_title_margin_bottom"
+            android:hint="手機號碼"
+            android:inputType="phone"
+            android:maxLines="1"
+            android:textColor="@color/md_black_1000"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/login_edit_text_size" />
+
+        <EditText
+            android:id="@+id/login_account"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_edit_text_height"
+            android:layout_below="@id/login_phone"
+            android:layout_marginBottom="@dimen/page_title_margin_bottom"
+            android:hint="E-mail帳號(至少八碼英文或數字)"
+            android:maxLines="1"
+            android:textColor="@color/md_black_1000"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/login_edit_text_size"
+            android:editable="false" />
+
+        <EditText
+            android:id="@+id/login_password"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_edit_text_height"
+            android:layout_below="@id/login_account"
+            android:layout_marginBottom="@dimen/page_title_margin_bottom"
+            android:hint="密碼"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textColor="@color/md_black_1000"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/login_edit_text_size" />
+
+        <EditText
+            android:id="@+id/login_password_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_edit_text_height"
+            android:layout_below="@id/login_password"
+            android:layout_marginBottom="@dimen/page_title_margin_bottom"
+            android:hint="再次確認新密碼"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textColor="@color/md_black_1000"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/login_edit_text_size" />
+    </LinearLayout>
+
+</RelativeLayout>

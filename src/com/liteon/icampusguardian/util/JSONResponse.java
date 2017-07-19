@@ -209,6 +209,61 @@ public class JSONResponse {
 		}
 	}
 	
+	public static class Parent {
+		private String account_name;//prefix of email
+		private String username;//email
+		private String password;
+		private String given_name;
+		/**
+		 * @return the account_name
+		 */
+		public String getAccount_name() {
+			return account_name;
+		}
+		/**
+		 * @param account_name the account_name to set
+		 */
+		public void setAccount_name(String account_name) {
+			this.account_name = account_name;
+		}
+		/**
+		 * @return the username
+		 */
+		public String getUsername() {
+			return username;
+		}
+		/**
+		 * @param username the username to set
+		 */
+		public void setUsername(String username) {
+			this.username = username;
+		}
+		/**
+		 * @return the password
+		 */
+		public String getPassword() {
+			return password;
+		}
+		/**
+		 * @param password the password to set
+		 */
+		public void setPassword(String password) {
+			this.password = password;
+		}
+		/**
+		 * @return the given_name
+		 */
+		public String getGiven_name() {
+			return given_name;
+		}
+		/**
+		 * @param given_name the given_name to set
+		 */
+		public void setGiven_name(String given_name) {
+			this.given_name = given_name;
+		}
+	}
+	
 	public static class Student {
 		@SerializedName("student_id")
 		private String student_id;

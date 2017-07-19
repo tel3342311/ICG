@@ -36,6 +36,8 @@ public class Def {
 	public static final String KEY_USERNAME = "username";
 	public static final String KEY_PASSWORD = "password";
 	public static final String KEY_FORCELOGIN = "forcelogin";
+	//API 04 Update Parent account detail.
+	public static final String REQUEST_USER_UPDATE = "UserUpdate";
 	
 	//API 07 get student list
 	public static final String REQUEST_GET_CHILDREN_LIST = "StudentList";

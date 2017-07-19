@@ -14,35 +14,29 @@
    
     </android.support.v7.widget.Toolbar>
      
-    <LinearLayout
+   	<include 
+        android:id="@+id/sync_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_marginBottom="@dimen/page_title_margin_bottom"
+        layout="@layout/component_popup"/>
+   	
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/sync_view"
         android:focusable="true"
-        android:focusableInTouchMode="true" 
-        android:orientation="vertical">
+        android:focusableInTouchMode="true">
 
         <EditText
             android:id="@+id/login_name"
             android:layout_width="match_parent"
             android:layout_height="@dimen/login_edit_text_height"
-            android:layout_below="@id/toolbar"
             android:layout_marginBottom="@dimen/page_title_margin_bottom"
             android:hint="姓名"
-            android:maxLines="1"
-            android:textColor="@color/md_black_1000"
-            android:textCursorDrawable="@null"
-            android:textSize="@dimen/login_edit_text_size" />
-
-        <EditText
-            android:id="@+id/login_phone"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/login_edit_text_height"
-            android:layout_below="@id/login_name"
-            android:layout_marginBottom="@dimen/page_title_margin_bottom"
-            android:hint="手機號碼"
-            android:inputType="phone"
             android:maxLines="1"
             android:textColor="@color/md_black_1000"
             android:textCursorDrawable="@null"
@@ -52,7 +46,7 @@
             android:id="@+id/login_account"
             android:layout_width="match_parent"
             android:layout_height="@dimen/login_edit_text_height"
-            android:layout_below="@id/login_phone"
+            android:layout_below="@id/login_name"
             android:layout_marginBottom="@dimen/page_title_margin_bottom"
             android:hint="E-mail帳號(至少八碼英文或數字)"
             android:maxLines="1"
@@ -86,6 +80,37 @@
             android:textColor="@color/md_black_1000"
             android:textCursorDrawable="@null"
             android:textSize="@dimen/login_edit_text_size" />
-    </LinearLayout>
+    </RelativeLayout>
+	
+	<FrameLayout
+	    android:id="@+id/progressBarHolder"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:alpha="0.7"
+	    android:animateLayoutChanges="true"
+	    android:background="@color/md_grey_800"
+	    android:visibility="gone" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+                android:layout_below="@id/progress_bar"
+                android:text="更新資料至雲端中"
+                android:textColor="@color/md_white_1000" />
+        </RelativeLayout>
+
+	</FrameLayout>
 
 </RelativeLayout>

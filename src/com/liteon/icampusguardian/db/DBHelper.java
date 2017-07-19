@@ -3,12 +3,11 @@ package com.liteon.icampusguardian.db;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.android.gms.actions.ItemListIntents;
 import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
 import com.liteon.icampusguardian.db.ChildLocationTable.ChildLocationEntry;
 import com.liteon.icampusguardian.db.ChildTable.ChildEntry;
 import com.liteon.icampusguardian.db.EventListTable.EventListEntry;
-import com.liteon.icampusguardian.util.JSONResponse.Return;
+import com.liteon.icampusguardian.util.JSONResponse.Parent;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.content.ContentValues;
@@ -95,6 +94,24 @@ public class DBHelper extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
+	
+	public Parent getParentByToken(SQLiteDatabase db, String token) {
+		Parent item = new Parent();
+		Cursor cursor = db.rawQuery(SQL_QUERY_ALL_ACCOUNT_DATA, null);
+		if (cursor.getCount() > 0) {
+			cursor.moveToFirst();
+			do {
+				item.setAccount_name(cursor.getString(cursor.getColumnIndex(AccountEntry.COLUMN_NAME_ACCOUNT_NAME)));
+				item.setPassword(cursor.getString(cursor.getColumnIndex(AccountEntry.COLUMN_NAME_PASSWORD)));
+				item.setGiven_name(cursor.getString(cursor.getColumnIndex(AccountEntry.COLUMN_NAME_GIVEN_NAME)));
+				item.setUsername(cursor.getString(cursor.getColumnIndex(AccountEntry.COLUMN_NAME_USER_NAME)));
+			} while (cursor.moveToNext());
+			cursor.close();
+			db.close();
+		}
+		return item;
+	}
+	
 	public String getAccountToken(SQLiteDatabase db, String name) {
 		Cursor c = db.query(AccountEntry.TABLE_NAME, new String[] { AccountEntry.COLUMN_NAME_TOKEN }, "username =?",
 				new String[] { name }, null, null, null, null);
@@ -103,6 +120,12 @@ public class DBHelper extends SQLiteOpenHelper {
 		return "";
 	}
 
+	public void clearAccountToken(SQLiteDatabase db, String token) {
+		ContentValues cv = new ContentValues();
+		cv.put(AccountEntry.COLUMN_NAME_TOKEN, "");
+		db.update(AccountEntry.TABLE_NAME, cv, "token=?", new String [] { token });
+		db.close();
+	}
 	public long insertAccount(SQLiteDatabase db, ContentValues value) {
 
 		long ret = db.insert(AccountEntry.TABLE_NAME, "", value);

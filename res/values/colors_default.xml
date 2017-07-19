@@ -12,4 +12,5 @@
     <color name="color_execrise">#009A87</color>
     <color name="color_heart_rate">#E10043</color>
     <color name="color_sleep">#8500d5</color>
+    <color name="color_progress">#80000000</color>
 </resources>

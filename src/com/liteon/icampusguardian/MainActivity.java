@@ -23,6 +23,8 @@ import com.liteon.icampusguardian.util.AppInfoPrivacyItemAdapter.ViewHolder.IApp
 import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
@@ -33,6 +35,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
@@ -81,6 +84,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		setContentView(R.layout.activity_main);
 		// registerNotification();
 		mDbHelper = DBHelper.getInstance(this);
+		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
+		new checkTokenTask().execute(token, null, null);
+
+		//mDbHelper.getAccountToken(mDbHelper.getReadableDatabase(), name)
 		mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
 		// get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
@@ -423,5 +431,36 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			intent.setClass(this, UserInfoUpdateActivity.class);
 			startActivity(intent);
 		}
+	}
+	
+	class checkTokenTask extends AsyncTask<String, Void, String>{
+		
+		@Override
+		protected String doInBackground(String... params) {
+			String token = params[0];
+			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
+			apiClient.setToken(token);
+			JSONResponse response = apiClient.getChildrenList();
+			if (TextUtils.equals("ERR01", response.getReturn().getResponseSummary().getStatusCode())) {
+				SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+				SharedPreferences.Editor editor = sp.edit();
+				editor.remove(Def.SP_LOGIN_TOKEN);
+				editor.commit();
+				// clear token in db 
+				mDbHelper.clearAccountToken(mDbHelper.getWritableDatabase(), token);
+				return null;
+			}
+			return token;
+		}
+
+		protected void onPostExecute(String result) {
+			if (result == null) {
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, LoginActivity.class);
+				startActivity(intent);
+				Toast.makeText(getApplicationContext(), "Token provided is expired, need to re-login", Toast.LENGTH_LONG).show();
+				finish();
+			}
+		};
 	}
 }

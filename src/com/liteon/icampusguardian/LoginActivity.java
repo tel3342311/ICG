@@ -273,32 +273,31 @@ public class LoginActivity extends AppCompatActivity {
         	String token = "";
         	//Account values
         	ContentValues cv = new ContentValues();
-        	token = helper.getAccountToken(helper.getReadableDatabase(), args[0]);
 
-        	if (TextUtils.isEmpty(token)) {
-        		final JSONResponse response = mApiClient.login(args[0], args[1]);
-        		if (response == null) {
-        			return null;
-        		}
-        		if (response.getReturn().getResults() == null) {
-        			runOnUiThread(new Runnable() {
-						
-						@Override
-						public void run() {
-		        			Toast.makeText(getApplicationContext(), "Status Code :" +response.getReturn().getResponseSummary().getStatusCode() + " Error is " +response.getReturn().getResponseSummary().getErrorMessage(), Toast.LENGTH_LONG).show();							
-						}
-					});
-        			return null;
-        		}
-        		token = response.getReturn().getResults().getToken();
-        		
-        		cv.put(AccountEntry.COLUMN_NAME_USER_NAME, args[0]);
-        		cv.put(AccountEntry.COLUMN_NAME_PASSWORD, args[1]);
-        		cv.put(AccountEntry.COLUMN_NAME_TOKEN, token);
-        		helper.insertAccount(helper.getWritableDatabase(), cv);
-        	} else {
-        		mApiClient.setToken(token);
-        	}
+			final JSONResponse response = mApiClient.login(args[0], args[1]);
+			if (response == null) {
+				return null;
+			}
+			if (response.getReturn().getResults() == null) {
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						Toast.makeText(getApplicationContext(),
+								"Status Code :" + response.getReturn().getResponseSummary().getStatusCode()
+										+ " Error is " + response.getReturn().getResponseSummary().getErrorMessage(),
+								Toast.LENGTH_LONG).show();
+					}
+				});
+				return null;
+			}
+			token = response.getReturn().getResults().getToken();
+
+			cv.put(AccountEntry.COLUMN_NAME_USER_NAME, args[0]);
+			cv.put(AccountEntry.COLUMN_NAME_PASSWORD, args[1]);
+			cv.put(AccountEntry.COLUMN_NAME_TOKEN, token);
+			helper.insertAccount(helper.getWritableDatabase(), cv);
+
         	
         	//get Child list
         	JSONResponse response_childList = mApiClient.getChildrenList();
@@ -313,9 +312,9 @@ public class LoginActivity extends AppCompatActivity {
         	String eventId = Def.EVENT_ID_GPS_LOCATION;
         	String duration = Def.EVENT_DURATION_WEEK;
         	for (Student student : childList) {
-        		JSONResponse response = mApiClient.getDeviceEventReport(student.getStudent_id(), eventId, duration);
-        		if (response != null) {
-        			response.getReturn().getResults().getDevices();
+        		JSONResponse res = mApiClient.getDeviceEventReport(student.getStudent_id(), eventId, duration);
+        		if (res != null) {
+        			res.getReturn().getResults().getDevices();
         		}
         	}
     		

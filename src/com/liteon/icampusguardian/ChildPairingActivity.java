@@ -2,10 +2,12 @@ package com.liteon.icampusguardian;
 
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -55,6 +57,26 @@ public class ChildPairingActivity extends AppCompatActivity {
 	}
 	
 	private void setListener() {
-		
+		mStartPairing.setOnClickListener(mOnClickListener);
+		mPairingLater.setOnClickListener(mOnClickListener);
 	}
+	
+	private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+
+			Intent intent = new Intent();
+			switch(v.getId()) {
+			case R.id.pairing_watch_now:
+				intent.setClass(ChildPairingActivity.this, BLEPairingListActivity.class);
+				break;
+			case R.id.pairing_watch_later:
+				intent.setClass(ChildPairingActivity.this, MainActivity.class);
+				break;
+			}
+			startActivity(intent);
+		}
+		
+	};
 }

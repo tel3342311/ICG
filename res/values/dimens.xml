@@ -85,4 +85,9 @@
 	<dimen name="pairing_bottom_area_margin_vertical">27dp</dimen>
 	<dimen name="pairing_watch_margin_bottom">60dp</dimen>
 	<dimen name="pairing_title_line_space">5dp</dimen>
+	<!-- ble pairing -->
+	<dimen name="ble_pairing_watch_img_width">125dp</dimen>
+	<dimen name="ble_pairing_watch_img_height">190dp</dimen>
+	
+	
 </resources>

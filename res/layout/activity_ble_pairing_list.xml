@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" >
+   
+        <ImageView 
+            android:layout_width="@dimen/ble_pairing_watch_img_width"
+            android:layout_height="@dimen/ble_pairing_watch_img_height"
+            android:background="@drawable/setup_img_surface2"/>
+        
+    </android.support.v7.widget.Toolbar>
+        	
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/page_title_margin_bottom"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/toolbar"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <EditText
+            android:id="@+id/login_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_edit_text_height"
+            android:layout_marginLeft="@dimen/child_name_item_margin_horizontal"
+            android:layout_marginRight="@dimen/child_name_item_margin_horizontal"
+            android:hint="姓名"
+            android:maxLines="1"
+            android:textColor="@color/md_black_1000"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/login_edit_text_size" 
+            android:gravity="left|center_vertical"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/profile_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/setting_profile_list_height"
+            android:layout_below="@id/login_name"
+            android:scrollbars="vertical" />
+
+		<android.support.v7.widget.CardView
+		    android:id="@+id/option_wheel"
+		    android:layout_width="match_parent"
+		    android:layout_height="@dimen/setting_profile_option_height"
+		    android:layout_alignParentBottom="true"
+		    android:elevation="40dp"
+		    android:visibility="invisible" >
+		
+		<include
+		    android:id="@+id/three_wheel"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    layout="@layout/popup_three_wheel"
+		    android:visibility="invisible" />
+		
+	    <include 
+		    android:id="@+id/one_wheel"
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    layout="@layout/popup_one_wheel"
+		    android:visibility="invisible"/>
+		</android.support.v7.widget.CardView>
+    </RelativeLayout>
+</RelativeLayout>

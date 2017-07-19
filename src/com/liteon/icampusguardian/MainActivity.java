@@ -395,6 +395,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			changeFragment(new SettingTargetFragment(), "每日目標設定", NAVIGATION_BACK);
 			break;
 		case PAIRING:
+			Intent intent = new Intent();
+			intent.setClass(this, ChildInfoUpdateActivity.class);
+			startActivity(intent);
 			break;
 		case PRIVACY_INFO:
 			break;

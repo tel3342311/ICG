@@ -1,6 +1,6 @@
 package com.liteon.icampusguardian;
 
-import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,7 +9,6 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.internal.CollectionMapper.Collection;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
@@ -21,11 +20,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
 import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
-import com.liteon.icampusguardian.util.JSONResponse.Return;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.content.ContentValues;
@@ -62,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
 	private EditText mUserName;
 	private EditText mPassword;
 	private GuardianApiClient mApiClient;
+	private List<Student> mStudentList = new ArrayList<>();
 
 	//facebook login
 	private final static int RC_GOOGLE_SIGNIN = 1000;
@@ -301,17 +299,19 @@ public class LoginActivity extends AppCompatActivity {
         	
         	//get Child list
         	JSONResponse response_childList = mApiClient.getChildrenList();
-        	List<Student> childList = Arrays.asList(response_childList.getReturn().getResults().getStudents());
-        	
-        	helper.queryChildList(helper.getReadableDatabase());
+        	mStudentList = Arrays.asList(response_childList.getReturn().getResults().getStudents());
+        	if (mStudentList.size() == 0) {
+        		//First use
+        		return token;
+        	}
+        	//Save child list to db
         	SQLiteDatabase db = helper.getWritableDatabase();
-        	helper.insertChildList(db, childList);
+        	helper.insertChildList(db, mStudentList);
         	
-
         	//get Device event report
         	String eventId = Def.EVENT_ID_GPS_LOCATION;
         	String duration = Def.EVENT_DURATION_WEEK;
-        	for (Student student : childList) {
+        	for (Student student : mStudentList) {
         		JSONResponse res = mApiClient.getDeviceEventReport(student.getStudent_id(), eventId, duration);
         		if (res != null) {
         			res.getReturn().getResults().getDevices();
@@ -320,7 +320,7 @@ public class LoginActivity extends AppCompatActivity {
     		
     		SharedPreferences.Editor editor = sp.edit();
     		editor.putString(Def.SP_LOGIN_TOKEN, token);
-        	if (childList.size() > 0 && !sp.contains(Def.SP_CURRENT_STUDENT)) {
+        	if (mStudentList.size() > 0 && !sp.contains(Def.SP_CURRENT_STUDENT)) {
         		editor.putInt(Def.SP_CURRENT_STUDENT, 0);
         	}
         	editor.commit();
@@ -328,16 +328,17 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(String token) {
-        	if (token != null ) {
-        		//String statusCode = response.getReturn().getResponseSummary().getStatusCode();
-        		//if (!TextUtils.isEmpty(statusCode) && TextUtils.equals(statusCode, Def.RET_SUCCESS)) {
-        			//String sessionId = response.getReturn().getResponseSummary().getSessionId();
-        		finish();	
+        	if (token != null) {
+        		finish();
         		Intent intent = new Intent();
-        		intent.setClass(getApplicationContext(), MainActivity.class);
-        		startActivity(intent);
-        		//}
-        			
+        		//First use, pairing child
+        		if (mStudentList.size() == 0) {			
+	        		intent.setClass(getApplicationContext(), ChildInfoUpdateActivity.class);
+	        		startActivity(intent);
+        		} else {
+	        		intent.setClass(getApplicationContext(), MainActivity.class);
+	        		startActivity(intent);
+        		}
         	}
         }
     }

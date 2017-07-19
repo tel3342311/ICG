@@ -73,6 +73,18 @@
             android:screenOrientation="portrait">
 		</activity>
 		
+        <activity
+            android:name=".ChildInfoUpdateActivity"
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait">
+		</activity>
+		
+        <activity
+            android:name=".ChildPairingActivity"
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait">
+		</activity>
+		
         <!-- For Google login info -->
         <activity
       		android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"

@@ -72,4 +72,17 @@
 	<dimen name="navigation_header_circular_icon_size">66dp</dimen>
 	<dimen name="navigation_header_child_name_margin_top">10dp</dimen>
 	<dimen name="navigation_bottom_btn_margin">10dp</dimen>
+	<!-- Child add -->	
+	<dimen name="child_name_item_margin_horizontal">6dp</dimen>
+	<!-- Child watch pairing -->
+	<dimen name="pairing_watch_indicator_size">26dp</dimen>
+	<dimen name="pairing_watch_bg_width">160dp</dimen>
+	<dimen name="pairing_watch_bg_height">244dp</dimen>
+	<dimen name="pairing_title_margin_top">62dp</dimen>
+	<dimen name="pairing_title_margin_horizontal">44dp</dimen>
+	<dimen name="pairing_title_text_size">15sp</dimen>
+	<dimen name="pairing_watch_margin_vertical">16dp</dimen>
+	<dimen name="pairing_bottom_area_margin_vertical">27dp</dimen>
+	<dimen name="pairing_watch_margin_bottom">60dp</dimen>
+	<dimen name="pairing_title_line_space">5dp</dimen>
 </resources>

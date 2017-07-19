@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView 
+        android:id="@+id/pairing_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/pairing_title_margin_top"
+        android:layout_marginStart="@dimen/pairing_title_margin_horizontal"
+        android:layout_marginEnd="@dimen/pairing_title_margin_horizontal"
+        android:text="請長按智慧型手錶按鈕，以進入配對模式。進入手環配對模式後，請點擊連接鍵"
+        android:textSize="@dimen/pairing_title_text_size"
+        android:textColor="@color/md_black_1000"
+        android:lineSpacingExtra="@dimen/pairing_title_line_space"
+        android:layout_centerHorizontal="true"/>
+
+
+
+	<LinearLayout 
+	    android:id="@+id/login_btn_group"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginLeft="@dimen/pairing_title_margin_horizontal"
+	    android:layout_marginRight="@dimen/pairing_title_margin_horizontal"
+	    android:layout_marginBottom="@dimen/pairing_bottom_area_margin_vertical"
+	    android:orientation="vertical"
+	    android:layout_alignParentBottom="true">
+
+	  	<android.support.v7.widget.AppCompatButton
+	        android:id="@+id/pairing_watch_now"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
+	        android:background="@color/md_red_700"
+	        android:text="配對智慧手錶" />
+	    	    
+	    <android.support.v7.widget.AppCompatButton
+	        android:id="@+id/pairing_watch_later"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
+	        android:background="@color/md_red_700"
+	        android:text="之後再配對手錶" />
+
+		<TextView 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="之後再至頁面下方 &quot;設定&quot; 中配對手環" 
+			android:layout_gravity="center_horizontal"/>
+	</LinearLayout>
+	
+	<ImageView 
+	    android:id="@+id/watch_bg"
+	    android:layout_width="@dimen/pairing_watch_bg_width"
+	    android:layout_height="@dimen/pairing_watch_bg_height"
+	    android:layout_above="@id/login_btn_group"
+	    android:layout_marginBottom="@dimen/pairing_watch_margin_bottom"
+	    android:layout_centerHorizontal="true"
+	    android:background="@drawable/login_img_watchpair"/>
+	
+	<ImageView 
+	    android:id="@+id/indicator_loading"
+	    android:layout_width="@dimen/pairing_watch_indicator_size"
+	    android:layout_height="@dimen/pairing_watch_indicator_size"
+	    android:layout_toEndOf="@id/watch_bg"
+	    android:layout_centerVertical="true"
+	    android:background="@drawable/login_ani_arrow"/>
+</RelativeLayout>

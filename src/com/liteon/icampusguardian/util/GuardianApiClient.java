@@ -505,6 +505,59 @@ public class GuardianApiClient {
 		}
 		return null;
 	}
+	
+	public JSONResponse updateAppToken(String fireBaseInstanceToken) {
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_UPDATE_APP_TOKEN).
+				appendPath(mToken).build();
+		
+		try {
+			URL url = new URL(uri.toString());
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setRequestProperty("Content-Type", "application/json");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(true);
+			urlConnection.setUseCaches(false);
+
+			JSONObject jsonParam = new JSONObject();
+
+			jsonParam.put(Def.KEY_APP_TOKEN, fireBaseInstanceToken);
+			jsonParam.put(Def.KEY_APP_TYPE, Def.KEY_APP_TYPE_ANDROID);
+
+			OutputStream os = urlConnection.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+			writer.write(jsonParam.toString());
+			writer.flush();
+			writer.close();
+			final int status = urlConnection.getResponseCode();
+			if (status == HttpURLConnection.HTTP_OK) {
+				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
+						JSONResponse.class);
+				showStatus(result);
+
+				return result;
+			} else {
+				if (mContext.get() != null) {
+					((Activity) mContext.get()).runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
+									.show();
+						}
+					});
+				}
+			}
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	private void showError(int status) {
 		final int status_code = status; 
 		if (mContext.get() != null) {

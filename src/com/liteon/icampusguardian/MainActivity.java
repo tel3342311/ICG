@@ -224,6 +224,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			DBHelper helper = DBHelper.getInstance(MainActivity.this);
 			helper.deleteAccount(helper.getWritableDatabase());
 			finish();
+			Intent intent = new Intent();
+			intent.setClass(MainActivity.this, LoginActivity.class);
+			startActivity(intent);
 		}
 	};
 	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
@@ -395,9 +398,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			changeFragment(new SettingTargetFragment(), "每日目標設定", NAVIGATION_BACK);
 			break;
 		case PAIRING:
-			Intent intent = new Intent();
-			intent.setClass(this, ChildInfoUpdateActivity.class);
-			startActivity(intent);
+//			Intent intent = new Intent();
+//			intent.setClass(this, ChildInfoUpdateActivity.class);
+//			startActivity(intent);
 			break;
 		case PRIVACY_INFO:
 			break;

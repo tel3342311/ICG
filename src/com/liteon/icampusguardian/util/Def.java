@@ -42,6 +42,12 @@ public class Def {
 	//API 07 get student list
 	public static final String REQUEST_GET_CHILDREN_LIST = "StudentList";
 	
+	//API 11 Update FCM Token
+	public static final String REQUEST_UPDATE_APP_TOKEN = "MobileAppTokenUpdate";
+	public static final String KEY_APP_TOKEN = "appToken";
+	public static final String KEY_APP_TYPE = "appType";
+	public static final String KEY_APP_TYPE_ANDROID = "android";//fixed input
+
 	//API 14 pair new device
 	public static final String REQUEST_PAIR_NEW_DEVICE = "ParentUserDevicePair";
 	//API 15 pair new device

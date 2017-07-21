@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.Def;
@@ -317,7 +318,9 @@ public class LoginActivity extends AppCompatActivity {
         			res.getReturn().getResults().getDevices();
         		}
         	}
-    		
+    		//Send FireBase Instance token to server
+        	String fcmToken = FirebaseInstanceId.getInstance().getToken();
+        	mApiClient.updateAppToken(fcmToken);
     		SharedPreferences.Editor editor = sp.edit();
     		editor.putString(Def.SP_LOGIN_TOKEN, token);
         	if (mStudentList.size() > 0 && !sp.contains(Def.SP_CURRENT_STUDENT)) {

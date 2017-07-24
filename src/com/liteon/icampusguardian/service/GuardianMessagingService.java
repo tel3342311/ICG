@@ -56,9 +56,9 @@ public class GuardianMessagingService extends FirebaseMessagingService {
 	}
 	
 	private void handleNow(RemoteMessage message) {
-		Log.d(TAG, "FCM message handle Now, Message Body: " + message.getNotification().getBody());
-		sendNotification(message.getNotification().getBody());
-		sendBrocastToAp(message.getNotification().getBody());
+		Log.d(TAG, "FCM message handle Now, Message Body: " + message.toString());
+		sendNotification(message.toString());
+		sendBrocastToAp(message.toString());
 	}
 	
 	public void sendBrocastToAp(String message) {

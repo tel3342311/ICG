@@ -342,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		if (id == R.id.action_switch_account) {
 			switchAccount();
 		} else if (id == R.id.action_add_child) {
-
+			addNewChild();
 		} else if (id == R.id.action_delete_account) {
 
 		} else if (id == R.id.action_setting) {
@@ -352,6 +352,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		return true;
 	}
 
+	public void addNewChild() {
+		Intent intent = new Intent();
+		intent.setClass(this, ChildInfoUpdateActivity.class);
+		startActivity(intent);
+	}
 	private void switchSetting() {
 		AppInfoPrivacyFragment frag = new AppInfoPrivacyFragment(this);
 		changeFragment(frag, getString(R.string.drawer_setting), NAVIGATION_BACK);

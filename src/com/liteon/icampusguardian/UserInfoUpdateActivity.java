@@ -88,9 +88,6 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
     	if (!TextUtils.isEmpty(token)) {
     		//Account values
     		Parent parent = helper.getParentByToken(helper.getReadableDatabase(), token);
-    		Toast.makeText(this, "Parent username: " + parent.getUsername() , Toast.LENGTH_LONG).show();
-    		Toast.makeText(this, "Parent given name: " + parent.getGiven_name() , Toast.LENGTH_LONG).show();
-    		Toast.makeText(this, "Parent password: " + parent.getPassword() , Toast.LENGTH_LONG).show();
     		
     		mName.setText(parent.getGiven_name());
     		mPassword.setText(parent.getPassword());

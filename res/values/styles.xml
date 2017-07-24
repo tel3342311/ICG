@@ -1,7 +1,22 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat">
 		
+    </style>
+    
+    <!-- Style for pin edit text -->
+     <style name="pin_edittext_style">
+       <item name="android:gravity">center</item>
+       <item name="android:cursorVisible">false</item>
+       <item name="android:maxLength">1</item>
+       <item name="android:minEms">2</item>
+       <item name="android:inputType">textPassword</item>
+       <item name="android:focusable">true</item>
+       <item name="android:focusableInTouchMode">true</item>
+       <item name="android:background">@drawable/pin_bg</item>
+       <item name="android:textColor">@color/md_black_1000</item>
+       <item name="android:textSize">@dimen/pin_text_size</item>
+       <item name="android:layout_margin">@dimen/pin_code_margin</item>
     </style>
 </resources>

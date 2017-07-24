@@ -128,12 +128,12 @@ public class SettingTargetFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
     	SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-    	String carlos = sp.getString(Def.SP_TARGET_CARLOS, "0");
-    	String step = sp.getString(Def.SP_TARGET_CARLOS, "0");
-    	String walking = sp.getString(Def.SP_TARGET_WALKING, "0");
-    	String running = sp.getString(Def.SP_TARGET_RUNNING, "0");
-    	String cycling = sp.getString(Def.SP_TARGET_CYCLING, "0");
-    	String sleep = sp.getString(Def.SP_TARGET_SLEEPING, "0");
+    	String carlos = sp.getString(Def.SP_TARGET_CARLOS, "");
+    	String step = sp.getString(Def.SP_TARGET_CARLOS, "");
+    	String walking = sp.getString(Def.SP_TARGET_WALKING, "");
+    	String running = sp.getString(Def.SP_TARGET_RUNNING, "");
+    	String cycling = sp.getString(Def.SP_TARGET_CYCLING, "");
+    	String sleep = sp.getString(Def.SP_TARGET_SLEEPING, "");
     	
 		mCarlos.setText(carlos);
 		mStep.setText(step);

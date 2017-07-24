@@ -321,6 +321,7 @@ public class LoginActivity extends AppCompatActivity {
     		//Send FireBase Instance token to server
         	String fcmToken = FirebaseInstanceId.getInstance().getToken();
         	mApiClient.updateAppToken(fcmToken);
+        	Log.i(TAG, "API 11 UpdateAppToken called : FCM Token is " + fcmToken);
     		SharedPreferences.Editor editor = sp.edit();
     		editor.putString(Def.SP_LOGIN_TOKEN, token);
         	if (mStudentList.size() > 0 && !sp.contains(Def.SP_CURRENT_STUDENT)) {

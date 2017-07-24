@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,66 +9,55 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/color_ble_pairing_bg"
         android:minHeight="?attr/actionBarSize" >
-   
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ImageView
+                android:id="@+id/cancel"
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_clear_white_24dp"
+                android:backgroundTint="@color/md_black_1000" />
+
+            <TextView
+                android:id="@+id/login_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="請選擇配對的智慧手錶"
+                android:textColor="@color/md_black_1000"
+                android:textSize="@dimen/page_title_text_size" />
+
+        </RelativeLayout>
+	</android.support.v7.widget.Toolbar>
+        
+    <RelativeLayout 
+        android:id="@+id/watch_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:background="@color/color_ble_pairing_bg">
         <ImageView 
             android:layout_width="@dimen/ble_pairing_watch_img_width"
             android:layout_height="@dimen/ble_pairing_watch_img_height"
-            android:background="@drawable/setup_img_surface2"/>
-        
-    </android.support.v7.widget.Toolbar>
-        	
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/page_title_margin_bottom"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_below="@id/toolbar"
-        android:focusable="true"
-        android:focusableInTouchMode="true">
-
-        <EditText
-            android:id="@+id/login_name"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/login_edit_text_height"
-            android:layout_marginLeft="@dimen/child_name_item_margin_horizontal"
-            android:layout_marginRight="@dimen/child_name_item_margin_horizontal"
-            android:hint="姓名"
-            android:maxLines="1"
-            android:textColor="@color/md_black_1000"
-            android:textCursorDrawable="@null"
-            android:textSize="@dimen/login_edit_text_size" 
-            android:gravity="left|center_vertical"/>
+            android:background="@drawable/setup_img_surface2"
+            android:layout_margin="@dimen/ble_pairing_watch_img_margin"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>	
+    
         <android.support.v7.widget.RecyclerView
             android:id="@+id/profile_view"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/setting_profile_list_height"
-            android:layout_below="@id/login_name"
+            android:layout_height="match_parent"
+            android:layout_below="@id/watch_bg"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:scrollbars="vertical" />
 
-		<android.support.v7.widget.CardView
-		    android:id="@+id/option_wheel"
-		    android:layout_width="match_parent"
-		    android:layout_height="@dimen/setting_profile_option_height"
-		    android:layout_alignParentBottom="true"
-		    android:elevation="40dp"
-		    android:visibility="invisible" >
-		
-		<include
-		    android:id="@+id/three_wheel"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    layout="@layout/popup_three_wheel"
-		    android:visibility="invisible" />
-		
-	    <include 
-		    android:id="@+id/one_wheel"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-		    layout="@layout/popup_one_wheel"
-		    android:visibility="invisible"/>
-		</android.support.v7.widget.CardView>
-    </RelativeLayout>
 </RelativeLayout>

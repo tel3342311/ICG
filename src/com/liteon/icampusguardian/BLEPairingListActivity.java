@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 
 public class BLEPairingListActivity extends AppCompatActivity implements IBLEItemClickListener {
 
@@ -22,14 +23,12 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
 	private List<BLEItem> mDataSet;
-	private Toolbar mToolbar;
-	
+	private ImageView mCancel;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ble_pairing_list);
 		findViews();
-		setupToolbar();
 		setListener();
 		initRecycleView();
 	}
@@ -45,38 +44,36 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	
 	private void setupData(){
 		mDataSet = new ArrayList<>();
-		
+		BLEItem item = new BLEItem();
+		item.setId("0000-0000-0000-0000");
+		item.setName("iCampus Guardian");
+		item.setValue("Not Connected");
+		mDataSet.add(item);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mToolbar.setTitle("請選擇配對的智慧手錶");
-	}
-	
-	private void setupToolbar() {
-		setSupportActionBar(mToolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-				onBackPressed();
-			}
-		});
 	}
 	
 	private void findViews() {
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		mRecyclerView = (RecyclerView) findViewById(R.id.profile_view);
-	}
+		mCancel = (ImageView) findViewById(R.id.cancel);
+		
+ 	}
 	
 	private void setListener() {
-		
+		mCancel.setOnClickListener(mOnCancelClickListener);
 	}
-
+	
+	private View.OnClickListener mOnCancelClickListener = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			onBackPressed();
+		}
+	};
+	
 	class UpdateInfoTask extends AsyncTask<String, Void, String> {
 
 		@Override
@@ -100,7 +97,8 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 
 	@Override
 	public void onBleItemClick(BLEItem item) {
-		// TODO Auto-generated method stub
-		
+		Intent intent = new Intent();
+		intent.setClass(this, BLEPinCodeInputActivity.class);
+		startActivity(intent);
 	}
 }

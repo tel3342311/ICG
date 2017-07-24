@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:minHeight="?attr/actionBarSize" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ImageView
+                android:id="@+id/cancel"
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_clear_white_24dp"
+                android:backgroundTint="@color/md_black_1000" />
+
+            <TextView
+                android:id="@+id/login_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="請輸入智慧手錶上Pin碼"
+                android:textColor="@color/md_black_1000"
+                android:textSize="@dimen/page_title_text_size" />
+
+            <ImageView
+                android:id="@+id/confirm"
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:background="@drawable/alarmset_btn_ok"
+                android:backgroundTint="@color/md_black_1000" />
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:id="@+id/pin_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+		android:layout_below="@+id/toolbar"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="@dimen/pin_area_top_margin"
+        android:orientation="horizontal" >
+
+        <EditText
+            android:id="@+id/pin_first_edittext"
+            style="@style/pin_edittext_style"
+            android:layout_width="@dimen/pin_edittext_width"
+            android:layout_height="@dimen/pin_edittext_height"
+            android:contentDescription="@string/pin_content_desc" />
+
+        <EditText
+            android:id="@+id/pin_second_edittext"
+            style="@style/pin_edittext_style"
+            android:layout_width="@dimen/pin_edittext_width"
+            android:layout_height="@dimen/pin_edittext_height"
+            android:contentDescription="@string/pin_content_desc" />
+
+        <EditText
+            android:id="@+id/pin_third_edittext"
+            style="@style/pin_edittext_style"
+            android:layout_width="@dimen/pin_edittext_width"
+            android:layout_height="@dimen/pin_edittext_height"
+            android:contentDescription="@string/pin_content_desc" />
+
+        <EditText
+            android:id="@+id/pin_forth_edittext"
+            style="@style/pin_edittext_style"
+            android:layout_width="@dimen/pin_edittext_width"
+            android:layout_height="@dimen/pin_edittext_height"
+            android:contentDescription="@string/pin_content_desc" />
+    </LinearLayout>
+	
+	<EditText android:id="@+id/pin_hidden_edittext" 
+      android:layout_width="1dp" 
+      android:layout_height="1dp" 
+      android:gravity="center_horizontal" 
+      android:layout_gravity="center_horizontal" 
+      android:background="@null" 
+      android:cursorVisible="false" 
+      android:password="true" 
+      android:maxLength="5" 
+      android:textColor="#00000000" 
+      android:contentDescription="@string/pin_content_desc" />
+</RelativeLayout>

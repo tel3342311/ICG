@@ -163,12 +163,13 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	}
 	
 	private void initRecycleView() {
-		for (AlarmPeriodItem.TYPE type : AlarmPeriodItem.TYPE.values()) {
-			AlarmPeriodItem item = new AlarmPeriodItem();
-			item.setItemType(type);
-			alarmPeriodDataset.add(item);
+		if (alarmPeriodDataset.size() == 0) {
+			for (AlarmPeriodItem.TYPE type : AlarmPeriodItem.TYPE.values()) {
+				AlarmPeriodItem item = new AlarmPeriodItem();
+				item.setItemType(type);
+				alarmPeriodDataset.add(item);
+			}
 		}
-		
 		mRecyclerView.setHasFixedSize(true);
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);

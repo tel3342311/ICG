@@ -16,5 +16,6 @@
 	<string name="add_child">新增寶貝</string>
 	<string name="delete_account">刪除%s帳號</string>
 	<string name="drawer_setting">App資訊與設定</string>
-	
+	<!-- Pin -->
+	<string name="pin_content_desc">PIN input field</string>
 </resources>

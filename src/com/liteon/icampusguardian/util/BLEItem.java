@@ -1,9 +1,24 @@
 package com.liteon.icampusguardian.util;
 
+import android.bluetooth.BluetoothDevice;
+
 public class BLEItem {
 	String name;
 	String id;
 	String value;
+	BluetoothDevice mBluetoothDevice;
+	/**
+	 * @return the mBluetoothDevice
+	 */
+	public BluetoothDevice getmBluetoothDevice() {
+		return mBluetoothDevice;
+	}
+	/**
+	 * @param mBluetoothDevice the mBluetoothDevice to set
+	 */
+	public void setmBluetoothDevice(BluetoothDevice mBluetoothDevice) {
+		this.mBluetoothDevice = mBluetoothDevice;
+	}
 	/**
 	 * @return the name
 	 */

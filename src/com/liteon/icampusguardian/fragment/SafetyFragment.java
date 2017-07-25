@@ -40,6 +40,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.TextView;
 
 public class SafetyFragment extends Fragment {
 
@@ -55,7 +56,7 @@ public class SafetyFragment extends Fragment {
 	private ValueAnimator mValueAnimator;
 	private FloatingActionButton mLocationOnMap;
 	private boolean isAlerted = false;
-	
+	private TextView mUpdateText;
 	public SafetyFragment(Intent intent) {
 		String latlng = intent.getStringExtra(Def.EXTRA_SOS_LOCATION);
 		latlng = "25.070108, 121.611435";
@@ -67,7 +68,14 @@ public class SafetyFragment extends Fragment {
 			SimpleDateFormat sdf_item = new SimpleDateFormat("HH:mm");
 			String currentDate = sdf.format(Calendar.getInstance().getTime());
 			String currentTime = sdf_item.format(Calendar.getInstance().getTime());
-			mCurrentItem = new GeoEventItem();
+			for (GeoEventItem item : myDataset) {
+				if (TextUtils.equals(item.getDate(), currentDate)) {
+					mCurrentItem = item;
+				}
+			}
+			if (mCurrentItem == null) {
+				mCurrentItem = new GeoEventItem();
+			}
 			mCurrentItem.setDate(currentDate);
 			mCurrentItem.setEnterSchool("");
 			mCurrentItem.setLeaveSchool("");
@@ -191,6 +199,7 @@ public class SafetyFragment extends Fragment {
 		mMapView = (MapView) rootView.findViewById(R.id.map_view);
 		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.daily_event_view);
 		mLocationOnMap = (FloatingActionButton) rootView.findViewById(R.id.map_location);
+		mUpdateText = (TextView) rootView.findViewById(R.id.gps_update_time);
 	}
 
 	@Override

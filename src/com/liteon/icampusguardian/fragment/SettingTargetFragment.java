@@ -129,7 +129,7 @@ public class SettingTargetFragment extends Fragment {
 		super.onResume();
     	SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
     	String carlos = sp.getString(Def.SP_TARGET_CARLOS, "");
-    	String step = sp.getString(Def.SP_TARGET_CARLOS, "");
+    	String step = sp.getString(Def.SP_TARGET_STEPS, "");
     	String walking = sp.getString(Def.SP_TARGET_WALKING, "");
     	String running = sp.getString(Def.SP_TARGET_RUNNING, "");
     	String cycling = sp.getString(Def.SP_TARGET_CYCLING, "");

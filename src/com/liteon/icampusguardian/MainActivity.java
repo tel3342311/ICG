@@ -55,6 +55,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks,
@@ -196,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 				changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this), "設定鬧鈴", 0);
 				return;
 			} else if (mCurrentFragment instanceof SettingProfileFragment || mCurrentFragment instanceof SettingTargetFragment) {
+				hideSoftKeyboard();
 				changeFragment(new SettingFragment(MainActivity.this), getString(R.string.setting_tab),
 						NAVIGATION_DRAWER);
 				return;
@@ -206,7 +208,13 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		}
 		super.onBackPressed();
 	}
-
+	private void hideSoftKeyboard() {
+		View view = getCurrentFocus();
+        if (view != null) {  
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+	}
 	private void findViews() {
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		mBottomView = (BottomNavigationView) findViewById(R.id.bottom_navigation);

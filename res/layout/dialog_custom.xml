@@ -9,7 +9,7 @@
 	<TextView
 	    android:id="@+id/title"
 	    android:layout_width="match_parent"
-	    android:layout_height="@dimen/page_title_height"
+	    android:layout_height="wrap_content"
 	    android:textColor="@color/md_black_1000"
 	    android:gravity="center"
 	    android:textSize="@dimen/page_title_text_size"
@@ -25,13 +25,16 @@
         android:layout_centerHorizontal="true"
         android:layout_above="@id/title"/>
     
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/confirm"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dialog_confirm_btn_height"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/dialog_btn_margin_bottom"
         android:layout_alignParentBottom="true"
-        android:text="好"/>
+        android:text="好"
+        android:textColor="@color/md_black_1000"
+        android:background="@drawable/btn_bg"/>
         
 </RelativeLayout>

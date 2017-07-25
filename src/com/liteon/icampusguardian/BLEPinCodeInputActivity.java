@@ -1,5 +1,9 @@
 package com.liteon.icampusguardian;
 
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.Def;
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -14,11 +18,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.MeasureSpec;
+import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class BLEPinCodeInputActivity extends AppCompatActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
@@ -30,7 +33,8 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
     private EditText mPinThirdDigitEditText;
     private EditText mPinForthDigitEditText;
     private EditText mPinHiddenEditText;
-    
+    private View mBleConnectingView;
+    private ConfirmDeleteDialog mBLEFailConfirmDialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,6 +57,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         mPinThirdDigitEditText = (EditText) findViewById(R.id.pin_third_edittext);
         mPinForthDigitEditText = (EditText) findViewById(R.id.pin_forth_edittext);
         mPinHiddenEditText = (EditText) findViewById(R.id.pin_hidden_edittext);
+        mBleConnectingView = (View) findViewById(R.id.ble_pairing_progress);
  	}
 	
 	private void setListener() {
@@ -100,32 +105,71 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 		
 		@Override
 		public void onClick(View v) {
-			//String pinCode = mPinHiddenEditText.getText();
+			new ConnectBleTask().execute();
 			
 		}
 	};
 	
-	class UpdateInfoTask extends AsyncTask<String, Void, String> {
+	class ConnectBleTask extends AsyncTask<String, Void, Boolean> {
 
 		@Override
 		protected void onPreExecute() {
-
-
+			mBleConnectingView.setVisibility(View.VISIBLE);
 		}
 		
-        protected String doInBackground(String... args) {
+        protected Boolean doInBackground(String... args) {
         	
-
-        	return null;
+        	//TODO add ble connection function
+        	
+        	return Boolean.FALSE;
         }
 
-        protected void onPostExecute(String token) {
-        	Intent intent = new Intent();
-        	intent.setClass(BLEPinCodeInputActivity.this, ChildPairingActivity.class);
-        	startActivity(intent);
+        protected void onPostExecute(Boolean success) {
+        	mBleConnectingView.setVisibility(View.INVISIBLE);
+        	if (success == true) {
+        		CustomDialog dialog = new CustomDialog();
+        		dialog.setTitle(mPinHiddenEditText.getText() + "(PIN碼)配對成功\n已綁定為智慧手錶");
+        		dialog.setIcon(0);
+        		dialog.setBtnText("好");
+        		dialog.show(getSupportFragmentManager(), "dialog_fragment");
+        	} else {
+        		mBLEFailConfirmDialog = new ConfirmDeleteDialog();
+        		mBLEFailConfirmDialog.setOnConfirmEventListener(mOnBLEFailConfirmClickListener);
+        		mBLEFailConfirmDialog.setmOnCancelListener(mOnBLEFailCancelClickListener);
+        		mBLEFailConfirmDialog.setmTitleText(mPinHiddenEditText.getText() + "(PIN碼)配對失敗");
+        		mBLEFailConfirmDialog.setmBtnConfirmText("重新輸入");
+        		mBLEFailConfirmDialog.setmBtnCancelText("之後再配對");
+        		mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
+        	}
         }
     }
+	
+	private OnClickListener mOnBLEFailConfirmClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			mBLEFailConfirmDialog.dismiss();
+			mPinFirstDigitEditText.setText("");
+	        mPinSecondDigitEditText.setText("");
+	        mPinThirdDigitEditText.setText("");
+	        mPinForthDigitEditText.setText("");
+			mPinHiddenEditText.setText("");
+			mPinFirstDigitEditText.requestFocus();
+		}
+	};
 
+	private OnClickListener mOnBLEFailCancelClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			finish();
+			Intent intent = new Intent();
+			intent.setClass(BLEPinCodeInputActivity.this, MainActivity.class);
+			intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+			startActivity(intent);
+		}
+	};
+	
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		// TODO Auto-generated method stub
@@ -230,7 +274,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
     }
 	
 	private void setDefaultPinBackground(EditText editText) {
-        setViewBackground(editText, getResources().getDrawable(R.drawable.pin_bg, null));
+        setViewBackground(editText, getResources().getDrawable(R.drawable.btn_bg, null));
     }
 	
 	private void setFocusedPinBackground(EditText editText) {

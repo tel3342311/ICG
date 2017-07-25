@@ -14,9 +14,15 @@
        <item name="android:inputType">textPassword</item>
        <item name="android:focusable">true</item>
        <item name="android:focusableInTouchMode">true</item>
-       <item name="android:background">@drawable/pin_bg</item>
+       <item name="android:background">@drawable/btn_bg</item>
        <item name="android:textColor">@color/md_black_1000</item>
        <item name="android:textSize">@dimen/pin_text_size</item>
        <item name="android:layout_margin">@dimen/pin_code_margin</item>
     </style>
+    
+     <!-- Style for loading progress -->
+    <style name="LinearProgress" >
+        <item name="colorAccent">@color/md_white_1000</item>
+    </style>
+    
 </resources>

@@ -89,5 +89,6 @@ public class Def {
 
 	//Intent EXTRA
 	public static final String EXTRA_DISABLE_USERTREM_BOTTOM = "com.liteon.icampusguardian.EXTRA_DISABLE_USERTREM_BOTTOM";
+	public static final String EXTRA_GOTO_MAIN_SETTING = "com.liteon.icampusguardian.EXTRA_GOTO_MAIN_SETTING";
 	
 }

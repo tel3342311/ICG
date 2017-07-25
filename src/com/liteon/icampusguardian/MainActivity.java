@@ -99,20 +99,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		updateMenuItem();
 		BottomNavigationViewHelper.disableShiftMode(mBottomView);
 		
-		if (getIntent().getExtras() != null) {
-			if (TextUtils.equals(Def.ACTION_NOTIFY, getIntent().getAction())) {
-				String type = getIntent().getStringExtra(Def.EXTRA_NOTIFY_TYPE);
-				if (TextUtils.equals(type, "sos")) {
-					SafetyFragment safetyFragment = new SafetyFragment(getIntent());
-					changeFragment(safetyFragment);
-				}
-			}
-            for (String key : getIntent().getExtras().keySet()) {
-                Object value = getIntent().getExtras().get(key);
-                Log.d(TAG, "Key: " + key + " Value: " + value);
-                Toast.makeText(this, "Key: " + key + " Value: " + value, Toast.LENGTH_SHORT).show();
-            }
-        }
+		
 	}
 
 	private void registerNotification() {
@@ -149,8 +136,31 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		changeFragment(new SafetyFragment(), "安心", NAVIGATION_DRAWER);
-
+		if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
+			SettingFragment settingFragment = new SettingFragment(this);
+			changeFragment(settingFragment);
+		} 
+		if (getIntent().getExtras() != null) {
+			if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
+				SettingFragment settingFragment = new SettingFragment(this);
+				changeFragment(settingFragment);
+				return;
+			}
+			if (TextUtils.equals(Def.ACTION_NOTIFY, getIntent().getAction())) {
+				String type = getIntent().getStringExtra(Def.EXTRA_NOTIFY_TYPE);
+				if (TextUtils.equals(type, "sos")) {
+					SafetyFragment safetyFragment = new SafetyFragment(getIntent());
+					changeFragment(safetyFragment);
+				}
+			}
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d(TAG, "Key: " + key + " Value: " + value);
+                Toast.makeText(this, "Key: " + key + " Value: " + value, Toast.LENGTH_SHORT).show();
+            }
+        } else {
+			changeFragment(new SafetyFragment(), "安心", NAVIGATION_DRAWER);
+		}
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Def.ACTION_NOTIFY);
 		mLocalBroadcastManager.registerReceiver(mReceiver, filter);
@@ -353,6 +363,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	}
 
 	public void addNewChild() {
+		finish();
 		Intent intent = new Intent();
 		intent.setClass(this, ChildInfoUpdateActivity.class);
 		startActivity(intent);

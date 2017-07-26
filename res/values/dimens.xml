@@ -105,4 +105,7 @@
     <dimen name="pin_phone_bg_height">107dp</dimen>
     <dimen name="pin_progress_margin">18dp</dimen>
     <dimen name="pin_margin_horizontal">38dp</dimen>
+    <!-- loading page -->
+    <dimen name="main_loading_progress_size">237dp</dimen>
+    <dimen name="main_loading_icon_size">104dp</dimen>
     </resources>

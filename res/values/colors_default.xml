@@ -15,4 +15,6 @@
     <color name="color_progress">#80000000</color>
     <color name="color_ble_pairing_bg">#e7eef7</color>
     <color name="color_btn_boarder">#d2d2d2</color>
+    <color name="color_loding_bar_ring">#11c0fe</color>
+    <color name="color_loding_bar_bg">#eaeaea</color>
 </resources>

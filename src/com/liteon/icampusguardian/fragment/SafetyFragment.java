@@ -1,11 +1,10 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import org.w3c.dom.Text;
+import java.util.List;
+import java.util.Locale;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -17,19 +16,28 @@ import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.liteon.icampusguardian.LoginActivity;
+import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GeoEventAdapter;
 import com.liteon.icampusguardian.util.GeoEventItem;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.animation.FloatEvaluator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -41,6 +49,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SafetyFragment extends Fragment {
 
@@ -57,6 +66,13 @@ public class SafetyFragment extends Fragment {
 	private FloatingActionButton mLocationOnMap;
 	private boolean isAlerted = false;
 	private TextView mUpdateText;
+	private DBHelper mDbHelper;
+	private List<Student> mStudents;
+	private int mCurrnetStudentIdx;
+	private GradientDrawable mGradientDrawable;
+	private Bitmap mBitmap;
+	private Context mContext;
+	
 	public SafetyFragment(Intent intent) {
 		String latlng = intent.getStringExtra(Def.EXTRA_SOS_LOCATION);
 		latlng = "25.070108, 121.611435";
@@ -88,27 +104,19 @@ public class SafetyFragment extends Fragment {
 	}
 
 	private void showRipples(LatLng latLng) {
-	    GradientDrawable d = new GradientDrawable();
-	    d.setShape(GradientDrawable.OVAL);
-	    d.setSize(500,500);
-	    d.setColor(getResources().getColor(R.color.md_red_700));
-	    d.setStroke(0, Color.TRANSPARENT);
 
-	    Bitmap bitmap = Bitmap.createBitmap(d.getIntrinsicWidth()
-	            , d.getIntrinsicHeight()
-	            , Bitmap.Config.ARGB_8888);
 
 	    // Convert the drawable to bitmap
-	    Canvas canvas = new Canvas(bitmap);
-	    d.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-	    d.draw(canvas);
+	    Canvas canvas = new Canvas(mBitmap);
+	    mGradientDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+	    mGradientDrawable.draw(canvas);
 
 	    // Radius of the circle
 	    final int radius = 70;
 
 	    // Add the circle to the map
 	    final GroundOverlay circle = mGoogleMap.addGroundOverlay(new GroundOverlayOptions()
-	            .position(latLng, 2 * radius).image(BitmapDescriptorFactory.fromBitmap(bitmap)));
+	            .position(latLng, 2 * radius).image(BitmapDescriptorFactory.fromBitmap(mBitmap)));
 
 	    // Prep the animator   
 	    PropertyValuesHolder radiusHolder = PropertyValuesHolder.ofFloat("radius", 0, radius);
@@ -143,13 +151,31 @@ public class SafetyFragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_safty, container, false);
 		findView(rootView);
 		setListener();
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		mMapView.onCreate(savedInstanceState);
 		mLocationOnMap.setVisibility(View.INVISIBLE);
 		initMapComponent();
 		initRecycleView();
+		mDbHelper = DBHelper.getInstance(getActivity());
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+		init();
+		mContext = getContext();
 		return rootView;
 	}
 
+	private void init() {
+	    mGradientDrawable = new GradientDrawable();
+	    mGradientDrawable.setShape(GradientDrawable.OVAL);
+	    mGradientDrawable.setSize(500,500);
+	    mGradientDrawable.setColor(getResources().getColor(R.color.md_red_700));
+	    mGradientDrawable.setStroke(0, Color.TRANSPARENT);
+
+	    mBitmap = Bitmap.createBitmap(mGradientDrawable.getIntrinsicWidth()
+	            , mGradientDrawable.getIntrinsicHeight()
+	            , Bitmap.Config.ARGB_8888);
+	}
 	private void setListener() {
 		mLocationOnMap.setOnClickListener(mOnLocateClickListener);
 	}
@@ -207,8 +233,11 @@ public class SafetyFragment extends Fragment {
 		super.onResume();
 		mMapView.onResume();
 		if (mCurrentItem != null) {
-			myDataset.add(0, mCurrentItem);
+			if (myDataset.indexOf(mCurrentItem) == -1) {
+				myDataset.add(0, mCurrentItem);
+			}
 			mAdapter.notifyDataSetChanged();
+			new getCurrentLocation().execute("");
 		}
 	}
 
@@ -237,7 +266,49 @@ public class SafetyFragment extends Fragment {
 			mGoogleMap = map;
 			mGoogleMap.setMaxZoomPreference(18);
 			mGoogleMap.setMinZoomPreference(12);
-			
+			new getCurrentLocation().execute("");
+		}
+	};
+	
+	public void setAlert(LatLng position, String updateTime) {
+		mLastPosition = position;
+		mGoogleMap.clear();
+		if (isDetached()) {
+			return;
+		}
+		showRipples(mLastPosition);
+		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mLastPosition, 16);
+		mGoogleMap.moveCamera(cameraUpdate);
+		mGoogleMap.addMarker(new MarkerOptions()
+                .position(mLastPosition)
+                .title("最後位置"));
+		mLocationOnMap.setVisibility(View.VISIBLE);
+	}
+	
+	class getCurrentLocation extends AsyncTask<String, Void, String>{
+		
+		@Override
+		protected String doInBackground(String... params) {
+			SharedPreferences sp = mContext.getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+			String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
+			GuardianApiClient apiClient = new GuardianApiClient(getActivity());
+			apiClient.setToken(token);
+			JSONResponse response = apiClient.getStudentLocation(mStudents.get(mCurrnetStudentIdx));
+			if (TextUtils.equals(Def.RET_SUCCESS_1, response.getReturn().getResponseSummary().getStatusCode())) {
+				String lat = response.getReturn().getResults().getLatitude();
+				String lnt = response.getReturn().getResults().getLongitude();
+				mLastPosition = new LatLng(Double.parseDouble(lat), Double.parseDouble(lnt));
+			} else if (TextUtils.equals(Def.RET_ERR_02, response.getReturn().getResponseSummary().getStatusCode())) {
+				return Def.RET_ERR_02;
+			}
+			return "";
+		}
+
+		protected void onPostExecute(String result) {
+			if (TextUtils.equals(Def.RET_ERR_02, result)) {
+				Toast.makeText(mContext, "Token provided is expired, need to re-login", Toast.LENGTH_LONG).show();
+				return;
+			}
 			mGoogleMap.addMarker(new MarkerOptions()
 	                .position(mLastPosition)
 	                .title("最後位置"));
@@ -246,15 +317,9 @@ public class SafetyFragment extends Fragment {
 			if (isAlerted) {
 				setAlert(mLastPosition, "2017-07-10 週一 07:50");
 			}
-			
-		}
-	};
-	
-	public void setAlert(LatLng position, String updateTime) {
-		mLastPosition = position;
-		showRipples(mLastPosition);
-		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mLastPosition, 16);
-		mGoogleMap.moveCamera(cameraUpdate);
-		mLocationOnMap.setVisibility(View.VISIBLE);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd EE HH:mm", Locale.TAIWAN);
+			String updateTime = sdf.format(Calendar.getInstance().getTime());
+			mUpdateText.setText(updateTime);
+		};
 	}
 }

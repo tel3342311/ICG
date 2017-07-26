@@ -17,6 +17,8 @@ public class Def {
 	//RET CODE there are two kind of success code
 	public static final String RET_SUCCESS_1 = "SUC01";
 	public static final String RET_SUCCESS_2 = "WSUC01";
+	public static final String RET_ERR_02 = "ERR02";
+	
 	//Default user 
 	public static final String USER = "admin1@parent.com";
 	public static final String PASSWORD = "password";
@@ -41,6 +43,8 @@ public class Def {
 	
 	//API 07 get student list
 	public static final String REQUEST_GET_CHILDREN_LIST = "StudentList";
+	//API 08 get student location 
+	public static final String REQUEST_GET_CHILDREN_LOCATION = "StudentLocation";
 	
 	//API 11 Update FCM Token
 	public static final String REQUEST_UPDATE_APP_TOKEN = "MobileAppTokenUpdate";

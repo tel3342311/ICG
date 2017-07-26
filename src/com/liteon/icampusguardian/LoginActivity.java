@@ -305,9 +305,10 @@ public class LoginActivity extends AppCompatActivity {
         		//First use
         		return token;
         	}
+        	//clear child list in db 
+        	helper.clearChildList(helper.getWritableDatabase());
         	//Save child list to db
-        	SQLiteDatabase db = helper.getWritableDatabase();
-        	helper.insertChildList(db, mStudentList);
+        	helper.insertChildList(helper.getWritableDatabase(), mStudentList);
         	
         	//get Device event report
         	String eventId = Def.EVENT_ID_GPS_LOCATION;

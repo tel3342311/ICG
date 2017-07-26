@@ -154,7 +154,9 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			@Override
 			public void onClick(View v) {
 
-				onBackPressed();
+				Intent intent = new Intent();
+				intent.setClass(ChildInfoUpdateActivity.this, MainActivity.class);
+				startActivity(intent);
 			}
 		});
 	}

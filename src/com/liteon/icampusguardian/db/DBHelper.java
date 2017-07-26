@@ -163,6 +163,10 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.close();
 	}
 
+	public void clearChildList(SQLiteDatabase db) {
+		db.execSQL("delete from "+ ChildEntry.TABLE_NAME);
+		db.close();
+	}
 	public boolean isChildExist(SQLiteDatabase db, String uuid) {
 		if (TextUtils.isEmpty(uuid)) {
 			return false;

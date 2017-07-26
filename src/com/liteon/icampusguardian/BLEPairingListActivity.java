@@ -206,6 +206,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
         BLEItem item = new BLEItem();
         item.setName(btDevice.getName());
         item.setId(btDevice.getAddress());
+        //item.setId(btDevice.getUuids());
         int bond_state = btDevice.getBondState();
         if (bond_state == btDevice.BOND_NONE) {
         	item.setValue("Not Connected");

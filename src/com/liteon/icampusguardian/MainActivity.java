@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
 		new checkTokenTask().execute(token, null, null);
 
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		//mDbHelper.getAccountToken(mDbHelper.getReadableDatabase(), name)
 		mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
 		// get child list
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			SettingFragment settingFragment = new SettingFragment(this);
 			changeFragment(settingFragment);
 		} 
+
 		if (getIntent().getExtras() != null) {
 			if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
 				SettingFragment settingFragment = new SettingFragment(this);
@@ -362,7 +364,12 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		} else if (id == R.id.action_add_child) {
 			addNewChild();
 		} else if (id == R.id.action_delete_account) {
-
+//			Intent intent = new Intent();
+//			intent.setAction(Def.ACTION_NOTIFY);
+//			intent.putExtra(Def.EXTRA_NOTIFY_TYPE, "sos");
+//			setIntent(intent);
+//			SafetyFragment safetyFragment = new SafetyFragment(getIntent());
+//			changeFragment(safetyFragment);
 		} else if (id == R.id.action_setting) {
 			switchSetting();
 		}
@@ -389,6 +396,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		SharedPreferences.Editor editor = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE).edit();
 		editor.putInt(Def.SP_CURRENT_STUDENT, mCurrentStudentIdx);
 		editor.commit();
+		
+		Intent intent = new Intent();
+		intent.setClass(this, LoadingPageActivity.class);
+		startActivity(intent);
 	}
 
 	@Override
@@ -493,4 +504,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 			}
 		};
 	}
+	
+
 }

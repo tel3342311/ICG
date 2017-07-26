@@ -270,6 +270,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 				mAlarmMap.put(uuid, new ArrayList<AlarmItem>());
 			}
 		}
+		if (mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getUuid()) == null) {
+			mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getUuid(), new ArrayList<AlarmItem>());
+		}
 		myDataset.clear();
 		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getUuid()));
 		mAdapter.notifyDataSetChanged();

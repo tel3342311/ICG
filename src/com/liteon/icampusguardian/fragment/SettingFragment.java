@@ -9,15 +9,18 @@ import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItem;
 import com.liteon.icampusguardian.util.SettingItemAdapter;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -84,7 +87,7 @@ public class SettingFragment extends Fragment {
 	}
 
 	private void initChildInfo() {
-		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
+		
 		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000));
 		mChildIcon.setBorderWidth(10);
 		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400));
@@ -92,6 +95,17 @@ public class SettingFragment extends Fragment {
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
 		mChildName.setText(mStudents.get(mCurrnetStudentIdx).getName());
+		
+		//read child image file
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+		Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + ".jpg", options);
+		if (bitmap != null) {
+			mChildIcon.setImageBitmap(bitmap);
+		} else {
+			mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
+		}
 	}
 	
 	private void testData() {

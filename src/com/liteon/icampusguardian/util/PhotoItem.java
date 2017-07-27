@@ -1,10 +1,24 @@
 package com.liteon.icampusguardian.util;
 
 import android.graphics.Bitmap;
+import android.net.Uri;
 
 public class PhotoItem {
 
+	public String filePath;
 	public String uri;
+	/**
+	 * @return the uri
+	 */
+	public String getUri() {
+		return uri;
+	}
+	/**
+	 * @param uri the uri to set
+	 */
+	public void setUri(String uri) {
+		this.uri = uri;
+	}
 	public Bitmap mBitmap;
 	public boolean isChecked;
 	/**
@@ -22,14 +36,14 @@ public class PhotoItem {
 	/**
 	 * @return the uri
 	 */
-	public String getUri() {
-		return uri;
+	public String getFilePath() {
+		return filePath;
 	}
 	/**
 	 * @param uri the uri to set
 	 */
-	public void setUri(String uri) {
-		this.uri = uri;
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 	/**
 	 * @return the mBitmap

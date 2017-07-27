@@ -73,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_login);
 		findViews();
 		setListener();
+		
 		mApiClient = new GuardianApiClient(this);
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		String token = sp.getString(Def.SP_LOGIN_TOKEN, "");

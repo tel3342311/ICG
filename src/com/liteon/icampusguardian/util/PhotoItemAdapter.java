@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.PhotoItemAdapter.ViewHolder.IPhotoViewHolderClicks;
 
 import android.content.Context;
@@ -25,6 +26,9 @@ public class PhotoItemAdapter extends Adapter<PhotoItemAdapter.ViewHolder> {
 	private float photoSize;
 	private List<PhotoItem> mDataset;
 	public WeakReference<IPhotoViewHolderClicks> mClicks;
+	private PhotoItem mCurrentUsedItem;
+
+	
 	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
         // each data item is just a string in this case
         public View mRootView;
@@ -71,9 +75,10 @@ public class PhotoItemAdapter extends Adapter<PhotoItemAdapter.ViewHolder> {
     		holder.mCheckIcon.setVisibility(View.INVISIBLE);
     	}
     	//load bitmap 
-    	Bitmap resized = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(item.getUri()), (int)photoSize, (int)photoSize);
-    	//Bitmap resized = BitmapUtils.decodeSampledBitmapFromFd(item.getUri(), (int)photoSize, (int)photoSize);
+    	Bitmap resized = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(item.getFilePath()), (int)photoSize, (int)photoSize);
     	holder.mPhotoItem.setImageBitmap(resized);
+    	//crash issue, and need resize
+    	//holder.mPhotoItem.setImageURI(item.getUri());
 	}
 
 	@Override

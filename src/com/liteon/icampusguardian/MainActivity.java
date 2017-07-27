@@ -30,19 +30,27 @@ import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthView
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomNavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -328,7 +336,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 	}
 
 	private void initChildInfo() {
-		mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
 		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000));
 		mChildIcon.setBorderWidth(10);
 		mChildIcon.setSelectorColor(getResources().getColor(R.color.md_blue_400));
@@ -337,6 +344,18 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		mChildIcon.addShadow();
 		if (mStudents.size() > 0) {
 			mChildName.setText(mStudents.get(mCurrentStudentIdx).getName());
+		}
+		//read child image file
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+		Bitmap bitmap = BitmapFactory.decodeFile(
+				Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/"
+						+ mStudents.get(mCurrentStudentIdx).getUuid() + ".jpg",
+				options);
+		if (bitmap != null) {
+			mChildIcon.setImageBitmap(bitmap);
+		} else {
+			mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
 		}
 	}
 

@@ -14,6 +14,9 @@ public class Def {
 	public static final String SP_TARGET_SLEEPING = "com.liteon.icampusguardian.SP_TARGET_SLEEPING";
 	public static final String SP_ALARM_MAP = "com.liteon.icampusguardian.SP_ALARM_MAP";
 	public static final String SP_IMPROVE_PLAN = "com.liteon.icampusguardian.SP_IMPROVE_PLAN";
+	public static final String SP_PHOTO_MAP = "com.liteon.icampusguardian.SP_PHOTO_MAP";
+	
+
 	//RET CODE there are two kind of success code
 	public static final String RET_SUCCESS_1 = "SUC01";
 	public static final String RET_SUCCESS_2 = "WSUC01";

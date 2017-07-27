@@ -11,6 +11,7 @@ import com.liteon.icampusguardian.fragment.AlarmPeriodFragment;
 import com.liteon.icampusguardian.fragment.AppInfoPrivacyFragment;
 import com.liteon.icampusguardian.fragment.DailyHealthFragment;
 import com.liteon.icampusguardian.fragment.HealthFragment;
+import com.liteon.icampusguardian.fragment.HealthMainFragment;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
 import com.liteon.icampusguardian.fragment.SettingFragment;
 import com.liteon.icampusguardian.fragment.SettingProfileFragment;
@@ -269,7 +270,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 				title = getString(R.string.safty_tab);
 				break;
 			case R.id.action_health:
-				fragment = new HealthFragment(MainActivity.this);
+				//fragment = new HealthFragment(MainActivity.this);
+				fragment = new HealthMainFragment();
 				title = getString(R.string.health_tab);
 				break;
 			case R.id.action_alarm:
@@ -389,6 +391,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 //			setIntent(intent);
 //			SafetyFragment safetyFragment = new SafetyFragment(getIntent());
 //			changeFragment(safetyFragment);
+			sendNotification("test");
 		} else if (id == R.id.action_setting) {
 			switchSetting();
 		}
@@ -524,5 +527,27 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		};
 	}
 	
+	private void sendNotification(String messageBody) {
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.setAction(Def.ACTION_NOTIFY);
+		intent.putExtra(Def.EXTRA_NOTIFY_TYPE, "sos");
+		intent.putExtra(Def.EXTRA_SOS_LOCATION, "25.070108, 121.611435");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
 
+        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentTitle("iCampus Guardian")
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+                .setContentIntent(pendingIntent);
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+	}
 }

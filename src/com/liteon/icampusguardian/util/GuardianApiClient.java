@@ -196,7 +196,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse resetPassword(String userEmail) {
-		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_REGISTRATION).appendPath(mToken).build();
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_PASSWORD_REST).appendPath(mToken).build();
 		try {
 			URL url = new URL(uri.toString());
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   	android:layout_width="@dimen/choose_photo_item_size"
+    android:layout_height="@dimen/choose_photo_item_size">
+    <ImageView
+    	android:id="@+id/photo_item" 
+   		android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_alignParentStart="true"
+    	android:background="@color/md_black_1000"/>
+    	
+     <ImageView
+         android:id="@+id/select_icon"
+         android:layout_width="@dimen/select_icon_size"
+         android:layout_height="@dimen/select_icon_size"
+         android:layout_alignParentEnd="true"
+         android:background="@drawable/ic_check_black_24dp"
+         android:backgroundTint="@color/color_accent"/>
+</RelativeLayout>

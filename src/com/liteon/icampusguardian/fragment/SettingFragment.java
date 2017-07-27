@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.liteon.icampusguardian.ChoosePhotoActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
@@ -14,6 +15,7 @@ import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +24,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -52,10 +55,19 @@ public class SettingFragment extends Fragment {
 		mDbHelper = DBHelper.getInstance(getActivity());
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
-
+		mChildIcon.setOnClickListener(mOnClickListener);
 		return rootView;
 	}
 	
+	private OnClickListener mOnClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Intent intent = new Intent();
+			intent.setClass(getActivity(), ChoosePhotoActivity.class);
+			startActivity(intent);
+		}
+	};
 	private void findView(View rootView) {
 		mChildIcon = (CircularImageView) rootView.findViewById(R.id.child_icon);
 		mChildName = (TextView) rootView.findViewById(R.id.child_name);

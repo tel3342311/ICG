@@ -18,4 +18,6 @@
 	<string name="drawer_setting">App資訊與設定</string>
 	<!-- Pin -->
 	<string name="pin_content_desc">PIN input field</string>
+	<!-- Page title -->
+	<string name="health_page_title">健康</string>
 </resources>

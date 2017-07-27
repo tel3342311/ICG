@@ -294,6 +294,9 @@ public class SafetyFragment extends Fragment {
 			GuardianApiClient apiClient = new GuardianApiClient(getActivity());
 			apiClient.setToken(token);
 			JSONResponse response = apiClient.getStudentLocation(mStudents.get(mCurrnetStudentIdx));
+			if (response == null) {
+				return null;
+			}
 			if (TextUtils.equals(Def.RET_SUCCESS_1, response.getReturn().getResponseSummary().getStatusCode())) {
 				String lat = response.getReturn().getResults().getLatitude();
 				String lnt = response.getReturn().getResults().getLongitude();

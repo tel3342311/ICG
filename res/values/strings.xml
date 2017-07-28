@@ -19,5 +19,5 @@
 	<!-- Pin -->
 	<string name="pin_content_desc">PIN input field</string>
 	<!-- Page title -->
-	<string name="health_page_title">健康</string>
+	<string name="health_page_title">今日紀錄</string>
 </resources>

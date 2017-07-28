@@ -67,7 +67,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
-public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, IHealthViewHolderClicks,
+public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener, IAppInfoPrivacyViewHolderClicks {
 
 	private static final String TAG = MainActivity.class.getName(); 
@@ -154,8 +154,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 
 		if (getIntent().getExtras() != null) {
 			if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
-				SettingFragment settingFragment = new SettingFragment(this);
-				changeFragment(settingFragment);
+				mBottomView.setSelectedItemId(R.id.action_setting);
 				return;
 			}
 			if (TextUtils.equals(Def.ACTION_NOTIFY, getIntent().getAction())) {
@@ -331,12 +330,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 		}
 	}
 
-	@Override
-	public void onClick(TYPE type) {
-		Fragment fragment = new DailyHealthFragment(type);
-		changeFragment(fragment, type.getName(), NAVIGATION_BACK);
-	}
-
 	private void initChildInfo() {
 		mChildIcon.setBorderColor(getResources().getColor(R.color.md_white_1000));
 		mChildIcon.setBorderWidth(10);
@@ -391,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks, 
 //			setIntent(intent);
 //			SafetyFragment safetyFragment = new SafetyFragment(getIntent());
 //			changeFragment(safetyFragment);
-			sendNotification("test");
+//			sendNotification("test");
 		} else if (id == R.id.action_setting) {
 			switchSetting();
 		}

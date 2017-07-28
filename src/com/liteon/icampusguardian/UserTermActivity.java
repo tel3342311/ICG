@@ -70,7 +70,6 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		boolean imporve = sp.getBoolean(Def.SP_IMPROVE_PLAN, false);
 		mRadioButton.setChecked(imporve);
-		
 	}
 	
 	private void setListener() {
@@ -98,13 +97,18 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 			userTermRead();
 			break;
 		case R.id.option_quit:
+			setResult(RESULT_CANCELED);
 			finish();
 			break;
 		}
 	}
 	private void userTermRead() {	
-		Intent intent = new Intent();
-		intent.setClass(this, LoginActivity.class);
-		startActivity(intent);
+		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putInt(Def.SP_USER_TERM_READ, 1);
+		editor.commit();
+		
+		setResult(RESULT_OK);
+		finish();
 	}
 }

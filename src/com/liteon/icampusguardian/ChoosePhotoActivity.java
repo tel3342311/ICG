@@ -282,7 +282,10 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	            	} catch (Exception e) {
 	            	     e.printStackTrace();
 	            	}
-	            	onBackPressed();
+	            	Intent intent = new Intent();
+	            	intent.setClass(this, MainActivity.class);
+	            	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+	            	startActivity(intent);
 	            }
 	        }
 	    }

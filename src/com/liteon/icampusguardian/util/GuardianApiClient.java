@@ -533,7 +533,6 @@ public class GuardianApiClient {
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
 						JSONResponse.class);
-				showStatus(result);
 
 				return result;
 			} else {

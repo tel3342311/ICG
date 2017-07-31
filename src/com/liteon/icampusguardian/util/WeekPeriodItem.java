@@ -23,6 +23,14 @@ public class WeekPeriodItem {
 			this.name = name;
 			this.value = value;
 		}
+		
+		public long getValue(){
+			return value;
+		}
+		
+		public String getName(){
+			return name;
+		}
     }
 	
 	TYPE itemType;

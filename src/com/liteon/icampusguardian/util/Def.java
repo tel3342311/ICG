@@ -16,6 +16,7 @@ public class Def {
 	public static final String SP_IMPROVE_PLAN = "com.liteon.icampusguardian.SP_IMPROVE_PLAN";
 	public static final String SP_TEACHER_PLAN = "com.liteon.icampusguardian.SP_TEACHER_PLAN";
 	public static final String SP_PHOTO_MAP = "com.liteon.icampusguardian.SP_PHOTO_MAP";
+	public static final String SP_PHOTO_MAP_WATCH = "com.liteon.icampusguardian.SP_PHOTO_MAP_WATCH";
 	
 
 	//RET CODE there are two kind of success code
@@ -98,5 +99,10 @@ public class Def {
 	//Intent EXTRA
 	public static final String EXTRA_DISABLE_USERTREM_BOTTOM = "com.liteon.icampusguardian.EXTRA_DISABLE_USERTREM_BOTTOM";
 	public static final String EXTRA_GOTO_MAIN_SETTING = "com.liteon.icampusguardian.EXTRA_GOTO_MAIN_SETTING";
+	public static final String EXTRA_CHOOSE_PHOTO_TYPE = "com.liteon.icampusguardian.EXTRA_GOTO_MAIN_EXTRA_CHOOSE_PHOTO_TYPE";
+	
+	//Choose photo TYPE
+	public static final String EXTRA_CHOOSE_CHILD_ICON = "child_icon";
+	public static final String EXTRA_CHOOSE_WATCH_ICON = "watch_icon";
 	
 }

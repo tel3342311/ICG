@@ -94,13 +94,19 @@ public class SettingFragment extends Fragment {
 		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
-		mChildName.setText(mStudents.get(mCurrnetStudentIdx).getName());
 		
-		//read child image file
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-		Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + ".jpg", options);
+		Bitmap bitmap = null;
+		if (mStudents.size() > 0) {
+			mChildName.setText(mStudents.get(mCurrnetStudentIdx).getName());
+			// read child image file
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			bitmap = BitmapFactory
+					.decodeFile(
+							Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+									.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + ".jpg",
+							options);
+		}
 		if (bitmap != null) {
 			mChildIcon.setImageBitmap(bitmap);
 		} else {

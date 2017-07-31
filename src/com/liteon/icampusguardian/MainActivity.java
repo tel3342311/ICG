@@ -337,16 +337,18 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		mChildIcon.setSelectorStrokeColor(getResources().getColor(R.color.md_blue_800));
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
+		Bitmap bitmap = null;
 		if (mStudents.size() > 0) {
 			mChildName.setText(mStudents.get(mCurrentStudentIdx).getName());
+			//read child image file
+			BitmapFactory.Options options = new BitmapFactory.Options();
+			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			bitmap = BitmapFactory.decodeFile(
+					Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/"
+							+ mStudents.get(mCurrentStudentIdx).getUuid() + ".jpg",
+					options);
 		}
-		//read child image file
-		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-		Bitmap bitmap = BitmapFactory.decodeFile(
-				Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/"
-						+ mStudents.get(mCurrentStudentIdx).getUuid() + ".jpg",
-				options);
+
 		if (bitmap != null) {
 			mChildIcon.setImageBitmap(bitmap);
 		} else {
@@ -419,22 +421,37 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 
 	@Override
 	public void onAddAlarmClick() {
-		changeFragment(new AlarmEditingFragment(this), "設定鬧鈴", 0);
+		if (mCurrentFragment instanceof AlarmFragment) {
+			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
+			changeFragment(new AlarmEditingFragment(this), "設定鬧鈴", 0);
+			mCurrentAlarmIdx = -1;
+			if (fragment.isEditMode()) {
+				fragment.exitEditMode();
+			}
+		}
+		
 	}
 
 	@Override
 	public void onEditAlarm(int idx) {
-		mCurrentAlarmIdx = idx;
-		changeFragment(new AlarmEditingFragment(idx, this), "設定鬧鈴", 0);
+		if (mCurrentFragment instanceof AlarmFragment) {
+			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
+			mCurrentAlarmIdx = idx;
+			changeFragment(new AlarmEditingFragment(idx, this), "設定鬧鈴", 0);
+			
+			if (fragment.isEditMode()) {
+				fragment.exitEditMode();
+			}
+		}
+		
 	}
 
 	@Override
-	public void onClick(AlarmPeriodItem item) {
+	public void onClick(AlarmPeriodItem item, AlarmItem alarmItem) {
 		if (item.getItemType() == AlarmPeriodItem.TYPE.CUSTOMIZE) {
 			// TODO get current AlarmItem
-			AlarmItem alarmItem = new AlarmItem();
 			alarmItem.setPeriodItem(item);
-			changeFragment(new AlarmPeriodFragment(alarmItem), "設定鬧鈴週期", NAVIGATION_BACK);
+			changeFragment(new AlarmPeriodFragment(mCurrentAlarmIdx), "設定鬧鈴週期", NAVIGATION_BACK);
 		}
 	}
 
@@ -455,12 +472,18 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		case PRIVACY_INFO:
 			break;
 		case WATCH_THEME:
+			UpdateWatchTheme();
 			break;
 		default:
 			break;
 		}
 	}
 	
+	private void UpdateWatchTheme() {
+		Intent intent = new Intent();
+		intent.setClass(this, PersonalizedWatchActivity.class);
+		startActivity(intent);
+	}
 
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
@@ -497,7 +520,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
 			apiClient.setToken(token);
 			JSONResponse response = apiClient.getChildrenList();
-			if (TextUtils.equals("ERR01", response.getReturn().getResponseSummary().getStatusCode())) {
+			if (response == null || TextUtils.equals("ERR01", response.getReturn().getResponseSummary().getStatusCode())) {
 				SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 				SharedPreferences.Editor editor = sp.edit();
 				editor.remove(Def.SP_LOGIN_TOKEN);

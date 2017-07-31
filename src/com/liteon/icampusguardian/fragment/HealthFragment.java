@@ -64,7 +64,7 @@ public class HealthFragment extends Fragment {
 			for (HealthyItem.TYPE type : HealthyItem.TYPE.values()) {
 				HealthyItem item = new HealthyItem();
 				item.setItemType(type);
-				item.setValue((int) System.currentTimeMillis() % 5000); 
+				item.setValue((int)(Math.random() * 100)); 
 				myDataset.add(item);
 			}
 		}

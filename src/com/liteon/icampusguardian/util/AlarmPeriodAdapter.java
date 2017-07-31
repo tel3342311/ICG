@@ -25,7 +25,7 @@ public class AlarmPeriodAdapter extends Adapter<AlarmPeriodAdapter.ViewHolder> {
 	private WeakReference<IAlarmPeriodViewHolderClicks> mClickListener;
 	private List<AlarmPeriodItem> mDataset;
 	//Current updateing item;
-	private AlarmItem mAlarmItem;
+	private static AlarmItem mAlarmItem;
 	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener{
         // each data item is just a string in this case
         public View mRootView;
@@ -41,16 +41,11 @@ public class AlarmPeriodAdapter extends Adapter<AlarmPeriodAdapter.ViewHolder> {
         }
 		@Override
 		public void onClick(View v) {
-			
-			Snackbar snackbar = Snackbar
-			        .make(mRootView, "click on " + mItem.getTitle(), Snackbar.LENGTH_LONG);
-			 
-			snackbar.show();			
-			mClicks.get().onClick(mItem);			
+			mClicks.get().onClick(mItem, mAlarmItem);
 		}
 		
 		public static interface IAlarmPeriodViewHolderClicks {
-	        public void onClick(AlarmPeriodItem item);
+	        public void onClick(AlarmPeriodItem item, AlarmItem alarmItem);
 	    }
     }
 
@@ -74,8 +69,11 @@ public class AlarmPeriodAdapter extends Adapter<AlarmPeriodAdapter.ViewHolder> {
         } else {
         	holder.mMoreIcon.setVisibility(View.INVISIBLE);
         }
-        if (mAlarmItem.getPeriodItem().getItemType() == item.getItemType()) {
+
+        if (item.isSelected()) {
         	holder.mTitleTextView.setTextColor(holder.mTitleTextView.getResources().getColor(R.color.color_accent));
+        } else {
+        	holder.mTitleTextView.setTextColor(holder.mTitleTextView.getResources().getColor(R.color.md_black_1000));
         }
         holder.mItem = item;
         mAlarmItem.PeriodItem = item;

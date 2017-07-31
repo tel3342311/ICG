@@ -25,6 +25,32 @@ public class AlarmPeriodItem {
 	
 	TYPE itemType;
 	long value;
+	long customValue;
+	/**
+	 * @return the customValue
+	 */
+	public long getCustomValue() {
+		return customValue;
+	}
+	/**
+	 * @param customValue the customValue to set
+	 */
+	public void setCustomValue(long customValue) {
+		this.customValue = customValue;
+	}
+	boolean isSelected;
+	/**
+	 * @return the isSelected
+	 */
+	public boolean isSelected() {
+		return isSelected;
+	}
+	/**
+	 * @param isSelected the isSelected to set
+	 */
+	public void setSelected(boolean isSelected) {
+		this.isSelected = isSelected;
+	}
 	/**
 	 * @return the itemType
 	 */

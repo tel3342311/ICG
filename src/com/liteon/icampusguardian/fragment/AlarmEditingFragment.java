@@ -31,6 +31,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -71,6 +72,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	}
 
 	private void testData() {
+		
 		mCurrentAlarmItem = new AlarmItem();
 		mCurrentAlarmItem.setTitle("上學");
 		mCurrentAlarmItem.setDate("00:00");
@@ -116,7 +118,9 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		}
 	};
 	private TextWatcher mOnTitleChange = new TextWatcher() {
-		
+		private int editStart;  
+	    private int editEnd;
+	    private int maxLen = 8; // the max byte  
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
 			
@@ -129,8 +133,41 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		
 		@Override
 		public void afterTextChanged(Editable s) {
+			editStart = mAlarmName.getSelectionStart();  
+	        editEnd = mAlarmName.getSelectionEnd();  
+	        mAlarmName.removeTextChangedListener(mOnTitleChange);  
+	        if (!TextUtils.isEmpty(mAlarmName.getText())) {  
+	            String etstring = mAlarmName.getText().toString().trim();  
+	            while (calculateLength(s.toString()) > maxLen) {  
+	                s.delete(editStart - 1, editEnd);  
+	                editStart--;  
+	                editEnd--;  
+	                Log.d("TextChanged", "editStart = " + editStart + " editEnd = " + editEnd);  
+	            }  
+	        }  
+	  
+	        mAlarmName.setText(s);  
+	        mAlarmName.setSelection(editStart);  
+	  
+ 
+	        mAlarmName.addTextChangedListener(mOnTitleChange);  
 			mCurrentAlarmItem.setTitle(s.toString());
 		}
+		
+		private int calculateLength(String etstring) {  
+	        char[] ch = etstring.toCharArray();  
+	  
+	        int varlength = 0;  
+	        for (int i = 0; i < ch.length; i++) {  
+	            if ((ch[i] >= 0x2E80 && ch[i] <= 0xFE4F) || (ch[i] >= 0xA13F && ch[i] <= 0xAA40) || ch[i] >= 0x80) { // 中文字符範圍0x4e00 0x9fbb  
+	                varlength = varlength + 2;  
+	            } else {  
+	                varlength++;  
+	            }  
+	        }  
+	        Log.d("TextChanged", "varlength = " + varlength);  
+	        return varlength;  
+	    }  
 	};
 	
 	@Override
@@ -211,8 +248,11 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		myDataset.clear();
 		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getUuid()));
 		if (mEditIdx == -1) {
-			testData();
-			myDataset.add(mCurrentAlarmItem);
+			if (mCurrentAlarmItem == null) {
+				testData();
+				myDataset.add(mCurrentAlarmItem);
+			}
+			
 		} else {
 			mCurrentAlarmItem = myDataset.get(mEditIdx);
 			mAlarmName.setText(mCurrentAlarmItem.getTitle());
@@ -247,9 +287,19 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	}
 
 	@Override
-	public void onClick(AlarmPeriodItem item) {
-		mCurrentAlarmItem.setPeriodItem(item);
-		mCurrentAlarmItem.setPeriod(item.getTitle());
-		mOnItemClickListener.onClick(item);
+	public void onClick(AlarmPeriodItem item, AlarmItem alarmItem) {
+		if (item.getItemType() != TYPE.CUSTOMIZE) {
+			mCurrentAlarmItem.setPeriodItem(item);
+			mCurrentAlarmItem.setPeriod(item.getTitle());
+		}
+		mOnItemClickListener.onClick(item, mCurrentAlarmItem);
+		if (myDataset.indexOf(mCurrentAlarmItem) == -1) {
+			myDataset.add(mCurrentAlarmItem);
+		}
+		for (AlarmPeriodItem periodItem : alarmPeriodDataset) {
+			periodItem.setSelected(false);
+		}
+		item.setSelected(true);
+		mAdapter.notifyDataSetChanged();
 	}
 }

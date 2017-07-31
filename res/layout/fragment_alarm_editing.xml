@@ -16,6 +16,7 @@
 	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
     	android:layout_marginRight="@dimen/activity_horizontal_margin"
 	    android:hint="鬧鈴名稱(英數8字元，中文字4個字為限)"
+	    android:maxLength="8"
 	    android:maxHeight="@dimen/setting_child_name_max_width"
 	    android:minHeight="@dimen/setting_child_name_min_width"
 	    android:singleLine="true"

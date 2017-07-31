@@ -66,7 +66,7 @@ public class WeekAdapter extends Adapter<WeekAdapter.ViewHolder> {
         	mDataset.add(weekdays);
         }
         mAlarmItem = item; 
-        mCurrentWeekValue = item.PeriodItem.getValue();
+        mCurrentWeekValue = item.getPeriodItem().getCustomValue();
         mClicks = new WeakReference<IWeekViewHolderClicks>(clicks);
     }
     

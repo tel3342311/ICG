@@ -6,12 +6,14 @@ import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Style;
+import android.text.TextUtils;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -45,6 +47,7 @@ public class HealthHistogramView extends View {
 	private List<String> mDateList;
 	private OnHistogramChangeListener mHistogramChangeListener;
 	private TYPE mType;
+	private String mSettingTarget;
 	public HealthHistogramView(Context context) {
 		super(context);
 	}
@@ -98,10 +101,42 @@ public class HealthHistogramView extends View {
 		mGraphMarginVertical = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_magin_vertical);
 		mGraphMarginHorizon = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_magin_horizon);
 		mHistogramWidth = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_width);
-		mRectList = new Rect[HISTOGRAM_NUM];
-		
+		mRectList = new Rect[HISTOGRAM_NUM];    	
 	}
 	
+	private String getTarget() {
+    	SharedPreferences sp = getContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		String target = "";
+		switch(mType) {
+		case ACTIVITY:
+			target = "99";
+			break;
+		case CALORIES_BURNED:
+	    	target = sp.getString(Def.SP_TARGET_CARLOS, "");
+			break;
+		case CYCLING_TIME:
+	    	target = sp.getString(Def.SP_TARGET_CYCLING, "");
+			break;
+		case HEART_RATE:
+			target = "80";
+			break;
+		case RUNNING_TIME:
+	    	target = sp.getString(Def.SP_TARGET_RUNNING, "");
+			break;
+		case SLEEP_TIME:
+	    	target = sp.getString(Def.SP_TARGET_SLEEPING, "");
+			break;
+		case TOTAL_STEPS:
+	    	target = sp.getString(Def.SP_TARGET_STEPS, "");
+			break;
+		case WALKING_TIME:
+	    	target = sp.getString(Def.SP_TARGET_WALKING, "");
+			break;
+		default:
+			break;
+		}
+		return target;
+	}
 	@Override
 	public void onDraw(Canvas canvas)
 	{
@@ -131,7 +166,7 @@ public class HealthHistogramView extends View {
 			mBottomPath.lineTo(mRectList[i].right + mHistogramGap, graph_bottom);
 		}
         canvas.drawPath(mBottomPath, baseLinePaint);
-		canvas.drawText(Integer.toString(mTargetNum), 0, 30, textPaint);
+		canvas.drawText(mSettingTarget, 0, 30, textPaint);
 
 	    Path path = new Path();
 		Point a = new Point(0, 45);
@@ -212,5 +247,7 @@ public class HealthHistogramView extends View {
 		paintSelected.setColor(getResources().getColor(mType.getColorId()));
 		paintOthers.setColor(getResources().getColor(mType.getColorId()));
 		paintOthers.setAlpha(128);
+		mSettingTarget = getTarget();
+		mTargetNum = !TextUtils.isEmpty(mSettingTarget) ? Integer.parseInt(mSettingTarget) : 80;
 	}
 }

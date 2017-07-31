@@ -312,17 +312,17 @@ public class SafetyFragment extends Fragment {
 				Toast.makeText(mContext, "Token provided is expired, need to re-login", Toast.LENGTH_LONG).show();
 				return;
 			}
-			mGoogleMap.addMarker(new MarkerOptions()
-	                .position(mLastPosition)
-	                .title("最後位置"));
-			CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mLastPosition, 16);
-			mGoogleMap.moveCamera(cameraUpdate);
-			if (isAlerted) {
-				setAlert(mLastPosition, "2017-07-10 週一 07:50");
+			if (mGoogleMap != null) {
+				mGoogleMap.addMarker(new MarkerOptions().position(mLastPosition).title("最後位置"));
+				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mLastPosition, 16);
+				mGoogleMap.moveCamera(cameraUpdate);
+				if (isAlerted) {
+					setAlert(mLastPosition, "2017-07-10 週一 07:50");
+				}
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd EE HH:mm", Locale.TAIWAN);
+				String updateTime = sdf.format(Calendar.getInstance().getTime());
+				mUpdateText.setText(updateTime);
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd EE HH:mm", Locale.TAIWAN);
-			String updateTime = sdf.format(Calendar.getInstance().getTime());
-			mUpdateText.setText(updateTime);
 		};
 	}
 }

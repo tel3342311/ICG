@@ -22,6 +22,7 @@ public class CustomDialog extends DialogFragment {
 	private String mTitleText;
 	private int mResId;
 	private String mBtnText;
+	private View.OnClickListener mConfirmListener;
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -52,6 +53,9 @@ public class CustomDialog extends DialogFragment {
 		mTitle.setText(mTitleText);
 		mBtn.setText(mBtnText);
 		mIcon.setBackgroundResource(mResId);
+		if (mConfirmListener!=null) {
+			mBtn.setOnClickListener(mConfirmListener);
+		}
 	}
 	
 	public void setTitle(String title) {
@@ -64,5 +68,9 @@ public class CustomDialog extends DialogFragment {
 	
 	public void setBtnText(String btn_text) {
 		mBtnText = btn_text;
+	}
+	
+	public void setBtnConfirm(View.OnClickListener mClickListener) {
+		mConfirmListener = mClickListener;
 	}
 }

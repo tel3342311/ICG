@@ -63,7 +63,7 @@ public class DailyHealthFragment extends Fragment {
 		mPiechartView = (HealthPieChartView) rootView.findViewById(R.id.pie_chart_view);
 	}
 	private void testData() {
-		int target = (int) (System.currentTimeMillis() % 1000);
+		int target = (int) (Math.random() * 1000);
 		
 		mDataList = new ArrayList<>(7);
 		mDataList.add(target);

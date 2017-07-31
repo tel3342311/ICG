@@ -111,4 +111,12 @@
     <!-- choose photo size -->
     <dimen name="choose_photo_item_size">118dp</dimen>
     <dimen name="select_icon_size">24dp</dimen>
+    <!-- watch surface page -->
+    <dimen name="watch_surface_bg_width">212dp</dimen>
+    <dimen name="watch_surface_bg_height">320dp</dimen>
+    <dimen name="watch_surface_center_margin_top">201.5dp</dimen>
+    <dimen name="watch_surface_center_width">173dp</dimen>
+    <dimen name="watch_surface_center_height">147dp</dimen>
+    <dimen name="watch_surface_loading_progress_size">68dp</dimen>
+    <dimen name="watch_surface_updating_text_margin_top">34dp</dimen>
     </resources>

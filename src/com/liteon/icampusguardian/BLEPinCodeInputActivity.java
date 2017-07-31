@@ -120,8 +120,12 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         protected Boolean doInBackground(String... args) {
         	
         	//TODO add ble connection function
-        	
-        	return Boolean.FALSE;
+        	try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+        	return Boolean.TRUE;
         }
 
         protected void onPostExecute(Boolean success) {
@@ -131,6 +135,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         		dialog.setTitle(mPinHiddenEditText.getText() + "(PIN碼)配對成功\n已綁定為智慧手錶");
         		dialog.setIcon(0);
         		dialog.setBtnText("好");
+        		dialog.setBtnConfirm(mOnBLEFailCancelClickListener);
         		dialog.show(getSupportFragmentManager(), "dialog_fragment");
         	} else {
         		mBLEFailConfirmDialog = new ConfirmDeleteDialog();

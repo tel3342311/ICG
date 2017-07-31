@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.AppCompatButton
+   	    android:id="@+id/watch_info_update_btn"
+   	    android:layout_width="match_parent"
+   	    android:layout_height="wrap_content"
+   	    android:layout_alignParentBottom="true"
+   	    android:layout_marginBottom="@dimen/watch_info_btn_margin_bottom"
+   	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+   	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+   	    android:background="@drawable/btn_bg"
+   	    android:text="智慧手錶韌體更新"
+   	    android:textColor="@color/md_black_1000" />
+       	
+   	<android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize" >
+   
+    </android.support.v7.widget.Toolbar>
+    
+    <ImageView
+    	android:id="@+id/watch_bg"
+    	android:layout_width="@dimen/watch_info_bg_width"
+    	android:layout_height="@dimen/watch_info_bg_height"
+    	android:layout_marginTop="@dimen/watch_info_bg_margin_top"
+    	android:layout_centerHorizontal="true"
+    	android:layout_below="@id/toolbar"
+    	android:background="@drawable/setup_img_surface2"/>
+
+	 <android.support.v7.widget.AppCompatCheckBox
+	     android:id="@+id/teacher_user_plan"
+	     android:layout_width="wrap_content"
+	     android:layout_height="wrap_content"
+	     android:layout_below="@id/watch_bg"
+	     android:layout_marginBottom="@dimen/watch_info_checkbox_margin_top"
+	     android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	     android:layout_marginRight="@dimen/activity_horizontal_margin"
+	     android:layout_marginTop="@dimen/watch_info_checkbox_margin_top"
+	     android:text="學校老師可以獲得寶貝睡眠資訊" />
+	 
+	<TextView
+	    android:id="@+id/watch_info_device_title_text"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@id/teacher_user_plan"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:text="裝置名稱"
+	    android:textColor="@color/md_black_1000" />
+
+	<TextView
+	    android:id="@+id/watch_info_device_title_value"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentRight="true"
+	    android:layout_below="@id/teacher_user_plan"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:text="XXXXXXXX"
+	    android:textColor="@color/md_black_1000" />
+
+	<TextView
+	    android:id="@+id/watch_info_firmware_title_text"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentLeft="true"
+	    android:layout_below="@id/watch_info_device_title_text"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:layout_marginTop="@dimen/watch_info_device_name_margin_top"
+	    android:text="韌體版本"
+	    android:textColor="@color/md_black_1000" />
+	
+	<TextView
+	    android:id="@+id/watch_info_firmware_title_value"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentRight="true"
+	    android:layout_below="@id/watch_info_device_title_value"
+	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:layout_marginTop="@dimen/watch_info_device_name_margin_top"
+	    android:text="V1.00"
+	    android:textColor="@color/md_black_1000" />
+	
+
+   	
+   	<FrameLayout
+	    android:id="@+id/progressBarHolder"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:alpha="0.7"
+	    android:animateLayoutChanges="true"
+	    android:background="@color/md_grey_800"
+	    android:visibility="gone" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:indeterminate="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+				android:layout_centerHorizontal="true"
+                android:layout_below="@id/progress_bar"
+                android:text="尋找最新版韌體中..."
+                android:textColor="@color/md_white_1000" />
+        </RelativeLayout>
+
+	</FrameLayout>
+</RelativeLayout>

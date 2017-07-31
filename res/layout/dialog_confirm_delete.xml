@@ -10,11 +10,13 @@
 	    android:id="@+id/title"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:textColor="@color/md_black_1000"
-	    android:gravity="center"
-	    android:textSize="@dimen/page_title_text_size"
 	    android:layout_centerInParent="true"
-	    android:text="刪除鬧鈴"/>
+	    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+	    android:layout_marginStart="@dimen/activity_horizontal_margin"
+	    android:gravity="center"
+	    android:text="刪除鬧鈴"
+	    android:textColor="@color/md_black_1000"
+	    android:textSize="@dimen/page_title_text_size" />
     
     <ImageView
         android:id="@+id/icon_error"

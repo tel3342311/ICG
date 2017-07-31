@@ -119,4 +119,11 @@
     <dimen name="watch_surface_center_height">147dp</dimen>
     <dimen name="watch_surface_loading_progress_size">68dp</dimen>
     <dimen name="watch_surface_updating_text_margin_top">34dp</dimen>
+    <!-- watch info and privacy -->
+    <dimen name="watch_info_bg_margin_top">35dp</dimen>
+    <dimen name="watch_info_bg_width">155dp</dimen>
+    <dimen name="watch_info_bg_height">238dp</dimen>
+    <dimen name="watch_info_checkbox_margin_top">34dp</dimen>
+    <dimen name="watch_info_device_name_margin_top">17dp</dimen>
+    <dimen name="watch_info_btn_margin_bottom">28dp</dimen>
     </resources>

@@ -470,6 +470,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 //			startActivity(intent);
 			break;
 		case PRIVACY_INFO:
+			UpdateWatchInfoAndPrivacy();
 			break;
 		case WATCH_THEME:
 			UpdateWatchTheme();
@@ -485,6 +486,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		startActivity(intent);
 	}
 
+	private void UpdateWatchInfoAndPrivacy() {
+		Intent intent = new Intent();
+		intent.setClass(this, WatchInfoAndPrivacyActivity.class);
+		startActivity(intent);
+	}
 	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {

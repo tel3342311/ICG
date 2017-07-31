@@ -19,8 +19,6 @@
         android:lineSpacingExtra="@dimen/pairing_title_line_space"
         android:layout_centerHorizontal="true"/>
 
-
-
 	<LinearLayout 
 	    android:id="@+id/login_btn_group"
 	    android:layout_width="match_parent"

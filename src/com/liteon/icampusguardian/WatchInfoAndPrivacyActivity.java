@@ -46,6 +46,8 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 	private List<Student> mStudents;
 	private int mCurrnetStudentIdx;
 	private final static int REQUEST_WATCH_UPDATE = 1;
+	private final static int REQUEST_WATCH_UPDATE_FIRMWARE = 2;
+	private boolean isUpdateFirmwareFailed;
     private ConfirmDeleteDialog mBLEFailConfirmDialog;
     private CustomDialog mDialog;
 	private boolean mIsTeacher;
@@ -70,6 +72,29 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 	private void setListener() {
 		mTeacherCheck.setOnCheckedChangeListener(mOnCheckedChangeListener);
 		mUpdateFirmwareBtn.setOnClickListener(mOnUpdateBtnClickListener);
+	}
+	
+	@Override
+	protected void onResumeFragments() {
+		super.onResumeFragments();
+		if (isUpdateFirmwareFailed) {
+			mDialog = new CustomDialog();
+    		mDialog.setTitle("連線失敗");
+    		mDialog.setIcon(R.drawable.ic_error_outline_black_24dp);
+    		mDialog.setBtnText("好");
+    		mDialog.setBtnConfirm(mOnSyncFailConfirmClickListener);
+    		mDialog.show(getSupportFragmentManager(), "dialog_fragment");
+    		isUpdateFirmwareFailed = false;
+		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+		Intent intent = new Intent();
+    	intent.setClass(WatchInfoAndPrivacyActivity.this, MainActivity.class);
+    	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+    	startActivity(intent);
+    	finish();		
 	}
 	
 	private View.OnClickListener mOnUpdateBtnClickListener = new OnClickListener() {
@@ -108,21 +133,14 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		});
 	}
 	
-	private View.OnClickListener mOnChangeSurfaceListener = new OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(WatchInfoAndPrivacyActivity.this, ChoosePhotoActivity.class);
-			intent.putExtra(Def.EXTRA_CHOOSE_PHOTO_TYPE, Def.EXTRA_CHOOSE_WATCH_ICON);
-			startActivityForResult(intent, REQUEST_WATCH_UPDATE);
-		}
-	};
-	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_WATCH_UPDATE) {
 			if (resultCode == RESULT_OK) {
 
+			}
+		} else if (requestCode == REQUEST_WATCH_UPDATE_FIRMWARE) {
+			if (resultCode == RESULT_CANCELED) {
+				isUpdateFirmwareFailed = true;
 			}
 		}
 	};
@@ -161,7 +179,7 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-        	return Boolean.FALSE;
+        	return Boolean.TRUE;
         }
 
         protected void onPostExecute(Boolean success) {
@@ -179,6 +197,7 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
         	} else {
         		mDialog = new CustomDialog();
         		mDialog.setTitle("同步失敗");
+        		mDialog.setIcon(R.drawable.ic_error_outline_black_24dp);
         		mDialog.setBtnText("好");
         		mDialog.setBtnConfirm(mOnSyncFailConfirmClickListener);
         		mDialog.show(getSupportFragmentManager(), "dialog_fragment");
@@ -191,7 +210,9 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		@Override
 		public void onClick(View v) {
 			mBLEFailConfirmDialog.dismiss();
-			new UpdateTask().execute("");
+			Intent intent = new Intent();
+			intent.setClass(WatchInfoAndPrivacyActivity.this, FirmwareDownLoadingActivity.class);
+			startActivityForResult(intent, REQUEST_WATCH_UPDATE_FIRMWARE);
 			
 		}
 	};

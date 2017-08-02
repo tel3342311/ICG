@@ -144,7 +144,7 @@ public class GuardianApiClient {
 		return null;
 	}
 	
-	public JSONResponse updateParentDetail(String given_name, String account_name, String password) {
+	public JSONResponse updateParentDetail(String given_name, String account_name, String password, String phoneNumber) {
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_UPDATE).appendPath(mToken).build();
 		try {
 			URL url = new URL(uri.toString());
@@ -169,8 +169,9 @@ public class GuardianApiClient {
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
 						JSONResponse.class);
-				showStatus(result);
-
+				//showStatus(result);
+            	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
+        		Log.e(TAG, "status code: " + statusCode + ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
 				return result;
 			} else {
 				if (mContext.get() != null) {
@@ -343,15 +344,11 @@ public class GuardianApiClient {
 
 			JSONObject jsonParam = new JSONObject();
 			jsonParam.put(Def.KEY_STUDENT_ID, student.getStudent_id());
-			jsonParam.put(Def.KEY_NAME, student.getName());
 			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
-			jsonParam.put(Def.KEY_CLASS, student.get_class());
-			jsonParam.put(Def.KEY_ROLL_NO, student.getRoll_no());
 			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
 			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());
 			jsonParam.put(Def.KEY_DOB, student.getDob());
 			jsonParam.put(Def.KEY_GENDER, student.getGender());
-			jsonParam.put(Def.KEY_UUID ,student.getUuid());
 			
 			OutputStream os = urlConnection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
@@ -362,8 +359,8 @@ public class GuardianApiClient {
             final int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
             	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
-				showStatus(result);
-
+            	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
+            	Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
             	return result;
             } else {
             	if (mContext.get() != null) {
@@ -562,6 +559,39 @@ public class GuardianApiClient {
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_CHILDREN_LOCATION).
 				appendPath(mToken).
 				appendPath(student.getUuid()).build();
+		try {
+
+			URL url = new URL(uri.toString());
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("GET");
+			urlConnection.setRequestProperty("Content-Type", "application/json");
+			urlConnection.setDoInput(true);
+			urlConnection.setDoOutput(false);
+			urlConnection.setUseCaches(false);
+            
+			int status = urlConnection.getResponseCode();
+            if (status == HttpURLConnection.HTTP_OK) {
+            	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
+            	if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+            		Log.e(TAG, "lat: " + result.getReturn().getResults().getLatitude() + ", longtitude " + result.getReturn().getResults().getLongitude());
+            	} else {
+            		Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
+            	}
+            	return result;
+            } else {
+            	showError(status);
+            }
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public JSONResponse getUserDetail() {
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_DETAIL).
+				appendPath(mToken).build();
 		try {
 
 			URL url = new URL(uri.toString());

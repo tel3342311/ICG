@@ -118,14 +118,95 @@ public class JSONResponse {
 		private String token;
 		@SerializedName("AccountId")
 		private String AccountId;
-		
 		@SerializedName("event_id")
 		private String event_id;
 		@SerializedName("event_name")
 		private String event_name;
 		@SerializedName("devices")
 		private Device devices[];
-		
+		/**
+		 * API 36
+		 */
+		@SerializedName("name")
+		private String name;
+		@SerializedName("mobile_number")
+		private String mobile_number;
+		@SerializedName("username")
+		private String username;
+		@SerializedName("account_name")
+		private String account_name;
+		/**
+		 * @return the name
+		 */
+		public String getName() {
+			return name;
+		}
+
+		/**
+		 * @param name the name to set
+		 */
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		/**
+		 * @return the mobile_number
+		 */
+		public String getMobile_number() {
+			return mobile_number;
+		}
+
+		/**
+		 * @param mobile_number the mobile_number to set
+		 */
+		public void setMobile_number(String mobile_number) {
+			this.mobile_number = mobile_number;
+		}
+
+		/**
+		 * @return the username
+		 */
+		public String getUsername() {
+			return username;
+		}
+
+		/**
+		 * @param username the username to set
+		 */
+		public void setUsername(String username) {
+			this.username = username;
+		}
+
+		/**
+		 * @return the account_name
+		 */
+		public String getAccount_name() {
+			return account_name;
+		}
+
+		/**
+		 * @param account_name the account_name to set
+		 */
+		public void setAccount_name(String account_name) {
+			this.account_name = account_name;
+		}
+
+		@SerializedName("event_occured_date")
+		private String event_occured_date;
+		/**
+		 * @return the event_occured_date
+		 */
+		public String getEvent_occured_date() {
+			return event_occured_date;
+		}
+
+		/**
+		 * @param event_occured_date the event_occured_date to set
+		 */
+		public void setEvent_occured_date(String event_occured_date) {
+			this.event_occured_date = event_occured_date;
+		}
+
 		@SerializedName("latitude")
 		private String latitude;
 		@SerializedName("longitude")

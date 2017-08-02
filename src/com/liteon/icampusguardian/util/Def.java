@@ -17,7 +17,8 @@ public class Def {
 	public static final String SP_TEACHER_PLAN = "com.liteon.icampusguardian.SP_TEACHER_PLAN";
 	public static final String SP_PHOTO_MAP = "com.liteon.icampusguardian.SP_PHOTO_MAP";
 	public static final String SP_PHOTO_MAP_WATCH = "com.liteon.icampusguardian.SP_PHOTO_MAP_WATCH";
-	
+	public static final String SP_GEO_ITEM_MAP = "com.liteon.icampusguardian.SP_GEO_ITEM_MAP";
+
 
 	//RET CODE there are two kind of success code
 	public static final String RET_SUCCESS_1 = "SUC01";
@@ -45,7 +46,7 @@ public class Def {
 	public static final String KEY_FORCELOGIN = "forcelogin";
 	//API 04 Update Parent account detail.
 	public static final String REQUEST_USER_UPDATE = "UserUpdate";
-	
+	public static final String KEY_PHONE_NUMBER = "mobile_number";
 	//API 07 get student list
 	public static final String REQUEST_GET_CHILDREN_LIST = "StudentList";
 	//API 08 get student location 
@@ -66,7 +67,7 @@ public class Def {
 	public static final String REQUEST_GET_DEVICE_EVENT_REPORT = "DeviceEventReport";
 	public static final String KEY_EMAIL = "email";
 	//API 32 update child info
-	public static final String REQUEST_UPDATE_CHILD_INFO = "UpdateStudentDetails";
+	public static final String REQUEST_UPDATE_CHILD_INFO = "StudentUpdate";
 	public static final String KEY_STUDENT_ID = "student_id";
 	public static final String KEY_NAME = "name";
 	public static final String KEY_NICKNAME = "nickname";
@@ -81,7 +82,12 @@ public class Def {
 	public static final String REQUEST_PASSWORD_REST = "PasswordResetRequest";
 	public static final String KEY_USER_ROLE = "user_role";
 
+	//API 36 get user detail
+	public static final String REQUEST_USER_DETAIL = "UserDetails";
+	
 	//EVENT ID LIST
+	public static final String EVENT_ID_ENTER_SCHOOL = "1";
+	public static final String EVENT_ID_LEAVE_SCHOOL = "2";
 	public static final String EVENT_ID_SOS_ALERT = "11";
 	public static final String EVENT_ID_SOS_REMOVE = "12";
 	public static final String EVENT_ID_GPS_LOCATION = "17";

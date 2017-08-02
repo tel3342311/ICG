@@ -23,6 +23,7 @@ import com.liteon.icampusguardian.util.AppInfoPrivacyItem;
 import com.liteon.icampusguardian.util.AppInfoPrivacyItemAdapter.ViewHolder.IAppInfoPrivacyViewHolderClicks;
 import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private DBHelper mDbHelper;
 	private LocalBroadcastManager mLocalBroadcastManager;
 	private AppCompatButton mLogoutButton;
-	
+	private ConfirmDeleteDialog mUnPairConfirmDialog;
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
 
@@ -339,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		mChildIcon.addShadow();
 		Bitmap bitmap = null;
 		if (mStudents.size() > 0) {
-			mChildName.setText(mStudents.get(mCurrentStudentIdx).getName());
+			mChildName.setText(mStudents.get(mCurrentStudentIdx).getNickname());
 			//read child image file
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -364,11 +365,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			int nextStudent = mCurrentStudentIdx == 0 ? 1 : 0;
 			MenuItem switchAccount = menu.findItem(R.id.action_switch_account);
 			switchAccount
-					.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getName()));
+					.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getNickname()));
 
 			MenuItem deleteAccount = menu.findItem(R.id.action_delete_account);
 			deleteAccount.setTitle(
-					String.format(getString(R.string.delete_account), mStudents.get(mCurrentStudentIdx).getName()));
+					String.format(getString(R.string.delete_account), mStudents.get(mCurrentStudentIdx).getNickname()));
 		}
 	}
 
@@ -386,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 //			setIntent(intent);
 //			SafetyFragment safetyFragment = new SafetyFragment(getIntent());
 //			changeFragment(safetyFragment);
-//			sendNotification("test");
+			sendNotification("test");
 		} else if (id == R.id.action_setting) {
 			switchSetting();
 		}
@@ -465,9 +466,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			changeFragment(new SettingTargetFragment(), "每日目標設定", NAVIGATION_BACK);
 			break;
 		case PAIRING:
-//			Intent intent = new Intent();
-//			intent.setClass(this, ChildInfoUpdateActivity.class);
-//			startActivity(intent);
+			if (!TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
+				showUnPairDialog();
+			} else {
+				showPairingPage();
+			}
 			break;
 		case PRIVACY_INFO:
 			UpdateWatchInfoAndPrivacy();
@@ -480,6 +483,34 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		}
 	}
 	
+	private void showPairingPage() {
+		
+	}
+	private void showUnPairDialog() {
+		mUnPairConfirmDialog = new ConfirmDeleteDialog();
+		mUnPairConfirmDialog.setOnConfirmEventListener(mUnPairConfirmClickListener);
+		mUnPairConfirmDialog.setmOnCancelListener(mUnPairCancelClickListener);
+		mUnPairConfirmDialog.setmTitleText("將解除已綁定的智慧手錶");
+		mUnPairConfirmDialog.setmBtnConfirmText("確定");
+		mUnPairConfirmDialog.setmBtnCancelText("取消");
+		mUnPairConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
+	}
+	private View.OnClickListener mUnPairConfirmClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			mUnPairConfirmDialog.dismiss();
+			
+		}
+	};
+	
+	private View.OnClickListener mUnPairCancelClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			mUnPairConfirmDialog.dismiss();
+		}
+	};
 	private void UpdateWatchTheme() {
 		Intent intent = new Intent();
 		intent.setClass(this, PersonalizedWatchActivity.class);

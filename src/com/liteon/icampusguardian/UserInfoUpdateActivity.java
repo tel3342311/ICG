@@ -1,8 +1,11 @@
 package com.liteon.icampusguardian;
 
+import java.util.jar.Attributes.Name;
+
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Parent;
 
 import android.content.Context;
@@ -25,6 +28,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.animation.AlphaAnimation;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,13 +36,16 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 
 	private boolean mIsEditMode;
 	private EditText mName;
+	private EditText mPhoneNumber;
 	private EditText mAccount;
 	private EditText mPassword;
 	private EditText mConfirmPassword;
 	private Toolbar mToolbar;
 	private View mSyncView;
 	private FrameLayout progressBarHolder;
-
+	private String mNameGiven;
+	private String mMobile_number;
+	private ImageView mConfirm;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -111,6 +118,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	
 	private void findViews() {
 		mName = (EditText) findViewById(R.id.login_name);
+		mPhoneNumber = (EditText) findViewById(R.id.login_number);
 		mAccount = (EditText) findViewById(R.id.login_account);
 		mPassword = (EditText) findViewById(R.id.login_password);
 		mConfirmPassword = (EditText) findViewById(R.id.login_password_confirm);
@@ -122,14 +130,25 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	private void setListener() {
 		
 		mName.addTextChangedListener(mTextWatcher);
+		mPhoneNumber.addTextChangedListener(mTextWatcher);
 		mAccount.addTextChangedListener(mTextWatcher);
 		mPassword.addTextChangedListener(mTextWatcher);
 		mConfirmPassword.addTextChangedListener(mTextWatcher);
 		
 		mName.setOnFocusChangeListener(mOnFocusChangeListener);
+		mPhoneNumber.setOnFocusChangeListener(mOnFocusChangeListener);
 		mAccount.setOnFocusChangeListener(mOnFocusChangeListener);
 		mPassword.setOnFocusChangeListener(mOnFocusChangeListener);
 		mConfirmPassword.setOnFocusChangeListener(mOnFocusChangeListener);
+		
+		AppCompatButton button = (AppCompatButton) mSyncView.findViewById(R.id.button_sync);
+		button.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				new UpdateTask().execute("");
+			}
+		});
 	}
 	
 	private OnFocusChangeListener mOnFocusChangeListener = new OnFocusChangeListener() {
@@ -157,15 +176,19 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		public void afterTextChanged(Editable s) {
 			if (validateInput()) {
 				//mConfirm.setEnabled(true);
+				mIsEditMode = true;
 			} else {
 				//mConfirm.setEnabled(false);
+				mIsEditMode = false;
 			}
+			invalidateOptionsMenu();
 		}
 	};
 	
 	private boolean validateInput() {
 		if (TextUtils.isEmpty(mName.getText()) || 
-			TextUtils.isEmpty(mAccount.getText()) || 
+			TextUtils.isEmpty(mAccount.getText()) ||
+			TextUtils.isEmpty(mPhoneNumber.getText()) ||
 			TextUtils.isEmpty(mPassword.getText()) ||
 			TextUtils.isEmpty(mConfirmPassword.getText())) {
 			return false;
@@ -187,10 +210,11 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	private void updateAccount() {
 		String strName = mName.getText().toString();
 		String strAccount = mAccount.getText().toString();
+		String strPhoneNumber = mPhoneNumber.getText().toString();
 		strAccount = strAccount.trim();
 		strAccount = strAccount.substring(0, strAccount.indexOf("@"));
 		String strPassword = mPassword.getText().toString();
-		new UpdateInfoTask().execute(strName, strAccount, strPassword);
+		new UpdateInfoTask().execute(strName, strAccount, strPassword, strPhoneNumber);
 	}
 
 	class UpdateInfoTask extends AsyncTask<String, Void, String> {
@@ -205,7 +229,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
         protected String doInBackground(String... args) {
         	
         	GuardianApiClient apiClient = new GuardianApiClient(UserInfoUpdateActivity.this);
-        	apiClient.updateParentDetail(args[0], args[1], args[2]);
+        	apiClient.updateParentDetail(args[0], args[1], args[2], args[3]);
         	return null;
         }
 
@@ -227,30 +251,49 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	
 	private void showSyncWindow() {
 		View contentview = mSyncView;
-		final TextView title = (TextView) contentview.findViewById(R.id.title);
-		AppCompatButton button = (AppCompatButton) contentview.findViewById(R.id.button_sync);
-		button.setOnClickListener(new OnClickListener() {
+		
+		
+	}
+	
+	class UpdateTask extends AsyncTask<String, Void, Boolean> {
+
+		final TextView title = (TextView) mSyncView.findViewById(R.id.title);
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			title.setText("同步中");
+
+		}
+		@Override
+		protected Boolean doInBackground(String... params) {
+
+			GuardianApiClient apiClient = new GuardianApiClient(UserInfoUpdateActivity.this);
+			JSONResponse response = apiClient.getUserDetail();
+			if (response == null || !TextUtils.equals("SUC01" ,response.getReturn().getResponseSummary().getStatusCode())) {
 			
-			@Override
-			public void onClick(View v) {
-				title.setText("同步中");
-				final Handler handler= new Handler();
-				final Runnable hideSyncView = new Runnable() {
-					
-					@Override
-					public void run() {
-						mSyncView.setVisibility(View.GONE);
-					}
-				};
-				Runnable runnable = new Runnable(){
-					   @Override
-					   public void run() {
-						   title.setText("同步完成");
-						   handler.postDelayed(hideSyncView, 3000);
-					} 
-				};
-				handler.postDelayed(runnable, 2000);
+				return null;
 			}
-		});
+			mNameGiven = response.getReturn().getResults().getName();
+			mMobile_number = response.getReturn().getResults().getMobile_number();
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			super.onPostExecute(result);
+			mName.setText(mNameGiven);
+			mPhoneNumber.setText(mMobile_number);
+			title.setText("同步完成");
+			final Handler handler= new Handler();
+			final Runnable hideSyncView = new Runnable() {
+				
+				@Override
+				public void run() {
+					mSyncView.setVisibility(View.GONE);
+				}
+			};
+			handler.postDelayed(hideSyncView, 1500);
+		}
 	}
 }

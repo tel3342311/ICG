@@ -4,8 +4,10 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
@@ -19,12 +21,12 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
 
 	private List<SettingItem> mDataset;
     public WeakReference<ISettingItemClickListener> mClicks;
-
+    private Student mStudent;
 	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener{
         // each data item is just a string in this case
         public View mRootView;
         public TextView mTitleTextView;
-        public TextView mValueTextView;
+        public AppCompatButton mValueBtn;
         public ImageView mMoreIcon;
         public WeakReference<ISettingItemClickListener> mClicks;
         public SettingItem.TYPE mType;
@@ -49,6 +51,9 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
         mClicks = new WeakReference<ISettingItemClickListener>(clicks);
     }
     
+    public void setChildData(Student student) {
+    	mStudent = student;
+    }
 	@Override
 	public int getItemCount() {
 		return mDataset.size();
@@ -59,10 +64,15 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
 		SettingItem item = mDataset.get(position);
         holder.mTitleTextView.setText(item.getTitle());
         if (item.getItemType() == SettingItem.TYPE.PAIRING) {
-        	holder.mValueTextView.setText("解除綁定");
+        	holder.mValueBtn.setVisibility(View.VISIBLE);
+        	if (mStudent != null && mStudent.getUuid() != null) {
+        		holder.mValueBtn.setText("解除綁定");
+        	} else {
+        		holder.mValueBtn.setText("新增綁定");
+        	}
         	holder.mMoreIcon.setVisibility(View.INVISIBLE);
         } else {
-        	holder.mValueTextView.setText("");
+        	holder.mValueBtn.setVisibility(View.INVISIBLE);
         	holder.mMoreIcon.setVisibility(View.VISIBLE);
         }
         holder.mType = item.getItemType();
@@ -76,9 +86,10 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
         // set the view's size, margins, paddings and layout parameters
         ViewHolder vh = new ViewHolder(v, mClicks.get());
         vh.mTitleTextView = (TextView) v.findViewById(R.id.title_text);
-        vh.mValueTextView = (TextView) v.findViewById(R.id.value_text);
+        vh.mValueBtn = (AppCompatButton) v.findViewById(R.id.value_text);
         vh.mMoreIcon = (ImageView) v.findViewById(R.id.more_info_icon);
         v.setOnClickListener(vh);
+        vh.mValueBtn.setOnClickListener(vh);
         return vh;
 	}
 }

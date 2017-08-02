@@ -1,0 +1,137 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+ 	<dimen name="page_title_text_size">30sp</dimen>
+ 	<dimen name="page_title_margin_bottom">40dp</dimen>
+	<dimen name="login_edit_text_size">24sp</dimen>
+	<dimen name="login_edit_text_height">67dp</dimen>
+	<dimen name="login_option_text_size">24sp</dimen>
+	<dimen name="login_option_text_height">45dp</dimen>
+	<dimen name="login_option_btn_width">180dp</dimen>
+	<dimen name="login_option_btn_margin_bottom">12dp</dimen>
+	<dimen name="more_icon_size">45dp</dimen>
+	<dimen name="toolbar_icon_size">36dp</dimen>
+	<!-- welcome -->
+	<dimen name="welcome_icon_size">180dp</dimen>
+	<dimen name="welcome_bottom_option_height">60dp</dimen>
+	<dimen name="welcome_user_term_margin_height">180dp</dimen>
+	<dimen name="welcome_radio_btn_margin_height">40dp</dimen>
+	<dimen name="user_term_text_size">24sp</dimen>
+	
+	<!-- user term -->
+	<dimen name="page_title_height">60dp</dimen>
+	<!-- Dialog  -->
+	<dimen name="popup_width">5700dp</dimen>
+	<dimen name="popup_height">570dp</dimen>
+	<dimen name="dialog_icon_size">90dp</dimen>
+	<dimen name="dialog_confirm_btn_height">75dp</dimen>
+	<dimen name="dialog_btn_margin_bottom">13dp</dimen>
+	<!-- Safty page -->
+	<dimen name="safty_map_view_height">375dp</dimen>
+	<dimen name="geo_event_view_fix_height">97dp</dimen>
+	<dimen name="geo_event_detail_item_height">52dp</dimen>
+	<!-- Health page -->
+	<dimen name="healthy_item_height">135dp</dimen>
+	<dimen name="healthy_item_icon_size">67dp</dimen>
+	<dimen name="healthy_item_icon_margin_right">22dp</dimen>
+	<dimen name="healthy_bottom_line_margin">22dp</dimen>
+	<!-- Health detail -->
+	<dimen name="healthy_detail_pie_chart_view_height">405dp</dimen>
+	<dimen name="healthy_detail_pie_chart_size">330dp</dimen>
+	<dimen name="healthy_detail_pie_chart_icon_size">82dp</dimen>
+	<dimen name="healthy_detail_pie_chart_icon_location_y">105dp</dimen>
+	<dimen name="healthy_detail_pie_chart_target_offset_y">22dp</dimen>
+	<dimen name="healthy_detail_pie_chart_date_offset_y">67dp</dimen>
+	<dimen name="healthy_detail_pie_chart_target_font_size">60sp</dimen>
+	<dimen name="healthy_detail_histogram_chart_height">405dp</dimen>
+	<dimen name="healthy_detail_histogram_font_size">21sp</dimen>
+	<dimen name="healthy_detail_histogram_magin_horizon">27dp</dimen>
+	<dimen name="healthy_detail_histogram_magin_vertical">24dp</dimen>
+	<dimen name="healthy_detail_histogram_width">34dp</dimen>
+	<!-- Alarm page -->
+	<dimen name="alarm_button_height">75dp</dimen>
+	<dimen name="alarm_button_magin_horizon">15dp</dimen>
+	<dimen name="alarm_item_icon_size">37dp</dimen>
+	<dimen name="alarm_setting_wheel_time_height">282dp</dimen>
+	<dimen name="alarm_setting_period_title_height">75dp</dimen>
+	<!-- Setting page -->
+	<dimen name="setting_child_info_height">375dp</dimen>
+	<dimen name="setting_circular_icon_size">200dp</dimen>
+	<dimen name="setting_circular_icon_margin_top">60dp</dimen>
+	<dimen name="setting_item_margin_horizontal">15dp</dimen>
+    <dimen name="setting_child_name_margin_top">0dp</dimen>
+	<dimen name="setting_child_name_max_width">225dp</dimen>
+	<dimen name="setting_child_name_min_width">75dp</dimen>
+	<dimen name="setting_profile_list_height">360dp</dimen>
+	<dimen name="setting_profile_item_height">90dp</dimen>
+	<dimen name="setting_profile_option_height">400dp</dimen>
+	<dimen name="setting_target_margin_left">7dp</dimen>
+	<dimen name="setting_target_size">30sp</dimen>
+	<!-- Drawer  -->
+	<dimen name="navigation_header_height">262dp</dimen>
+	<dimen name="navigation_header_circular_icon_size">100dp</dimen>
+	<dimen name="navigation_header_child_name_margin_top">15dp</dimen>
+	<dimen name="navigation_bottom_btn_margin">15dp</dimen>
+	<!-- Child add -->	
+	<dimen name="child_name_item_margin_horizontal">9dp</dimen>
+	<!-- Child watch pairing -->
+	<dimen name="pairing_watch_indicator_size">39dp</dimen>
+	<dimen name="pairing_watch_bg_width">240dp</dimen>
+	<dimen name="pairing_watch_bg_height">366dp</dimen>
+	<dimen name="pairing_title_margin_top">93dp</dimen>
+	<dimen name="pairing_title_margin_horizontal">66dp</dimen>
+	<dimen name="pairing_title_text_size">22sp</dimen>
+	<dimen name="pairing_watch_margin_vertical">24dp</dimen>
+	<dimen name="pairing_bottom_area_margin_vertical">40dp</dimen>
+	<dimen name="pairing_watch_margin_bottom">90dp</dimen>
+	<dimen name="pairing_title_line_space">7dp</dimen>
+	<!-- ble pairing -->
+	<dimen name="ble_pairing_watch_img_width">187dp</dimen>
+	<dimen name="ble_pairing_watch_img_height">285dp</dimen>
+	<dimen name="ble_pairing_watch_img_margin">45dp</dimen>
+	<!-- Pin input -->
+	<dimen name="pin_content_layout_padding">60dp</dimen>
+    <dimen name="pin_label_margin">15dp</dimen>
+    <dimen name="pin_min_width">48dp</dimen>
+    <dimen name="pin_edittext_width">109dp</dimen>
+    <dimen name="pin_edittext_height">127dp</dimen>
+    <dimen name="pin_code_margin">6dp</dimen>
+    <dimen name="pin_area_top_margin">34dp</dimen>
+    <dimen name="pin_text_size">36sp</dimen>
+    <dimen name="pin_watch_bg_width">105dp</dimen>
+    <dimen name="pin_watch_bg_height">160dp</dimen>
+    <dimen name="pin_phone_bg_width">94dp</dimen>
+    <dimen name="pin_phone_bg_height">160dp</dimen>
+    <dimen name="pin_progress_margin">27dp</dimen>
+    <dimen name="pin_margin_horizontal">57dp</dimen>
+    <!-- loading page -->
+    <dimen name="main_loading_progress_size">355dp</dimen>
+    <dimen name="main_loading_icon_size">156dp</dimen>
+    <!-- choose photo size -->
+    <dimen name="choose_photo_item_size">177dp</dimen>
+    <dimen name="select_icon_size">36dp</dimen>
+    <!-- watch surface page -->
+    <dimen name="watch_surface_bg_width">318dp</dimen>
+    <dimen name="watch_surface_bg_height">480dp</dimen>
+    <dimen name="watch_surface_center_margin_top">302dp</dimen>
+    <dimen name="watch_surface_center_width">260dp</dimen>
+    <dimen name="watch_surface_center_height">220dp</dimen>
+    <dimen name="watch_surface_loading_progress_size">102dp</dimen>
+    <dimen name="watch_surface_updating_text_margin_top">51dp</dimen>
+    <!-- watch info and privacy -->
+    <dimen name="watch_info_bg_margin_top">52dp</dimen>
+    <dimen name="watch_info_bg_width">232dp</dimen>
+    <dimen name="watch_info_bg_height">357dp</dimen>
+    <dimen name="watch_info_checkbox_margin_top">51dp</dimen>
+    <dimen name="watch_info_device_name_margin_top">25dp</dimen>
+    <dimen name="watch_info_btn_margin_bottom">42dp</dimen>
+    <!-- Component text size -->
+    <dimen name="component_text_size">24sp</dimen>
+    <dimen name="component_text_size_big">26sp</dimen>
+    <dimen name="component_text_size_small">20sp</dimen>
+        <!-- sync view  -->
+    <dimen name="sync_view_height">90dp</dimen>
+        <!-- wheel  -->
+    <dimen name="wheel_content_size">36sp</dimen>
+    </resources>

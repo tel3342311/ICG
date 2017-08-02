@@ -2,7 +2,10 @@ package com.liteon.icampusguardian;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,9 +108,46 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	}
 	
 	private void setListener() {
-
+		mUsedPhoto.setOnClickListener(mOnUsedPhotoClicked);
+		mUsedPhoto2.setOnClickListener(mOnUsedPhotoClicked);
+		mUsedPhoto3.setOnClickListener(mOnUsedPhotoClicked);
 	}
 	
+	private View.OnClickListener mOnUsedPhotoClicked = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Bitmap bitmap = null;
+			if (!isFromWatchTheme) {
+				if (mCurrentItem != null && !TextUtils.isEmpty(mCurrentItem.getUri())) {
+					try {
+						bitmap = getThumbnail(Uri.parse(mCurrentItem.getUri()));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
+				int idx = 0;
+				if (v.getId() == R.id.used_img2) {
+					idx = 1;
+				} else if (v.getId() == R.id.used_img3) {
+					idx = 2;
+				}
+				PhotoItem item = mCurrentItemForWatch[idx];
+				if (item != null && !TextUtils.isEmpty(item.getUri()) ) {
+					try {
+						bitmap = getThumbnail(Uri.parse(item.getUri()));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			if (bitmap != null) {
+				saveBitmapAsIcon(bitmap);
+				exit();
+			}
+		}
+	};
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -372,48 +412,102 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	    super.onActivityResult(requestCode, resultCode, data);
 
 	    if (requestCode == CROP_PIC_REQUEST_CODE) {
+	    	Bitmap bitmap = null;
 	        if (data != null) {
 	            Bundle extras = data.getExtras();
 	            if (extras != null) {
-	            	Bitmap bitmap = extras.getParcelable("data");
-	            	//yourImageView.setImageBitmap(bitmap);
-	            	//mUsedPhoto.setImageBitmap(bitmap);
-	            	File cropFile = null;
-	            	if (!isFromWatchTheme) {
-	            		cropFile = new File(Environment.getExternalStoragePublicDirectory(
-	                        Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + ".jpg");
-	            	} else {
-	            		cropFile = new File(Environment.getExternalStoragePublicDirectory(
-		                        Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + "_watch.jpg");
-	            	}
-	            	try {
-	            	     FileOutputStream out = new FileOutputStream(cropFile);
-	            	     bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-	            	     out.flush();
-	            	     out.close();
-	            	} catch (Exception e) {
-	            	     e.printStackTrace();
-	            	}
-	            	if (!isFromWatchTheme) {
-		            	Intent intent = new Intent();
-		            	intent.setClass(this, MainActivity.class);
-		            	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
-		            	startActivity(intent);
-		            	finish();
-	            	} else {
-	            		setResult(RESULT_OK);
-	            		finish();
-	            	}
+	            	 bitmap = extras.getParcelable("data");
+	            } else if (data.getData() != null) {
+	            	Uri uri = data.getData();
+	        		try {
+	        			bitmap = getThumbnail(uri);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 	            }
-	        }
+	        } 
+	        if (bitmap != null) {	        
+	        	saveBitmapAsIcon(bitmap);
+	        	exit();
+				
+			}
 	    }
 
 	}
 	
+	private void exit() {
+		if (!isFromWatchTheme) {
+			Intent intent = new Intent();
+			intent.setClass(this, MainActivity.class);
+			intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+			startActivity(intent);
+			finish();
+		} else {
+			setResult(RESULT_OK);
+			finish();
+		}
+	}
+	
+	private void saveBitmapAsIcon(Bitmap bitmap) {
+		File cropFile = null;
+		if (!isFromWatchTheme) {
+			cropFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+					.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + ".jpg");
+		} else {
+			cropFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+					.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + "_watch.jpg");
+		}
+		try {
+			FileOutputStream out = new FileOutputStream(cropFile);
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static float convertDpToPixel(float dp, Context context) {
 	    Resources resources = context.getResources();
 	    DisplayMetrics metrics = resources.getDisplayMetrics();
 	    float px = dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
 	    return px;
+	}
+	
+	public Bitmap getThumbnail(Uri uri) throws FileNotFoundException, IOException{
+		float photoSize = convertDpToPixel(getResources().getDimension(R.dimen.choose_photo_item_size), this);
+		InputStream input = getContentResolver().openInputStream(uri);
+
+		BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
+		onlyBoundsOptions.inJustDecodeBounds = true;
+		onlyBoundsOptions.inDither = true;// optional
+		onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;// optional
+		BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
+		input.close();
+
+		if ((onlyBoundsOptions.outWidth == -1) || (onlyBoundsOptions.outHeight == -1)) {
+			return null;
+		}
+
+		int originalSize = (onlyBoundsOptions.outHeight > onlyBoundsOptions.outWidth) ? onlyBoundsOptions.outHeight
+				: onlyBoundsOptions.outWidth;
+
+		double ratio = (originalSize > photoSize) ? (originalSize / photoSize) : 1.0;
+
+		BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+		bitmapOptions.inSampleSize = getPowerOfTwoForSampleRatio(ratio);
+		bitmapOptions.inDither = true; // optional
+		bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;//
+		input = this.getContentResolver().openInputStream(uri);
+		Bitmap bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions);
+		input.close();
+		return bitmap;
+	}
+	
+	private static int getPowerOfTwoForSampleRatio(double ratio) {
+		int k = Integer.highestOneBit((int) Math.floor(ratio));
+		if (k == 0)
+			return 1;
+		else
+			return k;
 	}
 }

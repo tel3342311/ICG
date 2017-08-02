@@ -47,6 +47,7 @@
 		    android:layout_width="match_parent"
 		    android:layout_height="@dimen/setting_profile_option_height"
 		    android:layout_alignParentBottom="true"
+		    android:layout_below="@id/profile_view"
 		    android:elevation="40dp"
 		    android:visibility="invisible" >
 		

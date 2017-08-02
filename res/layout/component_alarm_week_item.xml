@@ -8,7 +8,7 @@
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:layout_centerVertical="true"
-         android:textColor="@color/md_black_1000"/>
+         style="@style/list_item"/>
      
      <android.support.v7.widget.AppCompatRadioButton
          android:id="@+id/radio_icon"

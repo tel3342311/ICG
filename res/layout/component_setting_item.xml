@@ -10,7 +10,7 @@
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:layout_centerVertical="true"
-         android:textColor="@color/md_black_1000"/>
+         style="@style/list_item"/>
      
      <ImageView
          android:id="@+id/more_info_icon"
@@ -20,13 +20,14 @@
          android:layout_centerVertical="true"
          android:background="@drawable/health_btn_enter"/>
      
-     <TextView
+     <android.support.v7.widget.AppCompatButton
          android:id="@+id/value_text"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:layout_toStartOf="@id/more_info_icon"
          android:layout_centerVertical="true"
-         android:textColor="@color/md_black_1000"/>
+		 android:background="@drawable/btn_bg"
+		 android:textColor="@color/md_black_1000"/>
      
      <View 
          android:layout_width="match_parent"

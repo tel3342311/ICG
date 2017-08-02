@@ -22,7 +22,7 @@
         android:gravity="center_vertical"
         android:paddingStart="@dimen/activity_horizontal_margin"
         android:text="已使用過照片"
-        android:textColor="@color/md_black_1000" />
+        style="@style/list_item" />
 
  	<ImageView 
  	    android:id="@+id/used_img"
@@ -56,7 +56,7 @@
         android:gravity="center_vertical"
         android:paddingStart="@dimen/activity_horizontal_margin"
         android:text="所有照片"
-        android:textColor="@color/md_black_1000" />
+        style="@style/list_item" />
  	
  	<android.support.v7.widget.RecyclerView
         android:id="@+id/photo_list"

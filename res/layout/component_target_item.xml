@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:textColor="@color/md_black_1000" />
+        style="@style/list_item_big" />
      
 	<TextView
          android:id="@+id/unit_text"
@@ -19,7 +19,7 @@
          android:layout_marginStart="@dimen/setting_target_margin_left"
          android:layout_alignParentEnd="true"
          android:layout_centerVertical="true"
-         android:textColor="@color/md_black_1000"/>
+         style="@style/list_item"/>
      
      <EditText
          android:id="@+id/value_text"
@@ -29,7 +29,7 @@
 		 android:layout_centerVertical="true"
          android:background="@null"
          android:inputType="number"
-         android:textColor="@color/md_black_1000"
+         android:textColor="@drawable/item_text_color"
          android:textSize="@dimen/setting_target_size"/>
      
      <View 

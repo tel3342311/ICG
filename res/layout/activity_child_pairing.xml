@@ -35,6 +35,8 @@
 	        android:layout_height="wrap_content"
 	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
 	        android:background="@color/md_red_700"
+	        style="@style/list_item"
+	        android:textColor="@color/md_white_1000"
 	        android:text="配對智慧手錶" />
 	    	    
 	    <android.support.v7.widget.AppCompatButton
@@ -42,6 +44,8 @@
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
+	        style="@style/list_item"
+	       	android:textColor="@color/md_white_1000"
 	        android:background="@color/md_red_700"
 	        android:text="之後再配對手錶" />
 
@@ -49,7 +53,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="之後再至頁面下方 &quot;設定&quot; 中配對手環" 
-			android:layout_gravity="center_horizontal"/>
+			android:layout_gravity="center_horizontal"
+			style="@style/list_item"/>
 	</LinearLayout>
 	
 	<ImageView 

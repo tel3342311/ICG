@@ -23,21 +23,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="未命名"
-            android:textColor="@color/md_black_1000" />
+            style="@style/list_item" />
 
         <TextView
             android:id="@+id/uuid_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:00:00:00:00:00:00"
-            android:textColor="@color/md_black_1000" />
+            style="@style/list_item_small" />
         
         <TextView
             android:id="@+id/connect_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="未連接"
-            android:textColor="@color/md_black_1000" />
+            style="@style/list_item_small" />
      </LinearLayout>
      
      <ImageView

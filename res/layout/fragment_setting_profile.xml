@@ -21,6 +21,7 @@
         android:layout_height="@dimen/setting_profile_option_height"
         android:elevation="40dp"
         android:layout_alignParentBottom="true"
+        android:layout_below="@id/profile_view"
         android:visibility="invisible">
 	
 		<include 

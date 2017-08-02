@@ -10,11 +10,10 @@
 	    android:id="@+id/title"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:textColor="@color/md_black_1000"
 	    android:gravity="center"
-	    android:textSize="@dimen/page_title_text_size"
 	    android:layout_centerInParent="true"
-	    android:text="網路無法連線"/>
+	    android:text="網路無法連線"
+	    style="@style/list_item"/>
     
     <ImageView
         android:id="@+id/icon_error"
@@ -34,7 +33,7 @@
         android:layout_marginBottom="@dimen/dialog_btn_margin_bottom"
         android:layout_alignParentBottom="true"
         android:text="好"
-        android:textColor="@color/md_black_1000"
+        style="@style/list_item"
         android:background="@drawable/btn_bg"/>
         
 </RelativeLayout>

@@ -35,7 +35,7 @@
 			    android:maxHeight="@dimen/setting_child_name_max_width"
 		    	android:layout_marginTop="@dimen/setting_child_name_margin_top"
 				android:text="王小明"
-				android:textColor="@color/md_black_1000"/>
+				style="@style/list_item"/>
 	</RelativeLayout>
         
     <android.support.v7.widget.RecyclerView

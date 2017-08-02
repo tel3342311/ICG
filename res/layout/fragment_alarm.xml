@@ -30,8 +30,8 @@
     	android:layout_marginRight="@dimen/activity_horizontal_margin"
     	android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="增加鬧鈴"
-        android:textColor="@color/md_black_1000"
-        android:background="@color/md_grey_300"
+        style="@style/list_item"
+        android:background="@drawable/btn_bg"
         android:layout_below="@id/alarm_view"/>  
   
 </RelativeLayout>

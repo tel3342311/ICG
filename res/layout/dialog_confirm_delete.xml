@@ -15,8 +15,7 @@
 	    android:layout_marginStart="@dimen/activity_horizontal_margin"
 	    android:gravity="center"
 	    android:text="刪除鬧鈴"
-	    android:textColor="@color/md_black_1000"
-	    android:textSize="@dimen/page_title_text_size" />
+	    style="@style/list_item"/>
     
     <ImageView
         android:id="@+id/icon_error"
@@ -41,7 +40,7 @@
 	        android:layout_marginEnd="@dimen/activity_horizontal_margin"
 	        android:layout_marginBottom="@dimen/dialog_btn_margin_bottom"
 	        android:background="@drawable/btn_bg"
-	        android:textColor="@color/md_black_1000"
+	        style="@style/list_item"
 	        android:text="取消"/>
 	    <android.support.v7.widget.AppCompatButton
 	        android:id="@+id/confirm"
@@ -52,7 +51,7 @@
 	        android:layout_marginEnd="@dimen/activity_horizontal_margin"
 	        android:layout_marginBottom="@dimen/dialog_btn_margin_bottom"
 	        android:background="@drawable/btn_bg"
-	        android:textColor="@color/md_black_1000"
+	        style="@style/list_item"
 	        android:text="確認"/>
     </LinearLayout>
 </RelativeLayout>

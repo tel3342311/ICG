@@ -65,7 +65,7 @@
 	<dimen name="setting_child_name_min_width">50dp</dimen>
 	<dimen name="setting_profile_list_height">240dp</dimen>
 	<dimen name="setting_profile_item_height">60dp</dimen>
-	<dimen name="setting_profile_option_height">160dp</dimen>
+	<dimen name="setting_profile_option_height">220dp</dimen>
 	<dimen name="setting_target_margin_left">5dp</dimen>
 	<dimen name="setting_target_size">20sp</dimen>
 	<!-- Drawer  -->
@@ -126,4 +126,12 @@
     <dimen name="watch_info_checkbox_margin_top">34dp</dimen>
     <dimen name="watch_info_device_name_margin_top">17dp</dimen>
     <dimen name="watch_info_btn_margin_bottom">28dp</dimen>
+    <!-- Component text size -->
+    <dimen name="component_text_size">16sp</dimen>
+    <dimen name="component_text_size_big">18sp</dimen>
+    <dimen name="component_text_size_small">14sp</dimen>
+    <!-- sync view  -->
+    <dimen name="sync_view_height">60dp</dimen>
+    <!-- wheel  -->
+    <dimen name="wheel_content_size">24sp</dimen>
     </resources>

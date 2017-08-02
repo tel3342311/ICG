@@ -28,6 +28,6 @@
         android:maxHeight="@dimen/setting_child_name_max_width"
         android:minHeight="@dimen/setting_child_name_min_width"
         android:singleLine="true"
-        android:textColor="@color/md_black_1000" />
+        style="@style/list_item_big" />
 
 </RelativeLayout>

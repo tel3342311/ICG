@@ -25,4 +25,19 @@
         <item name="colorAccent">@color/md_white_1000</item>
     </style>
     
+    <!-- Style for list item  -->
+    <style name="list_item" >
+        <item name="android:textColor">@drawable/item_text_color</item>
+        <item name="android:textSize">@dimen/component_text_size</item>
+    </style>
+    
+   	<style name="list_item_small" >
+        <item name="android:textColor">@drawable/item_text_color</item>
+        <item name="android:textSize">@dimen/component_text_size_small</item>
+    </style>
+    
+   	<style name="list_item_big" >
+        <item name="android:textColor">@drawable/item_text_color</item>
+        <item name="android:textSize">@dimen/component_text_size_big</item>
+    </style>
 </resources>

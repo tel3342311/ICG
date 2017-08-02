@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
     <RelativeLayout 
         android:layout_width="match_parent"
-    	android:layout_height="60dp"
+    	android:layout_height="@dimen/sync_view_height"
     	android:background="@color/md_red_500">
     <TextView
         android:id="@+id/title"
@@ -14,16 +14,20 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:text="已於 07/11 14:17 更新"
+       	style="@style/list_item"
         android:textColor="@color/md_white_1000"/>
 
 	   	<android.support.v7.widget.AppCompatButton
 	   	    android:id="@+id/button_sync"
-	   	    android:layout_width="80dp"
+	   	    android:layout_width="wrap_content"
 	   	    android:layout_height="match_parent"
 	   	    android:layout_margin="@dimen/navigation_bottom_btn_margin"
         	android:layout_centerVertical="true"
         	android:layout_alignParentRight="true"
-	   	    android:textColor="@color/md_black_1000"
-	   	    android:text="同  步" />
+        	android:background="@drawable/btn_bg"
+	   	    style="@style/list_item"
+	   	    android:text="同  步" 
+	   	    android:textColor="@drawable/item_text_color_white"/>
+	   	
 	   	</RelativeLayout>
 </RelativeLayout>

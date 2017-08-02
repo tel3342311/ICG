@@ -16,7 +16,7 @@
          android:layout_toEndOf="@id/healthy_icon"
          android:layout_marginStart="@dimen/healthy_item_icon_margin_right"
          android:layout_centerVertical="true"
-         android:textColor="@color/md_black_1000"/>
+         style="@style/list_item_big"/>
      
      <ImageView
          android:id="@+id/more_info_icon"
@@ -32,7 +32,7 @@
          android:layout_height="wrap_content"
          android:layout_toStartOf="@id/more_info_icon"
          android:layout_centerVertical="true"
-         android:textColor="@color/md_black_1000"/>
+         style="@style/list_item"/>
      
      <View 
          android:layout_width="match_parent"

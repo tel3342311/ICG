@@ -42,11 +42,23 @@
             android:textCursorDrawable="@null"
             android:textSize="@dimen/login_edit_text_size" />
 
+       	<EditText
+            android:id="@+id/login_number"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_edit_text_height"
+            android:layout_below="@id/login_name"
+            android:layout_marginBottom="@dimen/page_title_margin_bottom"
+            android:hint="手機號碼"
+            android:maxLines="1"
+            android:textColor="@color/md_black_1000"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/login_edit_text_size" />
+                
         <EditText
             android:id="@+id/login_account"
             android:layout_width="match_parent"
             android:layout_height="@dimen/login_edit_text_height"
-            android:layout_below="@id/login_name"
+            android:layout_below="@id/login_number"
             android:layout_marginBottom="@dimen/page_title_margin_bottom"
             android:hint="E-mail帳號(至少八碼英文或數字)"
             android:maxLines="1"

@@ -1,10 +1,17 @@
 package com.liteon.icampusguardian.fragment;
 
+import java.lang.reflect.Type;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -16,15 +23,20 @@ import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.liteon.icampusguardian.LoginActivity;
-import com.liteon.icampusguardian.MainActivity;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GeoEventAdapter;
 import com.liteon.icampusguardian.util.GeoEventItem;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
+import com.liteon.icampusguardian.util.JSONResponse.Device;
+import com.liteon.icampusguardian.util.JSONResponse.DeviceEvent;
+import com.liteon.icampusguardian.util.JSONResponse.Results;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.animation.FloatEvaluator;
@@ -59,6 +71,7 @@ public class SafetyFragment extends Fragment {
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
 	private static LatLng mLastPosition = new LatLng(25.077877, 121.571141);
+	private String mLastPositionUpdateTime;
 	private static ArrayList<GeoEventItem> myDataset = new ArrayList<>();
 	private GeoEventItem mCurrentItem;
 	private static final int DURATION = 3000;
@@ -72,6 +85,8 @@ public class SafetyFragment extends Fragment {
 	private GradientDrawable mGradientDrawable;
 	private Bitmap mBitmap;
 	private Context mContext;
+	private Map<String, GeoEventItem> mEventReport = new HashMap<>();
+	private Map<String, Map<String, GeoEventItem>> mAllGeoEventItem;
 	
 	public SafetyFragment(Intent intent) {
 		String latlng = intent.getStringExtra(Def.EXTRA_SOS_LOCATION);
@@ -104,8 +119,6 @@ public class SafetyFragment extends Fragment {
 	}
 
 	private void showRipples(LatLng latLng) {
-
-
 	    // Convert the drawable to bitmap
 	    Canvas canvas = new Canvas(mBitmap);
 	    mGradientDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -202,7 +215,7 @@ public class SafetyFragment extends Fragment {
 
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
-		testData();
+		//testData();
 		mAdapter = new GeoEventAdapter(myDataset);
 		mRecyclerView.setAdapter(mAdapter);
 	}
@@ -239,14 +252,58 @@ public class SafetyFragment extends Fragment {
 			mAdapter.notifyDataSetChanged();
 			new getCurrentLocation().execute("");
 		}
+		restoreAlarm();
+		String id = mStudents.get(mCurrnetStudentIdx).getStudent_id();
+		new getEventReportTask().execute(id);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
 		mMapView.onPause();
+		saveAlarm();
 	}
 
+	private void restoreAlarm() {
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		String geoItemMap = sp.getString(Def.SP_GEO_ITEM_MAP, "");
+		Type typeOfHashMap = new TypeToken<Map<String, Map<String, GeoEventItem>>>() { }.getType();
+        Gson gson = new GsonBuilder().create();
+        mAllGeoEventItem = gson.fromJson(geoItemMap, typeOfHashMap);
+		if (TextUtils.isEmpty(geoItemMap)) {
+			mAllGeoEventItem = new HashMap<String, Map<String, GeoEventItem>>();
+			for (Student student : mStudents) {
+				String id = student.getStudent_id();
+				mAllGeoEventItem.put(id, new HashMap<String, GeoEventItem>());
+			}
+		}
+		if (mAllGeoEventItem.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()) == null) {
+			mAllGeoEventItem.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), new HashMap<String, GeoEventItem>());
+		}
+		mEventReport = mAllGeoEventItem.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
+		myDataset.clear();
+		myDataset.addAll(mEventReport.values());
+		Collections.sort(myDataset, new Comparator<GeoEventItem>() {
+	        @Override
+	        public int compare(GeoEventItem item1, GeoEventItem item2)
+	        {
+
+	            return  item2.getDate().compareTo(item1.getDate());
+	        }
+	    });
+		mAdapter.notifyDataSetChanged();
+	}
+	
+	private void saveAlarm() {
+		mAllGeoEventItem.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), mEventReport);
+		Gson gson = new Gson();
+		String input = gson.toJson(mAllGeoEventItem);
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putString(Def.SP_GEO_ITEM_MAP, input);
+		editor.commit();
+	}
+	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -300,6 +357,11 @@ public class SafetyFragment extends Fragment {
 			if (TextUtils.equals(Def.RET_SUCCESS_1, response.getReturn().getResponseSummary().getStatusCode())) {
 				String lat = response.getReturn().getResults().getLatitude();
 				String lnt = response.getReturn().getResults().getLongitude();
+				if (TextUtils.isEmpty(lat) || TextUtils.isEmpty(lnt)) {
+					return "";
+				}
+				mLastPositionUpdateTime = response.getReturn().getResults().getEvent_occured_date();
+				
 				mLastPosition = new LatLng(Double.parseDouble(lat), Double.parseDouble(lnt));
 			} else if (TextUtils.equals(Def.RET_ERR_02, response.getReturn().getResponseSummary().getStatusCode())) {
 				return Def.RET_ERR_02;
@@ -319,10 +381,144 @@ public class SafetyFragment extends Fragment {
 				if (isAlerted) {
 					setAlert(mLastPosition, "2017-07-10 週一 07:50");
 				}
+				SimpleDateFormat sdFormat = new SimpleDateFormat();
+				String format = "yyyy-MM-dd HH:mm:ss.S";
+				sdFormat.applyPattern(format);
+				Date date = Calendar.getInstance().getTime();
+				if (!TextUtils.isEmpty(mLastPositionUpdateTime)) {
+					try {
+						date = sdFormat.parse(mLastPositionUpdateTime);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd EE HH:mm", Locale.TAIWAN);
-				String updateTime = sdf.format(Calendar.getInstance().getTime());
+				String updateTime = sdf.format(date);
 				mUpdateText.setText(updateTime);
 			}
 		};
 	}
+	
+	class getEventReportTask extends AsyncTask<String, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(String... args) {
+			GuardianApiClient apiClient = new GuardianApiClient(getActivity());
+			JSONResponse responseEnter = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_ENTER_SCHOOL, "30");
+			parseEvent(responseEnter);
+			JSONResponse responseSOS = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_SOS_ALERT, "30");
+			parseEvent(responseSOS);
+			if (mCurrentItem != null) {
+				GeoEventItem item = mEventReport.get(mCurrentItem.getDate());
+				if (item == null) {
+					mEventReport.put(mCurrentItem.getDate(), mCurrentItem);
+				} else {
+					item.setEmergency(mCurrentItem.getEmergency());
+				}
+			}
+			myDataset.clear();
+			myDataset.addAll(mEventReport.values());
+			Collections.sort(myDataset, new Comparator<GeoEventItem>() {
+		        @Override
+		        public int compare(GeoEventItem item1, GeoEventItem item2)
+		        {
+
+		            return  item2.getDate().compareTo(item1.getDate());
+		        }
+		    });
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			super.onPostExecute(result);
+			mAdapter.notifyDataSetChanged();
+		}
+		
+	}
+	
+	private void parseEvent(JSONResponse response) {
+		if (response != null) {
+			Results results = response.getReturn().getResults();
+			if (results != null) {
+				String event_id = results.getEvent_id();
+				Device[] devices = results.getDevices();
+				if (devices[0] != null) {
+					DeviceEvent[] events = devices[0].getDevice_events();
+					for (DeviceEvent event : events) {
+						String event_occured_date = event.getEvent_occured_date();
+						Date date = getDateByStringFormatted(event_occured_date, "yyyy-MM-dd HH:mm:ss.S");
+						String key = getStringByDate(date, "yyyy/MM/dd");
+						GeoEventItem item;
+						if (mEventReport.containsKey(key)) {
+							item = mEventReport.get(key);
+						} else {
+							item = new GeoEventItem();
+							item.setDate(key);
+							mEventReport.put(key, item);
+						}
+						setGeoItemById(event_id, date, item);
+					}
+				}
+			}
+		}
+	}
+	
+	private Date getDateByStringFormatted(String time, String pattern) {
+		Date date = Calendar.getInstance().getTime();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+		try {
+			date = simpleDateFormat.parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return date;
+	}
+	
+	private String getStringByDate(Date date, String pattern) {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+		return simpleDateFormat.format(date);
+	}
+	
+	private void setGeoItemById(String eventId, Date date, GeoEventItem item) {
+		String time = getStringByDate(date, "MM:dd");
+		if (TextUtils.equals(eventId, Def.EVENT_ID_ENTER_SCHOOL)) {
+			String tmp = item.getEnterSchool();
+			if (TextUtils.isEmpty(tmp)) {
+				item.setEnterSchool(time);
+			} else {
+				if (time.compareTo(tmp) > 0) {
+					item.setEnterSchool(time);
+				}
+			}
+		} else if (TextUtils.equals(eventId, Def.EVENT_ID_LEAVE_SCHOOL)) {
+			String tmp = item.getLeavelSchool();
+			if (TextUtils.isEmpty(tmp)) {
+				item.setLeaveSchool(time);
+			} else {
+				if (time.compareTo(tmp) > 0) {
+					item.setLeaveSchool(time);
+				}
+			}
+		} else if (TextUtils.equals(eventId, Def.EVENT_ID_SOS_ALERT)) {
+			String tmp = item.getEmergency();
+			if (TextUtils.isEmpty(tmp)) {
+				item.setEmergency(time);
+			} else {
+				if (time.compareTo(tmp) > 0) {
+					item.setEmergency(time);
+				}
+			}
+		} else if (TextUtils.equals(eventId, Def.EVENT_ID_SOS_REMOVE)) {
+			String tmp = item.getEmergencyRelease();
+			if (TextUtils.isEmpty(tmp)) {
+				item.setEmergencyRelease(time);
+			} else {
+				if (time.compareTo(tmp) > 0) {
+					item.setEmergencyRelease(time);
+				}
+			}
+		}
+	}
+	
 }

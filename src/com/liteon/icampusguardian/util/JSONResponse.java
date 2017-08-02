@@ -399,6 +399,21 @@ public class JSONResponse {
 		private String gender;
 		@SerializedName("uuid")
 		private String uuid; 
+		
+		private int isDelete;
+		
+		/**
+		 * @return the isDelete
+		 */
+		public int getIsDelete() {
+			return isDelete;
+		}
+		/**
+		 * @param isDelete the isDelete to set
+		 */
+		public void setIsDelete(int isDelete) {
+			this.isDelete = isDelete;
+		}
 		/**
 		 * @return the student_id
 		 */

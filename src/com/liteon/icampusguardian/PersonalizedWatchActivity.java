@@ -113,7 +113,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 			bitmap = BitmapFactory
 					.decodeFile(
 							Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-									.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + "_watch.jpg",
+									.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + "_watch.jpg",
 							options);
 		}
 		if (bitmap != null) {

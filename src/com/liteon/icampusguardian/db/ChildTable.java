@@ -17,7 +17,8 @@ public class ChildTable {
         public static final String COLUMN_NAME_WEIGHT = "weight";
         public static final String COLUMN_NAME_ROLL_NO = "roll_no";
         public static final String COLUMN_NAME_CLASS = "class";   
-        public static final String COLUMN_NAME_STUDENT_ID = "student_id";   
+        public static final String COLUMN_NAME_STUDENT_ID = "student_id";
+        public static final String COLUMN_NAME_IS_DELETED = "is_deleted";
 	}
 	
 }

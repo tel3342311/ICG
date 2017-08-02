@@ -12,10 +12,13 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.BLEItem;
 import com.liteon.icampusguardian.util.BLEItemAdapter;
 import com.liteon.icampusguardian.util.BLEItemAdapter.ViewHolder.IBLEItemClickListener;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.Def;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -32,6 +35,7 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -68,6 +72,9 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
     private BluetoothGatt mGatt;
     private static int VERSION_CODES = 21;
     private final static int PERMISSION_REQUEST = 3;
+	private DBHelper mDbHelper;
+	private List<Student> mStudents;
+	private int mCurrnetStudentIdx;
 
     //work around for uuid
     private UUIDList mUUIDList;
@@ -85,9 +92,9 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 		setListener();
 		initRecycleView();
 		initBleComponent();
-
-		
-
+		mDbHelper = DBHelper.getInstance(this);
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 	}
 	
 	public static boolean hasPermissions(Context context, String... permissions) {
@@ -227,6 +234,8 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
             }
             scanLeDevice(true);
         }
+		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 	}
 	
 	@Override
@@ -426,6 +435,12 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 
 	@Override
 	public void onBleItemClick(BLEItem item) {
+		
+		//if (TextUtils.isEmpty(mStudents.get(mCurrnetStudentIdx).getUuid())) {
+			mStudents.get(mCurrnetStudentIdx).setUuid(item.getId());
+			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), mStudents.get(mCurrnetStudentIdx));
+		//}
+		
 		Intent intent = new Intent();
 		intent.setClass(this, BLEPinCodeInputActivity.class);
 		startActivity(intent);

@@ -24,6 +24,7 @@ import com.liteon.icampusguardian.util.AppInfoPrivacyItemAdapter.ViewHolder.IApp
 import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
 import com.liteon.icampusguardian.util.CircularImageView;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private LocalBroadcastManager mLocalBroadcastManager;
 	private AppCompatButton mLogoutButton;
 	private ConfirmDeleteDialog mUnPairConfirmDialog;
+	private ConfirmDeleteDialog mDeleteAccountConfirmDialog;
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
 
@@ -340,13 +342,16 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		mChildIcon.addShadow();
 		Bitmap bitmap = null;
 		if (mStudents.size() > 0) {
+			if (mCurrentStudentIdx >= mStudents.size()) {
+				mCurrentStudentIdx =  0;
+			}
 			mChildName.setText(mStudents.get(mCurrentStudentIdx).getNickname());
 			//read child image file
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
 			bitmap = BitmapFactory.decodeFile(
 					Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/"
-							+ mStudents.get(mCurrentStudentIdx).getUuid() + ".jpg",
+							+ mStudents.get(mCurrentStudentIdx).getStudent_id() + ".jpg",
 					options);
 		}
 
@@ -362,10 +367,12 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		if (mStudents.size() == 0) {
 			
 		} else {
-			int nextStudent = mCurrentStudentIdx == 0 ? 1 : 0;
+			int nextStudent = mCurrentStudentIdx+1;
+			if (nextStudent >= mStudents.size()) {
+				nextStudent = 0;
+			} 
 			MenuItem switchAccount = menu.findItem(R.id.action_switch_account);
-			switchAccount
-					.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getNickname()));
+			switchAccount.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getNickname()));
 
 			MenuItem deleteAccount = menu.findItem(R.id.action_delete_account);
 			deleteAccount.setTitle(
@@ -381,13 +388,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		} else if (id == R.id.action_add_child) {
 			addNewChild();
 		} else if (id == R.id.action_delete_account) {
-//			Intent intent = new Intent();
-//			intent.setAction(Def.ACTION_NOTIFY);
-//			intent.putExtra(Def.EXTRA_NOTIFY_TYPE, "sos");
-//			setIntent(intent);
-//			SafetyFragment safetyFragment = new SafetyFragment(getIntent());
-//			changeFragment(safetyFragment);
-			sendNotification("test");
+			deleteAccount();
 		} else if (id == R.id.action_setting) {
 			switchSetting();
 		}
@@ -395,6 +396,54 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		return true;
 	}
 
+	public void deleteAccount() {
+		mDeleteAccountConfirmDialog = new ConfirmDeleteDialog();
+		mDeleteAccountConfirmDialog.setOnConfirmEventListener(mOnDeleteAccountConfirm);
+		mDeleteAccountConfirmDialog.setmOnCancelListener(mOnDeleteAccountCancel);
+		mDeleteAccountConfirmDialog.setmTitleText("刪除追蹤"+ mChildName.getText() + "\n" +
+		"此手機將無法看見該帳號紀錄，但雲端記錄不會刪除，如日後要由此手機觀看，請重新加入該帳號");
+		mDeleteAccountConfirmDialog.setmBtnConfirmText("確定");
+		mDeleteAccountConfirmDialog.setmBtnCancelText("取消");
+		mDeleteAccountConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
+	}
+	
+	private View.OnClickListener mOnDeleteAccountConfirm = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Student student = mStudents.get(mCurrentStudentIdx);
+			student.setIsDelete(1);
+			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+			mStudents.remove(student);
+			mDeleteAccountConfirmDialog.dismiss();
+			
+			final CustomDialog dialog = new CustomDialog();
+			dialog.setTitle("完成刪除追蹤" + mChildName.getText());
+			dialog.setBtnText("好");
+			dialog.setBtnConfirm(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					dialog.dismiss();
+					if (mStudents.size() == 0) {
+						mLogoutButton.callOnClick(); 
+					} else {
+						switchAccount();
+					}
+				}
+			});
+			dialog.show(getSupportFragmentManager(), "dialog_fragment");
+		}
+	};
+	
+	private View.OnClickListener mOnDeleteAccountCancel = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			mDeleteAccountConfirmDialog.dismiss();
+		}
+	};
+	
 	public void addNewChild() {
 		finish();
 		Intent intent = new Intent();
@@ -407,7 +456,19 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	}
 	
 	private void switchAccount() {
-		mCurrentStudentIdx = mCurrentStudentIdx == 0 ? 1 : 0;
+		if (mStudents.size() == 0) {
+			return;
+		}
+		if (mStudents.size() == 1) {
+			mCurrentStudentIdx = 0;
+		} else {
+			
+			if (mCurrentStudentIdx == mStudents.size() - 1) {
+				mCurrentStudentIdx = 0;
+			} else {
+				mCurrentStudentIdx++;
+			}
+		}
 		initChildInfo();
 		updateMenuItem();
 		
@@ -484,8 +545,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	}
 	
 	private void showPairingPage() {
-		
+		Intent intent = new Intent();
+		intent.setClass(this, BLEPairingListActivity.class);
+		startActivity(intent);
 	}
+	
 	private void showUnPairDialog() {
 		mUnPairConfirmDialog = new ConfirmDeleteDialog();
 		mUnPairConfirmDialog.setOnConfirmEventListener(mUnPairConfirmClickListener);
@@ -500,7 +564,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		@Override
 		public void onClick(View v) {
 			mUnPairConfirmDialog.dismiss();
-			
+			new UnPairTask().execute();
 		}
 	};
 	
@@ -578,6 +642,30 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				finish();
 			}
 		};
+	}
+	
+	class UnPairTask extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
+			JSONResponse response = apiClient.unpairDevice(mStudents.get(mCurrentStudentIdx));
+			if (response != null) {
+				if (response.getReturn() != null) {
+					String statusCode = response.getReturn().getResponseSummary().getStatusCode(); 
+					if (TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+						Student student = mStudents.get(mCurrentStudentIdx);
+						student.setUuid("");
+						mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+					}
+				}
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+		}
 	}
 	
 	private void sendNotification(String messageBody) {

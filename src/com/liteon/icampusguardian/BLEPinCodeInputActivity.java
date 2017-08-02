@@ -1,17 +1,25 @@
 package com.liteon.icampusguardian;
 
+import java.util.List;
+
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -35,6 +43,10 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
     private EditText mPinHiddenEditText;
     private View mBleConnectingView;
     private ConfirmDeleteDialog mBLEFailConfirmDialog;
+	private DBHelper mDbHelper;
+	private List<Student> mStudents;
+	private int mCurrnetStudentIdx;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,11 +54,16 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 		setContentView(new MainLayout(this, null));
 		findViews();
 		setListener();
+		mDbHelper = DBHelper.getInstance(this);
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
+		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 	}
 	
 	private void findViews() {
@@ -125,6 +142,16 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+        	GuardianApiClient mApiClient = new GuardianApiClient(BLEPinCodeInputActivity.this);
+        	JSONResponse response = mApiClient.pairNewDevice(mStudents.get(mCurrnetStudentIdx));
+        	if (response != null) {
+        		String statusCode = response.getReturn().getResponseSummary().getStatusCode();
+        		if (!TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+        			Student student = mStudents.get(mCurrnetStudentIdx);
+        			student.setUuid("");
+        			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+        		}
+        	}
         	return Boolean.TRUE;
         }
 

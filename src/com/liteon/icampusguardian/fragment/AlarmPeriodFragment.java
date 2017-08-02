@@ -84,11 +84,11 @@ public class AlarmPeriodFragment extends Fragment implements IWeekViewHolderClic
 		if (TextUtils.isEmpty(alarmMap)) {
 			mAlarmMap = new HashMap<String, List<AlarmItem>>();
 			for (Student student : mStudents) {
-				String uuid = student.getUuid();
-				mAlarmMap.put(uuid, new ArrayList<AlarmItem>());
+				String studentId = student.getStudent_id();
+				mAlarmMap.put(studentId, new ArrayList<AlarmItem>());
 			}
 		}
-		alarmDataset = (ArrayList)mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getUuid());
+		alarmDataset = (ArrayList)mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
 		if (mEditIdx == -1) {
 			mItem = alarmDataset.get(alarmDataset.size() - 1);
 		} else {
@@ -102,7 +102,7 @@ public class AlarmPeriodFragment extends Fragment implements IWeekViewHolderClic
 	}
 	
 	private void saveAlarm() {
-		mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getUuid(), alarmDataset);
+		mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), alarmDataset);
 		Gson gson = new Gson();
 		String input = gson.toJson(mAlarmMap);
 		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);

@@ -202,6 +202,9 @@ public class SettingFragment extends Fragment {
 		
 		Bitmap bitmap = null;
 		if (mStudents.size() > 0) {
+			if (mCurrnetStudentIdx >= mStudents.size()) {
+				mCurrnetStudentIdx =  0;
+			}
 			mChildName.setText(mStudents.get(mCurrnetStudentIdx).getNickname());
 			// read child image file
 			BitmapFactory.Options options = new BitmapFactory.Options();
@@ -209,7 +212,7 @@ public class SettingFragment extends Fragment {
 			bitmap = BitmapFactory
 					.decodeFile(
 							Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-									.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + ".jpg",
+									.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + ".jpg",
 							options);
 		}
 		if (bitmap != null) {
@@ -235,5 +238,7 @@ public class SettingFragment extends Fragment {
 		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
 		initChildInfo();
+		((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrnetStudentIdx));
+		mAdapter.notifyDataSetChanged();
 	}
 }

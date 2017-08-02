@@ -401,8 +401,7 @@ public class GuardianApiClient {
 			JSONObject jsonParam = new JSONObject();
 
 			jsonParam.put(Def.KEY_UUID, student.getUuid());
-			jsonParam.put(Def.KEY_NAME, student.getName());
-			jsonParam.put(Def.KEY_EMAIL, "");
+			jsonParam.put(Def.KEY_EMAIL, student.getName());
 			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
 			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
 			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());

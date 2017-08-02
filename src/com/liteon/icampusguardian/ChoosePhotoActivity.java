@@ -172,15 +172,15 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		if (TextUtils.isEmpty(watchThemeMap)) {
 			mPhotoMapWatchTheme = new HashMap<String, List<PhotoItem>>();
 			for (Student student : mStudents) {
-				String uuid = student.getUuid();
-				mPhotoMapWatchTheme.put(uuid, new ArrayList<PhotoItem>());
+				String studentId = student.getStudent_id();
+				mPhotoMapWatchTheme.put(studentId, new ArrayList<PhotoItem>());
 			}
 		}
-		if (mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getUuid()) == null) {
-			mPhotoMapWatchTheme.put(mStudents.get(mCurrnetStudentIdx).getUuid(), new ArrayList<PhotoItem>());
+		if (mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()) == null) {
+			mPhotoMapWatchTheme.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), new ArrayList<PhotoItem>());
 			
 		}
-		List listPhoto = mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getUuid());
+		List listPhoto = mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
 		if (listPhoto.size() == 0) {
 			for (int i = 0; i < MAX_SAVE_ITEM; i++) {
 				listPhoto.add(new PhotoItem());
@@ -201,14 +201,14 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		if (TextUtils.isEmpty(alarmMap)) {
 			mPhotoMap = new HashMap<String, PhotoItem>();
 			for (Student student : mStudents) {
-				String uuid = student.getUuid();
-				mPhotoMap.put(uuid, new PhotoItem());
+				String studentId = student.getStudent_id();
+				mPhotoMap.put(studentId, new PhotoItem());
 			}
 		}
-		if (mPhotoMap.get(mStudents.get(mCurrnetStudentIdx).getUuid()) == null) {
-			mPhotoMap.put(mStudents.get(mCurrnetStudentIdx).getUuid(), new PhotoItem());
+		if (mPhotoMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()) == null) {
+			mPhotoMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), new PhotoItem());
 		}
-		mCurrentItem = mPhotoMap.get(mStudents.get(mCurrnetStudentIdx).getUuid());
+		mCurrentItem = mPhotoMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
 		updateUsedItem();
 	}
 	
@@ -311,12 +311,12 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	public void onPhotoClick(int position) {
 		if (!isFromWatchTheme) {
 			mCurrentItem = mDataSet.get(position);
-			mPhotoMap.put(mStudents.get(mCurrnetStudentIdx).getUuid(), mCurrentItem);
+			mPhotoMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), mCurrentItem);
 			updateUsedItem();
 			doCrop(Uri.parse(mCurrentItem.getUri()));
 		} else {
 			PhotoItem item = mDataSet.get(position);
-			List listPhotoItem = mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getUuid());
+			List listPhotoItem = mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
 			if (listPhotoItem.size() < 3) {
 				listPhotoItem.add(0,item);
 			} else {
@@ -452,10 +452,10 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		File cropFile = null;
 		if (!isFromWatchTheme) {
 			cropFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-					.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + ".jpg");
+					.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + ".jpg");
 		} else {
 			cropFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-					.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getUuid() + "_watch.jpg");
+					.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + "_watch.jpg");
 		}
 		try {
 			FileOutputStream out = new FileOutputStream(cropFile);

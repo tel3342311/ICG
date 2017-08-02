@@ -20,7 +20,7 @@ import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 	private static DBHelper mInstance = null;
-	public static final int DATABASE_VERSION = 1;
+	public static final int DATABASE_VERSION = 3;
 	public static final String DATABASE_NAME = "data.db";
 	private static final String TEXT_TYPE = " TEXT";
 	private static final String INTEGER_TYPE = " INTEGER";
@@ -42,14 +42,15 @@ public class DBHelper extends SQLiteOpenHelper {
 	// Child data
 	public static final String SQL_QUERY_ALL_CHILDREN_DATA = "SELECT * FROM " + ChildEntry.TABLE_NAME;
 	private static final String SQL_CREATE_CHILDREN_TABLE = "CREATE TABLE " + ChildEntry.TABLE_NAME + " ("
-			+ ChildEntry.COLUMN_NAME_UUID + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP + ChildEntry.COLUMN_NAME_GIVEN_NAME
+			+ ChildEntry.COLUMN_NAME_UUID + TEXT_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_GIVEN_NAME
 			+ TEXT_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + COMMA_SEP
 			+ ChildEntry.COLUMN_NAME_GENDER + TEXT_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_HEIGHT + INTEGER_TYPE
 			+ COMMA_SEP + ChildEntry.COLUMN_NAME_WEIGHT + INTEGER_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_CLASS
 			+ TEXT_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_ROLL_NO + TEXT_TYPE + COMMA_SEP
-			+ ChildEntry.COLUMN_NAME_STUDENT_ID + TEXT_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_DOB + TEXT_TYPE + " )";
+			+ ChildEntry.COLUMN_NAME_IS_DELETED +  INTEGER_TYPE + COMMA_SEP
+			+ ChildEntry.COLUMN_NAME_STUDENT_ID +  TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP + ChildEntry.COLUMN_NAME_DOB + TEXT_TYPE + " )";
 	private static final String SQL_DELETE_CHILD_TABLE = "DROP TABLE IF EXISTS " + ChildEntry.TABLE_NAME;
-
+	
 	// Event list data
 	public static final String SQL_QUERY_ALL_EVENT_DATA = "SELECT * FROM " + EventListEntry.TABLE_NAME;
 	private static final String SQL_CREATE_EVENT_TABLE = "CREATE TABLE " + EventListEntry.TABLE_NAME + " ("
@@ -71,7 +72,7 @@ public class DBHelper extends SQLiteOpenHelper {
 			+ ChildLocationEntry.COLUMN_NAME_UUID + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP
 			+ ChildLocationEntry.COLUMN_NAME_LATITUDE + TEXT_TYPE + COMMA_SEP + ChildLocationEntry.COLUMN_NAME_LONGITUDE
 			+ TEXT_TYPE + " )";
-	private static final String SQL_DELETE_CHILD_LOCATION_TABLE = "DROP TABLE IF EXISTS " + EventListEntry.TABLE_NAME;
+	private static final String SQL_DELETE_CHILD_LOCATION_TABLE = "DROP TABLE IF EXISTS " + ChildLocationEntry.TABLE_NAME;
 
 	private DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -186,6 +187,9 @@ public class DBHelper extends SQLiteOpenHelper {
 		if (cursor.getCount() > 0) {
 			cursor.moveToFirst();
 			do {
+				if (cursor.getInt(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_IS_DELETED)) != 0) {
+					continue;
+				}
 				Student item = new Student();
 				item.setUuid(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_UUID)));
 				item.setName(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_GIVEN_NAME)));
@@ -203,5 +207,13 @@ public class DBHelper extends SQLiteOpenHelper {
 			db.close();
 		}
 		return list;
+	}
+	
+	public void updateChildData(SQLiteDatabase db, Student student) {
+		ContentValues cv = new ContentValues();
+		String[] args = new String[]{student.getStudent_id()};
+		cv.put(ChildEntry.COLUMN_NAME_UUID, student.getUuid());
+		cv.put(ChildEntry.COLUMN_NAME_IS_DELETED, student.getIsDelete());
+		db.update(ChildEntry.TABLE_NAME, cv, "student_id=?", args);
 	}
 }

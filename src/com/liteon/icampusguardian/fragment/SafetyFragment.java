@@ -26,6 +26,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.LoginActivity;
+import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.AlarmItem;
@@ -173,6 +175,19 @@ public class SafetyFragment extends Fragment {
 		mDbHelper = DBHelper.getInstance(getActivity());
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+		if (mStudents.size() == 0) {
+			SharedPreferences.Editor editor = sp.edit();
+			editor.remove(Def.SP_LOGIN_TOKEN);
+			editor.commit();
+			DBHelper helper = DBHelper.getInstance(getActivity());
+			helper.deleteAccount(helper.getWritableDatabase());
+			getActivity().finish();
+			Intent intent = new Intent();
+			intent.setClass(getActivity(), LoginActivity.class);
+			startActivity(intent);
+		} else if (mStudents.size() >0 && mCurrnetStudentIdx >= mStudents.size()) {
+			mCurrnetStudentIdx = 0;
+		}
 		init();
 		mContext = getContext();
 		return rootView;

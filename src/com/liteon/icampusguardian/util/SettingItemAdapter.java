@@ -10,6 +10,7 @@ import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingIte
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -65,7 +66,7 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
         holder.mTitleTextView.setText(item.getTitle());
         if (item.getItemType() == SettingItem.TYPE.PAIRING) {
         	holder.mValueBtn.setVisibility(View.VISIBLE);
-        	if (mStudent != null && mStudent.getUuid() != null) {
+        	if (mStudent != null && !TextUtils.isEmpty(mStudent.getUuid())) {
         		holder.mValueBtn.setText("解除綁定");
         	} else {
         		holder.mValueBtn.setText("新增綁定");

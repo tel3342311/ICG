@@ -241,12 +241,12 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		if (TextUtils.isEmpty(alarmMap)) {
 			mAlarmMap = new HashMap<String, List<AlarmItem>>();
 			for (Student student : mStudents) {
-				String uuid = student.getUuid();
-				mAlarmMap.put(uuid, new ArrayList<AlarmItem>());
+				String studentId = student.getStudent_id();
+				mAlarmMap.put(studentId, new ArrayList<AlarmItem>());
 			}
 		}
 		myDataset.clear();
-		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getUuid()));
+		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()));
 		if (mEditIdx == -1) {
 			if (mCurrentAlarmItem == null) {
 				testData();
@@ -263,7 +263,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	}
 	
 	private void saveAlarm() {
-		mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getUuid(), myDataset);
+		mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), myDataset);
 		Gson gson = new Gson();
 		String input = gson.toJson(mAlarmMap);
 		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);

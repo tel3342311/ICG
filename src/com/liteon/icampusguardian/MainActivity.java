@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			case R.id.action_health:
 				//fragment = new HealthFragment(MainActivity.this);
 				fragment = new HealthMainFragment();
-				title = getString(R.string.health_tab);
+				title = getString(R.string.health_page_title);
 				break;
 			case R.id.action_alarm:
 				fragment = new AlarmFragment(MainActivity.this);

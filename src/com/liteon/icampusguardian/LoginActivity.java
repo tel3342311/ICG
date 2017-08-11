@@ -76,8 +76,11 @@ public class LoginActivity extends AppCompatActivity {
 	private final static int RC_USER_TERM = 1002;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
+		setupGoogleSignIn();
+		setupFacebookSignIn();
 		findViews();
 		setListener();
 		
@@ -95,8 +98,7 @@ public class LoginActivity extends AppCompatActivity {
     		startActivity(intent);
     		finish();	
 		} else {
-			setupGoogleSignIn();
-			setupFacebookSignIn();
+			
 		}
 	}
 	

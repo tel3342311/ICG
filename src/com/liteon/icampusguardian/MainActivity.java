@@ -106,6 +106,12 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
 		// get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+		if (mStudents.size() == 0) {
+			Intent intent = new Intent();
+			intent.setClass(this, ChildPairingActivity.class);
+			startActivity(intent);
+
+		}
 		findViews();
 		setListener();
 		setupToolbar();

@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.ChildPairingActivity;
 import com.liteon.icampusguardian.LoginActivity;
 import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
@@ -268,8 +269,10 @@ public class SafetyFragment extends Fragment {
 			new getCurrentLocation().execute("");
 		}
 		restoreAlarm();
-		String id = mStudents.get(mCurrnetStudentIdx).getStudent_id();
-		new getEventReportTask().execute(id);
+		if (mStudents.size() > 0) {
+			String id = mStudents.get(mCurrnetStudentIdx).getStudent_id();
+			new getEventReportTask().execute(id);
+		}
 	}
 
 	@Override
@@ -292,6 +295,9 @@ public class SafetyFragment extends Fragment {
 				mAllGeoEventItem.put(id, new HashMap<String, GeoEventItem>());
 			}
 		}
+		if (mStudents.size() == 0) {
+			return;
+		}
 		if (mAllGeoEventItem.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()) == null) {
 			mAllGeoEventItem.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), new HashMap<String, GeoEventItem>());
 		}
@@ -310,13 +316,15 @@ public class SafetyFragment extends Fragment {
 	}
 	
 	private void saveAlarm() {
-		mAllGeoEventItem.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), mEventReport);
-		Gson gson = new Gson();
-		String input = gson.toJson(mAllGeoEventItem);
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = sp.edit();
-		editor.putString(Def.SP_GEO_ITEM_MAP, input);
-		editor.commit();
+		if (mStudents.size() > 0) {
+			mAllGeoEventItem.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), mEventReport);
+			Gson gson = new Gson();
+			String input = gson.toJson(mAllGeoEventItem);
+			SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = sp.edit();
+			editor.putString(Def.SP_GEO_ITEM_MAP, input);
+			editor.commit();
+		}
 	}
 	
 	@Override
@@ -361,6 +369,9 @@ public class SafetyFragment extends Fragment {
 		
 		@Override
 		protected String doInBackground(String... params) {
+			if (mStudents.size() == 0) {
+				return "";
+			}
 			SharedPreferences sp = mContext.getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 			String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
 			GuardianApiClient apiClient = new GuardianApiClient(getActivity());

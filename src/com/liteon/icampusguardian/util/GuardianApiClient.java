@@ -16,13 +16,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.liteon.icampusguardian.util.JSONResponse.Device;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
-import android.support.v7.view.menu.ShowableListMenu;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -197,7 +197,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse resetPassword(String userEmail) {
-		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_PASSWORD_REST).appendPath(mToken).build();
+		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_PASSWORD_REST).build();
 		try {
 			URL url = new URL(uri.toString());
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -239,6 +239,9 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (JsonSyntaxException e) {
+			e.printStackTrace();
+			return null;
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

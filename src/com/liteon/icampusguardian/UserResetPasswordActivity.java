@@ -105,10 +105,10 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 		return apiClient.resetPassword(strName);
 	}
 
-	private void showErrorDialog() {
+	private void showErrorDialog(String message) {
 		
 		final CustomDialog dialog = new CustomDialog();
-		dialog.setTitle("帳號不正確，請再確認！");
+		dialog.setTitle(message);
 		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
 		dialog.setBtnText("好");
 		dialog.setBtnConfirm(new OnClickListener() {
@@ -126,6 +126,13 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
         protected Boolean doInBackground(Void... params) {
         	JSONResponse response = resetPassword();
         	if (response == null) {
+        		runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						showErrorDialog("網路無法連線");
+					}
+				});
 				return false;
 			}
 			if (response.getReturn().getResults() == null) {
@@ -133,7 +140,7 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 
 					@Override
 					public void run() {
-						showErrorDialog();
+						showErrorDialog("帳號不正確，請再確認！");
 					}
 				});
 				return false;

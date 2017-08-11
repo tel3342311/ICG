@@ -2,6 +2,7 @@ package com.liteon.icampusguardian;
 
 import java.util.UUID;
 
+import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 
 import android.os.AsyncTask;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class UserRegistrationActivity extends AppCompatActivity implements OnClickListener {
@@ -27,7 +29,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 	private EditText mAccount;
 	private EditText mPassword;
 	private EditText mConfirmPassword;
-	
+	private TextView mHintText;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,6 +53,8 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		mConfirmPassword = (EditText) findViewById(R.id.login_password_confirm);
 		mCancel = (ImageView) findViewById(R.id.cancel);
 		mConfirm = (ImageView) findViewById(R.id.confirm);
+		mHintText = (TextView) findViewById(R.id.error_hint);
+		
 	}
 	
 	private void setListener() {
@@ -98,27 +102,44 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 	}
 	
 	private boolean validateInput() {
+		//check if acount email is valid
+		String email = mAccount.getText().toString();
+		email = email.trim();
+		if ( !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+			if (!TextUtils.isEmpty(mAccount.getText())) {
+				mAccount.setTextColor(getResources().getColor(R.color.md_red_400));
+				mHintText.setVisibility(View.VISIBLE);
+			}
+			return false;
+		} else {
+			mAccount.setTextColor(getResources().getColor(R.color.md_black_1000));
+			mHintText.setVisibility(View.INVISIBLE);
+		}
 		if (TextUtils.isEmpty(mName.getText()) || 
-			TextUtils.isEmpty(mPhone.getText()) || 
-			TextUtils.isEmpty(mAccount.getText()) || 
+			TextUtils.isEmpty(mPhone.getText()) ||  
 			TextUtils.isEmpty(mPassword.getText()) ||
 			TextUtils.isEmpty(mConfirmPassword.getText())) {
 			return false;
 		}
-		//check if acount email is valid
-		String email = mAccount.getText().toString();
-		email = email.trim();
-		if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-			Toast.makeText(this, "invalid Email Account" , Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		//check if password & password confirm is match
-		if (!TextUtils.equals(mPassword.getText(), mConfirmPassword.getText())) {
-			return false;
-		}
+		
+
 		return true;
 	}
 	
+	private void showLoginErrorDialog() {
+		final CustomDialog dialog = new CustomDialog();
+		dialog.setTitle("帳號或密碼不正確，請再確認！");
+		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
+		dialog.setBtnText("好");
+		dialog.setBtnConfirm(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show(getSupportFragmentManager(), "dialog_fragment");
+	}
 	private void registerAccount() {
 		String strName = mName.getText().toString();
 		String strPhone = mPhone.getText().toString();
@@ -126,6 +147,11 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		strAccount = strAccount.trim();
 		String strPassword = mPassword.getText().toString();
 		
+		//check if password & password confirm is match
+		if (!TextUtils.equals(mPassword.getText(), mConfirmPassword.getText())) {
+			showLoginErrorDialog();
+			return ;
+		}
 		GuardianApiClient apiClient = new GuardianApiClient(this);
 		String str = "1234";
 		UUID uuid = UUID.nameUUIDFromBytes(str.getBytes());

@@ -1,6 +1,8 @@
 package com.liteon.icampusguardian;
 
+import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +36,7 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mSend.setEnabled(false);
 	}
 	
 	private void findViews() {
@@ -47,7 +50,9 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 	private void setListener() {
 		mSend.setOnClickListener(this);
 		mBackToLogin.setOnClickListener(this);
+		mName.addTextChangedListener(mTextWatcher);
 	}
+	
 	private TextWatcher mTextWatcher = new TextWatcher() {
 		
 		@Override
@@ -94,24 +99,55 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 		return true;
 	}
 	
-	private void resetPassword() {
+	private JSONResponse resetPassword() {
 		String strName = mName.getText().toString();
 		GuardianApiClient apiClient = new GuardianApiClient(this);
-		apiClient.resetPassword(strName);
+		return apiClient.resetPassword(strName);
 	}
-	
-	class ResetTask extends AsyncTask<Void, Void, String> {
 
-        protected String doInBackground(Void... params) {
-        	resetPassword();
-        	return null;
+	private void showErrorDialog() {
+		
+		final CustomDialog dialog = new CustomDialog();
+		dialog.setTitle("帳號不正確，請再確認！");
+		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
+		dialog.setBtnText("好");
+		dialog.setBtnConfirm(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show(getSupportFragmentManager(), "dialog_fragment");
+
+	}
+	class ResetTask extends AsyncTask<Void, Void, Boolean> {
+
+        protected Boolean doInBackground(Void... params) {
+        	JSONResponse response = resetPassword();
+        	if (response == null) {
+				return false;
+			}
+			if (response.getReturn().getResults() == null) {
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						showErrorDialog();
+					}
+				});
+				return false;
+			}
+        	return true;
         }
 
-        protected void onPostExecute(String token) {
-			mTitleView.setText("系統已重設你的密碼");
-			mDescView.setText("請察看信箱並使用系統寄出的預設密碼回到登入頁面進行登入\n");
-			mSend.setVisibility(View.GONE);
-			mName.setVisibility(View.INVISIBLE);
+        protected void onPostExecute(Boolean isSuccess) {
+        	if (isSuccess) {
+				mTitleView.setText("系統已重設你的密碼");
+				mDescView.setText("請察看信箱並使用系統寄出的預設密碼回到登入頁面進行登入\n");
+				mSend.setVisibility(View.GONE);
+				mName.setVisibility(View.INVISIBLE);
+        	}
         }
     }
 }

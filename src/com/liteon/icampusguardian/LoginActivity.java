@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.w3c.dom.Text;
+
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.internal.Validate;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.Auth;
@@ -21,6 +24,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
@@ -34,8 +38,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.ShowableListMenu;
 import android.support.v7.widget.AppCompatButton;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -96,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		signInButtonNormal.setEnabled(false);
 		//mUserName.setText(Def.USER);
 		//mPassword.setText(Def.PASSWORD);
 	}
@@ -117,6 +125,39 @@ public class LoginActivity extends AppCompatActivity {
 		mQuitButton.setOnClickListener(mOnQuitClickListener);
 		mCreateAccount.setOnClickListener(mOnCreateAccountClickListener);
 		mForgetPassword.setOnClickListener(mOnForgetPasswordClickListener);
+		mUserName.addTextChangedListener(mTextWatcher);
+		mPassword.addTextChangedListener(mTextWatcher);
+	}
+	
+	private TextWatcher mTextWatcher = new TextWatcher() {
+		
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			
+		}
+		
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			
+		}
+		
+		@Override
+		public void afterTextChanged(Editable s) {
+			if (validateInput()) {
+				signInButtonNormal.setEnabled(true);
+			} else {
+				signInButtonNormal.setEnabled(false);
+			}
+		}
+	};
+	
+	private boolean validateInput() {
+		String user = mUserName.getText().toString();
+		String password = mPassword.getText().toString();
+		if (TextUtils.isEmpty(user) || TextUtils.isEmpty(password)) {
+			return false;
+		}
+		return true;
 	}
 	
 	private View.OnClickListener mOnCreateAccountClickListener = new OnClickListener() {
@@ -265,6 +306,21 @@ public class LoginActivity extends AppCompatActivity {
 		}
 	};
 	
+	private void showLoginErrorDialog() {
+		final CustomDialog dialog = new CustomDialog();
+		dialog.setTitle("查無此登入帳號(電子郵件)\n請再確認！");
+		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
+		dialog.setBtnText("好");
+		dialog.setBtnConfirm(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show(getSupportFragmentManager(), "dialog_fragment");
+	}
+	
 	class LoginTask extends AsyncTask<String, Void, String> {
 
         protected String doInBackground(String... args) {
@@ -283,10 +339,7 @@ public class LoginActivity extends AppCompatActivity {
 
 					@Override
 					public void run() {
-						Toast.makeText(getApplicationContext(),
-								"Status Code :" + response.getReturn().getResponseSummary().getStatusCode()
-										+ " Error is " + response.getReturn().getResponseSummary().getErrorMessage(),
-								Toast.LENGTH_LONG).show();
+						showLoginErrorDialog();
 					}
 				});
 				return null;

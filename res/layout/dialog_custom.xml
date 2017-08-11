@@ -33,6 +33,7 @@
         android:layout_marginBottom="@dimen/dialog_btn_margin_bottom"
         android:layout_alignParentBottom="true"
         android:text="好"
+        android:textColor="@drawable/btn_text_color"
         style="@style/list_item"
         android:background="@drawable/btn_bg"/>
         

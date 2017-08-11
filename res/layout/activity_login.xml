@@ -78,7 +78,7 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/btn_bg"
         android:text="登  入"
-      	android:textColor="@color/md_black_1000"
+      	android:textColor="@drawable/btn_text_color"
         android:textSize="@dimen/login_option_text_size"/>
 	
 	<LinearLayout 

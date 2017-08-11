@@ -41,7 +41,8 @@
 	        android:layout_marginBottom="@dimen/dialog_btn_margin_bottom"
 	        android:background="@drawable/btn_bg"
 	        style="@style/list_item"
-	        android:text="取消"/>
+	        android:text="取消"
+	        android:textColor="@drawable/btn_text_color"/>
 	    <android.support.v7.widget.AppCompatButton
 	        android:id="@+id/confirm"
 	        android:layout_width="0dp"
@@ -52,6 +53,7 @@
 	        android:layout_marginBottom="@dimen/dialog_btn_margin_bottom"
 	        android:background="@drawable/btn_bg"
 	        style="@style/list_item"
-	        android:text="確認"/>
+	        android:text="確認"
+	        android:textColor="@drawable/btn_text_color"/>
     </LinearLayout>
 </RelativeLayout>

@@ -17,4 +17,5 @@
     <color name="color_btn_boarder">#d2d2d2</color>
     <color name="color_loding_bar_ring">#11c0fe</color>
     <color name="color_loding_bar_bg">#eaeaea</color>
+    <color name="color_btn_pressed">#1a8a59</color>
 </resources>

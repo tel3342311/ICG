@@ -83,7 +83,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
        	android:layout_marginBottom="@dimen/page_title_margin_bottom"
-        android:hint="E-mail帳號(至少八碼英文或數字)"
+        android:hint="E-mail帳號"
         android:maxLines="1"
         android:textColor="@color/md_black_1000"
         android:textCursorDrawable="@null"
@@ -98,7 +98,7 @@
 	    android:layout_marginRight="@dimen/activity_horizontal_margin"
 	    android:layout_marginBottom="@dimen/page_title_margin_bottom"
 	    android:inputType="textPassword"
-	    android:hint="密碼"
+	    android:hint="密碼(至少八碼英文或數字)"
 	    android:maxLines="1"
 	    android:textCursorDrawable="@null"
 	    android:textSize="@dimen/login_edit_text_size" 
@@ -111,12 +111,21 @@
 	   	android:layout_below="@id/login_password"
 	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
 	    android:layout_marginRight="@dimen/activity_horizontal_margin"
-	    android:layout_marginBottom="@dimen/page_title_margin_bottom"
 	    android:inputType="textPassword"
 	    android:hint="再次確認新密碼"
 	    android:maxLines="1"
 	    android:textCursorDrawable="@null"
 	    android:textSize="@dimen/login_edit_text_size" 
 	    android:textColor="@color/md_black_1000"/>
-
+	<TextView 
+	    android:id="@+id/error_hint"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	   	android:layout_marginLeft="@dimen/activity_horizontal_margin"
+	    android:layout_marginRight="@dimen/activity_horizontal_margin"
+	    android:text="電子郵件格式錯誤"
+	    android:layout_below="@id/login_password_confirm"
+	    style="@style/list_item_small"
+	    android:textColor="@color/md_red_700"
+	    android:visibility="invisible"/>
 </RelativeLayout>

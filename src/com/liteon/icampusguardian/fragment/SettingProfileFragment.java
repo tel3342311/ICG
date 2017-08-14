@@ -1,40 +1,36 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.aigestudio.wheelpicker.WheelPicker;
-import com.liteon.icampusguardian.LoginActivity;
-import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
-import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.ProfileItem;
 import com.liteon.icampusguardian.util.ProfileItem.TYPE;
 import com.liteon.icampusguardian.util.ProfileItemAdapter;
 import com.liteon.icampusguardian.util.ProfileItemAdapter.ViewHolder.IProfileItemClickListener;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IInterface;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,7 +38,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SettingProfileFragment extends Fragment implements IProfileItemClickListener {
 
@@ -63,7 +58,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	private List<Student> mStudents;
 	private int mCurrentStudentIdx;
 	private TYPE mType;
-
+	private AppCompatActivity mActivity; 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
@@ -89,6 +84,14 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 		mWheel_single = (WheelPicker) one_wheel.findViewById(R.id.main_wheel_left);
 		mWheelTitle = (TextView) one_wheel.findViewById(R.id.year_title);
 		
+	}
+	
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		if (context instanceof AppCompatActivity) {
+			mActivity = (AppCompatActivity) context;
+		}
 	}
 	
 	private void setupListener() {
@@ -120,6 +123,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 				} else if (R.id.main_wheel_right == wheel.getId()) {
 					calendar.set(Calendar.DATE, (Integer)data);
 				}
+				UpdateWheelForDate(calendar);
 				mStudents.get(mCurrentStudentIdx).setDob(sdf.format(calendar.getTime()));
 				
 			} else if (one_wheel.getVisibility() == View.VISIBLE) {
@@ -139,6 +143,22 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 		}		
 	};
 	
+	public void UpdateWheelForDate(Calendar date) {
+
+		int year = date.get(Calendar.YEAR);
+		int month = date.get(Calendar.MONTH);
+		int days = date.get(Calendar.DAY_OF_MONTH);
+		
+		int max_days = date.getActualMaximum(Calendar.DAY_OF_MONTH);
+		List day_of_Month = new ArrayList<Integer>();
+		for (int i = 1; i <= max_days; i ++) {
+			day_of_Month.add(i);
+		}
+		mWheel_left.setSelectedItemPosition(mWheel_left.getData().indexOf(year));
+		mWheel_center.setSelectedItemPosition(mWheel_center.getData().indexOf(month+1));
+		mWheel_right.setData(day_of_Month);
+		mWheel_right.setSelectedItemPosition(day_of_Month.indexOf(days));
+	}
 	private void updateData(){
 		Student student = mStudents.get(mCurrentStudentIdx);
         for (ProfileItem item : mDataSet) {
@@ -231,24 +251,28 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 			}
 			mWheel_center.setData(months);
 			mWheel_center.setCyclic(false);
+
+			String dob = mStudents.get(mCurrentStudentIdx).getDob();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Date date = null;
+			try {
+				date = sdf.parse(dob);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
 			List<Integer> days = new ArrayList<>();
-			for (int i = 1; i < 32; i++) {
+			for (int i = 1; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
 				days.add(i);
 			}
 			mWheel_right.setData(days);
 			mWheel_right.setCyclic(false);
-			String dob = mStudents.get(mCurrentStudentIdx).getDob();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				Date date = sdf.parse(dob);
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(date);
-				mWheel_left.setSelectedItemPosition(years.indexOf(calendar.get(Calendar.YEAR)));
-				mWheel_center.setSelectedItemPosition(months.indexOf(calendar.get(Calendar.MONTH) + 1));
-				mWheel_right.setSelectedItemPosition(days.indexOf(calendar.get(Calendar.DAY_OF_MONTH)));
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+
+			mWheel_left.setSelectedItemPosition(years.indexOf(calendar.get(Calendar.YEAR)));
+			mWheel_center.setSelectedItemPosition(months.indexOf(calendar.get(Calendar.MONTH) + 1));
+			mWheel_right.setSelectedItemPosition(days.indexOf(calendar.get(Calendar.DAY_OF_MONTH)));
+
 			
 			break;
 		case GENDER:
@@ -327,14 +351,16 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 
         protected String doInBackground(Void... params) {
         	updateChildInfo();
-        	DBHelper helper = DBHelper.getInstance(getActivity());
+        	DBHelper helper = DBHelper.getInstance(mActivity);
         	SQLiteDatabase db = helper.getWritableDatabase();
         	helper.insertChildList(db, mStudents);
         	return null;
         }
 
         protected void onPostExecute(String token) {
-        	getActivity().onBackPressed();
+        	if (mActivity != null) {
+        		mActivity.onBackPressed();
+        	}
         }
     }
 	
@@ -342,7 +368,13 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	public void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		SharedPreferences sp = mActivity.getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+	}
+	
+	public static int getDayOfMonth(Date aDate) {
+	    Calendar cal = Calendar.getInstance();
+	    cal.setTime(aDate);
+	    return cal.get(Calendar.DAY_OF_MONTH);
 	}
 }

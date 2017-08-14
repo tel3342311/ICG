@@ -11,6 +11,10 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -350,7 +354,15 @@ public class GuardianApiClient {
 			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
 			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
 			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());
-			jsonParam.put(Def.KEY_DOB, student.getDob());
+			//Workaround for API. convert 2017-01-31 to 31-01-2017
+			String dob = student.getDob();
+			if (!TextUtils.isEmpty(dob)) {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				Date date = sdf.parse(dob);
+				sdf.applyPattern("dd-MM-yyyy");
+				dob = sdf.format(date);
+			}
+			jsonParam.put(Def.KEY_DOB, dob);
 			jsonParam.put(Def.KEY_GENDER, student.getGender());
 			
 			OutputStream os = urlConnection.getOutputStream();
@@ -382,6 +394,8 @@ public class GuardianApiClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return null;

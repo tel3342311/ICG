@@ -16,6 +16,7 @@ import com.liteon.icampusguardian.fragment.SettingProfileFragment;
 import com.liteon.icampusguardian.fragment.SettingTargetFragment;
 import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
+import com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE;
 import com.liteon.icampusguardian.util.AlarmPeriodItem;
 import com.liteon.icampusguardian.util.AppInfoPrivacyItem;
 import com.liteon.icampusguardian.util.AppInfoPrivacyItemAdapter.ViewHolder.IAppInfoPrivacyViewHolderClicks;
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
 	private SafetyFragment mSaftyFragment;
+	private AlarmItem mCurrentAlarmItem;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -232,7 +234,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				mBottomView.setSelectedItemId(R.id.action_alarm);
 				return;
 			} else if (mCurrentFragment instanceof AlarmPeriodFragment) {
-				changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this), "設定鬧鈴", 0);
+				//changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this), "設定鬧鈴", 0);
+				onFinishEditPeriod();
 				return;
 			} else if (mCurrentFragment instanceof SettingProfileFragment || mCurrentFragment instanceof SettingTargetFragment) {
 				hideSoftKeyboard();
@@ -524,6 +527,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
 			changeFragment(new AlarmEditingFragment(this), "設定鬧鈴", 0);
 			mCurrentAlarmIdx = -1;
+			if (mCurrentAlarmItem == null) {
+				mCurrentAlarmItem = getCurrentAlarmItem();
+			}
 			if (fragment.isEditMode()) {
 				fragment.exitEditMode();
 			}
@@ -531,6 +537,31 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		
 	}
 
+	public void onFinishEditPeriod(){
+		if (mCurrentFragment instanceof AlarmPeriodFragment) {
+			changeFragment(new AlarmEditingFragment(this), "設定鬧鈴", 0);
+			mCurrentAlarmIdx = -1;
+			if (mCurrentAlarmItem == null) {
+				mCurrentAlarmItem = getCurrentAlarmItem();
+			}
+		}
+	}
+	public AlarmItem getCurrentAlarmItem(){
+		if (mCurrentAlarmItem == null) {
+			mCurrentAlarmItem = new AlarmItem();
+			mCurrentAlarmItem.setTitle("上學");
+			mCurrentAlarmItem.setDate("00:00");
+			mCurrentAlarmItem.setPeriod("週一至週五");
+			mCurrentAlarmItem.setEnabled(true);
+			AlarmPeriodItem item = new AlarmPeriodItem();
+			item.setItemType(TYPE.WEEK_DAY);
+			mCurrentAlarmItem.setPeriodItem(item);
+		}
+		return mCurrentAlarmItem;
+	}
+	public void setCurrentAlarmItem(AlarmItem item) {
+		mCurrentAlarmItem = item;
+	}
 	@Override
 	public void onEditAlarm(int idx) {
 		if (mCurrentFragment instanceof AlarmFragment) {

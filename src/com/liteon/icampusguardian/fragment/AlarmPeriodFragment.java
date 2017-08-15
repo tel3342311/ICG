@@ -9,6 +9,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.AlarmItem;
@@ -90,7 +91,7 @@ public class AlarmPeriodFragment extends Fragment implements IWeekViewHolderClic
 		}
 		alarmDataset = (ArrayList)mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
 		if (mEditIdx == -1) {
-			mItem = alarmDataset.get(alarmDataset.size() - 1);
+			mItem = ((MainActivity)getActivity()).getCurrentAlarmItem();
 		} else {
 			mItem = alarmDataset.get(mEditIdx);
 		}

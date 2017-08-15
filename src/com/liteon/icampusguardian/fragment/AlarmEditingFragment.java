@@ -11,6 +11,7 @@ import com.aigestudio.wheelpicker.WheelPicker.OnItemSelectedListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.AlarmItem;
@@ -71,16 +72,20 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 
 	}
 
-	private void testData() {
+	private void testData() {	
+		if (mEditIdx == -1) {
+			mCurrentAlarmItem = ((MainActivity)getActivity()).getCurrentAlarmItem();
+		} else {
+			mCurrentAlarmItem = new AlarmItem();
+			mCurrentAlarmItem.setTitle("上學");
+			mCurrentAlarmItem.setDate("00:00");
+			mCurrentAlarmItem.setPeriod("週一至週五");
+			mCurrentAlarmItem.setEnabled(true);
+			AlarmPeriodItem item = new AlarmPeriodItem();
+			item.setItemType(TYPE.WEEK_DAY);
+			mCurrentAlarmItem.setPeriodItem(item);
+		}
 		
-		mCurrentAlarmItem = new AlarmItem();
-		mCurrentAlarmItem.setTitle("上學");
-		mCurrentAlarmItem.setDate("00:00");
-		mCurrentAlarmItem.setPeriod("週一至週五");
-		mCurrentAlarmItem.setEnabled(true);
-		AlarmPeriodItem item = new AlarmPeriodItem();
-		item.setItemType(TYPE.CUSTOMIZE);
-		mCurrentAlarmItem.setPeriodItem(item);
 	}
 	
 	@Override
@@ -186,7 +191,10 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.action_confirm) {
-			//TODO Save alarm to db
+			if (mEditIdx == -1) {
+				myDataset.add(mCurrentAlarmItem);
+				((MainActivity)getActivity()).setCurrentAlarmItem(null);
+			}
 			getActivity().onBackPressed();
 		}
 		return super.onOptionsItemSelected(item);
@@ -201,12 +209,15 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	
 	private void initRecycleView() {
 		if (alarmPeriodDataset.size() == 0) {
+			
 			for (AlarmPeriodItem.TYPE type : AlarmPeriodItem.TYPE.values()) {
 				AlarmPeriodItem item = new AlarmPeriodItem();
 				item.setItemType(type);
 				alarmPeriodDataset.add(item);
+				
 			}
 		}
+		
 		mRecyclerView.setHasFixedSize(true);
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
@@ -249,13 +260,26 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()));
 		if (mEditIdx == -1) {
 			if (mCurrentAlarmItem == null) {
-				testData();
-				myDataset.add(mCurrentAlarmItem);
+				mCurrentAlarmItem = ((MainActivity)getActivity()).getCurrentAlarmItem();
 			}
 			
 		} else {
 			mCurrentAlarmItem = myDataset.get(mEditIdx);
 			mAlarmName.setText(mCurrentAlarmItem.getTitle());
+			
+		}
+		if (mCurrentAlarmItem !=null) {
+			AlarmPeriodItem currentPeriodItem = mCurrentAlarmItem.getPeriodItem();
+			if (currentPeriodItem != null) {
+				for (AlarmPeriodItem item : alarmPeriodDataset) {
+					if (item.getItemType() == currentPeriodItem.getItemType()) {
+						item.setSelected(true);
+					} else {
+						item.setSelected(false);
+					}
+				}
+			}
+			mAdapter.notifyDataSetChanged();
 		}
 		mHourPicker.setSelectedItemPosition(mHourList.indexOf(mCurrentAlarmItem.getDate().substring(0, 2)));
 		mMinutePicker.setSelectedItemPosition(mMinuteList.indexOf(mCurrentAlarmItem.getDate().substring(3)));
@@ -288,14 +312,12 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 
 	@Override
 	public void onClick(AlarmPeriodItem item, AlarmItem alarmItem) {
+		mCurrentAlarmItem.setPeriodItem(item);
 		if (item.getItemType() != TYPE.CUSTOMIZE) {
-			mCurrentAlarmItem.setPeriodItem(item);
 			mCurrentAlarmItem.setPeriod(item.getTitle());
 		}
 		mOnItemClickListener.onClick(item, mCurrentAlarmItem);
-		if (myDataset.indexOf(mCurrentAlarmItem) == -1) {
-			myDataset.add(mCurrentAlarmItem);
-		}
+
 		for (AlarmPeriodItem periodItem : alarmPeriodDataset) {
 			periodItem.setSelected(false);
 		}

@@ -76,7 +76,7 @@ public class AlarmPeriodAdapter extends Adapter<AlarmPeriodAdapter.ViewHolder> {
         	holder.mTitleTextView.setTextColor(holder.mTitleTextView.getResources().getColor(R.color.md_black_1000));
         }
         holder.mItem = item;
-        mAlarmItem.PeriodItem = item;
+        //mAlarmItem.PeriodItem = item;
 	}
 
 	@Override

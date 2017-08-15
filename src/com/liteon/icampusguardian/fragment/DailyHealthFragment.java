@@ -1,12 +1,15 @@
 package com.liteon.icampusguardian.fragment;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GeoEventAdapter;
 import com.liteon.icampusguardian.util.GeoEventItem;
 import com.liteon.icampusguardian.util.HealthHistogramView;
@@ -16,6 +19,9 @@ import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 import com.liteon.icampusguardian.util.HealthyItemAdapter;
 
 import android.R.integer;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.icu.text.SimpleDateFormat;
 import android.icu.text.DisplayContext.Type;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -63,7 +69,7 @@ public class DailyHealthFragment extends Fragment {
 		mPiechartView = (HealthPieChartView) rootView.findViewById(R.id.pie_chart_view);
 	}
 	private void testData() {
-		int target = (int) (Math.random() * 1000);
+		int target = getTargetByType(mType);
 		
 		mDataList = new ArrayList<>(7);
 		mDataList.add(target);
@@ -73,9 +79,57 @@ public class DailyHealthFragment extends Fragment {
 
 		mDateList = new ArrayList<>(7);
 
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(Calendar.getInstance().getTime());
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		for (int i = 0; i < 7; i++) {
-			mDateList.add( "2017/07/1"+ i);
+			calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
+			String format = simpleDateFormat.format(calendar.getTime());
+			mDateList.add(0, format);
+			
 		}
 		
+	}
+	
+	private int getTargetByType(HealthyItem.TYPE type) {
+		int target = 0;
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+    	String carlos = sp.getString(Def.SP_TARGET_CARLOS, "2000");
+    	String step = sp.getString(Def.SP_TARGET_STEPS, "10000");
+    	String walking = sp.getString(Def.SP_TARGET_WALKING, "30");
+    	String running = sp.getString(Def.SP_TARGET_RUNNING, "30");
+    	String cycling = sp.getString(Def.SP_TARGET_CYCLING, "30");
+    	String sleep = sp.getString(Def.SP_TARGET_SLEEPING, "9");
+		switch(type) {
+		case ACTIVITY:
+			target = 99;
+			break;
+		case CALORIES_BURNED:
+			target = Integer.parseInt(carlos);
+			break;
+		case CYCLING_TIME:
+			target = Integer.parseInt(cycling);
+			break;
+		case HEART_RATE:
+			target = 80;
+			break;
+		case RUNNING_TIME:
+			target = Integer.parseInt(running);
+			break;
+		case SLEEP_TIME:
+			target = Integer.parseInt(sleep);
+			target *= 60;
+			break;
+		case TOTAL_STEPS:
+			target = Integer.parseInt(step);
+			break;
+		case WALKING_TIME:
+			target = Integer.parseInt(walking);
+			break;
+		default:
+			break;
+		
+		}
+		return target;
 	}
 }

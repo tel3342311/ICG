@@ -2,7 +2,6 @@ package com.liteon.icampusguardian;
 
 import java.util.List;
 
-import com.facebook.share.model.AppGroupCreationContent.AppGroupPrivacy;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
 import com.liteon.icampusguardian.fragment.AlarmFragment;
@@ -10,7 +9,6 @@ import com.liteon.icampusguardian.fragment.AlarmFragment.IAddAlarmClicks;
 import com.liteon.icampusguardian.fragment.AlarmPeriodFragment;
 import com.liteon.icampusguardian.fragment.AppInfoPrivacyFragment;
 import com.liteon.icampusguardian.fragment.DailyHealthFragment;
-import com.liteon.icampusguardian.fragment.HealthFragment;
 import com.liteon.icampusguardian.fragment.HealthMainFragment;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
 import com.liteon.icampusguardian.fragment.SettingFragment;
@@ -28,8 +26,6 @@ import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
-import com.liteon.icampusguardian.util.HealthyItem.TYPE;
-import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
@@ -42,6 +38,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -59,7 +56,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -90,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private ConfirmDeleteDialog mDeleteAccountConfirmDialog;
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
-
+	private SafetyFragment mSaftyFragment;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -118,8 +117,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		initChildInfo();
 		updateMenuItem();
 		BottomNavigationViewHelper.disableShiftMode(mBottomView);
-		
-		
 	}
 
 	private void registerNotification() {
@@ -154,6 +151,21 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	}
 
 	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		if (TextUtils.equals(Def.ACTION_NOTIFY, intent.getAction())) {
+			String type = intent.getStringExtra(Def.EXTRA_NOTIFY_TYPE);
+			if (TextUtils.equals(type, "sos")) {
+				if (mSaftyFragment == null) {
+					mSaftyFragment = new SafetyFragment(intent);
+				} else {
+					mSaftyFragment.setAlertIntent(intent);
+				}
+			}
+		}
+	}
+	
+	@Override
 	protected void onResume() {
 		super.onResume();
 		if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
@@ -169,8 +181,12 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			if (TextUtils.equals(Def.ACTION_NOTIFY, getIntent().getAction())) {
 				String type = getIntent().getStringExtra(Def.EXTRA_NOTIFY_TYPE);
 				if (TextUtils.equals(type, "sos")) {
-					SafetyFragment safetyFragment = new SafetyFragment(getIntent());
-					changeFragment(safetyFragment);
+					if (mSaftyFragment == null) {
+						mSaftyFragment = new SafetyFragment(getIntent());
+					} else {
+						mSaftyFragment.setAlertIntent(getIntent());
+					}
+					changeFragment(mSaftyFragment);
 				}
 			}
             for (String key : getIntent().getExtras().keySet()) {
@@ -179,7 +195,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
                 Toast.makeText(this, "Key: " + key + " Value: " + value, Toast.LENGTH_SHORT).show();
             }
         } else {
-			changeFragment(new SafetyFragment(), "安心", NAVIGATION_DRAWER);
+        	if (mSaftyFragment == null) {
+				mSaftyFragment = new SafetyFragment();
+			}
+			changeFragment(mSaftyFragment, "安心", NAVIGATION_DRAWER);
 		}
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Def.ACTION_NOTIFY);
@@ -274,7 +293,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			String title = "";
 			switch (item.getItemId()) {
 			case R.id.action_safty:
-				fragment = new SafetyFragment();
+				if (mSaftyFragment == null) {
+					mSaftyFragment = new SafetyFragment();
+				}
+				fragment = mSaftyFragment;
 				title = getString(R.string.safty_tab);
 				break;
 			case R.id.action_health:
@@ -378,8 +400,16 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				nextStudent = 0;
 			} 
 			MenuItem switchAccount = menu.findItem(R.id.action_switch_account);
-			switchAccount.setTitle(String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getNickname()));
-
+			String title = String.format(getString(R.string.switch_account), mStudents.get(nextStudent).getNickname());
+			//if only one child left, disable switch menu item;
+			if (mStudents.size() == 1) {
+				switchAccount.setEnabled(false);
+				SpannableString s = new SpannableString(title);
+			    s.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.md_grey_400)), 0, s.length(), 0);
+			    switchAccount.setTitle(s);
+			} else {
+				switchAccount.setTitle(title);
+			}
 			MenuItem deleteAccount = menu.findItem(R.id.action_delete_account);
 			deleteAccount.setTitle(
 					String.format(getString(R.string.delete_account), mStudents.get(mCurrentStudentIdx).getNickname()));
@@ -390,6 +420,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	public boolean onNavigationItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_switch_account) {
+			
 			switchAccount();
 		} else if (id == R.id.action_add_child) {
 			addNewChild();
@@ -598,8 +629,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			if (TextUtils.equals(Def.ACTION_NOTIFY, intent.getAction())) {
 				String type = intent.getStringExtra(Def.EXTRA_NOTIFY_TYPE);
 				if (TextUtils.equals(type, "sos")) {
-					SafetyFragment safetyFragment = new SafetyFragment(intent);
-					changeFragment(safetyFragment);
+					if (mSaftyFragment == null) {
+						mSaftyFragment = new SafetyFragment(intent);
+					}
+					changeFragment(mSaftyFragment);
 				}
 			}
 		}
@@ -697,4 +730,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 	}
+	
+	
 }

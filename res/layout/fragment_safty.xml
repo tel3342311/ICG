@@ -12,15 +12,14 @@
     <android.support.design.widget.CoordinatorLayout
         	android:id="@+id/map_container"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/safty_map_view_height"
-            android:background="@color/md_black_1000" 
-            android:padding="1dp">
+            android:layout_height="@dimen/safty_map_view_height">
 		    
 		    <com.google.android.gms.maps.MapView
 		        android:id="@+id/map_view"
 		        android:layout_width="match_parent"
-		        android:layout_height="match_parent" />
-		    
+		        android:layout_height="match_parent" 
+		        android:background="@drawable/map_boarder"/>
+		    		    
 		    <android.support.design.widget.FloatingActionButton
 		        android:id="@+id/map_location"
 		        android:layout_width="wrap_content"
@@ -51,7 +50,7 @@
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_below="@id/map_container"
         android:layout_alignEnd="@id/map_container"
-        android:text="2017/06/06 週二 07:50"
+        android:text=""
 		android:textColor="@color/md_black_1000"/>
     
     <android.support.v7.widget.RecyclerView

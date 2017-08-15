@@ -52,6 +52,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -92,30 +93,7 @@ public class SafetyFragment extends Fragment {
 	private Map<String, Map<String, GeoEventItem>> mAllGeoEventItem;
 	
 	public SafetyFragment(Intent intent) {
-		String latlng = intent.getStringExtra(Def.EXTRA_SOS_LOCATION);
-		latlng = "25.070108, 121.611435";
-		if (!TextUtils.isEmpty(latlng)) {
-			String parse[] = latlng.split(","); 
-			mLastPosition = new LatLng(Double.parseDouble(parse[0]), Double.parseDouble(parse[1]));
-			isAlerted = true;
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-			SimpleDateFormat sdf_item = new SimpleDateFormat("HH:mm");
-			String currentDate = sdf.format(Calendar.getInstance().getTime());
-			String currentTime = sdf_item.format(Calendar.getInstance().getTime());
-			for (GeoEventItem item : myDataset) {
-				if (TextUtils.equals(item.getDate(), currentDate)) {
-					mCurrentItem = item;
-				}
-			}
-			if (mCurrentItem == null) {
-				mCurrentItem = new GeoEventItem();
-			}
-			mCurrentItem.setDate(currentDate);
-			mCurrentItem.setEnterSchool("");
-			mCurrentItem.setLeaveSchool("");
-			mCurrentItem.setEmergency(currentTime);
-			mCurrentItem.setEmergencyRelease("");
-		}
+		setAlertIntent(intent);
 	}
 	
 	public SafetyFragment() {
@@ -161,6 +139,15 @@ public class SafetyFragment extends Fragment {
 	public void stopRipples() {
 		mValueAnimator.end();
 	}
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		setRetainInstance(true);
+		super.onCreate(savedInstanceState);
+		if (mMapView != null) {
+			mMapView.onCreate(savedInstanceState);
+		}
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -169,7 +156,10 @@ public class SafetyFragment extends Fragment {
 		setListener();
 		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
-		mMapView.onCreate(savedInstanceState);
+		if (mMapView != null) {
+			mMapView.onCreate(savedInstanceState);
+		}
+		mMapView.setVisibility(View.INVISIBLE);
 		mLocationOnMap.setVisibility(View.INVISIBLE);
 		initMapComponent();
 		initRecycleView();
@@ -221,7 +211,6 @@ public class SafetyFragment extends Fragment {
 		}
 	};
 	private void initMapComponent() {
-
 		mMapView.getMapAsync(mOnMapReadyCallback);
 	}
 
@@ -260,7 +249,9 @@ public class SafetyFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mMapView.onResume();
+		if (mMapView != null) {
+			mMapView.onResume();
+		}
 		if (mCurrentItem != null) {
 			if (myDataset.indexOf(mCurrentItem) == -1) {
 				myDataset.add(0, mCurrentItem);
@@ -278,7 +269,9 @@ public class SafetyFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		mMapView.onPause();
+		if (mMapView != null) {
+			mMapView.onPause();
+		}
 		saveAlarm();
 	}
 
@@ -330,7 +323,9 @@ public class SafetyFragment extends Fragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		mMapView.onDestroy();
+		if (mMapView != null) {
+			mMapView.onDestroy();
+		}
 	}
 
 	@Override
@@ -344,8 +339,8 @@ public class SafetyFragment extends Fragment {
 		@Override
 		public void onMapReady(GoogleMap map) {
 			mGoogleMap = map;
-			mGoogleMap.setMaxZoomPreference(18);
-			mGoogleMap.setMinZoomPreference(12);
+			//mGoogleMap.setMaxZoomPreference(18);
+			//mGoogleMap.setMinZoomPreference(12);
 			new getCurrentLocation().execute("");
 		}
 	};
@@ -369,7 +364,7 @@ public class SafetyFragment extends Fragment {
 		
 		@Override
 		protected String doInBackground(String... params) {
-			if (mStudents.size() == 0) {
+			if (mStudents == null || mStudents.size() == 0) {
 				return "";
 			}
 			SharedPreferences sp = mContext.getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
@@ -396,6 +391,7 @@ public class SafetyFragment extends Fragment {
 		}
 
 		protected void onPostExecute(String result) {
+			mMapView.setVisibility(View.VISIBLE);
 			if (TextUtils.equals(Def.RET_ERR_02, result)) {
 				Toast.makeText(mContext, "Token provided is expired, need to re-login", Toast.LENGTH_LONG).show();
 				return;
@@ -501,13 +497,19 @@ public class SafetyFragment extends Fragment {
 		return date;
 	}
 	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		mMapView.onSaveInstanceState(outState);
+	}
+	
 	private String getStringByDate(Date date, String pattern) {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 		return simpleDateFormat.format(date);
 	}
 	
 	private void setGeoItemById(String eventId, Date date, GeoEventItem item) {
-		String time = getStringByDate(date, "MM:dd");
+		String time = getStringByDate(date, "HH:mm");
 		if (TextUtils.equals(eventId, Def.EVENT_ID_ENTER_SCHOOL)) {
 			String tmp = item.getEnterSchool();
 			if (TextUtils.isEmpty(tmp)) {
@@ -547,4 +549,31 @@ public class SafetyFragment extends Fragment {
 		}
 	}
 	
+	public void setAlertIntent(Intent intent) {
+		String latlng = intent.getStringExtra(Def.EXTRA_SOS_LOCATION);
+		latlng = "25.070108, 121.611435";
+		if (!TextUtils.isEmpty(latlng)) {
+			String parse[] = latlng.split(","); 
+			mLastPosition = new LatLng(Double.parseDouble(parse[0]), Double.parseDouble(parse[1]));
+			isAlerted = true;
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+			SimpleDateFormat sdf_item = new SimpleDateFormat("HH:mm");
+			String currentDate = sdf.format(Calendar.getInstance().getTime());
+			String currentTime = sdf_item.format(Calendar.getInstance().getTime());
+			for (GeoEventItem item : myDataset) {
+				if (TextUtils.equals(item.getDate(), currentDate)) {
+					mCurrentItem = item;
+				}
+			}
+			if (mCurrentItem == null) {
+				mCurrentItem = new GeoEventItem();
+			}
+			mCurrentItem.setDate(currentDate);
+			mCurrentItem.setEnterSchool("");
+			mCurrentItem.setLeaveSchool("");
+			mCurrentItem.setEmergency(currentTime);
+			mCurrentItem.setEmergencyRelease("");
+			new getCurrentLocation().execute("");
+		}
+	}
 }

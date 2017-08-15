@@ -263,7 +263,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(date);
 			List<Integer> days = new ArrayList<>();
-			for (int i = 1; i < calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
+			for (int i = 1; i <= calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
 				days.add(i);
 			}
 			mWheel_right.setData(days);
@@ -366,7 +366,6 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		SharedPreferences sp = mActivity.getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);

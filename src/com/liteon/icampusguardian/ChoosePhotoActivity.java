@@ -70,6 +70,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	private DBHelper mDbHelper;
 	private PhotoItem mCurrentItem;
 	private PhotoItem[] mCurrentItemForWatch = new PhotoItem[3];
+	private int mCurrentItemIdx = 0;
 	private boolean isGranted;
 	private boolean isFromWatchTheme;
 	private final static int MAX_SAVE_ITEM = 3;
@@ -309,21 +310,12 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 
 	@Override
 	public void onPhotoClick(int position) {
+		mCurrentItemIdx = position;
 		if (!isFromWatchTheme) {
 			mCurrentItem = mDataSet.get(position);
-			mPhotoMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), mCurrentItem);
-			updateUsedItem();
 			doCrop(Uri.parse(mCurrentItem.getUri()));
 		} else {
 			PhotoItem item = mDataSet.get(position);
-			List listPhotoItem = mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
-			if (listPhotoItem.size() < 3) {
-				listPhotoItem.add(0,item);
-			} else {
-				listPhotoItem.remove(listPhotoItem.size() - 1);
-				listPhotoItem.add(0,item);
-			}
-			updateUsedItem();
 			doCrop(Uri.parse(item.getUri()));
 		}
 	}
@@ -385,8 +377,8 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	        cropIntent.putExtra("crop", "true");           
 	        cropIntent.putExtra("aspectX", 1);
 	        cropIntent.putExtra("aspectY", 1);           
-	        cropIntent.putExtra("outputX", 128);
-	        cropIntent.putExtra("outputY", 128);           
+	        cropIntent.putExtra("outputX", 300);
+	        cropIntent.putExtra("outputY", 300);           
 	        cropIntent.putExtra("return-data", true);
 	        cropIntent.putExtra("outputFormat", "JPEG");
 	        startActivityForResult(cropIntent, CROP_PIC_REQUEST_CODE);
@@ -428,6 +420,22 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	        } 
 	        if (bitmap != null) {	        
 	        	saveBitmapAsIcon(bitmap);
+	        	if (RESULT_OK == resultCode) {
+	        		if (!isFromWatchTheme) {
+	        			mCurrentItem = mDataSet.get(mCurrentItemIdx);
+	        			mPhotoMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), mCurrentItem);
+	        		} else {
+	        			PhotoItem item = mDataSet.get(mCurrentItemIdx);
+	        			List listPhotoItem = mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
+	        			if (listPhotoItem.size() < 3) {
+	        				listPhotoItem.add(0,item);
+	        			} else {
+	        				listPhotoItem.remove(listPhotoItem.size() - 1);
+	        				listPhotoItem.add(0,item);
+	        			}
+	        		}
+	        		updateUsedItem();
+	        	}
 	        	exit();
 				
 			}
@@ -494,7 +502,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		double ratio = (originalSize > photoSize) ? (originalSize / photoSize) : 1.0;
 
 		BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-		bitmapOptions.inSampleSize = getPowerOfTwoForSampleRatio(ratio);
+		bitmapOptions.inSampleSize = 1;//getPowerOfTwoForSampleRatio(ratio);
 		bitmapOptions.inDither = true; // optional
 		bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;//
 		input = this.getContentResolver().openInputStream(uri);

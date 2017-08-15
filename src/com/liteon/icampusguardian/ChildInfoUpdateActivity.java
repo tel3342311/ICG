@@ -153,7 +153,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-
+				
 				Intent intent = new Intent();
 				intent.setClass(ChildInfoUpdateActivity.this, MainActivity.class);
 				startActivity(intent);
@@ -316,6 +316,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
         	Intent intent = new Intent();
         	intent.setClass(ChildInfoUpdateActivity.this, ChildPairingActivity.class);
         	startActivity(intent);
+        	finish();
         }
     }
 	

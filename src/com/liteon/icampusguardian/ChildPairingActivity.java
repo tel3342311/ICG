@@ -70,12 +70,15 @@ public class ChildPairingActivity extends AppCompatActivity {
 			switch(v.getId()) {
 			case R.id.pairing_watch_now:
 				intent.setClass(ChildPairingActivity.this, BLEPairingListActivity.class);
+				startActivity(intent);
 				break;
 			case R.id.pairing_watch_later:
 				intent.setClass(ChildPairingActivity.this, MainActivity.class);
+				startActivity(intent);
+				finish();
 				break;
 			}
-			startActivity(intent);
+			
 		}
 		
 	};

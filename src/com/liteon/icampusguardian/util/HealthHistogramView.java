@@ -112,22 +112,22 @@ public class HealthHistogramView extends View {
 			target = "99";
 			break;
 		case CALORIES_BURNED:
-	    	target = sp.getString(Def.SP_TARGET_CARLOS, "");
+	    	target = sp.getString(Def.SP_TARGET_CARLOS, "2000");
 			break;
 		case CYCLING_TIME:
-	    	target = sp.getString(Def.SP_TARGET_CYCLING, "");
+	    	target = sp.getString(Def.SP_TARGET_CYCLING, "30");
 			break;
 		case HEART_RATE:
 			target = "80";
 			break;
 		case RUNNING_TIME:
-	    	target = sp.getString(Def.SP_TARGET_RUNNING, "");
+	    	target = sp.getString(Def.SP_TARGET_RUNNING, "30");
 			break;
 		case SLEEP_TIME:
-	    	target = sp.getString(Def.SP_TARGET_SLEEPING, "");
+	    	target = sp.getString(Def.SP_TARGET_SLEEPING, "9");
 			break;
 		case TOTAL_STEPS:
-	    	target = sp.getString(Def.SP_TARGET_STEPS, "");
+	    	target = sp.getString(Def.SP_TARGET_STEPS, "10000");
 			break;
 		case WALKING_TIME:
 	    	target = sp.getString(Def.SP_TARGET_WALKING, "");

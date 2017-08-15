@@ -17,6 +17,7 @@ import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.icu.util.Calendar;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -249,15 +250,13 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	    cy = (mHeight - mPieChartSize) >> 1;
 	    RectF rect = new RectF(cx, cy, cx + mPieChartSize, cy + mPieChartSize);
 
-	    
-	    
 		// background full circle arc
 	    canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcClockBackGroundPaint);
         canvas.drawArc(rect, 270, 360, false, arcClockPaint);
         canvas.drawArc(rect, 270, 360, false, arcClockMinPaint);
-        
-        
-        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "分", mTargetOffsetY);
+        int hours = mCurrentValue / 60;
+        int minute = mCurrentValue % 60;
+        drawCenter(canvas, textTargetPaint, hours + "小時" + minute + "分", mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);		
 	}
 

@@ -56,6 +56,7 @@
 	  	android:layout_marginBottom="@dimen/page_title_margin_bottom"
 	    android:hint="姓名"
 	    android:maxLines="1"
+	    android:singleLine="true"
 	    android:textCursorDrawable="@null"
 	    android:textSize="@dimen/login_edit_text_size"
 	    android:textColor="@color/md_black_1000"/>
@@ -70,6 +71,7 @@
       	android:layout_marginBottom="@dimen/page_title_margin_bottom"
         android:hint="手機號碼"
         android:maxLines="1"
+        android:singleLine="true"
         android:inputType="phone"
         android:textColor="@color/md_black_1000"
         android:textCursorDrawable="@null"
@@ -85,6 +87,7 @@
        	android:layout_marginBottom="@dimen/page_title_margin_bottom"
         android:hint="E-mail帳號"
         android:maxLines="1"
+        android:singleLine="true"
         android:textColor="@color/md_black_1000"
         android:textCursorDrawable="@null"
         android:textSize="@dimen/login_edit_text_size" />
@@ -100,6 +103,7 @@
 	    android:inputType="textPassword"
 	    android:hint="密碼(至少八碼英文或數字)"
 	    android:maxLines="1"
+	    android:singleLine="true"
 	    android:textCursorDrawable="@null"
 	    android:textSize="@dimen/login_edit_text_size" 
 	    android:textColor="@color/md_black_1000"/>
@@ -114,6 +118,7 @@
 	    android:inputType="textPassword"
 	    android:hint="再次確認新密碼"
 	    android:maxLines="1"
+	    android:singleLine="true"
 	    android:textCursorDrawable="@null"
 	    android:textSize="@dimen/login_edit_text_size" 
 	    android:textColor="@color/md_black_1000"/>

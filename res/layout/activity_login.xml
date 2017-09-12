@@ -26,6 +26,7 @@
 	    android:layout_marginRight="@dimen/activity_horizontal_margin"
 	    android:hint="帳號(電子郵件地址)"
 	    android:maxLines="1"
+	    android:singleLine="true"
 	    android:textCursorDrawable="@null"
 	    android:textSize="@dimen/login_edit_text_size"
 	    android:textColor="@color/md_black_1000"/>
@@ -40,6 +41,7 @@
 	    android:inputType="textPassword"
 	    android:hint="密碼"
 	    android:maxLines="1"
+	   	android:singleLine="true"
 	    android:textCursorDrawable="@null"
 	    android:textSize="@dimen/login_edit_text_size" 
 	    android:textColor="@color/md_black_1000"/>

@@ -130,7 +130,7 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 
 					@Override
 					public void run() {
-						showErrorDialog("網路無法連線");
+						showErrorDialog("查無此帳號(電子郵件),請再確認!");
 					}
 				});
 				return false;
@@ -140,7 +140,7 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 
 					@Override
 					public void run() {
-						showErrorDialog("帳號不正確，請再確認！");
+						showErrorDialog("查無此帳號(電子郵件),請再確認!");
 					}
 				});
 				return false;

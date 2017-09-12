@@ -310,7 +310,7 @@ public class LoginActivity extends AppCompatActivity {
 	
 	private void showLoginErrorDialog() {
 		final CustomDialog dialog = new CustomDialog();
-		dialog.setTitle("查無此登入帳號(電子郵件)\n請再確認！");
+		dialog.setTitle("帳號(電子郵件)或密碼輸入錯誤,請再確認!");
 		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
 		dialog.setBtnText("好");
 		dialog.setBtnConfirm(new OnClickListener() {
@@ -353,7 +353,7 @@ public class LoginActivity extends AppCompatActivity {
 			cv.put(AccountEntry.COLUMN_NAME_TOKEN, token);
 			helper.insertAccount(helper.getWritableDatabase(), cv);
 
-        	
+
         	//get Child list
         	JSONResponse response_childList = mApiClient.getChildrenList();
         	mStudentList = Arrays.asList(response_childList.getReturn().getResults().getStudents());

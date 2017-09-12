@@ -33,6 +33,7 @@ public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
         public SwitchCompat mAlarmEnableView;
         public ImageView mItemIcon;
         public ImageView mMoreIcon;
+        public View mIconArea;
         public WeakReference<IAlarmViewHolderClicks> mClicks;
         public int position;
         public ViewHolder(View v, IAlarmViewHolderClicks clicks) {
@@ -49,7 +50,7 @@ public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
 
 		@Override
 		public void onClick(View v) {
-			if (v.getId() == R.id.alarm_icon) {
+			if (v.getId() == R.id.icon_area) {
 				if (isEditMode) {
 					mClicks.get().onDeleteAlarm(position);
 				} else {
@@ -111,8 +112,10 @@ public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
         vh.mAlarmEnableView = (SwitchCompat) v.findViewById(R.id.switch_alarm_icon);
         vh.mMoreIcon = (ImageView) v.findViewById(R.id.more_info_icon);
         v.setOnClickListener(vh);
-        vh.mItemIcon.setOnClickListener(vh);
+        //vh.mItemIcon.setOnClickListener(vh);
         vh.mAlarmEnableView.setOnCheckedChangeListener(vh);
+        vh.mIconArea = v.findViewById(R.id.icon_area);
+        vh.mIconArea.setOnClickListener(vh);
         return vh;
 	}
 

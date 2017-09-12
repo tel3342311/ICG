@@ -128,7 +128,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 	
 	private void showLoginErrorDialog() {
 		final CustomDialog dialog = new CustomDialog();
-		dialog.setTitle("帳號或密碼不正確，請再確認！");
+		dialog.setTitle("帳號(電子郵件)或密碼輸入錯誤,請再確認!");
 		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
 		dialog.setBtnText("好");
 		dialog.setBtnConfirm(new OnClickListener() {
@@ -148,7 +148,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		String strPassword = mPassword.getText().toString();
 		
 		//check if password & password confirm is match
-		if (!TextUtils.equals(mPassword.getText(), mConfirmPassword.getText())) {
+		if ((strPassword.length() < 8) || !TextUtils.equals(mPassword.getText(), mConfirmPassword.getText())) {
 			showLoginErrorDialog();
 			return ;
 		}

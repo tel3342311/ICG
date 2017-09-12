@@ -444,6 +444,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	}
 	
 	private void exit() {
+		savePhotoItem();
 		if (!isFromWatchTheme) {
 			Intent intent = new Intent();
 			intent.setClass(this, MainActivity.class);

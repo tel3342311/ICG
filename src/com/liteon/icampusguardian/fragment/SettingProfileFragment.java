@@ -119,7 +119,15 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 				if (R.id.main_wheel_left == wheel.getId()) {
 					calendar.set(Calendar.YEAR, (Integer)data);
 				} else if (R.id.main_wheel_center == wheel.getId()) {
+					int days = calendar.get(Calendar.DAY_OF_MONTH);
+					calendar.set(Calendar.DAY_OF_MONTH, 1);
 					calendar.set(Calendar.MONTH, (Integer)data - 1);
+					int max_days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+					if (days > max_days) {
+						calendar.set(Calendar.DAY_OF_MONTH, 1);
+					} else {
+						calendar.set(Calendar.DAY_OF_MONTH, days);
+					}
 				} else if (R.id.main_wheel_right == wheel.getId()) {
 					calendar.set(Calendar.DATE, (Integer)data);
 				}
@@ -299,8 +307,9 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 				height.add(Integer.toString(i));
 			}
 			mWheel_single.setData(height);
-			String height_now = Float.toString(mStudents.get(mCurrentStudentIdx).getHeight());
-			mWheel_single.setSelectedItemPosition(height.indexOf(height_now));
+			String height_now = Integer.toString((int)mStudents.get(mCurrentStudentIdx).getHeight());
+			int idx_height = height.indexOf(height_now);
+			mWheel_single.setSelectedItemPosition(idx_height);
 			break;
 		case WEIGHT:
 			one_wheel.setVisibility(View.VISIBLE);
@@ -310,8 +319,9 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 				weight.add(Integer.toString(i));
 			}
 			mWheel_single.setData(weight);
-			String weight_now = Float.toString(mStudents.get(mCurrentStudentIdx).getWeight());
-			mWheel_single.setSelectedItemPosition(weight.indexOf(weight_now));
+			String weight_now = Integer.toString((int)mStudents.get(mCurrentStudentIdx).getWeight());
+			int idx_weight = weight.indexOf(weight_now);
+			mWheel_single.setSelectedItemPosition(idx_weight);
 			break;
 		default:
 			break;

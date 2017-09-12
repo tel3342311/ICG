@@ -140,4 +140,8 @@ public class AlarmPeriodFragment extends Fragment implements IWeekViewHolderClic
 		}
 		mItem.setPeriod(sb.toString());
 	}
+	
+	public long getCurrentPeriod() {
+		return mItem.getPeriodItem().getCustomValue();
+	}
 }

@@ -9,6 +9,7 @@ import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.util.WeekAdapter.ViewHolder.IWeekViewHolderClicks;
 
 import android.os.IInterface;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -16,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 public class WeekAdapter extends Adapter<WeekAdapter.ViewHolder> {

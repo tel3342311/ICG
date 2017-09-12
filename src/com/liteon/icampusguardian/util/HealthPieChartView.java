@@ -279,7 +279,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         // draw starting at top of circle in the clockwise direction
         canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
-        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "步", mTargetOffsetY);
+        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "分", mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);			
 	}
 

@@ -65,7 +65,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	private static ArrayList<AlarmItem> myDataset = new ArrayList<>();
 	private EditText mAlarmName;
 	private boolean isCancelEditing;
-	
+	private static String titleForAlarm = ""; 
 	public AlarmEditingFragment(IAlarmPeriodViewHolderClicks clicks) {
 		mOnItemClickListener = clicks;
 	}
@@ -161,6 +161,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
  
 	        mAlarmName.addTextChangedListener(mOnTitleChange);  
 			mCurrentAlarmItem.setTitle(s.toString());
+			titleForAlarm = s.toString();
 		}
 		
 		private int calculateLength(String etstring) {  
@@ -308,6 +309,10 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		restoreAlarm();
+		if (!TextUtils.isEmpty(titleForAlarm)) {
+			mCurrentAlarmItem.setTitle(titleForAlarm);
+			mAlarmName.setText(titleForAlarm);
+		}
 	}
 	
 	@Override
@@ -323,6 +328,8 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		mCurrentAlarmItem.setPeriodItem(item);
 		if (item.getItemType() != TYPE.CUSTOMIZE) {
 			mCurrentAlarmItem.setPeriod(item.getTitle());
+		} else {
+			titleForAlarm = mCurrentAlarmItem.getTitle();
 		}
 		mOnItemClickListener.onClick(item, mCurrentAlarmItem);
 

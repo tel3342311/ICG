@@ -15,6 +15,7 @@ import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmItemAdapter;
 import com.liteon.icampusguardian.util.AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
@@ -126,6 +127,10 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			break;
 		case R.id.action_add:
 			exitEditMode();
+			if (myDataset.size() >= 4) {
+				showAddAlarmErrorDialog();
+				return super.onOptionsItemSelected(item);
+			}
 			mAddAlarmClicks.onAddAlarmClick();
 			break;
 		case R.id.action_complete:
@@ -133,6 +138,21 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	private void showAddAlarmErrorDialog() {
+		final CustomDialog dialog = new CustomDialog();
+		dialog.setTitle("新增鬧鈴最多為四組");
+		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
+		dialog.setBtnText("好");
+		dialog.setBtnConfirm(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show(getActivity().getSupportFragmentManager(), "dialog_fragment");
 	}
 	
 	public void findView(View rootView) {
@@ -160,6 +180,10 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		
 		@Override
 		public void onClick(View v) {
+			if (myDataset.size() >= 4) {
+				showAddAlarmErrorDialog();
+				return;
+			}
 			mAddAlarmClicks.onAddAlarmClick();
 		}
 	};
@@ -180,7 +204,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 
 	@Override
 	public void onEditAlarm(int position) {
-		mAddAlarmClicks.onEditAlarm(position);
+		if (isEditMode()) {
+			mAddAlarmClicks.onEditAlarm(position);
+		}
 	}
 	
 	private int mDeleteIdx = 0;

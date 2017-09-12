@@ -175,28 +175,28 @@ public class HealthMainFragment extends Fragment implements IHealthViewHolderCli
 	public void onClick(TYPE type) {
 		switch(type) {
 		case ACTIVITY:
-			mViewPager.setCurrentItem(HEALTHY_ACTIVITY);
+			mViewPager.setCurrentItem(HEALTHY_ACTIVITY, false);
 			break;
 		case CALORIES_BURNED:
-			mViewPager.setCurrentItem(HEALTHY_CALORIES);
+			mViewPager.setCurrentItem(HEALTHY_CALORIES, false);
 			break;
 		case CYCLING_TIME:
-			mViewPager.setCurrentItem(HEALTHY_CYCLING);
+			mViewPager.setCurrentItem(HEALTHY_CYCLING, false);
 			break;
 		case HEART_RATE:
-			mViewPager.setCurrentItem(HEALTHY_HEART_RATE);
+			mViewPager.setCurrentItem(HEALTHY_HEART_RATE, false);
 			break;
 		case RUNNING_TIME:
-			mViewPager.setCurrentItem(HEALTHY_RUNNING);
+			mViewPager.setCurrentItem(HEALTHY_RUNNING, false);
 			break;
 		case SLEEP_TIME:
-			mViewPager.setCurrentItem(HEALTHY_SLEEPING);
+			mViewPager.setCurrentItem(HEALTHY_SLEEPING, false);
 			break;
 		case TOTAL_STEPS:
-			mViewPager.setCurrentItem(HEALTHY_STEPS);
+			mViewPager.setCurrentItem(HEALTHY_STEPS, false);
 			break;
 		case WALKING_TIME:
-			mViewPager.setCurrentItem(HEALTHY_WALKING);
+			mViewPager.setCurrentItem(HEALTHY_WALKING, false);
 			break;
 		default:
 			break;

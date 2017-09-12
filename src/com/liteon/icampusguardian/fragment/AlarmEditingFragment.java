@@ -64,6 +64,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	private int mCurrnetStudentIdx;
 	private static ArrayList<AlarmItem> myDataset = new ArrayList<>();
 	private EditText mAlarmName;
+	private boolean isCancelEditing;
 	
 	public AlarmEditingFragment(IAlarmPeriodViewHolderClicks clicks) {
 		mOnItemClickListener = clicks;
@@ -185,6 +186,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            	isCancelEditing = true;
             	getActivity().onBackPressed();
             }
         });
@@ -311,7 +313,9 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	@Override
 	public void onPause() {
 		super.onPause();
-		saveAlarm();
+		if (!isCancelEditing) {
+			saveAlarm();
+		}
 	}
 
 	@Override

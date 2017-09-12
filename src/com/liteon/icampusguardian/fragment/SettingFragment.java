@@ -240,5 +240,6 @@ public class SettingFragment extends Fragment {
 		initChildInfo();
 		((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrnetStudentIdx));
 		mAdapter.notifyDataSetChanged();
+		mToolbar.setTitle("");
 	}
 }

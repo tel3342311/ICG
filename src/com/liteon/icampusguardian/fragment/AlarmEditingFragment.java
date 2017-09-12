@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.TintableBackgroundView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHolderClicks{
 
@@ -55,6 +57,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	private RecyclerView.LayoutManager mLayoutManager;
 	private IAlarmPeriodViewHolderClicks mOnItemClickListener;
 	private Toolbar mToolbar;
+	private TextView mTitleView;
 	private Map<String, List<AlarmItem>> mAlarmMap;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
@@ -205,6 +208,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		mMinutePicker = (WheelPicker) rootView.findViewById(R.id.main_wheel_right);
 		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.alarm_period_view);
 		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+		mTitleView = (TextView) getActivity().findViewById(R.id.toolbar_title);
 	}
 	
 	private void initRecycleView() {

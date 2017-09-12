@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private static final int NAVIGATION_BACK = 2;
 	private SafetyFragment mSaftyFragment;
 	private AlarmItem mCurrentAlarmItem;
+	private TextView mTitleView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Def.ACTION_NOTIFY);
 		mLocalBroadcastManager.registerReceiver(mReceiver, filter);
-		
+		mToolbar.setTitle("");
 	}
 
 	@Override
@@ -258,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	}
 	private void findViews() {
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mTitleView = (TextView) findViewById(R.id.toolbar_title);
 		mBottomView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mNavigationView = (NavigationView) findViewById(R.id.navigation);
@@ -342,7 +344,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 
 		if (mToolbar != null) {
 
-			mToolbar.setTitle(title);
+			//mToolbar.setTitle(title);
+			mTitleView.setText(title);
 			if (navigation == NAVIGATION_BACK) {
 				mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
 				mToolbar.setNavigationOnClickListener(new View.OnClickListener() {

@@ -20,12 +20,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class HealthMainFragment extends Fragment implements IHealthViewHolderClicks {
 
 	private View mRootView;
 	private ViewPager mViewPager;
 	private Toolbar mToolbar;
+	private TextView mTitleView;
 	private DrawerLayout mDrawerLayout;
     private static final int PAGE_COUNT = 9;
     private static final int HEALTHY_MAIN = 0;
@@ -49,6 +51,7 @@ public class HealthMainFragment extends Fragment implements IHealthViewHolderCli
 	private void findViews() {
 		mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
 		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+		mTitleView = (TextView) getActivity().findViewById(R.id.toolbar_title);
 		mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
 	}
 	
@@ -57,7 +60,8 @@ public class HealthMainFragment extends Fragment implements IHealthViewHolderCli
 		mViewPager.addOnPageChangeListener(mOnPageChangeListener);
 	}
 	private void setupTitleBar(int position) {
-		mToolbar.setTitle(mViewPager.getAdapter().getPageTitle(position));
+		//mToolbar.setTitle(mViewPager.getAdapter().getPageTitle(position));
+		mTitleView.setText(mViewPager.getAdapter().getPageTitle(position));
 		if (position != HEALTHY_MAIN) {
 			mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
 			mToolbar.setNavigationOnClickListener(new View.OnClickListener() {

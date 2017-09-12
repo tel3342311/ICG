@@ -51,6 +51,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private IAddAlarmClicks mAddAlarmClicks;
 	private boolean isEditMode;
 	private Toolbar mToolbar;
+	private TextView mTitleView;
 	private Map<String, List<AlarmItem>> mAlarmMap;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
@@ -104,7 +105,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		getActivity().invalidateOptionsMenu();
 		mAddAlarm.setVisibility(View.VISIBLE);
 		((AlarmItemAdapter)mAdapter).setEditMode(false);
-		mToolbar.setTitle("鬧鈴");
+		//mToolbar.setTitle("鬧鈴");
+		mTitleView.setText("鬧鈴");
 	}
 	
 	public void enterEditMode() {
@@ -112,7 +114,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		getActivity().invalidateOptionsMenu();
 		mAddAlarm.setVisibility(View.GONE);
 		((AlarmItemAdapter)mAdapter).setEditMode(true);
-		mToolbar.setTitle("編輯鬧鈴");
+		//mToolbar.setTitle("編輯鬧鈴");
+		mTitleView.setText("編輯鬧鈴");
 	}
 	
 	@Override
@@ -136,6 +139,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.alarm_view);
 		mAddAlarm = (AppCompatButton) rootView.findViewById(R.id.add_alarm);
 		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+		mTitleView = (TextView) getActivity().findViewById(R.id.toolbar_title);
 		mSyncView = rootView.findViewById(R.id.sync_view);
 	}
 	

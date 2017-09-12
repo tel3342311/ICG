@@ -31,6 +31,7 @@
             android:layout_marginRight="@dimen/child_name_item_margin_horizontal"
             android:hint="姓名"
             android:maxLines="1"
+            android:singleLine="true"
             android:textColor="@color/md_black_1000"
             android:textCursorDrawable="@null"
             android:textSize="@dimen/login_edit_text_size" 

@@ -9,13 +9,13 @@ import java.util.List;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.ProfileItem;
 import com.liteon.icampusguardian.util.ProfileItem.TYPE;
 import com.liteon.icampusguardian.util.ProfileItemAdapter;
 import com.liteon.icampusguardian.util.ProfileItemAdapter.ViewHolder.IProfileItemClickListener;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,8 +31,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfileItemClickListener{
@@ -261,6 +261,12 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			if (hasFocus) {
 				enterEditMode();
 				mCardView.setVisibility(View.INVISIBLE);
+			} else {
+				
+				if (v != null) {  
+				    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+				    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+				}
 			}
 		}
 	};

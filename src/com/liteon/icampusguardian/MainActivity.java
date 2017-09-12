@@ -236,6 +236,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				return;
 			} else if (mCurrentFragment instanceof AlarmPeriodFragment) {
 				//changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this), "設定鬧鈴", 0);
+				if (((AlarmPeriodFragment) mCurrentFragment).getCurrentPeriod() == 0) {
+					showPeriodErrorDialog();
+					return;
+				}
 				onFinishEditPeriod();
 				return;
 			} else if (mCurrentFragment instanceof SettingProfileFragment || mCurrentFragment instanceof SettingTargetFragment) {
@@ -327,6 +331,21 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		}
 	};
 
+	private void showPeriodErrorDialog() {
+		final CustomDialog dialog = new CustomDialog();
+		dialog.setTitle("請輸入週期");
+		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
+		dialog.setBtnText("好");
+		dialog.setBtnConfirm(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		dialog.show(getSupportFragmentManager(), "dialog_fragment");
+	}
+	
 	private void changeFragment(Fragment frag) {
 		mCurrentFragment = frag;
 		FragmentManager fragmentManager = getSupportFragmentManager();

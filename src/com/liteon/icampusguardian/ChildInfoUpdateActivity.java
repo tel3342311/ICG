@@ -185,6 +185,23 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		mWheel_single.setOnItemSelectedListener(mWheelClickListener);
 	}
 	
+	public void UpdateWheelForDate(Calendar date) {
+
+		int year = date.get(Calendar.YEAR);
+		int month = date.get(Calendar.MONTH);
+		int days = date.get(Calendar.DAY_OF_MONTH);
+		
+		int max_days = date.getActualMaximum(Calendar.DAY_OF_MONTH);
+		List day_of_Month = new ArrayList<Integer>();
+		for (int i = 1; i <= max_days; i ++) {
+			day_of_Month.add(i);
+		}
+		mWheel_left.setSelectedItemPosition(mWheel_left.getData().indexOf(year));
+		mWheel_center.setSelectedItemPosition(mWheel_center.getData().indexOf(month+1));
+		mWheel_right.setData(day_of_Month);
+		mWheel_right.setSelectedItemPosition(day_of_Month.indexOf(days));
+	}
+	
 	private WheelPicker.OnItemSelectedListener mWheelClickListener = new WheelPicker.OnItemSelectedListener() {
 
 		@Override
@@ -203,10 +220,19 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 				if (R.id.main_wheel_left == wheel.getId()) {
 					calendar.set(Calendar.YEAR, (Integer)data);
 				} else if (R.id.main_wheel_center == wheel.getId()) {
+					int days = calendar.get(Calendar.DAY_OF_MONTH);
+					calendar.set(Calendar.DAY_OF_MONTH, 1);
 					calendar.set(Calendar.MONTH, (Integer)data - 1);
+					int max_days = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+					if (days > max_days) {
+						calendar.set(Calendar.DAY_OF_MONTH, 1);
+					} else {
+						calendar.set(Calendar.DAY_OF_MONTH, days);
+					}
 				} else if (R.id.main_wheel_right == wheel.getId()) {
 					calendar.set(Calendar.DATE, (Integer)data);
 				}
+				UpdateWheelForDate(calendar);
 				mStudent.setDob(sdf.format(calendar.getTime()));
 				
 			} else if (one_wheel.getVisibility() == View.VISIBLE) {
@@ -349,8 +375,6 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		one_wheel.setVisibility(View.INVISIBLE);
 		switch(type) {
 		case BIRTHDAY:
-
-			
 			three_wheel.setVisibility(View.VISIBLE);
 			List<Integer> years = new ArrayList<>();
 			for (int i = 1990; i < 2017 ; i++) {

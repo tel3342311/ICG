@@ -1,0 +1,231 @@
+<resources>
+    <string name="app_name">iCampus Guardian</string>
+	<string name="facebook_app_id">838943992930614</string>
+	<string name="ak_login_protocol_scheme">ak838943992930614</string>
+	<string name="ACCOUNT_KIT_CLIENT_TOKEN">48e671402aca5e0484ea2fcff5ba160e</string>
+	<string name="open">open</string>
+	<string name="close">close</string>
+	<!-- Welcome Page -->
+	<string name="welcome_title">您好，歡迎使用 \niCampus Guardian\n 校園守護者</string>
+	<string name="welcome_user_term">使用者協議及隱私政策</string>
+	<string name="welcome_read_eula">點選同意以確認iCG校園守護者的使用者協議及隱私政策</string> 
+	<string name="welcome_user_term_content">使用者協議及隱私政策內文xxxxxxxxxxxxxxxx</string>
+	<string name="welcome_join_program">參與使用者體驗改善計畫</string>
+	<string name="welcome_permission_term">學校老師可以獲得寶貝睡眠資訊</string>
+	<string name="welcome_accept">同意</string>
+	<string name="welcome_quit">退出</string>
+	<!--  login Page -->
+	<string name="login_parent_account">請登入家長帳號</string>
+	<string name="login_account">帳號(電子郵件地址)</string>
+	<string name="login_password">密碼</string>
+	<string name="login_register_new_account">註冊新帳號</string>
+	<string name="login_forget_password">忘記密碼?</string>
+	<string name="login_login">登入</string>
+	<string name="login_social_signin">使用第三方帳號登入</string>
+	<string name="login_google">Google</string>
+	<string name="login_facebook">Facebook</string>
+	<string name="login_error_email">電子郵件地址錯誤</string>
+	<string name="login_already_used">此電子郵件已註冊過，請回到登入頁面直接登入，若忘記密碼請點選忘記密碼，系統將寄送密碼重設至您的信箱</string>
+	<string name="login_no_network">網路無法連線</string>
+	<string name="login_error_account_or_password">帳號或密碼輸入錯誤，請重新輸入</string>
+	<!-- Register new account -->
+	<string name="register_name">姓名</string>
+	<string name="register_mobile">手機號碼</string>
+	<string name="register_confirm_password">再次確認新密碼</string>
+	<string name="register_password_not_match">密碼與確認密碼不相符</string>
+	<!-- Forget Password -->
+	<string name="forget_reset_password">重置您的密碼</string>
+	<string name="forget_input_original_account">請輸入您當初註冊iCampus Guardian的帳號(電子郵件地址),我們將會傳送重設的密碼至您登錄的電子郵件。</string>
+	<string name="forget_send">送出</string>
+	<string name="forget_back_to_login">回登入頁面</string>
+	<string name="forget_reset_done">系統已重設您的密碼</string>
+	<string name="forget_account_not_exist">查無此登錄帳號(電子郵件)，請再確認!</string>
+	<string name="forget_check_mailbox_and_setup">請查看信箱並使用系統寄出的聯結重新設定密碼</string>
+	<!-- setup kid profile -->
+	<string name="setup_kid_profile">設定寶貝基本資料</string>
+	<string name="setup_kid_name">小孩姓名</string>
+	<string name="setup_kid_birthday">生日</string>
+	<string name="setup_kid_year">年</string>
+	<string name="setup_kid_month">月</string>
+	<string name="setup_kid_day">日</string>
+	<string name="setup_kid_gender">性別</string>
+	<string name="setup_kid_male">男生</string>
+	<string name="setup_kid_female">女生</string>
+	<string name="setup_kid_height">身高</string>
+	<string name="setup_kid_cm">公分</string>
+	<string name="setup_kid_weight">體重</string>
+	<string name="setup_kid_kg">公斤</string>
+	<!-- pairing watch page -->
+	<string name="pairing_watch_steps">請遵照圖示將手錶切換到配對頁面, 手錶切到配對畫面後, 請點選配對智慧手錶進行下一步</string>
+	<string name="pairing_watch_pair">配對智慧手錶</string>
+	<string name="pairing_watch_later">之後再配對</string>
+	<string name="pairing_watch_later_in_setting">之後可再至"設定"中配對手環</string>
+	<string name="pairing_watch_select_watch">請選擇要進行配對的iCG智慧手錶</string>
+	<string name="pairing_watch_input_pin">請輸入手錶上顯示PIN碼</string>
+	<string name="pairing_watch_pin_error">PIN碼輸入錯誤或連接失敗,請重新輸入PIN碼並且將手錶靠近裝置</string>
+	<string name="pairing_watch_success">iCG智慧手錶配對成功, 已綁定為%s智慧手錶</string>
+	<string name="pairing_watch_quit">退出</string>
+	<string name="pairing_watch_ask_permission">應用程式要求開啟藍芽功能</string>
+	<string name="pairing_watch_deny">拒絕</string>
+	<string name="pairing_watch_accept">允許</string>
+	<!-- Safty -->
+	<string name="safty">安心</string>
+	<string name="safty_last_position">此為GPS最後更新位置</string>
+	<string name="safty_enter_school">到校</string>
+	<string name="safty_leave_school">離校</string>
+	<string name="safty_emergency">緊急求救</string>
+	<string name="safty_emergency_release">求救解除</string>
+	<string name="safty_no_watch_detected">未感應手錶</string>
+	<!-- healthy -->
+	<string name="healthy_today_reocrd">今日紀錄</string>
+	<string name="healthy_update_time">已於MM/dd hh:mm更新</string>
+	<string name="healthy_sync_failed">資料同步失敗</string>
+	<string name="healthy_sync">同步</string>
+	<string name="healthy_activity">活動指數</string>
+	<string name="healthy_steps">步數</string>
+	<string name="healthy_step">步</string>
+	<string name="healthy_carlories">燃燒卡路里</string>
+	<string name="healthy_cal">大卡</string>
+	<string name="healthy_walk">走路</string>
+	<string name="healthy_minutes">分</string>
+	<string name="healthy_running">跑步</string> 
+	<string name="healthy_cycling">騎腳踏車</string>
+	<string name="healthy_avg_bpm">平均心率</string> 
+	<string name="healthy_bpm">bpm</string> 
+	<string name="healthy_sleep">睡眠</string>
+	<string name="healthy_hour_mins">hh 時 mm 分</string>
+	<!-- Activities -->
+	<string name="activity">活動指數</string>  
+	<string name="activity_very_bad">非常不好</string>
+	<string name="activity_bad">不好</string>
+	<string name="activity_normal">普通</string>
+	<string name="activity_good">好</string>
+	<string name="activity_excellent">非常好</string>
+	<string name="activity_last_7_days">近七天狀態</string>
+	<string name="activity_today">今天</string>
+	<!-- Calroies -->
+	<!-- heart rate -->
+	<!-- Sleep -->
+	<string name="sleep_quality">睡眠品質</string>
+	<string name="sleep_quality_good">良好</string>
+	<string name="sleep_quality_normal">尚可</string>
+	<string name="sleep_quality_bad">不佳</string>
+	<string name="sleep_hours">%s小時</string>
+	<!-- Alarm -->
+	<string name="alarm">鬧鈴</string>
+	<string name="alarm_no_watch_synced">智慧手錶未同步</string>
+	<string name="alarm_syncing">同步中…</string>
+	<string name="alarm_sync">同步</string>
+	<string name="alarm_sync_complete">同步完成</string>
+	<string name="alarm_sync_failed">智慧手錶同步失敗</string>
+	<string name="alarm_bluetooth_not_enable">藍芽未開啟</string>
+	<string name="alarm_open">開啟</string>
+	<string name="alarm_add_new_alarm">新增鬧鈴</string>
+	<string name="alarm_week_day">週一至週五</string>
+	<string name="alarm_week_end">假日</string>
+	<string name="alarm_every_day">每天</string>
+	<string name="alarm_once">只提醒一次</string>
+	<string name="alarm_customize">自訂</string>
+	<string name="alarm_period">設定鬧鈴週期</string>
+	<string name="alarm_edit_period">編輯鬧鈴</string>
+	<string name="alarm_delete">刪除鬧鈴</string>
+	<!-- child profile -->
+	<string name="child_setup_profile">設定寶貝資料</string>
+	<string name="child_basic_profile">基本資料</string>
+	<string name="child_goal_setting">每日目標設定</string>
+	<string name="child_personalize_theme">個性化錶面</string>
+	<string name="child_watch_info_and_privacy">智慧手錶資訊與使用隱私</string>
+	<string name="child_pairing_watch">配對智慧手錶</string>
+	<string name="child_unbind">解除綁定</string>
+	<!-- child photo setting -->
+	<string name="child_photo_photo_permission">iCampus Guardian想取用您的照片</string>
+	<string name="child_photo_photo_hint">這樣可以讓你從圖庫中選擇你喜歡的照片當此大頭貼</string>
+	<string name="child_photo_photo_deny">不允許</string>
+	<string name="child_photo_photo_ok">好</string>
+	<string name="child_photo_photo_select_pic">選擇圖片</string>
+	<string name="child_photo_photo_used_photo">已使用過圖片</string>
+	<string name="child_photo_photo_all_photo">所有照片</string>
+	<string name="child_photo_photo">寶貝照片</string>
+	<string name="child_photo_photo_crop">裁切照片，請移動、縮放照片至您要的畫面</string>
+	<!-- parent profile -->
+	<string name="parent_profile">基本資料</string>
+	<!-- goal setting -->
+	<string name="goal_setting">每日目標設定</string>
+	<!-- personal watch theme -->
+	<string name="watch_surface">個性化錶面</string>
+	<string name="watch_theme_hint">這樣可讓你從圖庫中尋找照片,並經由處理後給智慧手錶使用</string>
+	<string name="syncing_photo_to_watch">正同步錶面至智慧手錶, 請勿關閉或離開</string>
+	<string name="syncing_photo_to_watch_complete">您的個性化錶面已更新至智慧手錶</string>
+	<string name="syncing_photo_to_watch_failed">智慧手錶同步失敗，請確認手錶與手機藍芽連結狀態</string>
+	<string name="syncing_photo_to_watch_cancel">取消</string>
+	<string name="syncing_photo_to_watch_synced">同步</string>
+	<!-- watch infomation -->
+	<string name="watch_info_privacy">智慧手錶資訊與使用隱私</string>
+	<string name="send_sleeping_info_to_teacher">學校老師可以獲得寶貝睡眠資訊</string>
+	<string name="device_name_title">裝置名稱</string>      
+	<string name="device_name">iCG校園守護者第一代</string>
+	<string name="firmware_version">韌體版本</string>      
+	<string name="firmware_update">智慧手錶韌體更新</string>
+	<string name="finding_new_firmware">尋找最新版韌體中…</string>
+	<string name="has_latest_firmware">手錶韌體已是最新版本</string> 
+	<string name="syncing_fail">同步失敗</string>
+	<string name="update_to_version">手環韌體更新\n將更新至V %s 版</string>
+	<string name="udpate_by_wifi">韌體更新資料較大，建議使用WiFi下載讓更新過程較順利</string>
+	<string name="watch_update_cancel">取消</string>
+	<string name="watch_update_install">安裝</string>
+	<string name="firmware_download">手錶韌體下載</string>
+	<string name="firmware_sending">傳送新版韌體至手錶</string>
+	<string name="firmware_updating">手錶韌體更新中</string>
+	<string name="firmware_updated_complete">手錶韌體更新完成</string>
+	<string name="connect_failed">連線失敗</string>
+	<string name="insufficient_space">您的手機空間不足</string>
+	<!-- device pairing -->
+	<string name="pairing_watch">配對智慧手錶</string>
+	<string name="unbind_watch">解除綁定</string>
+	<string name="bind_watch">新增綁定</string>
+	<string name="will_unbind_watch">將解除已綁定的智慧手錶</string>
+	<string name="bind_cancel">取消</string>
+	<string name="bind_confirm">確定</string>
+	<!-- Menu -->
+	<string name="switch_to">切換至%s</string>
+	<string name="add_new_child">新增寶貝</string>
+	<string name="delete_child">刪除%s</string>
+	<string name="app_info">App資訊與設定</string>
+	<string name="logout">登出</string>
+	<string name="delete_tracking">刪除追蹤%s</string>
+	<string name="delete_warning">此手機將無法看見該帳號紀錄，但雲端紀錄不會刪除，如日後要由此手機觀看，請再加入該帳號。</string>
+	<string name="delete_child_cancel">取消</string>
+	<string name="delete_child_confirm">確認</string>
+	<string name="child_deleted">%s已刪除</string>
+	<!-- App info and setting -->
+	<string name="app_info_setting">App 資訊與設定</string>
+	<string name="app_version_title">APP版本</string>
+	<string name="app_version">V %s</string>
+	<string name="parent_info">家長資料</string>
+	<string name="original_password">原密碼</string>
+	<string name="new_password">新密碼 (至少八碼英文或數字)</string> 
+	<string name="confirm_new_password">再次確認新密碼</string>
+	<string name="remember_new_password">如有更改密碼將重新登入，請記住新密碼</string>
+	<string name="data_updating">資料更新中…</string>
+	<string name="update_failed">更新失敗</string>
+	<string name="update_failed_confirm">好</string>
+	<string name="wrong_password">原密碼錯誤</string>
+	<string name="password_not_match">密碼與確認密碼不相同</string>
+	<!-- Dialog message -->
+	<string name="ask_bluetooth_permission">應用程式要求開啟藍芽功能</string>
+	<!-- old strings -->
+	<!-- Bottom Bar -->
+	<string name="safty_tab">安心</string>
+	<string name="health_tab">健康</string>
+	<string name="alarm_tab">鬧鈴</string>
+	<string name="setting_tab">設定</string>
+	<!-- Drawer -->
+	<string name="switch_account">切換至%s帳號</string>
+	<string name="add_child">新增寶貝</string>
+	<string name="delete_account">刪除%s帳號</string>
+	<string name="drawer_setting">App資訊與設定</string>
+	<!-- Pin -->
+	<string name="pin_content_desc">PIN input field</string>
+	<!-- Page title -->
+	<string name="health_page_title">今日紀錄</string>
+</resources>

@@ -15,7 +15,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:gravity="center"
-        android:text="退出"
+        android:text="@string/welcome_quit"
         android:textColor="@color/md_white_1000" />
 
     <TextView
@@ -26,7 +26,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:gravity="center"
-        android:text="同意"
+        android:text="@string/welcome_accept"
         android:textColor="@color/md_white_1000" />
 
 </RelativeLayout>

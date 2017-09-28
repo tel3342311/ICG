@@ -1,13 +1,15 @@
 package com.liteon.icampusguardian.util;
 
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.App;
 public class ProfileItem {
 
 	
 	public static enum TYPE {
-        BIRTHDAY("生日"),
-        GENDER("性別"),
-        HEIGHT("身高"),
-        WEIGHT("體重");
+        BIRTHDAY(App.getContext().getString(R.string.setup_kid_birthday)),
+        GENDER(App.getContext().getString(R.string.setup_kid_gender)),
+        HEIGHT(App.getContext().getString(R.string.setup_kid_height)),
+        WEIGHT(App.getContext().getString(R.string.setup_kid_weight));
 		
 		private String name;
 		private TYPE(String name) {

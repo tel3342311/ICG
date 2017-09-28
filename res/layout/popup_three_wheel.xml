@@ -20,7 +20,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:paddingStart="@dimen/activity_horizontal_margin"
-            android:text="年"
+            android:text="@string/setup_kid_year"
             style="@style/list_item_big" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:paddingStart="@dimen/activity_horizontal_margin"
-            android:text="月"
+            android:text="@string/setup_kid_month"
             style="@style/list_item_big" />
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:paddingStart="@dimen/activity_horizontal_margin"
-            android:text="日"
+            android:text="@string/setup_kid_day"
             style="@style/list_item_big"/>
 
     </LinearLayout>

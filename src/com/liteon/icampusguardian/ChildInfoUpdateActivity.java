@@ -71,7 +71,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		Student student = new Student();
 		student.setDob("2000-01-01");
 		student.setName("");
-		student.setGender("MALE");
+		student.setGender(getString(R.string.setup_kid_male));
 		student.setHeight(0);
 		student.setWeight(0);
 		return student;
@@ -96,10 +96,10 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
     			item.setValue(student.getDob());
     			break;
     		case GENDER:
-    			if (TextUtils.equals(student.getGender(), "MALE")) {
-    				item.setValue("男性");
+    			if (TextUtils.equals(student.getGender(), getString(R.string.setup_kid_male))) {
+    				item.setValue(getString(R.string.setup_kid_male));
     			} else {
-    				item.setValue("女性");
+    				item.setValue(getString(R.string.setup_kid_female));
         		}
     			break;
     		case HEIGHT:
@@ -142,7 +142,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mToolbar.setTitle("設定寶貝基本資料");
+		mToolbar.setTitle(getString(R.string.setup_kid_profile));
 	}
 	
 	private void setupToolbar() {
@@ -238,9 +238,9 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			} else if (one_wheel.getVisibility() == View.VISIBLE) {
 				if (mType == TYPE.GENDER) {
 					if (position == 0) {
-						mStudent.setGender("MALE");
+						mStudent.setGender(getString(R.string.setup_kid_male));
 					} else {
-						mStudent.setGender("FEMALE");
+						mStudent.setGender(getString(R.string.setup_kid_female));
 					}
 				} else if (mType == TYPE.HEIGHT) {
 					mStudent.setHeight(Integer.parseInt((String)data));
@@ -261,10 +261,10 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
     			item.setValue(student.getDob());
     			break;
     		case GENDER:
-    			if (TextUtils.equals(student.getGender(), "MALE")) {
-    				item.setValue("男性");
+    			if (TextUtils.equals(student.getGender(), getString(R.string.setup_kid_male))) {
+    				item.setValue(getString(R.string.setup_kid_male));
     			} else {
-    				item.setValue("女性");
+    				item.setValue(getString(R.string.setup_kid_female));
         		}
     			break;
     		case HEIGHT:
@@ -410,14 +410,14 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			break;
 		case GENDER:
 			one_wheel.setVisibility(View.VISIBLE);
-			mWheelTitle.setText("性別");
+			mWheelTitle.setText(getString(R.string.setup_kid_gender));
 			List<String> gender = new ArrayList<>();
-			gender.add("男生");
-			gender.add("女生");
+			gender.add(getString(R.string.setup_kid_male));
+			gender.add(getString(R.string.setup_kid_female));
 			mWheel_single.setData(gender);
 			mWheel_single.setCyclic(false);
 			String gender_now = mStudent.getGender();
-			if (TextUtils.equals(gender_now, "MALE")) {
+			if (TextUtils.equals(gender_now, getString(R.string.setup_kid_male))) {
 				mWheel_single.setSelectedItemPosition(0);
 			} else {
 				mWheel_single.setSelectedItemPosition(1);
@@ -426,7 +426,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			break;
 		case HEIGHT:
 			one_wheel.setVisibility(View.VISIBLE);
-			mWheelTitle.setText("身高");
+			mWheelTitle.setText(getString(R.string.setup_kid_height));
 			List<String> height = new ArrayList<>();
 			for (int i = 0; i < 200; i++) {
 				height.add(Integer.toString(i));
@@ -437,7 +437,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			break;
 		case WEIGHT:
 			one_wheel.setVisibility(View.VISIBLE);
-			mWheelTitle.setText("體重");
+			mWheelTitle.setText(getString(R.string.setup_kid_weight));
 			List<String> weight = new ArrayList<>();
 			for (int i = 0; i < 100; i++) {
 				weight.add(Integer.toString(i));

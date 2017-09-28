@@ -30,6 +30,7 @@
 	<string name="login_error_account_or_password">Invalid account (email) or password, please try again!</string>
 	<!-- Register new account -->
 	<string name="register_name">Name</string>
+	<string name="register_password">Password (minimum 8 characters)</string>
 	<string name="register_mobile">Mobile number</string>
 	<string name="register_confirm_password">Confirm password</string>
 	<string name="register_password_not_match">Password and confirm password do not match!</string>
@@ -42,8 +43,8 @@
 	<string name="forget_account_not_exist">Email address does not exist</string>
 	<string name="forget_check_mailbox_and_setup">Please check your email for continue the password reset process</string>
 	<!-- setup kid profile -->
-	<string name="setup_kid_profile">Kid's Profile</string>
-	<string name="setup_kid_name">Kid's name</string>
+	<string name="setup_kid_profile">Kid\'s Profile</string>
+	<string name="setup_kid_name">Kid\'s name</string>
 	<string name="setup_kid_birthday">Date of Birth</string>
 	<string name="setup_kid_year">Year</string>
 	<string name="setup_kid_month">Month</string>
@@ -130,7 +131,7 @@
 	<string name="alarm_edit_period">Edit</string>
 	<string name="alarm_delete">Delete alarm</string>
 	<!-- child profile -->
-	<string name="child_setup_profile">Child's Profile</string>
+	<string name="child_setup_profile">Child\'s Profile</string>
 	<string name="child_basic_profile">Profile</string>
 	<string name="child_goal_setting">Daily Goal</string>
 	<string name="child_personalize_theme">Watch Face</string>
@@ -140,13 +141,13 @@
 	<!-- child photo setting -->
 	<string name="child_photo_photo_permission">"iCampus Guardian" would like to access your photos.</string>
 	<string name="child_photo_photo_hint">這樣可以讓你從圖庫中選擇你喜歡的照片當此大頭貼</string>
-	<string name="child_photo_photo_deny">Don't Allow</string>
+	<string name="child_photo_photo_deny">Don\'t Allow</string>
 	<string name="child_photo_photo_ok">OK</string>
 	<string name="child_photo_photo_select_pic">Select a photo</string>
 	<string name="child_photo_photo_used_photo">Used photos</string>
 	<string name="child_photo_photo_all_photo">All Photos</string>
-	<string name="child_photo_photo">Child's Picture</string>
-	<string name="child_photo_photo_crop">Move and Scale </string>
+	<string name="child_photo_photo">Child\'s Picture</string>
+	<string name="child_photo_photo_crop">Move and Scale</string>
 	<!-- parent profile -->
 	<string name="parent_profile">Profile</string>
 	<!-- goal setting -->
@@ -161,7 +162,7 @@
 	<string name="syncing_photo_to_watch_synced">Retry</string>
 	<!-- watch infomation -->
 	<string name="watch_info_privacy">Device Information and EULA</string>
-	<string name="send_sleeping_info_to_teacher">Permission for school teacher to see your kid's sleeping information</string>
+	<string name="send_sleeping_info_to_teacher">Permission for school teacher to see your kid\'s sleeping information</string>
 	<string name="device_name_title">Device name</string>      
 	<string name="device_name">iCampus Guardian 1</string>
 	<string name="firmware_version">Firmware Version</string>      
@@ -169,7 +170,7 @@
 	<string name="finding_new_firmware">Checking for update</string>
 	<string name="has_latest_firmware">Your firmware is up to date.</string> 
 	<string name="syncing_fail">Firmware update fail</string>
-	<string name="update_to_version">Firmware upgrade to V%s/string>
+	<string name="update_to_version">Firmware upgrade to V%s</string>
 	<string name="udpate_by_wifi">To avoid data charge, please connect to a Wi-Fi network to download it.</string>
 	<string name="watch_update_cancel">Cancel</string>
 	<string name="watch_update_install">Install</string>
@@ -183,7 +184,7 @@
 	<string name="pairing_watch">Link with Device</string>
 	<string name="unbind_watch">Unlink Device</string>
 	<string name="bind_watch">Add Device</string>
-	<string name="will_unbind_watch">Confirm to unlink with child's wearable device</string>
+	<string name="will_unbind_watch">Confirm to unlink with child\'s wearable device</string>
 	<string name="bind_cancel">Cancel</string>
 	<string name="bind_confirm">Confirm</string>
 	<!-- Menu -->

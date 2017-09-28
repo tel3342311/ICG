@@ -30,6 +30,7 @@
 	<string name="login_error_account_or_password">帳號或密碼輸入錯誤，請重新輸入</string>
 	<!-- Register new account -->
 	<string name="register_name">姓名</string>
+	<string name="register_password">密碼 (至少八碼英文或數字)</string> 
 	<string name="register_mobile">手機號碼</string>
 	<string name="register_confirm_password">再次確認新密碼</string>
 	<string name="register_password_not_match">密碼與確認密碼不相符</string>

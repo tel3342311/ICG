@@ -110,7 +110,7 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 		final CustomDialog dialog = new CustomDialog();
 		dialog.setTitle(message);
 		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
-		dialog.setBtnText("好");
+		dialog.setBtnText(getString(android.R.string.ok));
 		dialog.setBtnConfirm(new OnClickListener() {
 
 			@Override
@@ -140,7 +140,7 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 
 					@Override
 					public void run() {
-						showErrorDialog("查無此帳號(電子郵件),請再確認!");
+						showErrorDialog(getString(R.string.login_error_email));
 					}
 				});
 				return false;
@@ -150,8 +150,8 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 
         protected void onPostExecute(Boolean isSuccess) {
         	if (isSuccess) {
-				mTitleView.setText("系統已重設你的密碼");
-				mDescView.setText("請察看信箱並使用系統寄出的預設密碼回到登入頁面進行登入\n");
+				mTitleView.setText(getString(R.string.forget_reset_done));
+				mDescView.setText(getString(R.string.forget_check_mailbox_and_setup));
 				mSend.setVisibility(View.GONE);
 				mName.setVisibility(View.INVISIBLE);
         	}

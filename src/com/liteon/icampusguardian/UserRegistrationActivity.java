@@ -128,9 +128,9 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 	
 	private void showLoginErrorDialog() {
 		final CustomDialog dialog = new CustomDialog();
-		dialog.setTitle("帳號(電子郵件)或密碼輸入錯誤,請再確認!");
+		dialog.setTitle(getString(R.string.login_error_email));
 		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
-		dialog.setBtnText("好");
+		dialog.setBtnText(getString(android.R.string.ok));
 		dialog.setBtnConfirm(new OnClickListener() {
 			
 			@Override

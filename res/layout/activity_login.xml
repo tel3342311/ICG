@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginBottom="@dimen/page_title_margin_bottom"
-        android:text="請登入家長帳號"
+        android:text="@string/login_parent_account"
         android:textSize="@dimen/page_title_text_size"
         android:textColor="@color/md_black_1000"
         android:layout_centerHorizontal="true"/>
@@ -24,7 +24,7 @@
 	    android:layout_below="@id/login_title"
 	    android:layout_marginLeft="@dimen/activity_horizontal_margin"
 	    android:layout_marginRight="@dimen/activity_horizontal_margin"
-	    android:hint="帳號(電子郵件地址)"
+	    android:hint="@string/login_account"
 	    android:maxLines="1"
 	    android:singleLine="true"
 	    android:textCursorDrawable="@null"
@@ -39,7 +39,7 @@
 	    android:layout_marginRight="@dimen/activity_horizontal_margin"
 	    android:layout_marginBottom="@dimen/page_title_margin_bottom"
 	    android:inputType="textPassword"
-	    android:hint="密碼"
+	    android:hint="@string/login_password"
 	    android:maxLines="1"
 	   	android:singleLine="true"
 	    android:textCursorDrawable="@null"
@@ -54,7 +54,7 @@
 	    android:layout_alignParentLeft="true"
 	    android:layout_marginLeft="@dimen/activity_horizontal_margin"	
 	    android:layout_marginBottom="@dimen/activity_vertical_margin"	    
-	    android:text="註冊新的帳號"
+	    android:text="@string/login_register_new_account"
 	    android:textSize="@dimen/login_option_text_size"
 	    android:textColor="@color/md_blue_700"/>
 	<TextView
@@ -65,7 +65,7 @@
 	    android:layout_alignParentRight="true"
 	    android:layout_marginRight="@dimen/activity_horizontal_margin"
 	  	android:layout_marginBottom="@dimen/activity_vertical_margin"	    
-	    android:text="忘記密碼？"
+	    android:text="@string/login_forget_password"
 	    android:textSize="@dimen/login_option_text_size"
 	    android:textColor="@color/md_blue_700"/>
 
@@ -79,7 +79,7 @@
 	    android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_centerHorizontal="true"
         android:background="@drawable/btn_bg"
-        android:text="登  入"
+        android:text="@string/login_login"
       	android:textColor="@drawable/btn_text_color"
         android:textSize="@dimen/login_option_text_size"/>
 	
@@ -99,7 +99,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_gravity="start"
 	       	android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
-	        android:text="使用外部帳號登入"
+	        android:text="@string/login_social_signin"
         	android:textColor="@color/md_black_1000"
 	        android:textSize="@dimen/login_option_text_size" />
 
@@ -109,7 +109,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
 	        android:background="@color/md_red_700"
-	        android:text="Google" />
+	        android:text="@string/login_google" />
 
 	    <android.support.v7.widget.AppCompatButton
 	        android:id="@+id/login_button_fb"
@@ -117,7 +117,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
 	        android:background="@color/md_blue_700"
-	        android:text="Facebook" />
+	        android:text="@string/login_facebook" />
 
 	    <android.support.v7.widget.AppCompatButton
 	        android:id="@+id/login_button_quit"
@@ -126,7 +126,7 @@
 	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
 	        android:background="@drawable/btn_bg"
 	        android:textColor="@color/md_black_1000"
-	        android:text="退  出" />
+	        android:text="@string/welcome_quit" />
 
 	</LinearLayout>
 

@@ -54,6 +54,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
@@ -67,10 +68,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
-		IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener, IAppInfoPrivacyViewHolderClicks {
+		IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener, IAppInfoPrivacyViewHolderClicks, DrawerListener {
 
 	private static final String TAG = MainActivity.class.getName(); 
 	private CircularImageView mChildIcon;
@@ -207,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		filter.addAction(Def.ACTION_NOTIFY);
 		mLocalBroadcastManager.registerReceiver(mReceiver, filter);
 		mToolbar.setTitle("");
+		initChildInfo();
 	}
 
 	@Override
@@ -276,7 +279,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		mBottomView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 		mNavigationView.setNavigationItemSelectedListener(this);
 		mLogoutButton.setOnClickListener(mOnLogoutClickListener);
+		mDrawerLayout.addDrawerListener(this);
 	}
+	
+	
 	private OnClickListener mOnLogoutClickListener = new OnClickListener() {
 		
 		@Override
@@ -394,6 +400,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
 		Bitmap bitmap = null;
+		// get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		if (mStudents.size() > 0) {
 			if (mCurrentStudentIdx >= mStudents.size()) {
 				mCurrentStudentIdx =  0;
@@ -784,6 +792,28 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+	}
+
+	@Override
+	public void onDrawerClosed(View arg0) {
+		
+	}
+
+	@Override
+	public void onDrawerOpened(View arg0) {
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+		initChildInfo();
+		updateMenuItem();
+	}
+
+	@Override
+	public void onDrawerSlide(View arg0, float arg1) {
+		
+	}
+
+	@Override
+	public void onDrawerStateChanged(int arg0) {
+		
 	}
 	
 	

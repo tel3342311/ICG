@@ -72,8 +72,8 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		student.setDob("2000-01-01");
 		student.setName("");
 		student.setGender(getString(R.string.setup_kid_male));
-		student.setHeight(0);
-		student.setWeight(0);
+		student.setHeight("0");
+		student.setWeight("0");
 		return student;
 	}
 	private void initRecycleView() {
@@ -103,10 +103,10 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
         		}
     			break;
     		case HEIGHT:
-    			item.setValue(Float.toString(student.getHeight()));
+    			item.setValue(student.getHeight());
     			break;
     		case WEIGHT:
-    			item.setValue(Float.toString(student.getWeight()));
+    			item.setValue(student.getWeight());
     			break;
     		default:
     			break;
@@ -243,9 +243,9 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 						mStudent.setGender(getString(R.string.setup_kid_female));
 					}
 				} else if (mType == TYPE.HEIGHT) {
-					mStudent.setHeight(Integer.parseInt((String)data));
+					mStudent.setHeight((String)data);
 				} else if (mType == TYPE.WEIGHT) {
-					mStudent.setWeight(Integer.parseInt((String)data));
+					mStudent.setWeight((String)data);
 				}
 			}
 			updateData();
@@ -268,10 +268,10 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
         		}
     			break;
     		case HEIGHT:
-    			item.setValue(Float.toString(student.getHeight()));
+    			item.setValue(student.getHeight());
     			break;
     		case WEIGHT:
-    			item.setValue(Float.toString(student.getWeight()));
+    			item.setValue(student.getWeight());
     			break;
     		default:
     			break;
@@ -432,7 +432,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 				height.add(Integer.toString(i));
 			}
 			mWheel_single.setData(height);
-			String height_now = Float.toString(mStudent.getHeight());
+			String height_now = mStudent.getHeight();
 			mWheel_single.setSelectedItemPosition(height.indexOf(height_now));
 			break;
 		case WEIGHT:
@@ -443,7 +443,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 				weight.add(Integer.toString(i));
 			}
 			mWheel_single.setData(weight);
-			String weight_now = Float.toString(mStudent.getWeight());
+			String weight_now = mStudent.getWeight();
 			mWheel_single.setSelectedItemPosition(weight.indexOf(weight_now));
 			break;
 		default:

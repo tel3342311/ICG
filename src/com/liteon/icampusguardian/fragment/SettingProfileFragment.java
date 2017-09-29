@@ -142,9 +142,9 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 						mStudents.get(mCurrentStudentIdx).setGender("FEMALE");
 					}
 				} else if (mType == TYPE.HEIGHT) {
-					mStudents.get(mCurrentStudentIdx).setHeight(Integer.parseInt((String)data));
+					mStudents.get(mCurrentStudentIdx).setHeight((String)data);
 				} else if (mType == TYPE.WEIGHT) {
-					mStudents.get(mCurrentStudentIdx).setWeight(Integer.parseInt((String)data));
+					mStudents.get(mCurrentStudentIdx).setWeight((String)data);
 				}
 			}
 			updateData();
@@ -183,10 +183,10 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
         		}
     			break;
     		case HEIGHT:
-    			item.setValue(Float.toString(student.getHeight()));
+    			item.setValue(student.getHeight());
     			break;
     		case WEIGHT:
-    			item.setValue(Float.toString(student.getWeight()));
+    			item.setValue(student.getWeight());
     			break;
     		default:
     			break;
@@ -212,10 +212,10 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
         		}
     			break;
     		case HEIGHT:
-    			item.setValue(Float.toString(student.getHeight()));
+    			item.setValue(student.getHeight());
     			break;
     		case WEIGHT:
-    			item.setValue(Float.toString(student.getWeight()));
+    			item.setValue(student.getWeight());
     			break;
     		default:
     			break;
@@ -307,7 +307,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 				height.add(Integer.toString(i));
 			}
 			mWheel_single.setData(height);
-			String height_now = Integer.toString((int)mStudents.get(mCurrentStudentIdx).getHeight());
+			String height_now = mStudents.get(mCurrentStudentIdx).getHeight();
 			int idx_height = height.indexOf(height_now);
 			mWheel_single.setSelectedItemPosition(idx_height);
 			break;
@@ -319,7 +319,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 				weight.add(Integer.toString(i));
 			}
 			mWheel_single.setData(weight);
-			String weight_now = Integer.toString((int)mStudents.get(mCurrentStudentIdx).getWeight());
+			String weight_now = mStudents.get(mCurrentStudentIdx).getWeight();
 			int idx_weight = weight.indexOf(weight_now);
 			mWheel_single.setSelectedItemPosition(idx_weight);
 			break;
@@ -379,6 +379,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 		super.onResume();
 		SharedPreferences sp = mActivity.getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		updateData();
 	}
 	
 	public static int getDayOfMonth(Date aDate) {

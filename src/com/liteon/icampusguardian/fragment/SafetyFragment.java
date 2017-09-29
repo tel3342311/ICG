@@ -252,17 +252,19 @@ public class SafetyFragment extends Fragment {
 		if (mMapView != null) {
 			mMapView.onResume();
 		}
+		
+		restoreGeoEvent();
+		if (mStudents.size() > 0) {
+			String id = mStudents.get(mCurrnetStudentIdx).getStudent_id();
+			new getEventReportTask().execute(id);
+			new getCurrentLocation().execute("");
+		}
 		if (mCurrentItem != null) {
 			if (myDataset.indexOf(mCurrentItem) == -1) {
 				myDataset.add(0, mCurrentItem);
 			}
 			mAdapter.notifyDataSetChanged();
 			new getCurrentLocation().execute("");
-		}
-		restoreAlarm();
-		if (mStudents.size() > 0) {
-			String id = mStudents.get(mCurrnetStudentIdx).getStudent_id();
-			new getEventReportTask().execute(id);
 		}
 	}
 
@@ -275,8 +277,9 @@ public class SafetyFragment extends Fragment {
 		saveAlarm();
 	}
 
-	private void restoreAlarm() {
+	private void restoreGeoEvent() {
 		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		String geoItemMap = sp.getString(Def.SP_GEO_ITEM_MAP, "");
 		Type typeOfHashMap = new TypeToken<Map<String, Map<String, GeoEventItem>>>() { }.getType();
         Gson gson = new GsonBuilder().create();

@@ -47,6 +47,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -258,6 +259,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
         		dialog.setTitle("應用程式要求權限以繼續");
         		dialog.setIcon(0);
         		dialog.setBtnText("好");
+        		dialog.setBtnConfirm(mClickListener);
         		dialog.show(getSupportFragmentManager(), "dialog_fragment");
 			}
 			
@@ -268,12 +270,20 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
         		dialog.setTitle("應用程式要求權限以繼續");
         		dialog.setIcon(0);
         		dialog.setBtnText("好");
+        		dialog.setBtnConfirm(mClickListener);
         		dialog.show(getSupportFragmentManager(), "dialog_fragment");
 			}
 			break;
 		}
 	}
-	
+	private OnClickListener mClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			onBackPressed();
+		}
+		
+	};
 	public ArrayList<PhotoItem> getPhotoItem() {
 		ArrayList<PhotoItem> list = new ArrayList<>();
         int int_position = 0;

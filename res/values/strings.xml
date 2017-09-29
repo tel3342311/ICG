@@ -28,6 +28,7 @@
 	<string name="login_already_used">The email address already registered, please go back to the login page to continue</string>
 	<string name="login_no_network">Unable to connect to the internet</string>
 	<string name="login_error_account_or_password">Invalid account (email) or password, please try again!</string>
+	<string name="login_error_no_server_connection">Failed to connect to server. Please try again later!</string>
 	<!-- Register new account -->
 	<string name="register_name">Name</string>
 	<string name="register_password">Password (minimum 8 characters)</string>

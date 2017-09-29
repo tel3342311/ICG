@@ -1,16 +1,25 @@
 package com.liteon.icampusguardian;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.UUID;
 
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.NetworkInfo.State;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,7 +30,7 @@ import android.widget.Toast;
 
 public class UserRegistrationActivity extends AppCompatActivity implements OnClickListener {
 
-	
+	private static final String TAG = UserRegistrationActivity.class.getName();
 	private ImageView mCancel;
 	private ImageView mConfirm;
 	private EditText mName;
@@ -126,11 +135,11 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		return true;
 	}
 	
-	private void showLoginErrorDialog() {
+	private void showLoginErrorDialog(String title, String btnText) {
 		final CustomDialog dialog = new CustomDialog();
-		dialog.setTitle(getString(R.string.login_error_email));
+		dialog.setTitle(title);
 		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
-		dialog.setBtnText(getString(android.R.string.ok));
+		dialog.setBtnText(btnText);
 		dialog.setBtnConfirm(new OnClickListener() {
 			
 			@Override
@@ -140,6 +149,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		});
 		dialog.show(getSupportFragmentManager(), "dialog_fragment");
 	}
+	
 	private void registerAccount() {
 		String strName = mName.getText().toString();
 		String strPhone = mPhone.getText().toString();
@@ -149,10 +159,32 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		
 		//check if password & password confirm is match
 		if ((strPassword.length() < 8) || !TextUtils.equals(mPassword.getText(), mConfirmPassword.getText())) {
-			showLoginErrorDialog();
+			showLoginErrorDialog(getString(R.string.password_not_match), getString(android.R.string.ok));
 			return ;
 		}
 		GuardianApiClient apiClient = new GuardianApiClient(this);
+		//check network 
+    	if (!isNetworkConnectionAvailable()) {
+    		runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok));
+				}
+			});
+    		return;
+    	}
+    	//check server 
+    	if (!isURLReachable(UserRegistrationActivity.this, apiClient.getServerUri().toString())) {
+    		runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok));
+				}
+			});
+    		return;
+    	}
 		String str = "1234";
 		UUID uuid = UUID.nameUUIDFromBytes(str.getBytes());
 		new RegisterTask().execute(strAccount, strPassword, "parent_admin", uuid.toString(), strName);
@@ -171,5 +203,39 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
         protected void onPostExecute(String token) {
         	finish();
         }
+    }
+	
+	public boolean isNetworkConnectionAvailable() {  
+	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo info = cm.getActiveNetworkInfo();     
+	    if (info == null) return false;
+	    State network = info.getState();
+	    return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
+	} 
+	
+	public boolean isURLReachable(Context context, String Url) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnected()) {
+            try {
+                URL url = new URL(Url);   // Change to "http://google.com" for www  test.
+                HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
+                urlc.setConnectTimeout(1000);          // 1 s.
+                urlc.connect();
+                int responseCode = urlc.getResponseCode();
+                if (responseCode == 200 || responseCode == 404) {        // 200 = "OK" code (http connection is fine).
+                    Log.i(TAG, "Connect to "+ Url +" Success !");
+                    return true;
+                } else {
+                    Log.i(TAG, "Connect to " + Url + " Fail ! Response code is " + responseCode);
+                    return false;
+                }
+            } catch (MalformedURLException e1) {
+                return false;
+            } catch (IOException e) {
+                return false;
+            }
+        }
+        return false;
     }
 }

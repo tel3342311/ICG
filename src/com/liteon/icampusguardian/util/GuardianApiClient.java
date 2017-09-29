@@ -664,4 +664,8 @@ public class GuardianApiClient {
 			});
     	}
 	}
+	
+	public Uri getServerUri() {
+		return mUri;
+	}
 }

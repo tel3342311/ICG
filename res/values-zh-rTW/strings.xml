@@ -28,6 +28,7 @@
 	<string name="login_already_used">此電子郵件已註冊過，請回到登入頁面直接登入，若忘記密碼請點選忘記密碼，系統將寄送密碼重設至您的信箱</string>
 	<string name="login_no_network">網路無法連線</string>
 	<string name="login_error_account_or_password">帳號或密碼輸入錯誤，請重新輸入</string>
+	<string name="login_error_no_server_connection">無法建立與系統連線, 請稍候再試!</string>
 	<!-- Register new account -->
 	<string name="register_name">姓名</string>
 	<string name="register_password">密碼 (至少八碼英文或數字)</string> 

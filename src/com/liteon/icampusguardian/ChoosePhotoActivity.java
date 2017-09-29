@@ -152,7 +152,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mToolbar.setTitle("選擇圖片");
+		mToolbar.setTitle(R.string.child_photo_photo_select_pic);
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		if (!isFromWatchTheme) {

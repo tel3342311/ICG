@@ -99,19 +99,19 @@ public class SettingTargetFragment extends Fragment {
 		mSleeping = (EditText) sleeping.findViewById(R.id.value_text);
 		mTitleSleepingUnit = (TextView) sleeping.findViewById(R.id.unit_text);
 		
-		mTitleCarlos.setText("每日燃燒卡路里");
-		mTitleSteps.setText("步數");
-		mTitleWalking.setText("走路");
-		mTitleRunning.setText("跑步");
-		mTitleCycling.setText("騎腳踏車");
-		mTitleSleeping.setText("總睡眠時數");
+		mTitleCarlos.setText(R.string.healthy_carlories);
+		mTitleSteps.setText(R.string.healthy_steps);
+		mTitleWalking.setText(R.string.healthy_walk);
+		mTitleRunning.setText(R.string.healthy_running);
+		mTitleCycling.setText(R.string.healthy_cycling);
+		mTitleSleeping.setText(R.string.healthy_sleep);
 		
-		mTitleCarlosUnit.setText("卡");
-		mTitleStepsUnit.setText("步");
-		mTitleWalkingUnit.setText("分");
-		mTitleRunningUnit.setText("分");
-		mTitleCyclingUnit.setText("分");
-		mTitleSleepingUnit.setText("小時");
+		mTitleCarlosUnit.setText(R.string.healthy_cal);
+		mTitleStepsUnit.setText(R.string.healthy_step);
+		mTitleWalkingUnit.setText(R.string.healthy_minutes);
+		mTitleRunningUnit.setText(R.string.healthy_minutes);
+		mTitleCyclingUnit.setText(R.string.healthy_minutes);
+		mTitleSleepingUnit.setText(R.string.sleep_hours);
 		
 	}
 	

@@ -143,8 +143,8 @@ public class HealthHistogramView extends View {
 		int graph_bottom = mHeight - textFontSize * 2;
 		mHistogramGap = (mWidth - (mGraphMarginHorizon * 2) - (mHistogramWidth * HISTOGRAM_NUM)) / (HISTOGRAM_NUM - 1);
 
-		canvas.drawText("近七天狀態", 50, mHeight - textFontSize, textPaint);
-		canvas.drawText("今天", mWidth - 100, mHeight - textFontSize, textPaint);
+		canvas.drawText(getResources().getString(R.string.activity_last_7_days), 50, mHeight - textFontSize, textPaint);
+		canvas.drawText(getResources().getString(R.string.activity_today), mWidth - 100, mHeight - textFontSize, textPaint);
 		
 		mBottomPath = new Path();
 		mBottomPath.moveTo(0, graph_bottom);

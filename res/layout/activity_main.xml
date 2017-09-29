@@ -70,7 +70,7 @@
 	   	    android:layout_gravity="bottom"
         	android:background="@drawable/btn_bg"
         	android:textColor="@drawable/btn_text_color"
-	   	    android:text="登  出" />
+	   	    android:text="@string/logout" />
 </android.support.design.widget.NavigationView>
     
 </android.support.v4.widget.DrawerLayout>

@@ -43,7 +43,7 @@
 	<dimen name="healthy_detail_pie_chart_icon_location_y">105dp</dimen>
 	<dimen name="healthy_detail_pie_chart_target_offset_y">22dp</dimen>
 	<dimen name="healthy_detail_pie_chart_date_offset_y">67dp</dimen>
-	<dimen name="healthy_detail_pie_chart_target_font_size">60sp</dimen>
+	<dimen name="healthy_detail_pie_chart_target_font_size">42sp</dimen>
 	<dimen name="healthy_detail_histogram_chart_height">405dp</dimen>
 	<dimen name="healthy_detail_histogram_font_size">21sp</dimen>
 	<dimen name="healthy_detail_histogram_magin_horizon">27dp</dimen>

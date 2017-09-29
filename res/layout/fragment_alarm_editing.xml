@@ -20,7 +20,7 @@
 	    android:maxHeight="@dimen/setting_child_name_max_width"
 	    android:minHeight="@dimen/setting_child_name_min_width"
 	    android:singleLine="true"
-	    android:text="上學"
+	    android:text="@string/alarm"
 	    android:textColor="@color/md_black_1000"/>
 	
 	<LinearLayout
@@ -66,7 +66,7 @@
 	    android:paddingStart="@dimen/activity_horizontal_margin"
 	    android:background="@color/md_grey_200"
 	    android:textColor="@color/md_black_1000"
-	    android:text="鬧鈴週期"/>
+	    android:text="@string/alarm_period"/>
     
     <android.support.v7.widget.RecyclerView
         android:id="@+id/alarm_period_view"

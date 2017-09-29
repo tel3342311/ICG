@@ -3,20 +3,20 @@
             android:id="@+id/action_switch_account"
             android:enabled="true"
             android:icon="@drawable/menu_img_change"
-            android:title="@string/switch_account"/>
+            android:title="@string/switch_to"/>
         <item
             android:id="@+id/action_add_child"
             android:enabled="true"
             android:icon="@drawable/menu_img_add"
-            android:title="@string/add_child"/>
+            android:title="@string/add_new_child"/>
         <item
             android:id="@+id/action_delete_account"
             android:enabled="true"
             android:icon="@drawable/menu_img_delete"
-            android:title="@string/delete_account"/>
+            android:title="@string/delete_child"/>
         <item
             android:id="@+id/action_setting"
             android:enabled="true"
             android:icon="@drawable/menu_img_setup"
-            android:title="@string/drawer_setting"/>
+            android:title="@string/app_info"/>
 </menu>

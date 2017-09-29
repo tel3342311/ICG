@@ -111,7 +111,7 @@
 	<string name="sleep_quality_good">良好</string>
 	<string name="sleep_quality_normal">尚可</string>
 	<string name="sleep_quality_bad">不佳</string>
-	<string name="sleep_hours">%s小時</string>
+	<string name="sleep_hours">小時</string>
 	<!-- Alarm -->
 	<string name="alarm">鬧鈴</string>
 	<string name="alarm_no_watch_synced">智慧手錶未同步</string>
@@ -130,6 +130,14 @@
 	<string name="alarm_period">設定鬧鈴週期</string>
 	<string name="alarm_edit_period">編輯鬧鈴</string>
 	<string name="alarm_delete">刪除鬧鈴</string>
+	<string name="alarm_max_alarm">新增鬧鈴最多為四組</string>
+	<string name="alarm_sun">週日</string>
+	<string name="alarm_mon">週一</string>
+	<string name="alarm_tue">週二</string>
+	<string name="alarm_wed">週三</string>
+	<string name="alarm_thr">週四</string>
+	<string name="alarm_fri">週五</string>
+	<string name="alarm_sat">週六</string>
 	<!-- child profile -->
 	<string name="child_setup_profile">設定寶貝資料</string>
 	<string name="child_basic_profile">基本資料</string>
@@ -227,6 +235,4 @@
 	<string name="drawer_setting">App資訊與設定</string>
 	<!-- Pin -->
 	<string name="pin_content_desc">PIN input field</string>
-	<!-- Page title -->
-	<string name="health_page_title">今日紀錄</string>
 </resources>

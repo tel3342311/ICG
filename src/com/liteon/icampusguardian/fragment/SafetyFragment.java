@@ -414,7 +414,7 @@ public class SafetyFragment extends Fragment {
 						e.printStackTrace();
 					}
 				}
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd EE HH:mm", Locale.TAIWAN);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd EE HH:mm");
 				String updateTime = sdf.format(date);
 				mUpdateText.setText(updateTime);
 			}

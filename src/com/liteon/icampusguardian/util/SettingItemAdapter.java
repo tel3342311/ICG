@@ -67,9 +67,9 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
         if (item.getItemType() == SettingItem.TYPE.PAIRING) {
         	holder.mValueBtn.setVisibility(View.VISIBLE);
         	if (mStudent != null && !TextUtils.isEmpty(mStudent.getUuid())) {
-        		holder.mValueBtn.setText("解除綁定");
+        		holder.mValueBtn.setText(holder.mValueBtn.getResources().getString(R.string.unbind_watch));
         	} else {
-        		holder.mValueBtn.setText("新增綁定");
+        		holder.mValueBtn.setText(holder.mValueBtn.getResources().getString(R.string.bind_watch));
         	}
         	holder.mMoreIcon.setVisibility(View.INVISIBLE);
         } else {

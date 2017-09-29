@@ -168,9 +168,9 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         		mBLEFailConfirmDialog = new ConfirmDeleteDialog();
         		mBLEFailConfirmDialog.setOnConfirmEventListener(mOnBLEFailConfirmClickListener);
         		mBLEFailConfirmDialog.setmOnCancelListener(mOnBLEFailCancelClickListener);
-        		mBLEFailConfirmDialog.setmTitleText(mPinHiddenEditText.getText() + "(PIN碼)配對失敗");
-        		mBLEFailConfirmDialog.setmBtnConfirmText("重新輸入");
-        		mBLEFailConfirmDialog.setmBtnCancelText("之後再配對");
+        		mBLEFailConfirmDialog.setmTitleText(getString(R.string.pairing_watch_pin_error));
+        		mBLEFailConfirmDialog.setmBtnConfirmText(getString(R.string.pairing_watch_pair));
+        		mBLEFailConfirmDialog.setmBtnCancelText(getString(R.string.pairing_watch_later));
         		mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
         	}
         }

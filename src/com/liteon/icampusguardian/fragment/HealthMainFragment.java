@@ -149,7 +149,7 @@ public class HealthMainFragment extends Fragment implements IHealthViewHolderCli
 		@Override
 		public CharSequence getPageTitle(int position) {
 			if (position == HEALTHY_MAIN) {
-				return getString(R.string.health_page_title);
+				return getString(R.string.healthy_today_reocrd);
 			} else if (position == HEALTHY_ACTIVITY) {
 				return TYPE.ACTIVITY.getName();
 			} else if (position == HEALTHY_CALORIES) {

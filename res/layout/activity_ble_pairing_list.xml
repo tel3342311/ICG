@@ -30,7 +30,7 @@
                 android:layout_centerInParent="true"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="請選擇配對的智慧手錶"
+                android:text="@string/pairing_watch_select_watch"
                 android:textColor="@color/md_black_1000"
                 android:textSize="@dimen/page_title_text_size" />
 

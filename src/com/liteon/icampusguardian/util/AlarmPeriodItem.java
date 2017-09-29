@@ -3,17 +3,18 @@ package com.liteon.icampusguardian.util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
 
 public class AlarmPeriodItem {
 
 	
 	public static enum TYPE {
-		WEEK_DAY("週一至週五", 0x1),
-		WEEKEND("假日",       0x10),
-		EVERYDAY("每日",      0x100),
-		ONCE("只提醒一次",     0x1000),
-		CUSTOMIZE("自訂",     0x10000);
+		WEEK_DAY(App.getContext().getString(R.string.alarm_week_day), 0x1),
+		WEEKEND(App.getContext().getString(R.string.alarm_week_end),       0x10),
+		EVERYDAY(App.getContext().getString(R.string.alarm_every_day),      0x100),
+		ONCE(App.getContext().getString(R.string.alarm_once),     0x1000),
+		CUSTOMIZE(App.getContext().getString(R.string.alarm_customize),     0x10000);
 		
 		String name;
 		long value;

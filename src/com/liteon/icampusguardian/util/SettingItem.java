@@ -1,14 +1,18 @@
 package com.liteon.icampusguardian.util;
 
+import com.liteon.icampusguardian.App;
+
+import com.liteon.icampusguardian.R;
+
 public class SettingItem {
 
 	
 	public static enum TYPE {
-        BASIC_INFO("基本資料"),
-        GOAL_SETTING("每日目標設定"),
-        WATCH_THEME("個性化錶面"),
-        PRIVACY_INFO("智慧手錶資訊與使用隱私"),
-        PAIRING("配對智慧手錶");
+        BASIC_INFO(App.getContext().getString(R.string.child_basic_profile)),
+        GOAL_SETTING(App.getContext().getString(R.string.child_goal_setting)),
+        WATCH_THEME(App.getContext().getString(R.string.child_personalize_theme)),
+        PRIVACY_INFO(App.getContext().getString(R.string.child_watch_info_and_privacy)),
+        PAIRING(App.getContext().getString(R.string.child_pairing_watch));
 		
 		private String name;
 		private TYPE(String name) {

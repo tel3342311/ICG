@@ -13,7 +13,7 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="已於 07/11 14:17 更新"
+        android:text=""
        	style="@style/list_item"
         android:textColor="@color/md_white_1000"/>
 
@@ -26,7 +26,7 @@
         	android:layout_alignParentRight="true"
         	android:background="@drawable/btn_bg"
 	   	    style="@style/list_item"
-	   	    android:text="同  步" 
+	   	    android:text="@string/healthy_sync" 
 	   	    android:textColor="@drawable/item_text_color_white"/>
 	   	
 	   	</RelativeLayout>

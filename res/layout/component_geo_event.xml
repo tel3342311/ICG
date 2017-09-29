@@ -31,7 +31,7 @@
             android:layout_alignParentStart="true"
             style="@style/list_item"
             android:gravity="center"
-            android:text="2017/06/14 週二"/>
+            android:text=""/>
         
         <include 
             android:id="@+id/detail_info"

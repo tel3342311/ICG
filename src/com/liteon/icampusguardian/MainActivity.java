@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
         	if (mSaftyFragment == null) {
 				mSaftyFragment = new SafetyFragment();
 			}
-			changeFragment(mSaftyFragment, "安心", NAVIGATION_DRAWER);
+			changeFragment(mSaftyFragment, getString(R.string.safty), NAVIGATION_DRAWER);
 		}
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Def.ACTION_NOTIFY);
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				mBottomView.setSelectedItemId(R.id.action_alarm);
 				return;
 			} else if (mCurrentFragment instanceof AlarmPeriodFragment) {
-				//changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this), "設定鬧鈴", 0);
+				//changeFragment(new AlarmEditingFragment(mCurrentAlarmIdx, this), getString(R.string.alarm_edit_period), 0);
 				if (((AlarmPeriodFragment) mCurrentFragment).getCurrentPeriod() == 0) {
 					showPeriodErrorDialog();
 					return;
@@ -311,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			case R.id.action_health:
 				//fragment = new HealthFragment(MainActivity.this);
 				fragment = new HealthMainFragment();
-				title = getString(R.string.health_page_title);
+				title = getString(R.string.healthy_today_reocrd);
 				break;
 			case R.id.action_alarm:
 				fragment = new AlarmFragment(MainActivity.this);
@@ -459,13 +459,16 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	}
 
 	public void deleteAccount() {
+		StringBuilder sBuilder = new StringBuilder();
+		sBuilder.append(String.format(getString(R.string.delete_tracking), mChildName.getText()))
+		.append("\n")
+		.append(getString(R.string.delete_warning));
 		mDeleteAccountConfirmDialog = new ConfirmDeleteDialog();
 		mDeleteAccountConfirmDialog.setOnConfirmEventListener(mOnDeleteAccountConfirm);
 		mDeleteAccountConfirmDialog.setmOnCancelListener(mOnDeleteAccountCancel);
-		mDeleteAccountConfirmDialog.setmTitleText("刪除追蹤"+ mChildName.getText() + "\n" +
-		"此手機將無法看見該帳號紀錄，但雲端記錄不會刪除，如日後要由此手機觀看，請重新加入該帳號");
-		mDeleteAccountConfirmDialog.setmBtnConfirmText("確定");
-		mDeleteAccountConfirmDialog.setmBtnCancelText("取消");
+		mDeleteAccountConfirmDialog.setmTitleText(sBuilder.toString());
+		mDeleteAccountConfirmDialog.setmBtnConfirmText(getString(R.string.delete_child_confirm));
+		mDeleteAccountConfirmDialog.setmBtnCancelText(getString(R.string.delete_child_cancel));
 		mDeleteAccountConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
 	}
 	
@@ -478,10 +481,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
 			mStudents.remove(student);
 			mDeleteAccountConfirmDialog.dismiss();
-			
 			final CustomDialog dialog = new CustomDialog();
-			dialog.setTitle("完成刪除追蹤" + mChildName.getText());
-			dialog.setBtnText("好");
+			dialog.setTitle(String.format(getString(R.string.child_deleted), mChildName.getText()));
+			dialog.setBtnText(getString(android.R.string.ok));
 			dialog.setBtnConfirm(new OnClickListener() {
 				
 				@Override
@@ -547,7 +549,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	public void onAddAlarmClick() {
 		if (mCurrentFragment instanceof AlarmFragment) {
 			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
-			changeFragment(new AlarmEditingFragment(this), "設定鬧鈴", 0);
+			changeFragment(new AlarmEditingFragment(this), getString(R.string.alarm_edit_period), 0);
 			mCurrentAlarmIdx = -1;
 			if (mCurrentAlarmItem == null) {
 				mCurrentAlarmItem = getCurrentAlarmItem();
@@ -561,7 +563,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 
 	public void onFinishEditPeriod(){
 		if (mCurrentFragment instanceof AlarmPeriodFragment) {
-			changeFragment(new AlarmEditingFragment(this), "設定鬧鈴", 0);
+			changeFragment(new AlarmEditingFragment(this), getString(R.string.alarm_edit_period), 0);
 			mCurrentAlarmIdx = -1;
 			if (mCurrentAlarmItem == null) {
 				mCurrentAlarmItem = getCurrentAlarmItem();
@@ -589,7 +591,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		if (mCurrentFragment instanceof AlarmFragment) {
 			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
 			mCurrentAlarmIdx = idx;
-			changeFragment(new AlarmEditingFragment(idx, this), "設定鬧鈴", 0);
+			changeFragment(new AlarmEditingFragment(idx, this), getString(R.string.alarm_edit_period), 0);
 			
 			if (fragment.isEditMode()) {
 				fragment.exitEditMode();
@@ -603,7 +605,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		if (item.getItemType() == AlarmPeriodItem.TYPE.CUSTOMIZE) {
 			// TODO get current AlarmItem
 			alarmItem.setPeriodItem(item);
-			changeFragment(new AlarmPeriodFragment(mCurrentAlarmIdx), "設定鬧鈴週期", NAVIGATION_BACK);
+			changeFragment(new AlarmPeriodFragment(mCurrentAlarmIdx), getString(R.string.alarm_edit_period), NAVIGATION_BACK);
 		}
 	}
 
@@ -611,10 +613,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	public void onSettingItemClick(com.liteon.icampusguardian.util.SettingItem.TYPE type) {
 		switch (type) {
 		case BASIC_INFO:
-			changeFragment(new SettingProfileFragment(), "基本資料", NAVIGATION_BACK);
+			changeFragment(new SettingProfileFragment(), getString(R.string.child_basic_profile), NAVIGATION_BACK);
 			break;
 		case GOAL_SETTING:
-			changeFragment(new SettingTargetFragment(), "每日目標設定", NAVIGATION_BACK);
+			changeFragment(new SettingTargetFragment(), getString(R.string.child_goal_setting), NAVIGATION_BACK);
 			break;
 		case PAIRING:
 			if (!TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
@@ -644,9 +646,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		mUnPairConfirmDialog = new ConfirmDeleteDialog();
 		mUnPairConfirmDialog.setOnConfirmEventListener(mUnPairConfirmClickListener);
 		mUnPairConfirmDialog.setmOnCancelListener(mUnPairCancelClickListener);
-		mUnPairConfirmDialog.setmTitleText("將解除已綁定的智慧手錶");
-		mUnPairConfirmDialog.setmBtnConfirmText("確定");
-		mUnPairConfirmDialog.setmBtnCancelText("取消");
+		mUnPairConfirmDialog.setmTitleText(getString(R.string.will_unbind_watch));
+		mUnPairConfirmDialog.setmBtnConfirmText(getString(R.string.bind_confirm));
+		mUnPairConfirmDialog.setmBtnCancelText(getString(R.string.bind_cancel));
 		mUnPairConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
 	}
 	private View.OnClickListener mUnPairConfirmClickListener = new OnClickListener() {

@@ -1,11 +1,14 @@
 package com.liteon.icampusguardian.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.util.HealthHistogramView.OnHistogramChangeListener;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 
+import android.R.string;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -233,7 +236,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         // draw starting at top of circle in the clockwise direction
         canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
-        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "步", mTargetOffsetY);
+        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + getResources().getString(R.string.healthy_step), mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);		
 	}
 
@@ -254,9 +257,11 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	    canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcClockBackGroundPaint);
         canvas.drawArc(rect, 270, 360, false, arcClockPaint);
         canvas.drawArc(rect, 270, 360, false, arcClockMinPaint);
-        int hours = mCurrentValue / 60;
-        int minute = mCurrentValue % 60;
-        drawCenter(canvas, textTargetPaint, hours + "小時" + minute + "分", mTargetOffsetY);
+
+        SimpleDateFormat sdf = new SimpleDateFormat(App.getContext().getString(R.string.healthy_hour_mins));
+		Date date = new Date(mCurrentValue);
+		String output = sdf.format(date);
+        drawCenter(canvas, textTargetPaint, output, mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);		
 	}
 
@@ -279,7 +284,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         // draw starting at top of circle in the clockwise direction
         canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
-        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "分", mTargetOffsetY);
+        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + getResources().getString(R.string.healthy_minutes), mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);			
 	}
 
@@ -301,7 +306,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	    cy = mTypeIconLocationY;
 	    canvas.drawBitmap(mTypeIcon, cx, cy, null);
         
-        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "bpm", mTargetOffsetY);
+        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + getResources().getString(R.string.healthy_bpm), mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);			
 	}
 
@@ -324,7 +329,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         // draw starting at top of circle in the clockwise direction
         canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
-        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "分", mTargetOffsetY);
+        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + getResources().getString(R.string.healthy_minutes), mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);			
 	}
 	private static int currentResId;
@@ -365,11 +370,11 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	    
 	    drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);
 	    
-	    canvas.drawText("非常不好", (float) (mWidth * 0.75), (float) (mHeight * 0.2), textPaint);
-	    canvas.drawText("非常好", (float) (mWidth * 0.12), (float) (mHeight * 0.2), textPaint);
-	    canvas.drawText("好", (float) (mWidth * 0.12), (float) (mHeight * 0.7), textPaint);
-	    canvas.drawText("不好", (float) (mWidth * 0.85), (float)(mHeight * 0.7), textPaint);
-	    canvas.drawText("普通", (float)(mWidth * 0.45), (float)(mHeight * 0.97), textPaint);
+	    canvas.drawText(getResources().getString(R.string.activity_very_bad), (float) (mWidth * 0.75), (float) (mHeight * 0.2), textPaint);
+	    canvas.drawText(getResources().getString(R.string.activity_excellent), (float) (mWidth * 0.12), (float) (mHeight * 0.2), textPaint);
+	    canvas.drawText(getResources().getString(R.string.activity_good), (float) (mWidth * 0.12), (float) (mHeight * 0.7), textPaint);
+	    canvas.drawText(getResources().getString(R.string.activity_bad), (float) (mWidth * 0.85), (float)(mHeight * 0.7), textPaint);
+	    canvas.drawText(getResources().getString(R.string.activity_normal), (float)(mWidth * 0.45), (float)(mHeight * 0.97), textPaint);
 	}
 	
 	private void onDrawCalories(Canvas canvas) {
@@ -391,7 +396,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         // draw starting at top of circle in the clockwise direction
         canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcPaintPrimary);
         
-        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + "卡", mTargetOffsetY);
+        drawCenter(canvas, textTargetPaint, Integer.toString(mCurrentValue) + getResources().getString(R.string.healthy_cal), mTargetOffsetY);
         drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);
 	}
 	

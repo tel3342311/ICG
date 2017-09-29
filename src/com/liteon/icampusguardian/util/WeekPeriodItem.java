@@ -3,19 +3,20 @@ package com.liteon.icampusguardian.util;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
 
 public class WeekPeriodItem {
 
 	
 	public static enum TYPE {
-		SUNDAY("週日",    0x1000000),
-		MONDAY("週一",    0x0100000),
-		TUESDAY("週二",   0x0010000),
-		WEDNESDAY("週三", 0x0001000),
-		THURSDAY("週四",  0x0000100),
-		FRIDAY("週五",    0x0000010),
-		SATURDAY("週六",  0x0000001);
+		SUNDAY(App.getContext().getString(R.string.alarm_sun),    0x1000000),
+		MONDAY(App.getContext().getString(R.string.alarm_mon),    0x0100000),
+		TUESDAY(App.getContext().getString(R.string.alarm_tue),   0x0010000),
+		WEDNESDAY(App.getContext().getString(R.string.alarm_wed), 0x0001000),
+		THURSDAY(App.getContext().getString(R.string.alarm_thr),  0x0000100),
+		FRIDAY(App.getContext().getString(R.string.alarm_fri),    0x0000010),
+		SATURDAY(App.getContext().getString(R.string.alarm_sat),  0x0000001);
 		
 		String name;
 		long value;

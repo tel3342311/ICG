@@ -60,7 +60,7 @@ public class FirmwareDownLoadingActivity extends AppCompatActivity {
 
 		@Override
 		protected void onPreExecute() {
-			mUpdateText.setText("傳送新版韌體至手機...");
+			mUpdateText.setText(R.string.firmware_sending);
 		}
 		
 		@Override

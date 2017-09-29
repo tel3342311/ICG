@@ -98,7 +98,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		if (requestCode == REQUEST_WATCH_SURFACE) {
 			if (resultCode == RESULT_OK) {
 				mProgressBar.setVisibility(View.VISIBLE);
-				mTitleUpdating.setText("正在與智慧手錶同步中...");
+				mTitleUpdating.setText(R.string.syncing_photo_to_watch);
 				mTitleUpdating.setVisibility(View.VISIBLE);
 				new ConnectBleTask().execute("");
 			}
@@ -131,7 +131,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
 		setupWatchSurface();
-		mToolbar.setTitle("個性化錶面");
+		mToolbar.setTitle(R.string.watch_surface);
 	}
 	
 	@Override
@@ -144,7 +144,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		@Override
 		protected void onPreExecute() {
 			mProgressBar.setVisibility(View.VISIBLE);
-			mTitleUpdating.setText("正在與智慧手錶同步中...");
+			mTitleUpdating.setText(R.string.syncing_photo_to_watch);
 			mTitleUpdating.setVisibility(View.VISIBLE);
 		}
 		
@@ -162,15 +162,15 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean success) {
         	mProgressBar.setVisibility(View.INVISIBLE);
         	if (success == true) {
-        		mTitleUpdating.setText("已完成與配對智慧手錶同步");
+        		mTitleUpdating.setText(R.string.syncing_photo_to_watch_complete);
         	} else {
         		mTitleUpdating.setVisibility(View.INVISIBLE);
         		mBLEFailConfirmDialog = new ConfirmDeleteDialog();
         		mBLEFailConfirmDialog.setOnConfirmEventListener(mOnBLEFailConfirmClickListener);
         		mBLEFailConfirmDialog.setmOnCancelListener(mOnBLEFailCancelClickListener);
-        		mBLEFailConfirmDialog.setmTitleText("智慧手錶同步失敗\n請確認手環與手機藍芽連結狀態");
-        		mBLEFailConfirmDialog.setmBtnConfirmText("同步");
-        		mBLEFailConfirmDialog.setmBtnCancelText("取消");
+        		mBLEFailConfirmDialog.setmTitleText(getString(R.string.syncing_photo_to_watch_failed));
+        		mBLEFailConfirmDialog.setmBtnConfirmText(getString(R.string.syncing_photo_to_watch_synced));
+        		mBLEFailConfirmDialog.setmBtnCancelText(getString(R.string.syncing_photo_to_watch_cancel));
         		mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
         	}
         }

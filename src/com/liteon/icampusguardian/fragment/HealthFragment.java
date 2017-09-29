@@ -90,7 +90,7 @@ public class HealthFragment extends Fragment {
 			
 			@Override
 			public void onClick(View v) {
-				title.setText("同步中");
+				title.setText(getString(R.string.alarm_syncing));
 				final Handler handler= new Handler();
 				final Runnable hideSyncView = new Runnable() {
 					
@@ -102,7 +102,7 @@ public class HealthFragment extends Fragment {
 				Runnable runnable = new Runnable(){
 					   @Override
 					   public void run() {
-						   SimpleDateFormat sdf = new SimpleDateFormat("已於dd/MM HH:mm 更新");
+						   SimpleDateFormat sdf = new SimpleDateFormat(getString(R.string.healthy_update_time));
 						   String currentDateandTime = sdf.format(Calendar.getInstance().getTime());
 						   title.setText(currentDateandTime);
 						   handler.postDelayed(hideSyncView, 3000);

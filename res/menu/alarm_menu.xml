@@ -11,10 +11,11 @@
         android:id="@+id/action_add"
         android:enabled="true"
         app:showAsAction="always"
-        android:title="新增"/>
+        android:title="@string/alarm_add_new_alarm"/>
      <item
         android:id="@+id/action_complete"
         android:enabled="true"
+        android:icon="@drawable/ic_check_black_24dp"
         app:showAsAction="always"
         android:title="完成"/>
 

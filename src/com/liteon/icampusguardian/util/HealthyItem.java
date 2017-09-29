@@ -4,19 +4,20 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.App;
 
 public class HealthyItem {
 
-	
 	public static enum TYPE {
-        ACTIVITY("活動指數", R.drawable.health_img_activity, R.color.color_activity),
-        CALORIES_BURNED("每日燃燒卡路里", R.drawable.health_img_calories, R.color.color_calories ),
-        TOTAL_STEPS("步數", R.drawable.health_img_step, R.color.color_execrise),
-        WALKING_TIME("走路", R.drawable.health_img_walk, R.color.color_execrise),
-        RUNNING_TIME("跑步", R.drawable.health_img_run, R.color.color_execrise),
-        CYCLING_TIME("騎腳踏車", R.drawable.health_img_bicycle, R.color.color_execrise),
-        HEART_RATE("心率", R.drawable.health_img_heartbeat, R.color.color_heart_rate),
-        SLEEP_TIME("睡眠", R.drawable.health_img_sleep, R.color.color_sleep);
+        ACTIVITY(App.getContext().getString(R.string.activity), R.drawable.health_img_activity, R.color.color_activity),
+        CALORIES_BURNED(App.getContext().getString(R.string.healthy_carlories), R.drawable.health_img_calories, R.color.color_calories ),
+        TOTAL_STEPS(App.getContext().getString(R.string.healthy_steps), R.drawable.health_img_step, R.color.color_execrise),
+        WALKING_TIME(App.getContext().getString(R.string.healthy_walk), R.drawable.health_img_walk, R.color.color_execrise),
+        RUNNING_TIME(App.getContext().getString(R.string.healthy_running), R.drawable.health_img_run, R.color.color_execrise),
+        CYCLING_TIME(App.getContext().getString(R.string.healthy_cycling), R.drawable.health_img_bicycle, R.color.color_execrise),
+        HEART_RATE(App.getContext().getString(R.string.healthy_avg_bpm), R.drawable.health_img_heartbeat, R.color.color_heart_rate),
+        SLEEP_TIME(App.getContext().getString(R.string.healthy_sleep), R.drawable.health_img_sleep, R.color.color_sleep);
 		
 		private String name;
 		private int icon_id;
@@ -81,23 +82,23 @@ public class HealthyItem {
 				output = Integer.toString(value);
 				break;
 			case CALORIES_BURNED:
-				output = Integer.toString(value) + " 卡";
+				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_cal);
 				break;
 			case WALKING_TIME:
 			case RUNNING_TIME:
 			case CYCLING_TIME:	
-				output = Integer.toString(value) + " 分";
+				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_minutes);
 				break;
 			case SLEEP_TIME:
-				SimpleDateFormat sdf = new SimpleDateFormat("HH 小時 mm 分");
+				SimpleDateFormat sdf = new SimpleDateFormat(App.getContext().getString(R.string.healthy_hour_mins));
 				Date date = new Date(value);
 				output = sdf.format(date);
 				break;
 			case HEART_RATE:
-				output = Integer.toString(value) + " bpm";
+				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_bpm);
 				break;
 			case TOTAL_STEPS:
-				output = Integer.toString(value) + " 步";
+				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_step);
 				break;
 			default:
 				output = "";

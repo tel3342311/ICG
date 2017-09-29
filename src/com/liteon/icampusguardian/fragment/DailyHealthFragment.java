@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.text.SimpleDateFormat;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -21,7 +22,6 @@ import com.liteon.icampusguardian.util.HealthyItemAdapter;
 import android.R.integer;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.icu.text.SimpleDateFormat;
 import android.icu.text.DisplayContext.Type;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

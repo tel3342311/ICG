@@ -79,7 +79,7 @@
 	<string name="safty_no_watch_detected">No scanned data</string>
 	<!-- healthy -->
 	<string name="healthy_today_reocrd">Health Summary</string>
-	<string name="healthy_update_time">Updated MM/dd hh:mm</string>
+	<string name="healthy_update_time">\'Updated\' MM/dd hh:mm</string>
 	<string name="healthy_sync_failed">Data sync failed</string>
 	<string name="healthy_sync">Sync</string>
 	<string name="healthy_activity">PFI</string>
@@ -93,8 +93,8 @@
 	<string name="healthy_cycling">Cycling</string>
 	<string name="healthy_avg_bpm">Heart Rate</string> 
 	<string name="healthy_bpm">bpm</string> 
-	<string name="healthy_sleep">睡眠</string>
-	<string name="healthy_hour_mins">hh Hrs mm Mins</string>
+	<string name="healthy_sleep">Sleep</string>
+	<string name="healthy_hour_mins">hh \'Hrs\' mm \'Mins\'</string>
 	<!-- Activities -->
 	<string name="activity">PFI</string>  
 	<string name="activity_very_bad">Poor</string>
@@ -111,7 +111,7 @@
 	<string name="sleep_quality_good">Good</string>
 	<string name="sleep_quality_normal">Ok</string>
 	<string name="sleep_quality_bad">bad</string>
-	<string name="sleep_hours">%s Hours</string>
+	<string name="sleep_hours">Hours</string>
 	<!-- Alarm -->
 	<string name="alarm">Alarm</string>
 	<string name="alarm_no_watch_synced">Not synced</string>
@@ -130,6 +130,14 @@
 	<string name="alarm_period">Repeat</string>
 	<string name="alarm_edit_period">Edit</string>
 	<string name="alarm_delete">Delete alarm</string>
+	<string name="alarm_max_alarm">Maximum number of alarm is 4</string>
+	<string name="alarm_sun">Sunday</string>
+	<string name="alarm_mon">Monday</string>
+	<string name="alarm_tue">Tuesday</string>
+	<string name="alarm_wed">Wednesday</string>
+	<string name="alarm_thr">Thursday</string>
+	<string name="alarm_fri">Friday</string>
+	<string name="alarm_sat">Saturday</string>
 	<!-- child profile -->
 	<string name="child_setup_profile">Child\'s Profile</string>
 	<string name="child_basic_profile">Profile</string>
@@ -216,17 +224,15 @@
 	<string name="ask_bluetooth_permission">Application is requesting permission to turn on Bluetooth.</string>
 	<!-- old strings -->
 	<!-- Bottom Bar -->
-	<string name="safty_tab">安心</string>
-	<string name="health_tab">健康</string>
-	<string name="alarm_tab">鬧鈴</string>
-	<string name="setting_tab">設定</string>
+	<string name="safty_tab">Safty</string>
+	<string name="health_tab">Health</string>
+	<string name="alarm_tab">Alarm</string>
+	<string name="setting_tab">Settings</string>
 	<!-- Drawer -->
-	<string name="switch_account">切換至%s帳號</string>
+	<string name="switch_account">Switch to %s</string>
 	<string name="add_child">Add New baby</string>
-	<string name="delete_account">刪除%s帳號</string>
-	<string name="drawer_setting">App資訊與設定</string>
+	<string name="delete_account">Delete %s</string>
+	<string name="drawer_setting">About and Settings</string>
 	<!-- Pin -->
 	<string name="pin_content_desc">PIN input field</string>
-	<!-- Page title -->
-	<string name="health_page_title">今日紀錄</string>
 </resources>

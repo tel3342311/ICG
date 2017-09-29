@@ -107,7 +107,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mAddAlarm.setVisibility(View.VISIBLE);
 		((AlarmItemAdapter)mAdapter).setEditMode(false);
 		//mToolbar.setTitle("鬧鈴");
-		mTitleView.setText("鬧鈴");
+		mTitleView.setText(getString(R.string.alarm));
 	}
 	
 	public void enterEditMode() {
@@ -116,7 +116,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mAddAlarm.setVisibility(View.GONE);
 		((AlarmItemAdapter)mAdapter).setEditMode(true);
 		//mToolbar.setTitle("編輯鬧鈴");
-		mTitleView.setText("編輯鬧鈴");
+		mTitleView.setText(getString(R.string.alarm_edit_period));
 	}
 	
 	@Override
@@ -142,9 +142,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	
 	private void showAddAlarmErrorDialog() {
 		final CustomDialog dialog = new CustomDialog();
-		dialog.setTitle("新增鬧鈴最多為四組");
+		dialog.setTitle(getString(R.string.alarm_max_alarm));
 		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
-		dialog.setBtnText("好");
+		dialog.setBtnText(getString(android.R.string.ok));
 		dialog.setBtnConfirm(new OnClickListener() {
 			
 			@Override
@@ -269,7 +269,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			
 			@Override
 			public void onClick(View v) {
-				title.setText("同步中");
+				title.setText(R.string.alarm_syncing);
 				final Handler handler= new Handler();
 				final Runnable hideSyncView = new Runnable() {
 					
@@ -281,7 +281,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 				Runnable runnable = new Runnable(){
 					   @Override
 					   public void run() {
-						   title.setText("同步完成");
+						   title.setText(R.string.alarm_sync_complete);
 						   handler.postDelayed(hideSyncView, 3000);
 					} 
 				};

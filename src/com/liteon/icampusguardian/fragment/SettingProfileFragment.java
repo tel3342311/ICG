@@ -177,9 +177,9 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
     			break;
     		case GENDER:
     			if (TextUtils.equals(student.getGender(), "MALE")) {
-    				item.setValue("男性");
+    				item.setValue(getString(R.string.setup_kid_male));
     			} else {
-    				item.setValue("女性");
+    				item.setValue(getString(R.string.setup_kid_female));
         		}
     			break;
     		case HEIGHT:
@@ -206,9 +206,9 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
     			break;
     		case GENDER:
     			if (TextUtils.equals(student.getGender(), "MALE")) {
-    				item.setValue("男性");
+    				item.setValue(getString(R.string.setup_kid_male));
     			} else {
-    				item.setValue("女性");
+    				item.setValue(getString(R.string.setup_kid_female));
         		}
     			break;
     		case HEIGHT:
@@ -285,10 +285,10 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 			break;
 		case GENDER:
 			one_wheel.setVisibility(View.VISIBLE);
-			mWheelTitle.setText("性別");
+			mWheelTitle.setText(getString(R.string.setup_kid_gender));
 			List<String> gender = new ArrayList<>();
-			gender.add("男生");
-			gender.add("女生");
+			gender.add(getString(R.string.setup_kid_male));
+			gender.add(getString(R.string.setup_kid_female));
 			mWheel_single.setData(gender);
 			mWheel_single.setCyclic(false);
 			String gender_now = mStudents.get(mCurrentStudentIdx).getGender();
@@ -301,7 +301,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 			break;
 		case HEIGHT:
 			one_wheel.setVisibility(View.VISIBLE);
-			mWheelTitle.setText("身高");
+			mWheelTitle.setText(getString(R.string.setup_kid_height));
 			List<String> height = new ArrayList<>();
 			for (int i = 0; i < 200; i++) {
 				height.add(Integer.toString(i));
@@ -313,7 +313,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 			break;
 		case WEIGHT:
 			one_wheel.setVisibility(View.VISIBLE);
-			mWheelTitle.setText("體重");
+			mWheelTitle.setText(getString(R.string.setup_kid_weight));
 			List<String> weight = new ArrayList<>();
 			for (int i = 0; i < 100; i++) {
 				weight.add(Integer.toString(i));

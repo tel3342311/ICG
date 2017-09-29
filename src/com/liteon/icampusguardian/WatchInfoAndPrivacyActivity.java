@@ -79,9 +79,9 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		super.onResumeFragments();
 		if (isUpdateFirmwareFailed) {
 			mDialog = new CustomDialog();
-    		mDialog.setTitle("連線失敗");
+    		mDialog.setTitle(getString(R.string.connect_failed));
     		mDialog.setIcon(R.drawable.ic_error_outline_black_24dp);
-    		mDialog.setBtnText("好");
+    		mDialog.setBtnText(getString(android.R.string.ok));
     		mDialog.setBtnConfirm(mOnSyncFailConfirmClickListener);
     		mDialog.show(getSupportFragmentManager(), "dialog_fragment");
     		isUpdateFirmwareFailed = false;
@@ -154,7 +154,7 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
 		mIsTeacher = sp.getBoolean(Def.SP_TEACHER_PLAN, false);
-		mToolbar.setTitle("智慧手錶資訊與使用隱私");
+		mToolbar.setTitle(R.string.watch_info_privacy);
 		mTeacherCheck.setChecked(mIsTeacher);
 	}
 	
@@ -190,15 +190,15 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
         		mBLEFailConfirmDialog = new ConfirmDeleteDialog();
         		mBLEFailConfirmDialog.setOnConfirmEventListener(mOnBLEFailConfirmClickListener);
         		mBLEFailConfirmDialog.setmOnCancelListener(mOnBLEFailCancelClickListener);
-        		mBLEFailConfirmDialog.setmTitleText("智慧手錶韌體更新\n將更新成V1.XX版\n韌體更新資料較大，建議使用wifi下載讓更新過程較順利");
-        		mBLEFailConfirmDialog.setmBtnConfirmText("安裝");
-        		mBLEFailConfirmDialog.setmBtnCancelText("取消");
+        		mBLEFailConfirmDialog.setmTitleText(getString(R.string.update_to_version));
+        		mBLEFailConfirmDialog.setmBtnConfirmText(getString(R.string.watch_update_install));
+        		mBLEFailConfirmDialog.setmBtnCancelText(getString(R.string.watch_update_cancel));
         		mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
         	} else {
         		mDialog = new CustomDialog();
-        		mDialog.setTitle("同步失敗");
+        		mDialog.setTitle(getString(R.string.syncing_fail));
         		mDialog.setIcon(R.drawable.ic_error_outline_black_24dp);
-        		mDialog.setBtnText("好");
+        		mDialog.setBtnText(getString(android.R.string.ok));
         		mDialog.setBtnConfirm(mOnSyncFailConfirmClickListener);
         		mDialog.show(getSupportFragmentManager(), "dialog_fragment");
         	}

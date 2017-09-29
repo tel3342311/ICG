@@ -13,7 +13,7 @@
         android:layout_marginTop="@dimen/pairing_title_margin_top"
         android:layout_marginStart="@dimen/pairing_title_margin_horizontal"
         android:layout_marginEnd="@dimen/pairing_title_margin_horizontal"
-        android:text="請長按智慧型手錶按鈕，以進入配對模式。進入手環配對模式後，請點擊連接鍵"
+        android:text="@string/pairing_watch_steps"
         android:textSize="@dimen/pairing_title_text_size"
         android:textColor="@color/md_black_1000"
         android:lineSpacingExtra="@dimen/pairing_title_line_space"
@@ -37,7 +37,7 @@
 	        android:background="@color/md_red_700"
 	        style="@style/list_item"
 	        android:textColor="@color/md_white_1000"
-	        android:text="配對智慧手錶" />
+	        android:text="@string/pairing_watch_pair" />
 	    	    
 	    <android.support.v7.widget.AppCompatButton
 	        android:id="@+id/pairing_watch_later"
@@ -47,12 +47,12 @@
 	        style="@style/list_item"
 	       	android:textColor="@color/md_white_1000"
 	        android:background="@color/md_red_700"
-	        android:text="之後再配對手錶" />
+	        android:text="@string/pairing_watch_later" />
 
 		<TextView 
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="之後再至頁面下方 &quot;設定&quot; 中配對手環" 
+			android:text="@string/pairing_watch_later_in_setting" 
 			android:layout_gravity="center_horizontal"
 			style="@style/list_item"/>
 	</LinearLayout>

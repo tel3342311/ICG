@@ -1,17 +1,27 @@
 package com.liteon.icampusguardian.fragment;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.TargetItem;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +55,13 @@ public class SettingTargetFragment extends Fragment {
 	private TextView mTitleCyclingUnit;
 	private TextView mTitleSleepingUnit;
 	private List<TextView> mTitleList = new ArrayList();
+	
+	private Map<String, TargetItem> mTargetMap;
+	private List<Student> mStudents;
+	private int mCurrentStudentIdx;
+	
+	private TargetItem mCurrentTargetItem;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 	
@@ -52,6 +69,8 @@ public class SettingTargetFragment extends Fragment {
 		findView(rootView);
 		setupListener();
 		mDbHelper = DBHelper.getInstance(getActivity());
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		return rootView;
 	}
 	
@@ -128,19 +147,64 @@ public class SettingTargetFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
     	SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-    	String carlos = sp.getString(Def.SP_TARGET_CARLOS, "2000");
-    	String step = sp.getString(Def.SP_TARGET_STEPS, "10000");
-    	String walking = sp.getString(Def.SP_TARGET_WALKING, "30");
-    	String running = sp.getString(Def.SP_TARGET_RUNNING, "30");
-    	String cycling = sp.getString(Def.SP_TARGET_CYCLING, "30");
-    	String sleep = sp.getString(Def.SP_TARGET_SLEEPING, "9");
+		
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+    	restoreTarget();
     	
-		mCarlos.setText(carlos);
-		mStep.setText(step);
-		mWalking.setText(walking);
-		mRunning.setText(running);
-		mCycling.setText(cycling);
-		mSleeping.setText(sleep);
+		mCarlos.setText(mCurrentTargetItem.getCarlos());
+		mStep.setText(mCurrentTargetItem.getStep());
+		mWalking.setText(mCurrentTargetItem.getWalking());
+		mRunning.setText(mCurrentTargetItem.getRunning());
+		mCycling.setText(mCurrentTargetItem.getCycling());
+		mSleeping.setText(mCurrentTargetItem.getSleep());
+	}
+	
+	private void restoreTarget() {
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		String targetMap = sp.getString(Def.SP_TARGET_MAP, "");
+		Type typeOfHashMap = new TypeToken<Map<String, TargetItem >>() { }.getType();
+        Gson gson = new GsonBuilder().create();
+        mTargetMap = gson.fromJson(targetMap, typeOfHashMap);
+		if (TextUtils.isEmpty(targetMap)) {
+			mTargetMap = new HashMap<String, TargetItem>();
+			for (Student student : mStudents) {
+				String studentId = student.getStudent_id();
+				TargetItem item = new TargetItem();
+				item.setCarlos("2000");
+				item.setStep("10000");
+				item.setWalking("30");
+				item.setRunning("30");
+				item.setCycling("30");
+				item.setSleep("9");
+				mTargetMap.put(studentId, item);
+			}
+		}
+		if (mTargetMap.get(mStudents.get(mCurrentStudentIdx).getStudent_id()) == null) {
+			TargetItem item = new TargetItem();
+			item.setCarlos("2000");
+			item.setStep("10000");
+			item.setWalking("30");
+			item.setRunning("30");
+			item.setCycling("30");
+			item.setSleep("9");
+			mTargetMap.put(mStudents.get(mCurrentStudentIdx).getStudent_id(), new TargetItem());
+		}
+		mCurrentTargetItem = mTargetMap.get(mStudents.get(mCurrentStudentIdx).getStudent_id());
+	}
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		saveTarget();
+	}
+	
+	private void saveTarget() {
+		Gson gson = new Gson();
+		String input = gson.toJson(mTargetMap);
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sp.edit();
+		editor.putString(Def.SP_TARGET_MAP, input);
+		editor.commit();
 	}
 	
 	private TextWatcher mCarlosTextWatcher = new TextWatcher() {
@@ -157,10 +221,8 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sp.edit();
-			editor.putString(Def.SP_TARGET_CARLOS, s.toString());
-			editor.commit();
+			
+			mCurrentTargetItem.setCarlos(s.toString());
 		}
 	};
 	
@@ -178,10 +240,7 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sp.edit();
-			editor.putString(Def.SP_TARGET_STEPS, s.toString());
-			editor.commit();
+			mCurrentTargetItem.setStep(s.toString());
 		}
 	};
 	
@@ -199,10 +258,7 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sp.edit();
-			editor.putString(Def.SP_TARGET_WALKING, s.toString());
-			editor.commit();
+			mCurrentTargetItem.setWalking(s.toString());
 		}
 	};
 	
@@ -220,10 +276,7 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sp.edit();
-			editor.putString(Def.SP_TARGET_RUNNING, s.toString());
-			editor.commit();
+			mCurrentTargetItem.setRunning(s.toString());
 		}
 	};
 	
@@ -241,10 +294,7 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sp.edit();
-			editor.putString(Def.SP_TARGET_CYCLING, s.toString());
-			editor.commit();
+			mCurrentTargetItem.setCycling(s.toString());
 		}
 	};
 	
@@ -262,10 +312,7 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sp.edit();
-			editor.putString(Def.SP_TARGET_SLEEPING, s.toString());
-			editor.commit();
+			mCurrentTargetItem.setSleep(s.toString());
 		}
 		
 

@@ -1,9 +1,17 @@
 package com.liteon.icampusguardian.util;
 
+import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -48,6 +56,12 @@ public class HealthHistogramView extends View {
 	private OnHistogramChangeListener mHistogramChangeListener;
 	private TYPE mType;
 	private String mSettingTarget;
+	private TargetItem mCurrentTargetItem;
+	private Map<String, TargetItem> mTargetMap;
+	private List<Student> mStudents;
+	private int mCurrentStudentIdx;
+	private DBHelper mDbHelper;
+
 	public HealthHistogramView(Context context) {
 		super(context);
 	}
@@ -102,35 +116,39 @@ public class HealthHistogramView extends View {
 		mGraphMarginHorizon = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_magin_horizon);
 		mHistogramWidth = getResources().getDimensionPixelSize(R.dimen.healthy_detail_histogram_width);
 		mRectList = new Rect[HISTOGRAM_NUM];    	
+		
+		mDbHelper = DBHelper.getInstance(getContext());
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+		restoreTarget();
 	}
 	
 	private String getTarget() {
-    	SharedPreferences sp = getContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		String target = "";
 		switch(mType) {
 		case ACTIVITY:
 			target = "99";
 			break;
 		case CALORIES_BURNED:
-	    	target = sp.getString(Def.SP_TARGET_CARLOS, "2000");
+	    	target = mCurrentTargetItem.getCarlos();
 			break;
 		case CYCLING_TIME:
-	    	target = sp.getString(Def.SP_TARGET_CYCLING, "30");
+	    	target = mCurrentTargetItem.getCycling();
 			break;
 		case HEART_RATE:
 			target = "80";
 			break;
 		case RUNNING_TIME:
-	    	target = sp.getString(Def.SP_TARGET_RUNNING, "30");
+	    	target = mCurrentTargetItem.getRunning();
 			break;
 		case SLEEP_TIME:
-	    	target = sp.getString(Def.SP_TARGET_SLEEPING, "9");
+	    	target = mCurrentTargetItem.getSleep();
 			break;
 		case TOTAL_STEPS:
-	    	target = sp.getString(Def.SP_TARGET_STEPS, "10000");
+	    	target = mCurrentTargetItem.getStep();
 			break;
 		case WALKING_TIME:
-	    	target = sp.getString(Def.SP_TARGET_WALKING, "");
+	    	target = mCurrentTargetItem.getWalking();
 			break;
 		default:
 			break;
@@ -249,5 +267,39 @@ public class HealthHistogramView extends View {
 		paintOthers.setAlpha(128);
 		mSettingTarget = getTarget();
 		mTargetNum = !TextUtils.isEmpty(mSettingTarget) ? Integer.parseInt(mSettingTarget) : 80;
+	}
+	
+	private void restoreTarget() {
+		SharedPreferences sp = getContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		String targetMap = sp.getString(Def.SP_TARGET_MAP, "");
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		Type typeOfHashMap = new TypeToken<Map<String, TargetItem >>() { }.getType();
+        Gson gson = new GsonBuilder().create();
+        mTargetMap = gson.fromJson(targetMap, typeOfHashMap);
+		if (TextUtils.isEmpty(targetMap)) {
+			mTargetMap = new HashMap<String, TargetItem>();
+			for (Student student : mStudents) {
+				String studentId = student.getStudent_id();
+				TargetItem item = new TargetItem();
+				item.setCarlos("2000");
+				item.setStep("10000");
+				item.setWalking("30");
+				item.setRunning("30");
+				item.setCycling("30");
+				item.setSleep("9");
+				mTargetMap.put(studentId, item);
+			}
+		}
+		if (mTargetMap.get(mStudents.get(mCurrentStudentIdx).getStudent_id()) == null) {
+			TargetItem item = new TargetItem();
+			item.setCarlos("2000");
+			item.setStep("10000");
+			item.setWalking("30");
+			item.setRunning("30");
+			item.setCycling("30");
+			item.setSleep("9");
+			mTargetMap.put(mStudents.get(mCurrentStudentIdx).getStudent_id(), new TargetItem());
+		}
+		mCurrentTargetItem = mTargetMap.get(mStudents.get(mCurrentStudentIdx).getStudent_id());
 	}
 }

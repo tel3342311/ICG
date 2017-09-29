@@ -101,7 +101,8 @@
 	    android:alpha="0.7"
 	    android:animateLayoutChanges="true"
 	    android:background="@color/md_grey_800"
-	    android:visibility="gone" >
+	    android:visibility="gone" 
+	    android:clickable="true">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >

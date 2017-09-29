@@ -13,6 +13,7 @@ import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.AlarmItem;
+import com.liteon.icampusguardian.util.AlarmManager;
 import com.liteon.icampusguardian.util.AlarmPeriodItem;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
@@ -38,15 +39,8 @@ public class AlarmPeriodFragment extends Fragment implements IWeekViewHolderClic
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
 	private AlarmItem mItem;
-	private int mEditIdx = -1;
-	private Map<String, List<AlarmItem>> mAlarmMap;
-	private DBHelper mDbHelper;
-	private List<Student> mStudents;
-	private int mCurrnetStudentIdx;
-	private static ArrayList<AlarmItem> alarmDataset = new ArrayList<>();
 	
-	public AlarmPeriodFragment(int editIdx) {
-		mEditIdx = editIdx;
+	public AlarmPeriodFragment() {
 	}
 	
 	@Override
@@ -62,60 +56,16 @@ public class AlarmPeriodFragment extends Fragment implements IWeekViewHolderClic
 	@Override
 	public void onResume() {
 		super.onResume();
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
-		mDbHelper = DBHelper.getInstance(getActivity());
-		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
-		restoreAlarm();
+		if (AlarmManager.ACTION_ADDING == AlarmManager.getCurrentAction()) {
+			mItem = AlarmManager.mNewItem;
+		} else {
+			mItem = AlarmManager.mCurrentItem;
+		}
 		initRecycleView();
 	}
 	
-	@Override
-	public void onPause() {
-		super.onPause();
-		saveAlarm();
-	}
-	
-	private void restoreAlarm() {
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		String alarmMap = sp.getString(Def.SP_ALARM_MAP, "");
-		Type typeOfHashMap = new TypeToken<Map<String, List<AlarmItem>>>() { }.getType();
-        Gson gson = new GsonBuilder().create();
-        mAlarmMap = gson.fromJson(alarmMap, typeOfHashMap);
-		if (TextUtils.isEmpty(alarmMap)) {
-			mAlarmMap = new HashMap<String, List<AlarmItem>>();
-			for (Student student : mStudents) {
-				String studentId = student.getStudent_id();
-				mAlarmMap.put(studentId, new ArrayList<AlarmItem>());
-			}
-		}
-		alarmDataset = (ArrayList)mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
-		if (mEditIdx == -1) {
-			mItem = ((MainActivity)getActivity()).getCurrentAlarmItem();
-		} else {
-			mItem = alarmDataset.get(mEditIdx);
-		}
-		if (mItem.getPeriodItem() == null) {
-			AlarmPeriodItem item = new AlarmPeriodItem();
-			mItem.setPeriodItem(item);
-		}
-		
-	}
-	
-	private void saveAlarm() {
-		mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), alarmDataset);
-		Gson gson = new Gson();
-		String input = gson.toJson(mAlarmMap);
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = sp.edit();
-		editor.putString(Def.SP_ALARM_MAP, input);
-		editor.commit();
-	}
-	
 	public void findView(View rootView) {
-
 		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.alarm_view);
-
 	}
 	
 	public void initRecycleView() {

@@ -15,6 +15,7 @@ import com.liteon.icampusguardian.fragment.SettingFragment;
 import com.liteon.icampusguardian.fragment.SettingProfileFragment;
 import com.liteon.icampusguardian.fragment.SettingTargetFragment;
 import com.liteon.icampusguardian.util.AlarmItem;
+import com.liteon.icampusguardian.util.AlarmManager;
 import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
 import com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE;
 import com.liteon.icampusguardian.util.AlarmPeriodItem;
@@ -82,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private DrawerLayout mDrawerLayout;
 	private NavigationView mNavigationView;
 	private Fragment mCurrentFragment;
-	private int mCurrentAlarmIdx;
 	private List<Student> mStudents;
 	private int mCurrentStudentIdx;
 	private DBHelper mDbHelper;
@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
 	private SafetyFragment mSaftyFragment;
-	private AlarmItem mCurrentAlarmItem;
 	private TextView mTitleView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -558,10 +557,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		if (mCurrentFragment instanceof AlarmFragment) {
 			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
 			changeFragment(new AlarmEditingFragment(this), getString(R.string.alarm_edit_period), 0);
-			mCurrentAlarmIdx = -1;
-			if (mCurrentAlarmItem == null) {
-				mCurrentAlarmItem = getCurrentAlarmItem();
-			}
+
 			if (fragment.isEditMode()) {
 				fragment.exitEditMode();
 			}
@@ -572,34 +568,15 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	public void onFinishEditPeriod(){
 		if (mCurrentFragment instanceof AlarmPeriodFragment) {
 			changeFragment(new AlarmEditingFragment(this), getString(R.string.alarm_edit_period), 0);
-			mCurrentAlarmIdx = -1;
-			if (mCurrentAlarmItem == null) {
-				mCurrentAlarmItem = getCurrentAlarmItem();
-			}
 		}
 	}
-	public AlarmItem getCurrentAlarmItem(){
-		if (mCurrentAlarmItem == null) {
-			mCurrentAlarmItem = new AlarmItem();
-			mCurrentAlarmItem.setTitle("上學");
-			mCurrentAlarmItem.setDate("00:00");
-			mCurrentAlarmItem.setPeriod("週一至週五");
-			mCurrentAlarmItem.setEnabled(true);
-			AlarmPeriodItem item = new AlarmPeriodItem();
-			item.setItemType(TYPE.WEEK_DAY);
-			mCurrentAlarmItem.setPeriodItem(item);
-		}
-		return mCurrentAlarmItem;
-	}
-	public void setCurrentAlarmItem(AlarmItem item) {
-		mCurrentAlarmItem = item;
-	}
+
 	@Override
 	public void onEditAlarm(int idx) {
 		if (mCurrentFragment instanceof AlarmFragment) {
 			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
-			mCurrentAlarmIdx = idx;
-			changeFragment(new AlarmEditingFragment(idx, this), getString(R.string.alarm_edit_period), 0);
+
+			changeFragment(new AlarmEditingFragment(this), getString(R.string.alarm_edit_period), 0);
 			
 			if (fragment.isEditMode()) {
 				fragment.exitEditMode();
@@ -613,7 +590,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		if (item.getItemType() == AlarmPeriodItem.TYPE.CUSTOMIZE) {
 			// TODO get current AlarmItem
 			alarmItem.setPeriodItem(item);
-			changeFragment(new AlarmPeriodFragment(mCurrentAlarmIdx), getString(R.string.alarm_edit_period), NAVIGATION_BACK);
+			changeFragment(new AlarmPeriodFragment(), getString(R.string.alarm_edit_period), NAVIGATION_BACK);
 		}
 	}
 

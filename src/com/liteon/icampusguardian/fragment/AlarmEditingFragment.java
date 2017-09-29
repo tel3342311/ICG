@@ -15,6 +15,7 @@ import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.AlarmItem;
+import com.liteon.icampusguardian.util.AlarmManager;
 import com.liteon.icampusguardian.util.AlarmPeriodAdapter;
 import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
 import com.liteon.icampusguardian.util.AlarmPeriodItem;
@@ -58,38 +59,9 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	private IAlarmPeriodViewHolderClicks mOnItemClickListener;
 	private Toolbar mToolbar;
 	private TextView mTitleView;
-	private Map<String, List<AlarmItem>> mAlarmMap;
-	private DBHelper mDbHelper;
-	private List<Student> mStudents;
-	private int mCurrnetStudentIdx;
-	private static ArrayList<AlarmItem> myDataset = new ArrayList<>();
 	private EditText mAlarmName;
-	private boolean isCancelEditing;
-	private static String titleForAlarm = ""; 
 	public AlarmEditingFragment(IAlarmPeriodViewHolderClicks clicks) {
 		mOnItemClickListener = clicks;
-	}
-
-	public AlarmEditingFragment(int idx, IAlarmPeriodViewHolderClicks clicks) {
-		mEditIdx = idx;
-		mOnItemClickListener = clicks;
-
-	}
-
-	private void testData() {	
-		if (mEditIdx == -1) {
-			mCurrentAlarmItem = ((MainActivity)getActivity()).getCurrentAlarmItem();
-		} else {
-			mCurrentAlarmItem = new AlarmItem();
-			mCurrentAlarmItem.setTitle("上學");
-			mCurrentAlarmItem.setDate("00:00");
-			mCurrentAlarmItem.setPeriod("週一至週五");
-			mCurrentAlarmItem.setEnabled(true);
-			AlarmPeriodItem item = new AlarmPeriodItem();
-			item.setItemType(TYPE.WEEK_DAY);
-			mCurrentAlarmItem.setPeriodItem(item);
-		}
-		
 	}
 	
 	@Override
@@ -98,10 +70,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		View rootView = inflater.inflate(R.layout.fragment_alarm_editing, container, false);
 		findView(rootView);
 		setListener();
-		initWheelView();
-		initRecycleView();
-		mDbHelper = DBHelper.getInstance(getActivity());
-		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+
 		return rootView;
 	}
 
@@ -161,7 +130,6 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
  
 	        mAlarmName.addTextChangedListener(mOnTitleChange);  
 			mCurrentAlarmItem.setTitle(s.toString());
-			titleForAlarm = s.toString();
 		}
 		
 		private int calculateLength(String etstring) {  
@@ -187,8 +155,13 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            	isCancelEditing = true;
             	getActivity().onBackPressed();
+            	if (AlarmManager.getCurrentAction() == AlarmManager.ACTION_EDITING) {
+            		AlarmManager.restoreCurrentItem();
+            	}
+            	AlarmManager.mNewItem = null;
+            	AlarmManager.setCurrentAction(-1);
+            	AlarmManager.saveAlarm();
             }
         });
 		super.onCreateOptionsMenu(menu, inflater);
@@ -197,11 +170,12 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.action_confirm) {
-			if (mEditIdx == -1) {
-				myDataset.add(mCurrentAlarmItem);
-				((MainActivity)getActivity()).setCurrentAlarmItem(null);
-			}
 			getActivity().onBackPressed();
+			if (AlarmManager.ACTION_ADDING == AlarmManager.getCurrentAction()) {
+				AlarmManager.getDataSet().add(mCurrentAlarmItem);
+				AlarmManager.mNewItem = null;
+			}
+			AlarmManager.saveAlarm();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -224,11 +198,17 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 				
 			}
 		}
+		for (AlarmPeriodItem item : alarmPeriodDataset) {
+			if (item.getItemType() == mCurrentAlarmItem.getPeriodItem().getItemType()) {
+				item.setSelected(true);
+			} else {
+				item.setSelected(false);
+			}
+		}
 		
 		mRecyclerView.setHasFixedSize(true);
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
-		testData();
 		mAdapter = new AlarmPeriodAdapter(alarmPeriodDataset, this, mCurrentAlarmItem);
 		mRecyclerView.setAdapter(mAdapter);
 	}
@@ -248,79 +228,40 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 			mMinuteList.add(mins);
 		}
 		mMinutePicker.setData(mMinuteList);
-	}
-	
-	private void restoreAlarm() {
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		String alarmMap = sp.getString(Def.SP_ALARM_MAP, "");
-		Type typeOfHashMap = new TypeToken<Map<String, List<AlarmItem>>>() { }.getType();
-        Gson gson = new GsonBuilder().create();
-        mAlarmMap = gson.fromJson(alarmMap, typeOfHashMap);
-		if (TextUtils.isEmpty(alarmMap)) {
-			mAlarmMap = new HashMap<String, List<AlarmItem>>();
-			for (Student student : mStudents) {
-				String studentId = student.getStudent_id();
-				mAlarmMap.put(studentId, new ArrayList<AlarmItem>());
-			}
-		}
-		myDataset.clear();
-		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()));
-		if (mEditIdx == -1) {
-			if (mCurrentAlarmItem == null) {
-				mCurrentAlarmItem = ((MainActivity)getActivity()).getCurrentAlarmItem();
-			}
-			
-		} else {
-			mCurrentAlarmItem = myDataset.get(mEditIdx);
-			mAlarmName.setText(mCurrentAlarmItem.getTitle());
-			
-		}
-		if (mCurrentAlarmItem !=null) {
-			AlarmPeriodItem currentPeriodItem = mCurrentAlarmItem.getPeriodItem();
-			if (currentPeriodItem != null) {
-				for (AlarmPeriodItem item : alarmPeriodDataset) {
-					if (item.getItemType() == currentPeriodItem.getItemType()) {
-						item.setSelected(true);
-					} else {
-						item.setSelected(false);
-					}
-				}
-			}
-			mAdapter.notifyDataSetChanged();
-		}
 		mHourPicker.setSelectedItemPosition(mHourList.indexOf(mCurrentAlarmItem.getDate().substring(0, 2)));
 		mMinutePicker.setSelectedItemPosition(mMinuteList.indexOf(mCurrentAlarmItem.getDate().substring(3)));
 
 	}
 	
-	private void saveAlarm() {
-		mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), myDataset);
-		Gson gson = new Gson();
-		String input = gson.toJson(mAlarmMap);
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = sp.edit();
-		editor.putString(Def.SP_ALARM_MAP, input);
-		editor.commit();
-	}
-	
 	@Override
 	public void onResume() {
 		super.onResume();
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
-		restoreAlarm();
-		if (!TextUtils.isEmpty(titleForAlarm)) {
-			mCurrentAlarmItem.setTitle(titleForAlarm);
-			mAlarmName.setText(titleForAlarm);
+		if (AlarmManager.getCurrentAction() == AlarmManager.ACTION_ADDING) {
+			if (AlarmManager.mNewItem == null) {
+				mCurrentAlarmItem = new AlarmItem();
+				mCurrentAlarmItem.setTitle("上學");
+				mCurrentAlarmItem.setDate("00:00");
+				mCurrentAlarmItem.setPeriod("週一至週五");
+				mCurrentAlarmItem.setEnabled(true);
+				AlarmPeriodItem item = new AlarmPeriodItem();
+				item.setItemType(TYPE.WEEK_DAY);
+				mCurrentAlarmItem.setPeriodItem(item);
+				AlarmManager.mNewItem = mCurrentAlarmItem;
+			} else {
+				mCurrentAlarmItem = AlarmManager.mNewItem;
+			}
+			
+		} else {
+			mCurrentAlarmItem = AlarmManager.mCurrentItem;
 		}
+		initWheelView();
+		initRecycleView();
+		mAlarmName.setText(mCurrentAlarmItem.getTitle());
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (!isCancelEditing) {
-			saveAlarm();
-		}
 	}
 
 	@Override
@@ -328,8 +269,6 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		mCurrentAlarmItem.setPeriodItem(item);
 		if (item.getItemType() != TYPE.CUSTOMIZE) {
 			mCurrentAlarmItem.setPeriod(item.getTitle());
-		} else {
-			titleForAlarm = mCurrentAlarmItem.getTitle();
 		}
 		mOnItemClickListener.onClick(item, mCurrentAlarmItem);
 

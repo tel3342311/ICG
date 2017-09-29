@@ -6,7 +6,7 @@ public class AlarmItem {
 	public String Date;
 	public AlarmPeriodItem PeriodItem;
 	public String Period;
-	public Boolean Enabled;
+	public boolean Enabled;
 	
 	/**
 	 * @return the title
@@ -47,13 +47,13 @@ public class AlarmItem {
 	/**
 	 * @return the enabled
 	 */
-	public Boolean getEnabled() {
+	public boolean getEnabled() {
 		return Enabled;
 	}
 	/**
 	 * @param enabled the enabled to set
 	 */
-	public void setEnabled(Boolean enabled) {
+	public void setEnabled(boolean enabled) {
 		Enabled = enabled;
 	}
 	/**

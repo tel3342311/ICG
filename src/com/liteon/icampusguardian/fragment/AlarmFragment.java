@@ -13,6 +13,7 @@ import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmItemAdapter;
+import com.liteon.icampusguardian.util.AlarmManager;
 import com.liteon.icampusguardian.util.AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
@@ -44,7 +45,6 @@ import android.widget.TextView;
 
 public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 
-	private static ArrayList<AlarmItem> myDataset = new ArrayList<>();
 	private RecyclerView mRecyclerView;
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
@@ -53,7 +53,6 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private boolean isEditMode;
 	private Toolbar mToolbar;
 	private TextView mTitleView;
-	private Map<String, List<AlarmItem>> mAlarmMap;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
 	private int mCurrnetStudentIdx;
@@ -127,7 +126,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			break;
 		case R.id.action_add:
 			exitEditMode();
-			if (myDataset.size() >= 4) {
+			if (AlarmManager.getDataSet().size() >= 4) {
 				showAddAlarmErrorDialog();
 				return super.onOptionsItemSelected(item);
 			}
@@ -167,8 +166,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mRecyclerView.setHasFixedSize(true);
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
-		//testData();
-		mAdapter = new AlarmItemAdapter(myDataset, this);
+		mAdapter = new AlarmItemAdapter(AlarmManager.getDataSet(), this);
 		mRecyclerView.setAdapter(mAdapter);
 	}
 	
@@ -180,23 +178,15 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		
 		@Override
 		public void onClick(View v) {
-			if (myDataset.size() >= 4) {
+			if (AlarmManager.getDataSet().size() >= 4) {
 				showAddAlarmErrorDialog();
 				return;
 			}
 			mAddAlarmClicks.onAddAlarmClick();
+			AlarmManager.setCurrentAction(AlarmManager.ACTION_ADDING);
 		}
 	};
-	
-	public void testData() {
-		AlarmItem item = new AlarmItem();
-		item.setTitle("上學");
-		item.setDate("06:10");
-		item.setPeriod("週一");
-		item.setEnabled(true);
-		myDataset.add(item);
-	}
-	
+
 	public static interface IAddAlarmClicks {
         public void onAddAlarmClick();
         public void onEditAlarm(int idx);
@@ -206,6 +196,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	public void onEditAlarm(int position) {
 		if (isEditMode()) {
 			mAddAlarmClicks.onEditAlarm(position);
+			AlarmManager.setCurrentAction(AlarmManager.ACTION_EDITING);
+			AlarmManager.setCurrentItem(AlarmManager.getDataSet().get(position), position);
 		}
 	}
 	
@@ -221,7 +213,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	
 	@Override
 	public void onEnableAlarm(int position, boolean enable) {
-		myDataset.get(position).Enabled = enable;		
+		AlarmManager.getDataSet().get(position).Enabled = enable;		
 		
 	}
 	
@@ -229,10 +221,10 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		
 		@Override
 		public void onClick(View v) {
-			myDataset.remove(mDeleteIdx);
+			AlarmManager.getDataSet().remove(mDeleteIdx);
 			mAdapter.notifyDataSetChanged();
 			mConfirmDeleteDialog.dismiss();
-			if (myDataset.size() == 0) {
+			if (AlarmManager.getDataSet().size() == 0) {
 				exitEditMode();
 			}
 		}
@@ -291,33 +283,10 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	}
 	
 	private void restoreAlarm() {
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		String alarmMap = sp.getString(Def.SP_ALARM_MAP, "");
-		Type typeOfHashMap = new TypeToken<Map<String, List<AlarmItem>>>() { }.getType();
-        Gson gson = new GsonBuilder().create();
-        mAlarmMap = gson.fromJson(alarmMap, typeOfHashMap);
-		if (TextUtils.isEmpty(alarmMap)) {
-			mAlarmMap = new HashMap<String, List<AlarmItem>>();
-			for (Student student : mStudents) {
-				String studentId = student.getStudent_id();
-				mAlarmMap.put(studentId, new ArrayList<AlarmItem>());
-			}
-		}
-		if (mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()) == null) {
-			mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), new ArrayList<AlarmItem>());
-		}
-		myDataset.clear();
-		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()));
-		mAdapter.notifyDataSetChanged();
+		AlarmManager.restoreAlarm();
 	}
 	
 	private void saveAlarm() {
-		mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), myDataset);
-		Gson gson = new Gson();
-		String input = gson.toJson(mAlarmMap);
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = sp.edit();
-		editor.putString(Def.SP_ALARM_MAP, input);
-		editor.commit();
+		AlarmManager.saveAlarm();
 	}
 }

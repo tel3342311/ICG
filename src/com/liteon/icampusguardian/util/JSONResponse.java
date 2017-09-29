@@ -390,9 +390,9 @@ public class JSONResponse {
 		@SerializedName("roll_no")
 		private String roll_no;
 		@SerializedName("height")
-		private float height;
+		private String height;
 		@SerializedName("weight")
-		private float weight;
+		private String weight;
 		@SerializedName("dob")
 		private String dob;
 		@SerializedName("gender")
@@ -477,25 +477,25 @@ public class JSONResponse {
 		/**
 		 * @return the height
 		 */
-		public float getHeight() {
+		public String getHeight() {
 			return height;
 		}
 		/**
 		 * @param height the height to set
 		 */
-		public void setHeight(float height) {
+		public void setHeight(String height) {
 			this.height = height;
 		}
 		/**
 		 * @return the weight
 		 */
-		public float getWeight() {
+		public String getWeight() {
 			return weight;
 		}
 		/**
 		 * @param weight the weight to set
 		 */
-		public void setWeight(float weight) {
+		public void setWeight(String weight) {
 			this.weight = weight;
 		}
 		/**

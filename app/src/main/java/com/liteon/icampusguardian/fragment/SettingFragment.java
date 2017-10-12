@@ -25,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -218,7 +219,7 @@ public class SettingFragment extends Fragment {
 		if (bitmap != null) {
 			mChildIcon.setImageBitmap(bitmap);
 		} else {
-			mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
+			mChildIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.setup_img_picture));
 		}
 	}
 	

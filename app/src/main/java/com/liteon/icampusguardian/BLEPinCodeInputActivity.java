@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -31,6 +32,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import static com.liteon.icampusguardian.App.getContext;
 
 public class BLEPinCodeInputActivity extends AppCompatActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
@@ -306,11 +309,12 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
     }
 	
 	private void setDefaultPinBackground(EditText editText) {
-        setViewBackground(editText, getResources().getDrawable(R.drawable.btn_bg, null));
+
+        setViewBackground(editText, ContextCompat.getDrawable(getContext(), R.drawable.btn_bg));
     }
 	
 	private void setFocusedPinBackground(EditText editText) {
-        setViewBackground(editText, getResources().getDrawable(R.drawable.pin_bg_selected, null));
+        setViewBackground(editText, ContextCompat.getDrawable(getContext(), R.drawable.pin_bg_selected));
     }
 	
 	public static void setFocus(EditText editText) {

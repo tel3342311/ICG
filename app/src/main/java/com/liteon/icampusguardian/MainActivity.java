@@ -53,6 +53,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
@@ -72,6 +73,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import static com.liteon.icampusguardian.App.getContext;
+
 public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		IAlarmPeriodViewHolderClicks, ISettingItemClickListener, NavigationView.OnNavigationItemSelectedListener, IAppInfoPrivacyViewHolderClicks, DrawerListener {
 
@@ -418,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		if (bitmap != null) {
 			mChildIcon.setImageBitmap(bitmap);
 		} else {
-			mChildIcon.setImageDrawable(getResources().getDrawable(R.drawable.setup_img_picture, null));
+			mChildIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.setup_img_picture));
 		}
 	}
 

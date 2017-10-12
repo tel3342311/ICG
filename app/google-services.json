@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "181231449362",
+    "firebase_url": "https://icg-for-parent.firebaseio.com",
+    "project_id": "icg-for-parent",
+    "storage_bucket": "icg-for-parent.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:181231449362:android:cea7d8ba15cecf2e",
+        "android_client_info": {
+          "package_name": "com.liteon.icampusguardian"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "181231449362-915mgricbekk75sohmjconaveo0q569a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwTy7t55aJwxSAuxLvvqSZr55BTMtX5GI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

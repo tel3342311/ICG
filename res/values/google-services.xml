@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="default_web_client_id" translatable="false">983341846818-ehveum5jn2iiiebvmsaidgp87i2dkc5j.apps.googleusercontent.com</string>
-    <string name="gcm_defaultSenderId"   translatable="false">983341846818</string>
-    <string name="firebase_database_url" translatable="false">https://fcm-msg-app.firebaseio.com</string>
-    <string name="google_app_id"         translatable="false">1:983341846818:android:fb0f3906ee3e2aa4</string>
-    <string name="google_api_key"        translatable="false">AIzaSyBpNb909lXLqTbSFa7s9eJ4ZEmJI4a9D04</string>
-    <string name="google_storage_bucket" translatable="false">fcm-msg-app.appspot.com</string>
-</resources>

@@ -38,7 +38,16 @@ public class GuardianApiClient {
 	private static String mToken;
 	private Uri mUri;
 	private WeakReference<Context> mContext;
-	
+
+	private static GuardianApiClient mApiClient;
+
+	public static GuardianApiClient getInstance(Context context) {
+		if (mApiClient == null) {
+			mApiClient = new GuardianApiClient(context);
+		}
+		return mApiClient;
+	}
+
 	public GuardianApiClient(Context context) {
 		//Current url "http://61.246.61.175:8080/icgwearable/mobile/%s"
 		Uri.Builder builder = new Uri.Builder();
@@ -72,7 +81,6 @@ public class GuardianApiClient {
             int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
             	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
-            	mSessionId = result.getReturn().getResponseSummary().getSessionId();
             	if (result.getReturn().getResults() != null) {
             		mToken = result.getReturn().getResults().getToken();
             	}

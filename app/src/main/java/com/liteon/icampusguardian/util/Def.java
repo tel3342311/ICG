@@ -111,5 +111,28 @@ public class Def {
 	//Choose photo TYPE
 	public static final String EXTRA_CHOOSE_CHILD_ICON = "child_icon";
 	public static final String EXTRA_CHOOSE_WATCH_ICON = "watch_icon";
-	
+	/**
+	 * =================================================================
+	 *
+	 * Action for DataSync Service
+	 *
+	 * =================================================================
+	 */
+	public static final String ACTION_REGISTERATION_USER = "com.liteon.icampusguardian.ACTION_REGISTERATION_USER";
+	public static final String ACTION_LOGIN_USER = "com.liteon.icampusguardian.ACTION_LOGIN_USER";
+	public static final String ACTION_LOGOUT_USER = "com.liteon.icampusguardian.ACTION_LOGOUT_USER";
+	public static final String ACTION_GET_STUDENT_LIST = "com.liteon.icampusguardian.ACTION_GET_STUDENT_LIST";
+	public static final String ACTION_GET_LOCATION = "com.liteon.icampusguardian.ACTION_GET_LOCATION";
+	public static final String ACTION_GET_EVENT_REPORT = "com.liteon.icampusguardian.ACTION_GET_EVENT_REPORT";
+	public static final String ACTION_GET_PARENT_DETAIL = "com.liteon.icampusguardian.ACTION_GET_PARENT_DETAIL";
+	public static final String ACTION_PAIR_NEW_DEVICE = "com.liteon.icampusguardian.ACTION_PAIR_NEW_DEVICE";
+	public static final String ACTION_UNPAIR_DEVICE = "com.liteon.icampusguardian.ACTION_UNPAIR_NEW_DEVICE";
+	public static final String ACTION_UPDATE_APP_TOKEN = "com.liteon.icampusguardian.ACTION_UPDATE_APP_TOKEN";
+	public static final String ACTION_UPDATE_STUDENT_DETAIL = "com.liteon.icampusguardian.ACTION_UPDATE_STUDENT_DETAIL";
+	public static final String ACTION_UPDATE_PARENT_DETAIL = "com.liteon.icampusguardian.ACTION_UPDATE_PARENT_DETAIL";
+	public static final String ACTION_RESET_PASSWORD = "com.liteon.icampusguardian.ACTION_RESET_PASSWORD";
+
+	//Action fro reponse of DataSync Service
+	public static final String ACTION_ERROR_NOTIFY = "com.liteon.icampusguardian.ACTION_ERROR_NOTIFY";
+	public static final String EXTRA_ERROR_MESSAGE = "com.liteon.icampusguardian.EXTRA_ERROR_MESSAGE";
 }

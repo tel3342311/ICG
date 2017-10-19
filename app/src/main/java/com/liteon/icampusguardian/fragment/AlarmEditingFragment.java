@@ -269,6 +269,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		mCurrentAlarmItem.setPeriodItem(item);
 		if (item.getItemType() != TYPE.CUSTOMIZE) {
 			mCurrentAlarmItem.setPeriod(item.getTitle());
+
 		}
 		mOnItemClickListener.onClick(item, mCurrentAlarmItem);
 

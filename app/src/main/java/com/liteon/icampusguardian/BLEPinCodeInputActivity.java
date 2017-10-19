@@ -1,6 +1,8 @@
 package com.liteon.icampusguardian;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
@@ -11,6 +13,8 @@ import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.app.Service;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -49,7 +53,11 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
 	private int mCurrnetStudentIdx;
-	
+    // Unique UUID for this application
+    private static final UUID MY_UUID_SECURE =
+            UUID.fromString("1eafc0af-8dd6-40b2-8114-26163835c38d");
+    private static final UUID MY_UUID_INSECURE =
+            UUID.fromString("1eafc0af-8dd6-40b2-8114-26163835c38d");
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -10,11 +10,11 @@ public class AlarmPeriodItem {
 
 	
 	public static enum TYPE {
-		WEEK_DAY(App.getContext().getString(R.string.alarm_week_day), 0x1),
-		WEEKEND(App.getContext().getString(R.string.alarm_week_end),       0x10),
-		EVERYDAY(App.getContext().getString(R.string.alarm_every_day),      0x100),
-		ONCE(App.getContext().getString(R.string.alarm_once),     0x1000),
-		CUSTOMIZE(App.getContext().getString(R.string.alarm_customize),     0x10000);
+		WEEK_DAY(App.getContext().getString(R.string.alarm_week_day), 0x01 | 0x02 | 0x04 | 0x08 | 0x10 ),
+		WEEKEND(App.getContext().getString(R.string.alarm_week_end),       0x40 | 0x20),
+		EVERYDAY(App.getContext().getString(R.string.alarm_every_day),      0x01| 0x02| 0x04| 0x08| 0x10 |0x20 | 0x40),
+		ONCE(App.getContext().getString(R.string.alarm_once),     0x0),
+		CUSTOMIZE(App.getContext().getString(R.string.alarm_customize),     0x80);
 		
 		String name;
 		long value;
@@ -69,6 +69,7 @@ public class AlarmPeriodItem {
 	 */
 	public void setItemType(TYPE itemType) {
 		this.itemType = itemType;
+		this.value = itemType.value;
 	}
 	/**
 	 * @return the value

@@ -1,47 +1,45 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.AlarmItemAdapter;
 import com.liteon.icampusguardian.util.AlarmManager;
 import com.liteon.icampusguardian.util.AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks;
+import com.liteon.icampusguardian.util.BluetoothAgent;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.CoordinatorLayout.LayoutParams;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 
@@ -59,7 +57,10 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private ConfirmDeleteDialog mConfirmDeleteDialog;
 	private PopupWindow mPopupWindow;
 	private View mSyncView;
-	
+	//For bluetooth
+	private BluetoothAgent mBTAgent;
+
+
 	public AlarmFragment(IAddAlarmClicks listener) {
 		mAddAlarmClicks = listener;
 	}
@@ -73,6 +74,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mDbHelper = DBHelper.getInstance(getActivity());
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+
+		mBTAgent = new BluetoothAgent(getContext(), mHandler);
 		return rootView;
 	}
 	
@@ -105,7 +108,6 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		getActivity().invalidateOptionsMenu();
 		mAddAlarm.setVisibility(View.VISIBLE);
 		((AlarmItemAdapter)mAdapter).setEditMode(false);
-		//mToolbar.setTitle("鬧鈴");
 		mTitleView.setText(getString(R.string.alarm));
 	}
 	
@@ -213,8 +215,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	
 	@Override
 	public void onEnableAlarm(int position, boolean enable) {
-		AlarmManager.getDataSet().get(position).Enabled = enable;		
-		
+		AlarmManager.getDataSet().get(position).setEnabled(enable);
 	}
 	
 	private View.OnClickListener mOnConfirmDelete = new OnClickListener() {
@@ -237,6 +238,18 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		if (mStudents.size() > 0 && mCurrnetStudentIdx >= mStudents.size()) {
 			mCurrnetStudentIdx = 0;
 		}
+
+        //Get BT device and check if the device is BONDED
+        Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
+        BluetoothDevice target = null;
+        if (pairedDevices.size() >= 1) {
+            for (BluetoothDevice device : pairedDevices) {
+                target = device;
+                break;
+            }
+            mBTAgent.connect(target, true);
+        }
+
 		showSyncWindow();
 		restoreAlarm();
 	}
@@ -246,6 +259,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		super.onPause();
 		saveAlarm();
 		hideSyncWindow();
+        mBTAgent.stop();
 	}
 	
 	private void hideSyncWindow() {
@@ -262,7 +276,18 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			@Override
 			public void onClick(View v) {
 				title.setText(R.string.alarm_syncing);
-				final Handler handler= new Handler();
+
+				//sync alarm data with watch
+				String alarmString = AlarmManager.getAlarmEditContent();
+				if (!TextUtils.isEmpty(alarmString)) {
+                    mBTAgent.write(alarmString.getBytes());
+                }
+                //sync alarm state (enable/disable) with watch
+                String alarmState = AlarmManager.getAlarmStateContent();
+				if (!TextUtils.isEmpty(alarmState)) {
+				    mBTAgent.write(alarmState.getBytes());
+                }
+				final Handler handler = new Handler();
 				final Runnable hideSyncView = new Runnable() {
 					
 					@Override
@@ -289,4 +314,52 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private void saveAlarm() {
 		AlarmManager.saveAlarm();
 	}
+
+
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Def.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothAgent.STATE_CONNECTED:
+                            //setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            //mConversationArrayAdapter.clear();
+                            break;
+                        case BluetoothAgent.STATE_CONNECTING:
+                            //setStatus(R.string.title_connecting);
+                            break;
+                        case BluetoothAgent.STATE_LISTEN:
+                        case BluetoothAgent.STATE_NONE:
+                            //setStatus(R.string.title_not_connected);
+                            break;
+                    }
+                    break;
+                case Def.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    //mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    break;
+                case Def.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(App.getContext(), "Response : "
+                            + readMessage, Toast.LENGTH_SHORT).show();
+                    break;
+                case Def.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
+                    Toast.makeText(App.getContext(), "Connected to "
+                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+
+                    break;
+                case Def.MESSAGE_TOAST:
+                    Toast.makeText(App.getContext(), msg.getData().getString(Def.TOAST),
+                            Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 }

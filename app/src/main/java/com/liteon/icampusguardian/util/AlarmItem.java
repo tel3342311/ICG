@@ -7,7 +7,16 @@ public class AlarmItem {
 	public AlarmPeriodItem PeriodItem;
 	public String Period;
 	public boolean Enabled;
-	
+	public boolean isStateChange;
+
+	public boolean isStateChange() {
+		return isStateChange;
+	}
+
+	public void setStateChange(boolean stateChange) {
+		isStateChange = stateChange;
+	}
+
 	/**
 	 * @return the title
 	 */
@@ -55,6 +64,7 @@ public class AlarmItem {
 	 */
 	public void setEnabled(boolean enabled) {
 		Enabled = enabled;
+		setStateChange(true);
 	}
 	/**
 	 * @return the periodItem

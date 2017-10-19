@@ -10,13 +10,14 @@ public class WeekPeriodItem {
 
 	
 	public static enum TYPE {
-		SUNDAY(App.getContext().getString(R.string.alarm_sun),    0x1000000),
-		MONDAY(App.getContext().getString(R.string.alarm_mon),    0x0100000),
-		TUESDAY(App.getContext().getString(R.string.alarm_tue),   0x0010000),
-		WEDNESDAY(App.getContext().getString(R.string.alarm_wed), 0x0001000),
-		THURSDAY(App.getContext().getString(R.string.alarm_thr),  0x0000100),
-		FRIDAY(App.getContext().getString(R.string.alarm_fri),    0x0000010),
-		SATURDAY(App.getContext().getString(R.string.alarm_sat),  0x0000001);
+
+		MONDAY(App.getContext().getString(R.string.alarm_mon),    0x01),
+		TUESDAY(App.getContext().getString(R.string.alarm_tue),   0x02),
+		WEDNESDAY(App.getContext().getString(R.string.alarm_wed), 0x04),
+		THURSDAY(App.getContext().getString(R.string.alarm_thr),  0x08),
+		FRIDAY(App.getContext().getString(R.string.alarm_fri),    0x10),
+		SATURDAY(App.getContext().getString(R.string.alarm_sat),  0x20),
+		SUNDAY(App.getContext().getString(R.string.alarm_sun),    0x40);
 		
 		String name;
 		long value;

@@ -19,7 +19,7 @@ public class Def {
 	public static final String SP_PHOTO_MAP = "com.liteon.icampusguardian.SP_PHOTO_MAP";
 	public static final String SP_PHOTO_MAP_WATCH = "com.liteon.icampusguardian.SP_PHOTO_MAP_WATCH";
 	public static final String SP_GEO_ITEM_MAP = "com.liteon.icampusguardian.SP_GEO_ITEM_MAP";
-
+	public static final String SP_BT_WATCH_ADDRESS = "com.liteon.icampusguardian.SP_BT_WATCH_ADDRESS";
 
 	//RET CODE there are two kind of success code
 	public static final String RET_SUCCESS_1 = "SUC01";
@@ -135,4 +135,15 @@ public class Def {
 	//Action fro reponse of DataSync Service
 	public static final String ACTION_ERROR_NOTIFY = "com.liteon.icampusguardian.ACTION_ERROR_NOTIFY";
 	public static final String EXTRA_ERROR_MESSAGE = "com.liteon.icampusguardian.EXTRA_ERROR_MESSAGE";
+
+	// Message types sent from the BluetoothChatService Handler
+	public static final int MESSAGE_STATE_CHANGE = 1;
+	public static final int MESSAGE_READ = 2;
+	public static final int MESSAGE_WRITE = 3;
+	public static final int MESSAGE_DEVICE_NAME = 4;
+	public static final int MESSAGE_TOAST = 5;
+
+	// Key names received from the BluetoothChatService Handler
+	public static final String DEVICE_NAME = "device_name";
+	public static final String TOAST = "toast";
 }

@@ -2,6 +2,7 @@ package com.liteon.icampusguardian.util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,4 +98,73 @@ public class AlarmManager {
 	public static ArrayList<AlarmItem> getDataSet(){
 		return myDataset;
 	}
+
+	public static String getAlarmEditContent() {
+		AlarmDataJSON alarmDataJSON = new AlarmDataJSON();
+		alarmDataJSON.setType("alarm");
+		List<AlarmDataJSON.AlarmData> data = new ArrayList<>();
+		for (AlarmItem item : myDataset) {
+			AlarmDataJSON.AlarmData alarmInfo = new AlarmDataJSON.AlarmData();
+			alarmInfo.setAction("edit");
+			alarmInfo.setAlarmId(Integer.toString(myDataset.indexOf(item) + 1));
+			alarmInfo.setAlarmtitle(item.getTitle());
+			alarmInfo.setHour(item.getDate().substring(0,2));
+            alarmInfo.setMinutes(item.getDate().substring(3));
+            if (item.getPeriodItem().getItemType() == AlarmPeriodItem.TYPE.CUSTOMIZE) {
+                alarmInfo.setRepeat(Long.toString(item.getPeriodItem().getCustomValue()));
+            } else {
+                alarmInfo.setRepeat(Long.toString(item.getPeriodItem().getValue()));
+            }
+            data.add(alarmInfo);
+		}
+
+		if (data.size() > 0) {
+			AlarmDataJSON.AlarmData [] alarmData = new AlarmDataJSON.AlarmData[data.size()];
+			data.toArray(alarmData);
+			//Insert array to JSON
+			alarmDataJSON.setAlarmList(alarmData);
+			Gson gson = new Gson();
+			String alarmStr = gson.toJson(alarmDataJSON);
+			return alarmStr;
+		}
+		return "";
+	}
+
+    public static String getAlarmStateContent() {
+        AlarmDataJSON alarmDataJSON = new AlarmDataJSON();
+        alarmDataJSON.setType("alarm");
+        List<AlarmDataJSON.AlarmData> data = new ArrayList<>();
+        for (AlarmItem item : myDataset) {
+            if (item.isStateChange()) {
+                item.setStateChange(false);
+                AlarmDataJSON.AlarmData alarmInfo = new AlarmDataJSON.AlarmData();
+                if (item.getEnabled()) {
+                    alarmInfo.setAction("enable");
+                } else {
+                    alarmInfo.setAction("disable");
+                }
+                alarmInfo.setAlarmId(Integer.toString(myDataset.indexOf(item) + 1));
+                alarmInfo.setAlarmtitle(item.getTitle());
+                alarmInfo.setHour(item.getDate().substring(0, 2));
+                alarmInfo.setMinutes(item.getDate().substring(3));
+                if (item.getPeriodItem().getItemType() == AlarmPeriodItem.TYPE.CUSTOMIZE) {
+                    alarmInfo.setRepeat(Long.toString(item.getPeriodItem().getCustomValue()));
+                } else {
+                    alarmInfo.setRepeat(Long.toString(item.getPeriodItem().getValue()));
+                }
+                data.add(alarmInfo);
+            }
+        }
+
+        if (data.size() > 0) {
+            AlarmDataJSON.AlarmData [] alarmData = new AlarmDataJSON.AlarmData[data.size()];
+            data.toArray(alarmData);
+            //Insert array to JSON
+            alarmDataJSON.setAlarmList(alarmData);
+            Gson gson = new Gson();
+            String alarmStr = gson.toJson(alarmDataJSON);
+            return alarmStr;
+        }
+        return "";
+    }
 }

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -16,6 +17,7 @@ import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.BLEItem;
 import com.liteon.icampusguardian.util.BLEItemAdapter;
 import com.liteon.icampusguardian.util.BLEItemAdapter.ViewHolder.IBLEItemClickListener;
+import com.liteon.icampusguardian.util.BluetoothAgent;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
@@ -33,8 +35,10 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -42,6 +46,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,6 +65,8 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	private RecyclerView.LayoutManager mLayoutManager;
 	private List<BLEItem> mDataSet;
 	private ImageView mCancel;
+	//class BT flag
+    private boolean isClassBT = true;
 	//ble 
 	private BluetoothAdapter mBluetoothAdapter;
 	private boolean mScanning;
@@ -75,6 +82,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
 	private int mCurrnetStudentIdx;
+    private BluetoothAgent mBTAgent = null;
 
     //work around for uuid
     private UUIDList mUUIDList;
@@ -91,10 +99,16 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 		findViews();
 		setListener();
 		initRecycleView();
-		initBleComponent();
+		if (isClassBT) {
+            initClassicBT();
+        } else {
+            initBleComponent();
+        }
 		mDbHelper = DBHelper.getInstance(this);
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+
+
 	}
 	
 	public static boolean hasPermissions(Context context, String... permissions) {
@@ -178,7 +192,23 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 			break;
 		}
 	}
-	
+	//for class BT set up
+	private void initClassicBT() {
+		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBTAgent = new BluetoothAgent(this, mHandlerBTClassic);
+
+		// Get a set of currently paired devices
+		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+
+		// If there are paired devices, add each one to the ArrayAdapter
+		if (pairedDevices.size() > 0) {
+			for (BluetoothDevice device : pairedDevices) {
+                updateList(device);
+			}
+		}
+	}
+
+
 	private void initBleComponent() {
 		mHandler = new Handler();
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
@@ -225,23 +255,42 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else {
-            if (Build.VERSION.SDK_INT >= VERSION_CODES) {
-                mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
-                settings = new ScanSettings.Builder()
-                        .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
-                        .build();
-                filters = new ArrayList<ScanFilter>();
+		    if (isClassBT) {
+		        scanBTDevice();
+            } else {
+                if (Build.VERSION.SDK_INT >= VERSION_CODES) {
+                    mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
+                    settings = new ScanSettings.Builder()
+                            .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                            .build();
+                    filters = new ArrayList<ScanFilter>();
+                }
+                scanLeDevice(true);
             }
-            scanLeDevice(true);
         }
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+
+        // Register for broadcasts when a device is discovered
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        this.registerReceiver(mReceiver, filter);
+
+        // Register for broadcasts when discovery has finished
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        this.registerReceiver(mReceiver, filter);
+
 	}
 	
 	@Override
     protected void onPause() {
         super.onPause();
-        if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
+        if (isClassBT) {
+            if (mBluetoothAdapter.isDiscovering()) {
+                mBluetoothAdapter.cancelDiscovery();
+            }
+            this.unregisterReceiver(mReceiver);
+        }
+        else if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
             scanLeDevice(false);
         }
     }
@@ -249,13 +298,60 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
     @Override
     protected void onDestroy() {
     	super.onDestroy();
+
+        // Make sure we're not doing discovery anymore
+        if (mBluetoothAdapter != null) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
+        if (mBTAgent != null) {
+            mBTAgent.stop();
+        }
     	if (mGatt == null) {
             return;
         }
         mGatt.close();
         mGatt = null;  
     }
-	
+
+    private void scanBTDevice() {
+        // Indicate scanning in the title
+        setProgressBarIndeterminateVisibility(true);
+        //setTitle(R.string.scanning);
+
+        // Turn on sub-title for new devices
+        //findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
+
+        // If we're already discovering, stop it
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
+        // Request discover from BluetoothAdapter
+        mBluetoothAdapter.startDiscovery();
+	}
+
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // If it's already paired, skip it, because it's been listed already
+                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                    updateList(device);
+                }
+                // When discovery is finished, change the Activity title
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                setProgressBarIndeterminateVisibility(false);
+            }
+        }
+    };
+
 	private void scanLeDevice(final boolean enable) {
         if (enable) {
             mHandler.postDelayed(new Runnable() {
@@ -283,7 +379,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
         }
     }
 	
-	private void UpdateList(BluetoothDevice device) {
+	private void updateList(BluetoothDevice device) {
 		BluetoothDevice btDevice = device;
 		boolean isDuplicated = false;
 		for (BLEItem item : mDataSet) {
@@ -320,7 +416,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
             Log.i("callbackType", String.valueOf(callbackType));
             Log.i("result", result.toString());
             BluetoothDevice btDevice = result.getDevice();
-            UpdateList(btDevice);
+            updateList(btDevice);
         }
  
         @Override
@@ -346,7 +442,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
                         public void run() {
                             Log.i("onLeScan", device.toString());
                             //connectToDevice(device);
-                            UpdateList(device);
+                            updateList(device);
                         }
                     });
                 }
@@ -397,7 +493,6 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	private void findViews() {
 		mRecyclerView = (RecyclerView) findViewById(R.id.profile_view);
 		mCancel = (ImageView) findViewById(R.id.cancel);
-		
  	}
 	
 	private void setListener() {
@@ -437,10 +532,18 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	public void onBleItemClick(BLEItem item) {
 		
 		//if (TextUtils.isEmpty(mStudents.get(mCurrnetStudentIdx).getUuid())) {
-			mStudents.get(mCurrnetStudentIdx).setUuid(item.getId());
-			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), mStudents.get(mCurrnetStudentIdx));
+		//	mStudents.get(mCurrnetStudentIdx).setUuid(item.getId());
+		//	mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), mStudents.get(mCurrnetStudentIdx));
 		//}
-		
+        BluetoothDevice device = item.getmBluetoothDevice();//mBluetoothAdapter.getRemoteDevice();
+        // Attempt to connect to the device
+        mBTAgent.connect(device, true);
+
+        SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(Def.SP_BT_WATCH_ADDRESS, device.getAddress());
+        editor.commit();
+
 		Intent intent = new Intent();
 		intent.setClass(this, BLEPinCodeInputActivity.class);
 		startActivity(intent);
@@ -496,4 +599,50 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 		}
 		
 	}
+
+    private final Handler mHandlerBTClassic = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Def.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothAgent.STATE_CONNECTED:
+                            //setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            //mConversationArrayAdapter.clear();
+                            break;
+                        case BluetoothAgent.STATE_CONNECTING:
+                            //setStatus(R.string.title_connecting);
+                            break;
+                        case BluetoothAgent.STATE_LISTEN:
+                        case BluetoothAgent.STATE_NONE:
+                            //setStatus(R.string.title_not_connected);
+                            break;
+                    }
+                    break;
+                case Def.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    //mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    break;
+                case Def.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    break;
+                case Def.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
+                    Toast.makeText(getApplicationContext(), "Connected to "
+                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+
+                    break;
+                case Def.MESSAGE_TOAST:
+                    Toast.makeText(getApplicationContext(), msg.getData().getString(Def.TOAST),
+                                Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 }

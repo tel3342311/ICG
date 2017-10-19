@@ -1,6 +1,8 @@
 package com.liteon.icampusguardian;
 
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
@@ -33,6 +35,9 @@ import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingIte
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -98,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private static final int NAVIGATION_BACK = 2;
 	private SafetyFragment mSaftyFragment;
 	private TextView mTitleView;
+	//For BT pairing
+	private String mBtAddress;
+	private BluetoothDevice mBTDevice;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -125,6 +133,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		initChildInfo();
 		updateMenuItem();
 		BottomNavigationViewHelper.disableShiftMode(mBottomView);
+
+		//get current bt address
+		mBtAddress = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
 	}
 
 	private void registerNotification() {
@@ -608,11 +619,27 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			changeFragment(new SettingTargetFragment(), getString(R.string.child_goal_setting), NAVIGATION_BACK);
 			break;
 		case PAIRING:
-			if (!TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
+			//TODO For BT Testing
+			//Get BT device and check if the device is BONDED
+			Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
+			if (pairedDevices.size() >= 1) {
+				for (BluetoothDevice device : pairedDevices) {
+					if (TextUtils.equals(device.getAddress(), mBtAddress)) {
+						mBTDevice = device;
+					}
+					break;
+				}
 				showUnPairDialog();
+
 			} else {
 				showPairingPage();
 			}
+			//For Cloud's pair/unpair
+//			if (!TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
+//				showUnPairDialog();
+//			} else {
+//				showPairingPage();
+//			}
 			break;
 		case PRIVACY_INFO:
 			UpdateWatchInfoAndPrivacy();
@@ -645,7 +672,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		@Override
 		public void onClick(View v) {
 			mUnPairConfirmDialog.dismiss();
-			new UnPairTask().execute();
+			//new UnPairTask().execute();
+			new UnPairBTTask().execute(mBTDevice);
 		}
 	};
 	
@@ -750,7 +778,28 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			super.onPostExecute(result);
 		}
 	}
-	
+
+	//Unpair for BT
+	class UnPairBTTask extends AsyncTask<BluetoothDevice, Void, Void> {
+
+		@Override
+		protected Void doInBackground(BluetoothDevice... params) {
+			try {
+				Method m = params[0].getClass()
+						.getMethod("removeBond", (Class[]) null);
+				m.invoke(params[0], (Object[]) null);
+			} catch (Exception e) {
+				Log.e("RemoveBond failed.", e.getMessage());
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			Toast.makeText(App.getContext(), getString(R.string.unbind_watch),Toast.LENGTH_SHORT).show();
+		}
+	}
+
 	private void sendNotification(String messageBody) {
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.setAction(Def.ACTION_NOTIFY);

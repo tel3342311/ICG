@@ -50,11 +50,11 @@ public class GuardianApiClient {
 	}
 
 	public GuardianApiClient(Context context) {
-		//Current url "http://61.246.61.175:8080/icgwearable/mobile/%s"
+		//Current url "http://icg.aricentcoe.com:8080/icgcloud/mobile/%s"
 		Uri.Builder builder = new Uri.Builder();
 		mUri = builder.scheme("http")
-		    .encodedAuthority("61.246.61.175:8080")
-		    .appendPath("icgwearable")
+		    .encodedAuthority("icg.aricentcoe.com:8080")
+		    .appendPath("icgcloud")
 		    .appendPath("mobile").build();
 		mContext = new WeakReference<Context>(context);
 	}
@@ -75,7 +75,7 @@ public class GuardianApiClient {
 			JSONObject jsonParam = new JSONObject();
 			jsonParam.put(Def.KEY_USERNAME, user);
 			jsonParam.put(Def.KEY_PASSWORD, password);
-			jsonParam.put(Def.KEY_FORCELOGIN, "yes");
+			//jsonParam.put(Def.KEY_FORCELOGIN, "yes");
 			OutputStream os = urlConnection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));

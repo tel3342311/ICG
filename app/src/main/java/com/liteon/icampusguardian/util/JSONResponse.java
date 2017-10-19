@@ -71,7 +71,7 @@ public class JSONResponse {
 		private String StatusCode;
 		@SerializedName("StatusMessage")
 		private String ErrorMessage;
-		@SerializedName("SessionId")
+		@SerializedName("token")
 		private String SessionId;
 		/**
 		 * @return the statusCode

@@ -375,7 +375,7 @@ public class LoginActivity extends AppCompatActivity {
 			if (response == null) {
 				return null;
 			}
-			if (response.getReturn().getResults() == null) {
+			if (TextUtils.equals(Def.RET_ERR_01, response.getReturn().getResponseSummary().getStatusCode())) {
 				runOnUiThread(new Runnable() {
 
 					@Override
@@ -385,7 +385,7 @@ public class LoginActivity extends AppCompatActivity {
 				});
 				return null;
 			}
-			token = response.getReturn().getResults().getToken();
+			token = response.getReturn().getResponseSummary().getSessionId();
 
 			cv.put(AccountEntry.COLUMN_NAME_USER_NAME, args[0]);
 			cv.put(AccountEntry.COLUMN_NAME_PASSWORD, args[1]);

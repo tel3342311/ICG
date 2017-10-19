@@ -24,6 +24,7 @@ public class Def {
 	//RET CODE there are two kind of success code
 	public static final String RET_SUCCESS_1 = "SUC01";
 	public static final String RET_SUCCESS_2 = "WSUC01";
+	public static final String RET_ERR_01 = "ERR01";
 	public static final String RET_ERR_02 = "ERR02";
 	
 	//Default user 

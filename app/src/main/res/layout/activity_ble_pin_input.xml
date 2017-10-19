@@ -83,6 +83,20 @@
             android:layout_width="@dimen/pin_edittext_width"
             android:layout_height="@dimen/pin_edittext_height"
             android:contentDescription="@string/pin_content_desc" />
+
+        <EditText
+            android:id="@+id/pin_fifth_edittext"
+            style="@style/pin_edittext_style"
+            android:layout_width="@dimen/pin_edittext_width"
+            android:layout_height="@dimen/pin_edittext_height"
+            android:contentDescription="@string/pin_content_desc" />
+
+        <EditText
+            android:id="@+id/pin_sixth_edittext"
+            style="@style/pin_edittext_style"
+            android:layout_width="@dimen/pin_edittext_width"
+            android:layout_height="@dimen/pin_edittext_height"
+            android:contentDescription="@string/pin_content_desc" />
     </LinearLayout>
 	
 	<EditText android:id="@+id/pin_hidden_edittext" 

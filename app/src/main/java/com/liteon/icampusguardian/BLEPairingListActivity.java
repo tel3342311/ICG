@@ -537,7 +537,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 		//}
         BluetoothDevice device = item.getmBluetoothDevice();//mBluetoothAdapter.getRemoteDevice();
         // Attempt to connect to the device
-        mBTAgent.connect(device, true);
+        //mBTAgent.connect(device, true);
 
         SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();

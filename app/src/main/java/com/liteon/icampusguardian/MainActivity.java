@@ -791,6 +791,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			} catch (Exception e) {
 				Log.e("RemoveBond failed.", e.getMessage());
 			}
+			SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = sp.edit();
+			editor.remove(Def.SP_BT_WATCH_ADDRESS);
+			editor.commit();
 			return null;
 		}
 		@Override

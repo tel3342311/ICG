@@ -159,6 +159,13 @@
         <service
             android:name=".service.DataSyncService"
             android:exported="false"></service>
+
+        <receiver android:name=".BluetoothConnectActivityReceiver" >
+            <intent-filter android:priority="1000">
+                <action android:name="android.bluetooth.device.action.PAIRING_REQUEST" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

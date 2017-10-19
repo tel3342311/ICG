@@ -47,6 +47,8 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
     private EditText mPinSecondDigitEditText;
     private EditText mPinThirdDigitEditText;
     private EditText mPinForthDigitEditText;
+    private EditText mPinFifthDigitEditText;
+    private EditText mPinSixthDigitEditText;
     private EditText mPinHiddenEditText;
     private View mBleConnectingView;
     private ConfirmDeleteDialog mBLEFailConfirmDialog;
@@ -84,6 +86,8 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         mPinSecondDigitEditText = (EditText) findViewById(R.id.pin_second_edittext);
         mPinThirdDigitEditText = (EditText) findViewById(R.id.pin_third_edittext);
         mPinForthDigitEditText = (EditText) findViewById(R.id.pin_forth_edittext);
+        mPinFifthDigitEditText = (EditText) findViewById(R.id.pin_fifth_edittext);
+        mPinSixthDigitEditText = (EditText) findViewById(R.id.pin_sixth_edittext);
         mPinHiddenEditText = (EditText) findViewById(R.id.pin_hidden_edittext);
         mBleConnectingView = (View) findViewById(R.id.ble_pairing_progress);
  	}
@@ -95,12 +99,16 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         mPinSecondDigitEditText.setOnFocusChangeListener(this);
         mPinThirdDigitEditText.setOnFocusChangeListener(this);
         mPinForthDigitEditText.setOnFocusChangeListener(this);
+        mPinFifthDigitEditText.setOnFocusChangeListener(this);
+        mPinSixthDigitEditText.setOnFocusChangeListener(this);
         mPinHiddenEditText.setOnFocusChangeListener(this);
         
         mPinFirstDigitEditText.setOnKeyListener(this);
         mPinSecondDigitEditText.setOnKeyListener(this);
         mPinThirdDigitEditText.setOnKeyListener(this);
         mPinForthDigitEditText.setOnKeyListener(this);
+        mPinFifthDigitEditText.setOnKeyListener(this);
+        mPinSixthDigitEditText.setOnKeyListener(this);
         mPinHiddenEditText.setOnKeyListener(this);
         
         mPinHiddenEditText.addTextChangedListener(this);
@@ -196,6 +204,8 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 	        mPinSecondDigitEditText.setText("");
 	        mPinThirdDigitEditText.setText("");
 	        mPinForthDigitEditText.setText("");
+            mPinFifthDigitEditText.setText("");
+            mPinSixthDigitEditText.setText("");
 			mPinHiddenEditText.setText("");
 			mPinFirstDigitEditText.requestFocus();
 		}
@@ -225,6 +235,8 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         setDefaultPinBackground(mPinSecondDigitEditText);
         setDefaultPinBackground(mPinThirdDigitEditText);
         setDefaultPinBackground(mPinForthDigitEditText);
+        setDefaultPinBackground(mPinFifthDigitEditText);
+        setDefaultPinBackground(mPinSixthDigitEditText);
 
         if (s.length() == 0) {
             setFocusedPinBackground(mPinFirstDigitEditText);
@@ -235,20 +247,38 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
             mPinSecondDigitEditText.setText("");
             mPinThirdDigitEditText.setText("");
             mPinForthDigitEditText.setText("");
+            mPinFifthDigitEditText.setText("");
+            mPinSixthDigitEditText.setText("");
         } else if (s.length() == 2) {
             setFocusedPinBackground(mPinThirdDigitEditText);
             mPinSecondDigitEditText.setText(s.charAt(1) + "");
             mPinThirdDigitEditText.setText("");
             mPinForthDigitEditText.setText("");
+            mPinFifthDigitEditText.setText("");
+            mPinSixthDigitEditText.setText("");
         } else if (s.length() == 3) {
         	setFocusedPinBackground(mPinForthDigitEditText);
             mPinThirdDigitEditText.setText(s.charAt(2) + "");
             mPinForthDigitEditText.setText("");
+            mPinFifthDigitEditText.setText("");
+            mPinSixthDigitEditText.setText("");
         } else if (s.length() == 4) {
-            setDefaultPinBackground(mPinForthDigitEditText);
+            setDefaultPinBackground(mPinFifthDigitEditText);
             mPinForthDigitEditText.setText(s.charAt(3) + "");
+            mPinFifthDigitEditText.setText("");
+            mPinSixthDigitEditText.setText("");
 
-            hideSoftKeyboard(mPinForthDigitEditText);
+        } else if (s.length() == 5) {
+            setDefaultPinBackground(mPinSixthDigitEditText);
+            mPinFifthDigitEditText.setText(s.charAt(4) + "");
+            mPinSixthDigitEditText.setText("");
+
+
+        } else if (s.length() == 6) {
+            setDefaultPinBackground(mPinSixthDigitEditText);
+            mPinSixthDigitEditText.setText(s.charAt(5) + "");
+
+            hideSoftKeyboard(mPinSixthDigitEditText);
         }
 	}
 
@@ -264,7 +294,11 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
             switch (id) {
                 case R.id.pin_hidden_edittext:
                     if (keyCode == KeyEvent.KEYCODE_DEL) {
-                        if (mPinHiddenEditText.getText().length() == 4)
+                        if (mPinHiddenEditText.getText().length() == 6)
+                            mPinSixthDigitEditText.setText("");
+                        else if (mPinHiddenEditText.getText().length() == 5)
+                            mPinFifthDigitEditText.setText("");
+                        else if (mPinHiddenEditText.getText().length() == 4)
                             mPinForthDigitEditText.setText("");
                         else if (mPinHiddenEditText.getText().length() == 3)
                             mPinThirdDigitEditText.setText("");
@@ -294,10 +328,13 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 	public void onFocusChange(View v, boolean hasFocus) {
 		final int id = v.getId();
         switch (id) {
+
             case R.id.pin_first_edittext:
             case R.id.pin_second_edittext:
             case R.id.pin_third_edittext:
             case R.id.pin_forth_edittext:
+            case R.id.pin_fifth_edittext:
+            case R.id.pin_sixth_edittext:
                 if (hasFocus) {
                     setFocus(mPinHiddenEditText);
                     showSoftKeyboard(mPinHiddenEditText);

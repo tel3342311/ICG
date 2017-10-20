@@ -31,6 +31,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 public class SettingTargetFragment extends Fragment {
 	
 	private DBHelper mDbHelper;
@@ -221,8 +223,12 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			
-			mCurrentTargetItem.setCarlos(s.toString());
+
+			if (TextUtils.isEmpty(s.toString()) || !TextUtils.isDigitsOnly(s.toString())) {
+				mCurrentTargetItem.setCarlos("0");
+			} else {
+				mCurrentTargetItem.setCarlos(s.toString());
+			}
 		}
 	};
 	
@@ -240,7 +246,11 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			mCurrentTargetItem.setStep(s.toString());
+			if (TextUtils.isEmpty(s.toString())) {
+				mCurrentTargetItem.setStep("0");
+			} else {
+				mCurrentTargetItem.setStep(s.toString());
+			}
 		}
 	};
 	
@@ -258,7 +268,11 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			mCurrentTargetItem.setWalking(s.toString());
+			if (TextUtils.isEmpty(s.toString())) {
+				mCurrentTargetItem.setWalking("0");
+			} else {
+				mCurrentTargetItem.setWalking(s.toString());
+			}
 		}
 	};
 	
@@ -276,7 +290,11 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			mCurrentTargetItem.setRunning(s.toString());
+			if (TextUtils.isEmpty(s.toString())) {
+				mCurrentTargetItem.setRunning("0");
+			} else {
+				mCurrentTargetItem.setRunning(s.toString());
+			}
 		}
 	};
 	
@@ -294,7 +312,11 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			mCurrentTargetItem.setCycling(s.toString());
+			if (TextUtils.isEmpty(s.toString())) {
+				mCurrentTargetItem.setCycling("0");
+			} else {
+				mCurrentTargetItem.setCycling(s.toString());
+			}
 		}
 	};
 	
@@ -312,7 +334,11 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			mCurrentTargetItem.setSleep(s.toString());
+			if (TextUtils.isEmpty(s.toString())) {
+				mCurrentTargetItem.setSleep("0");
+			} else {
+				mCurrentTargetItem.setSleep(s.toString());
+			}
 		}
 		
 

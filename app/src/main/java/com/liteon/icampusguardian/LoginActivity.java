@@ -106,9 +106,12 @@ public class LoginActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		signInButtonNormal.setEnabled(false);
-		//mUserName.setText(Def.USER);
-		//mPassword.setText(Def.PASSWORD);
+		if (validateInput()) {
+			signInButtonNormal.setEnabled(true);
+		} else {
+			signInButtonNormal.setEnabled(false);
+		}
+
 	}
 	private void findViews() {
 		signInButtonNormal = (AppCompatButton) findViewById(R.id.ap_login);

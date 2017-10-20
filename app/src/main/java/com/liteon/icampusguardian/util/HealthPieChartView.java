@@ -1,7 +1,10 @@
 package com.liteon.icampusguardian.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
@@ -20,7 +23,6 @@ import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.icu.util.Calendar;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -259,11 +261,43 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
         canvas.drawArc(rect, 270, 360, false, arcClockMinPaint);
 
         SimpleDateFormat sdf = new SimpleDateFormat(App.getContext().getString(R.string.healthy_hour_mins));
-		Date date = new Date(mCurrentValue);
-		String output = sdf.format(date);
+		long hours = TimeUnit.MINUTES.toHours(mCurrentValue);
+		long remainMinute = mCurrentValue - TimeUnit.HOURS.toMinutes(hours);
+		Calendar d = Calendar.getInstance();
+		d.set(Calendar.HOUR, (int)hours);
+		d.set(Calendar.MINUTE, (int)remainMinute);
+
+		String output = sdf.format(d.getTime());
+
         drawCenter(canvas, textTargetPaint, output, mTargetOffsetY);
-        drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);		
-	}
+        drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);
+        sdf.applyPattern("yyyy/MM/dd");
+        Date origin = null;
+        try {
+            origin = sdf.parse(mCurrentDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (origin != null) {
+            Calendar d1 = Calendar.getInstance();
+            d1.setTime(origin);
+            Calendar d2 = Calendar.getInstance();
+            d2.setTimeInMillis(d1.getTimeInMillis());
+            d2.add(Calendar.MINUTE, mCurrentValue);
+            sdf.applyPattern("MM/dd HH:mm");
+            String sleep = sdf.format(d1.getTime());
+            String wake = sdf.format(d2.getTime());
+            drawCenter(canvas, textPaint, getContext().getString(R.string.healthy_sleep)+ " " + sleep, mDateOffsetY + 30);
+            drawCenter(canvas, textPaint, getContext().getString(R.string.healthy_wake)+ " " + wake, mDateOffsetY + 60);
+        }
+        if (mCurrentValue >= 320) {
+            canvas.drawText(getResources().getString(R.string.sleep_quality_good), (float) (mWidth * 0.75), (float) (mHeight * 0.9), textTargetPaint);
+        } else if (mCurrentValue >=160) {
+            canvas.drawText(getResources().getString(R.string.sleep_quality_normal), (float) (mWidth * 0.75), (float) (mHeight * 0.9), textTargetPaint);
+        } else {
+            canvas.drawText(getResources().getString(R.string.sleep_quality_bad), (float) (mWidth * 0.75), (float) (mHeight * 0.9), textTargetPaint);
+        }
+    }
 
 	private void onDrawRunning(Canvas canvas) {
 		if (mTypeIcon == null) {

@@ -206,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 						mSaftyFragment.setAlertIntent(getIntent());
 					}
 					changeFragment(mSaftyFragment);
+                    mBottomView.setSelectedItemId(R.id.action_safty);
 				}
 			}
             for (String key : getIntent().getExtras().keySet()) {
@@ -218,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				mSaftyFragment = new SafetyFragment();
 			}
 			changeFragment(mSaftyFragment, getString(R.string.safty), NAVIGATION_DRAWER);
+            mBottomView.setSelectedItemId(R.id.action_safty);
 		}
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Def.ACTION_NOTIFY);

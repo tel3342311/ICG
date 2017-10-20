@@ -109,6 +109,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mAddAlarm.setVisibility(View.VISIBLE);
 		((AlarmItemAdapter)mAdapter).setEditMode(false);
 		mTitleView.setText(getString(R.string.alarm));
+        showSyncWindow();
 	}
 	
 	public void enterEditMode() {
@@ -259,7 +260,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		super.onPause();
 		saveAlarm();
 		hideSyncWindow();
-        mBTAgent.stop();
+		if (mBTAgent != null) {
+            mBTAgent.stop();
+        }
 	}
 	
 	private void hideSyncWindow() {
@@ -356,8 +359,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 
                     break;
                 case Def.MESSAGE_TOAST:
-                    Toast.makeText(App.getContext(), msg.getData().getString(Def.TOAST),
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(App.getContext(), msg.getData().getString(Def.TOAST),
+//                            Toast.LENGTH_SHORT).show();
                     break;
             }
         }

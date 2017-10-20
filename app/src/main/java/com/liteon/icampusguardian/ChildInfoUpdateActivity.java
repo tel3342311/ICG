@@ -426,7 +426,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			break;
 		case HEIGHT:
 			one_wheel.setVisibility(View.VISIBLE);
-			mWheelTitle.setText(getString(R.string.setup_kid_height));
+			mWheelTitle.setText(getString(R.string.setup_kid_cm));
 			List<String> height = new ArrayList<>();
 			for (int i = 0; i < 200; i++) {
 				height.add(Integer.toString(i));
@@ -437,7 +437,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			break;
 		case WEIGHT:
 			one_wheel.setVisibility(View.VISIBLE);
-			mWheelTitle.setText(getString(R.string.setup_kid_weight));
+			mWheelTitle.setText(getString(R.string.setup_kid_kg));
 			List<String> weight = new ArrayList<>();
 			for (int i = 0; i < 100; i++) {
 				weight.add(Integer.toString(i));

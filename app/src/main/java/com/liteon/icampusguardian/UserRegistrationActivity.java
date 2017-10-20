@@ -163,31 +163,10 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 			showLoginErrorDialog(getString(R.string.password_not_match), getString(android.R.string.ok));
 			return ;
 		}
-		GuardianApiClient apiClient = new GuardianApiClient(this);
-		//check network 
-    	if (!isNetworkConnectionAvailable()) {
-    		runOnUiThread(new Runnable() {
 
-				@Override
-				public void run() {
-					showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok));
-				}
-			});
-    		return;
-    	}
-    	//check server 
-    	if (!isURLReachable(UserRegistrationActivity.this, apiClient.getServerUri().toString())) {
-    		runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok));
-				}
-			});
-    		return;
-    	}
 		String str = "1234";
 		UUID uuid = UUID.nameUUIDFromBytes(str.getBytes());
+
 		new RegisterTask().execute(strAccount, strPassword, "parent_admin", uuid.toString(), strName);
 		
 	}
@@ -196,7 +175,30 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 
         protected String doInBackground(String... args) {
 
-        	GuardianApiClient apiClient = new GuardianApiClient(UserRegistrationActivity.this);
+			GuardianApiClient apiClient = new GuardianApiClient(UserRegistrationActivity.this);
+			//check network
+			if (!isNetworkConnectionAvailable()) {
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok));
+					}
+				});
+				return null;
+			}
+			//check server
+			if (!isURLReachable(UserRegistrationActivity.this, apiClient.getServerUri().toString())) {
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok));
+					}
+				});
+				return null;
+			}
+
         	apiClient.registerUser(args[0], args[1], args[2], args[3], args[4]);
         	return null;
         }

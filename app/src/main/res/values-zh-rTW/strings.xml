@@ -157,7 +157,7 @@
 	<string name="child_photo_photo">寶貝照片</string>
 	<string name="child_photo_photo_crop">裁切照片，請移動、縮放照片至您要的畫面</string>
 	<!-- parent profile -->
-	<string name="parent_profile">基本資料</string>
+	<string name="parent_profile">家長資料</string>
 	<!-- goal setting -->
 	<string name="goal_setting">每日目標設定</string>
 	<!-- personal watch theme -->
@@ -236,4 +236,6 @@
 	<!-- Pin -->
 	<string name="pin_content_desc">PIN input field</string>
 	<string name="healthy_wake">起床</string>
+    <string name="alarm_hint">鬧鈴名稱(英數8字元，中文字4個字為限)</string>
+	<string name="alarm_dialog_delete">刪除</string>
 </resources>

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:background="@color/color_ble_pairing_bg"
         android:minHeight="?attr/actionBarSize" >
-        <RelativeLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
@@ -20,21 +20,32 @@
                 android:layout_width="@dimen/toolbar_icon_size"
                 android:layout_height="@dimen/toolbar_icon_size"
                 android:layout_centerVertical="true"
+                android:layout_marginBottom="24dp"
+                android:layout_marginTop="24dp"
                 android:background="@drawable/ic_clear_white_24dp"
-                android:backgroundTint="@color/md_black_1000" />
+                android:backgroundTint="@color/md_black_1000"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/login_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:layout_centerInParent="true"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/pairing_watch_select_watch"
                 android:textColor="@color/md_black_1000"
-                android:textSize="@dimen/page_title_text_size" />
+                android:textSize="@dimen/page_title_text_size"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cancel"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </RelativeLayout>
+        </android.support.constraint.ConstraintLayout>
 	</android.support.v7.widget.Toolbar>
         
     <RelativeLayout 

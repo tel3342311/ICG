@@ -21,12 +21,7 @@
 	    android:layout_height="match_parent"
 	    android:layout_below="@id/toolbar"
 	    android:textColor="@color/md_black_1000"
-	    android:text="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
-	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
-	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
-	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
-	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n
-	    			  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n"/>
+	    android:text="@string/welcome_user_term_content"/>
 
 	 <include 
 	     android:id="@+id/bottom_bar"
@@ -41,6 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/bottom_bar"
         android:layout_margin="@dimen/activity_vertical_margin"
-        android:text="參與使用者體驗改善計畫" />
+        android:text="@string/welcome_join_program" />
 
 </RelativeLayout>

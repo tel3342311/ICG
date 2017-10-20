@@ -236,9 +236,10 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         	mBleConnectingView.setVisibility(View.INVISIBLE);
         	if (success.booleanValue() == true) {
         		CustomDialog dialog = new CustomDialog();
-        		dialog.setTitle(mPinHiddenEditText.getText() + "(PIN碼)配對成功\n已綁定為智慧手錶");
+        		String title = String.format(getString(R.string.pairing_watch_success), mStudents.get(mCurrnetStudentIdx).getNickname());
+        		dialog.setTitle(title);
         		dialog.setIcon(0);
-        		dialog.setBtnText("好");
+        		dialog.setBtnText(getString(android.R.string.ok));
         		dialog.setBtnConfirm(mOnBLEFailCancelClickListener);
         		dialog.show(getSupportFragmentManager(), "dialog_fragment");
         	} else {

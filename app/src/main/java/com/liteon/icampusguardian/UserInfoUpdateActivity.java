@@ -84,7 +84,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mToolbar.setTitle("家長資料");
+		mToolbar.setTitle(getString(R.string.parent_profile));
 		showSyncWindow();
 	}
 	
@@ -262,7 +262,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			title.setText("同步中");
+			title.setText(getString(R.string.alarm_syncing));
 
 		}
 		@Override
@@ -284,7 +284,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 			super.onPostExecute(result);
 			mName.setText(mNameGiven);
 			mPhoneNumber.setText(mMobile_number);
-			title.setText("同步完成");
+			title.setText(getString(R.string.alarm_sync_complete));
 			final Handler handler= new Handler();
 			final Runnable hideSyncView = new Runnable() {
 				

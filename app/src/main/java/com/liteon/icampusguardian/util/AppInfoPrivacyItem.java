@@ -1,12 +1,15 @@
 package com.liteon.icampusguardian.util;
 
+import com.liteon.icampusguardian.App;
+import com.liteon.icampusguardian.R;
+
 public class AppInfoPrivacyItem {
 
 	
 	public static enum TYPE {
-		APP_INFO("App版本"),
-        PARENT_INFO("家長資料"),
-        USER_TERM("使用者協議及隱私政策");
+		APP_INFO(App.getContext().getString(R.string.app_version_title)),
+        PARENT_INFO(App.getContext().getString(R.string.parent_info)),
+        USER_TERM(App.getContext().getString(R.string.welcome_user_term));
 		
 		private String name;
 		private TYPE(String name) {

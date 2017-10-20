@@ -11,7 +11,7 @@
 	<dimen name="login_option_btn_width">180dp</dimen>
 	<dimen name="login_option_btn_margin_bottom">12dp</dimen>
 	<dimen name="more_icon_size">45dp</dimen>
-	<dimen name="toolbar_icon_size">36dp</dimen>
+	<dimen name="toolbar_icon_size">45dp</dimen>
 	<!-- welcome -->
 	<dimen name="welcome_icon_size">180dp</dimen>
 	<dimen name="welcome_bottom_option_height">60dp</dimen>

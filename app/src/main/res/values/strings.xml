@@ -16,7 +16,7 @@
 	<!--  login Page -->
 	<string name="login_parent_account">Login your account</string>
 	<string name="login_account">Account (email)</string>
-	<string name="login_password">Password (minimum 8 characters)</string>
+	<string name="login_password">Password</string>
 	<string name="login_register_new_account">Sign up</string> 
 	<string name="login_forget_password">Forgot password?</string>
 	<string name="login_login">Login</string> 
@@ -143,7 +143,7 @@
 	<string name="child_basic_profile">Profile</string>
 	<string name="child_goal_setting">Daily Goal</string>
 	<string name="child_personalize_theme">Watch Face</string>
-	<string name="child_watch_info_and_privacy">Device Information and EULA</string>
+	<string name="child_watch_info_and_privacy">Device Information</string>
 	<string name="child_pairing_watch">Link with Device</string>
 	<string name="child_unbind">Unlink Device</string>
 	<!-- child photo setting -->
@@ -169,7 +169,7 @@
 	<string name="syncing_photo_to_watch_cancel">Cancel</string>
 	<string name="syncing_photo_to_watch_synced">Retry</string>
 	<!-- watch infomation -->
-	<string name="watch_info_privacy">Device Information and EULA</string>
+	<string name="watch_info_privacy">Device Information</string>
 	<string name="send_sleeping_info_to_teacher">Permission for school teacher to see your kid\'s sleeping information</string>
 	<string name="device_name_title">Device name</string>      
 	<string name="device_name">iCampus Guardian 1</string>
@@ -224,7 +224,7 @@
 	<string name="ask_bluetooth_permission">Application is requesting permission to turn on Bluetooth.</string>
 	<!-- old strings -->
 	<!-- Bottom Bar -->
-	<string name="safty_tab">Safty</string>
+	<string name="safty_tab">Safety</string>
 	<string name="health_tab">Health</string>
 	<string name="alarm_tab">Alarm</string>
 	<string name="setting_tab">Settings</string>
@@ -236,4 +236,6 @@
 	<!-- Pin -->
 	<string name="pin_content_desc">PIN input field</string>
     <string name="healthy_wake">Wake</string>
+	<string name="alarm_hint">Alarm title (Maximum 8 characters)</string>
+	<string name="alarm_dialog_delete">Delete</string>
 </resources>

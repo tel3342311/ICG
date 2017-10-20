@@ -239,9 +239,9 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		if (AlarmManager.getCurrentAction() == AlarmManager.ACTION_ADDING) {
 			if (AlarmManager.mNewItem == null) {
 				mCurrentAlarmItem = new AlarmItem();
-				mCurrentAlarmItem.setTitle("上學");
+				mCurrentAlarmItem.setTitle(getString(R.string.alarm));
 				mCurrentAlarmItem.setDate("00:00");
-				mCurrentAlarmItem.setPeriod("週一至週五");
+				mCurrentAlarmItem.setPeriod(getString(R.string.alarm_week_day));
 				mCurrentAlarmItem.setEnabled(true);
 				AlarmPeriodItem item = new AlarmPeriodItem();
 				item.setItemType(TYPE.WEEK_DAY);

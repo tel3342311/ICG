@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/page_title_margin_bottom"
-        android:text="你好，歡迎使用\nICAMPUS GUARDIAN\n智慧手錶"
+        android:text="@string/welcome_title"
         android:textSize="@dimen/page_title_text_size"
         android:textAlignment="center"
         android:gravity="center"

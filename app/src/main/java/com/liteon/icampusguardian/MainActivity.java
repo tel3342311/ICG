@@ -624,7 +624,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			//TODO For BT Testing
 			//Get BT device and check if the device is BONDED
 			Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
-			if (pairedDevices.size() >= 1) {
+			if (pairedDevices.size() >= 1 && !TextUtils.isEmpty(mBtAddress)) {
 				for (BluetoothDevice device : pairedDevices) {
 					if (TextUtils.equals(device.getAddress(), mBtAddress)) {
 						mBTDevice = device;

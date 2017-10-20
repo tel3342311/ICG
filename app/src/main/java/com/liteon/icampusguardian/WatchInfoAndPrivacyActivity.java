@@ -1,13 +1,17 @@
 package com.liteon.icampusguardian;
 
 import java.util.List;
+import java.util.Set;
 
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.BluetoothAgent;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +22,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +38,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 
@@ -51,6 +57,9 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
     private ConfirmDeleteDialog mBLEFailConfirmDialog;
     private CustomDialog mDialog;
 	private boolean mIsTeacher;
+	//For bluetooth
+	private BluetoothAgent mBTAgent;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,6 +67,8 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		findViews();
 		setListener();
 		setupToolbar();
+		mBTAgent = new BluetoothAgent(this, mHandler);
+
 	}
 	
 	private void findViews() {
@@ -156,11 +167,25 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		mIsTeacher = sp.getBoolean(Def.SP_TEACHER_PLAN, false);
 		mToolbar.setTitle(R.string.watch_info_privacy);
 		mTeacherCheck.setChecked(mIsTeacher);
+
+		//Get BT device and check if the device is BONDED
+		Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
+		BluetoothDevice target = null;
+		if (pairedDevices.size() >= 1) {
+			for (BluetoothDevice device : pairedDevices) {
+				target = device;
+				break;
+			}
+			mBTAgent.connect(target, true);
+		}
 	}
 	
 	@Override
 	protected void onPause() {
 		super.onPause();
+		if (mBTAgent != null) {
+			mBTAgent .stop();
+		}
 	}
 	
 	class UpdateTask extends AsyncTask<String, Void, Boolean> {
@@ -230,6 +255,53 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		@Override
 		public void onClick(View v) {
 			mDialog.dismiss();
+		}
+	};
+
+	private final Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case Def.MESSAGE_STATE_CHANGE:
+					switch (msg.arg1) {
+						case BluetoothAgent.STATE_CONNECTED:
+							//setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+							//mConversationArrayAdapter.clear();
+							break;
+						case BluetoothAgent.STATE_CONNECTING:
+							//setStatus(R.string.title_connecting);
+							break;
+						case BluetoothAgent.STATE_LISTEN:
+						case BluetoothAgent.STATE_NONE:
+							//setStatus(R.string.title_not_connected);
+							break;
+					}
+					break;
+				case Def.MESSAGE_WRITE:
+					byte[] writeBuf = (byte[]) msg.obj;
+					// construct a string from the buffer
+					String writeMessage = new String(writeBuf);
+					//mConversationArrayAdapter.add("Me:  " + writeMessage);
+					break;
+				case Def.MESSAGE_READ:
+					byte[] readBuf = (byte[]) msg.obj;
+					// construct a string from the valid bytes in the buffer
+					String readMessage = new String(readBuf, 0, msg.arg1);
+					Toast.makeText(App.getContext(), "Response : "
+							+ readMessage, Toast.LENGTH_SHORT).show();
+					break;
+				case Def.MESSAGE_DEVICE_NAME:
+					// save the connected device's name
+					String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
+					Toast.makeText(App.getContext(), "Connected to "
+							+ mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+
+					break;
+				case Def.MESSAGE_TOAST:
+                    Toast.makeText(App.getContext(), msg.getData().getString(Def.TOAST),
+                            Toast.LENGTH_SHORT).show();
+					break;
+			}
 		}
 	};
 }

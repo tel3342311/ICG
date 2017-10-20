@@ -232,20 +232,20 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	
 	private void setupData(){
 		mDataSet = new ArrayList<>();
-		if (mUUIDList != null) {
-			for (Device device : mUUIDList.getDevices()) {
-				BLEItem item = new BLEItem();
-				item.setId(device.getUuid());
-				item.setName(device.getName());
-				mDataSet.add(item);
-			}
-		} else {
-			BLEItem item = new BLEItem();
-			item.setId("0000-0000-0000-0000");
-			item.setName("iCampus Guardian");
-			item.setValue("Not Connected");
-			mDataSet.add(item);
-		}
+//		if (mUUIDList != null) {
+//			for (Device device : mUUIDList.getDevices()) {
+//				BLEItem item = new BLEItem();
+//				item.setId(device.getUuid());
+//				item.setName(device.getName());
+//				mDataSet.add(item);
+//			}
+//		} else {
+//			BLEItem item = new BLEItem();
+//			item.setId("0000-0000-0000-0000");
+//			item.setName("iCampus Guardian");
+//			item.setValue("Not Connected");
+//			mDataSet.add(item);
+//		}
 	}
 
 	@Override
@@ -289,6 +289,9 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
                 mBluetoothAdapter.cancelDiscovery();
             }
             this.unregisterReceiver(mReceiver);
+            if (mBTAgent != null) {
+                mBTAgent.stop();
+            }
         }
         else if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
             scanLeDevice(false);
@@ -535,6 +538,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 		//	mStudents.get(mCurrnetStudentIdx).setUuid(item.getId());
 		//	mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), mStudents.get(mCurrnetStudentIdx));
 		//}
+
         BluetoothDevice device = item.getmBluetoothDevice();//mBluetoothAdapter.getRemoteDevice();
         // Attempt to connect to the device
         //mBTAgent.connect(device, true);
@@ -544,10 +548,13 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
         editor.putString(Def.SP_BT_WATCH_ADDRESS, device.getAddress());
         editor.commit();
 
-		Intent intent = new Intent();
-		intent.setClass(this, BLEPinCodeInputActivity.class);
-		startActivity(intent);
-	}
+        if (mBTAgent != null) {
+            mBTAgent.stop();
+        }
+        Intent intent = new Intent();
+        intent.setClass(BLEPairingListActivity.this, BLEPinCodeInputActivity.class);
+        startActivity(intent);
+    }
 	
 	class UUIDList {
 		
@@ -612,6 +619,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
                             break;
                         case BluetoothAgent.STATE_CONNECTING:
                             //setStatus(R.string.title_connecting);
+
                             break;
                         case BluetoothAgent.STATE_LISTEN:
                         case BluetoothAgent.STATE_NONE:

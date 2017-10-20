@@ -801,6 +801,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			Toast.makeText(App.getContext(), getString(R.string.unbind_watch),Toast.LENGTH_SHORT).show();
+			if (mCurrentFragment instanceof SettingFragment) {
+				((SettingFragment)mCurrentFragment).notifyBTState();
+			}
 		}
 	}
 

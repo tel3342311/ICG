@@ -243,4 +243,8 @@ public class SettingFragment extends Fragment {
 		mAdapter.notifyDataSetChanged();
 		mToolbar.setTitle("");
 	}
+
+	public void notifyBTState() {
+		mAdapter.notifyDataSetChanged();
+	}
 }

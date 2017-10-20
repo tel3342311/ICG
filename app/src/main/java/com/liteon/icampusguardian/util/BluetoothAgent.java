@@ -240,7 +240,7 @@ public class BluetoothAgent {
         // Send a failure message back to the Activity
         Message msg = mHandler.obtainMessage(Def.MESSAGE_TOAST);
         Bundle bundle = new Bundle();
-        bundle.putString(Def.TOAST, "Unable to connect device");
+        bundle.putString(Def.TOAST, Def.BT_ERR_UNABLE_TO_CONNECT);
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 

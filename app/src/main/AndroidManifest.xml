@@ -145,7 +145,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="@string/ak_login_protocol_scheme" />
+                <data android:scheme="ak838943992930614" />
             </intent-filter>
         </activity>
 
@@ -159,12 +159,6 @@
         <service
             android:name=".service.DataSyncService"
             android:exported="false"></service>
-
-        <receiver android:name=".BluetoothConnectActivityReceiver" >
-            <intent-filter android:priority="1000">
-                <action android:name="android.bluetooth.device.action.PAIRING_REQUEST" />
-            </intent-filter>
-        </receiver>
 
     </application>
 

@@ -4,23 +4,34 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.fragment.SafetyFragment;
+import com.liteon.icampusguardian.util.BluetoothAgent;
+import com.liteon.icampusguardian.util.ClsUtils;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.DeviceNameJSON;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -36,6 +47,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import static com.liteon.icampusguardian.App.getContext;
 
@@ -55,11 +67,9 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
 	private int mCurrnetStudentIdx;
-    // Unique UUID for this application
-    private static final UUID MY_UUID_SECURE =
-            UUID.fromString("1eafc0af-8dd6-40b2-8114-26163835c38d");
-    private static final UUID MY_UUID_INSECURE =
-            UUID.fromString("1eafc0af-8dd6-40b2-8114-26163835c38d");
+
+    private BluetoothAgent mBTAgent = null;
+    private BluetoothDevice mBluetoothDevice;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,16 +80,45 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 		mDbHelper = DBHelper.getInstance(this);
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
-	}
+        mBTAgent = new BluetoothAgent(this, mHandlerBTClassic);
+        SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+        mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        String btAddress = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
+        mBluetoothDevice = btAdapter.getRemoteDevice(btAddress);
+        mBTAgent.connect(mBluetoothDevice, true);
+    }
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
-	}
-	
-	private void findViews() {
+
+		//IntentFilter intentFilter = new IntentFilter();
+        //intentFilter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);//"android.bluetooth.device.action.PAIRING_REQUEST");
+        //registerReceiver(mReceiver, intentFilter);
+
+//        try {
+//            ClsUtils.createBond(mBluetoothDevice.getClass(), mBluetoothDevice);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mBTAgent != null) {
+            mBTAgent.stop();
+        }
+    }
+
+    private void findViews() {
 		mCancel = (ImageView) findViewById(R.id.cancel);
 		mConfirm = (ImageView) findViewById(R.id.confirm);
 		mPinFirstDigitEditText = (EditText) findViewById(R.id.pin_first_edittext);
@@ -128,12 +167,17 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         InputMethodManager imm = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
     }
-	
+
 	private View.OnClickListener mOnCancelClickListener = new View.OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
-			onBackPressed();
+            try {
+                ClsUtils.cancelBondProcess(mBluetoothDevice.getClass(), mBluetoothDevice);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            onBackPressed();
 		}
 	};
 	
@@ -141,42 +185,56 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 		
 		@Override
 		public void onClick(View v) {
+
 			new ConnectBleTask().execute();
 			
 		}
 	};
 	
-	class ConnectBleTask extends AsyncTask<String, Void, Boolean> {
+	class ConnectBleTask extends AsyncTask<Boolean, Void, Boolean> {
 
 		@Override
 		protected void onPreExecute() {
 			mBleConnectingView.setVisibility(View.VISIBLE);
 		}
 		
-        protected Boolean doInBackground(String... args) {
+        protected Boolean doInBackground(Boolean... args) {
         	
         	//TODO add ble connection function
-        	try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-        	GuardianApiClient mApiClient = new GuardianApiClient(BLEPinCodeInputActivity.this);
-        	JSONResponse response = mApiClient.pairNewDevice(mStudents.get(mCurrnetStudentIdx));
-        	if (response != null) {
-        		String statusCode = response.getReturn().getResponseSummary().getStatusCode();
-        		if (!TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
-        			Student student = mStudents.get(mCurrnetStudentIdx);
-        			student.setUuid("");
-        			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
-        		}
-        	}
-        	return Boolean.TRUE;
+            boolean ret = args[0];
+            //setPin
+            try {
+                 //ret = ClsUtils.setPin(mBluetoothDevice.getClass(), mBluetoothDevice, mPinHiddenEditText.getText().toString());
+                 //ClsUtils.cancelBondProcess(mBluetoothDevice.getClass(),mBluetoothDevice);
+                //Device name update
+                DeviceNameJSON deviceNameInfo = new DeviceNameJSON();
+                deviceNameInfo.setType("devicename");
+                deviceNameInfo.setName(mStudents.get(mCurrnetStudentIdx).getNickname());
+                Gson gson = new Gson();
+                String deviceNameStr = gson.toJson(deviceNameInfo);
+                if (ret && mBTAgent != null) {
+                    mBTAgent.write(deviceNameStr.getBytes());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+//        	GuardianApiClient mApiClient = new GuardianApiClient(BLEPinCodeInputActivity.this);
+//        	JSONResponse response = mApiClient.pairNewDevice(mStudents.get(mCurrnetStudentIdx));
+//        	if (response != null) {
+//        		String statusCode = response.getReturn().getResponseSummary().getStatusCode();
+//        		if (!TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+//        			Student student = mStudents.get(mCurrnetStudentIdx);
+//        			student.setUuid("");
+//        			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+//        		}
+//        	}
+        	return ret;
         }
 
         protected void onPostExecute(Boolean success) {
         	mBleConnectingView.setVisibility(View.INVISIBLE);
-        	if (success == true) {
+        	if (success.booleanValue() == true) {
         		CustomDialog dialog = new CustomDialog();
         		dialog.setTitle(mPinHiddenEditText.getText() + "(PIN碼)配對成功\n已綁定為智慧手錶");
         		dialog.setIcon(0);
@@ -207,7 +265,8 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
             mPinFifthDigitEditText.setText("");
             mPinSixthDigitEditText.setText("");
 			mPinHiddenEditText.setText("");
-			mPinFirstDigitEditText.requestFocus();
+			//mPinFirstDigitEditText.requestFocus();
+            onBackPressed();
 		}
 	};
 
@@ -263,13 +322,13 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
             mPinFifthDigitEditText.setText("");
             mPinSixthDigitEditText.setText("");
         } else if (s.length() == 4) {
-            setDefaultPinBackground(mPinFifthDigitEditText);
+            setFocusedPinBackground(mPinFifthDigitEditText);
             mPinForthDigitEditText.setText(s.charAt(3) + "");
             mPinFifthDigitEditText.setText("");
             mPinSixthDigitEditText.setText("");
 
         } else if (s.length() == 5) {
-            setDefaultPinBackground(mPinSixthDigitEditText);
+            setFocusedPinBackground(mPinSixthDigitEditText);
             mPinFifthDigitEditText.setText(s.charAt(4) + "");
             mPinSixthDigitEditText.setText("");
 
@@ -407,4 +466,77 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("android.bluetooth.device.action.PAIRING_REQUEST")) {
+                mBluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                try {
+                    //ClsUtils.setPairingConfirmation(mBluetoothDevice.getClass(), mBluetoothDevice, true);
+                    abortBroadcast();
+                    int pairingKey = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_KEY,
+                            BluetoothDevice.ERROR);
+                    Boolean b = ClsUtils.setPin(mBluetoothDevice.getClass(), mBluetoothDevice, Integer.toString(pairingKey) );
+                    Log.d("mBluetoothDevice", "onReceive: " + b);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
+    private final Handler mHandlerBTClassic = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Def.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothAgent.STATE_CONNECTED:
+                            //setStatus(getString(R.string.title_connected_to, mConnectedDeviceName));
+                            //mConversationArrayAdapter.clear();
+                            mBleConnectingView.setVisibility(View.INVISIBLE);
+                            new ConnectBleTask().execute(new Boolean(true));
+                            //new Ble
+                            break;
+                        case BluetoothAgent.STATE_CONNECTING:
+                            //setStatus(R.string.title_connecting);
+                            mBleConnectingView.setVisibility(View.VISIBLE);
+                            break;
+                        case BluetoothAgent.STATE_LISTEN:
+                        case BluetoothAgent.STATE_NONE:
+                            //setStatus(R.string.title_not_connected);
+                            //new ConnectBleTask().execute(new Boolean(false));
+                            break;
+                    }
+                    break;
+                case Def.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    //mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    break;
+                case Def.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    break;
+                case Def.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
+                    Toast.makeText(getApplicationContext(), "Connected to "
+                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+
+                    break;
+                case Def.MESSAGE_TOAST:
+                    Toast.makeText(getApplicationContext(), msg.getData().getString(Def.TOAST),
+                            Toast.LENGTH_SHORT).show();
+                    if (TextUtils.equals(msg.getData().getString(Def.TOAST), Def.BT_ERR_UNABLE_TO_CONNECT)) {
+                        new ConnectBleTask().execute(new Boolean(false));
+                    }
+                    break;
+            }
+        }
+    };
 }

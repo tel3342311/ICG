@@ -106,8 +106,8 @@
       android:layout_gravity="center_horizontal" 
       android:background="@null" 
       android:cursorVisible="false" 
-      android:password="true" 
-      android:maxLength="5" 
+      android:inputType="numberPassword"
+      android:maxLength="6"
       android:textColor="#00000000" 
       android:contentDescription="@string/pin_content_desc" />
 	

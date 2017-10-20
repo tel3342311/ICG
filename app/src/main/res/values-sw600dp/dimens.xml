@@ -94,8 +94,8 @@
 	<dimen name="pin_content_layout_padding">60dp</dimen>
     <dimen name="pin_label_margin">15dp</dimen>
     <dimen name="pin_min_width">48dp</dimen>
-    <dimen name="pin_edittext_width">109dp</dimen>
-    <dimen name="pin_edittext_height">127dp</dimen>
+    <dimen name="pin_edittext_width">75dp</dimen>
+    <dimen name="pin_edittext_height">107dp</dimen>
     <dimen name="pin_code_margin">6dp</dimen>
     <dimen name="pin_area_top_margin">34dp</dimen>
     <dimen name="pin_text_size">36sp</dimen>

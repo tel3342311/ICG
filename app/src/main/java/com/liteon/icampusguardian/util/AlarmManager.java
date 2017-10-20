@@ -105,7 +105,12 @@ public class AlarmManager {
 		List<AlarmDataJSON.AlarmData> data = new ArrayList<>();
 		for (AlarmItem item : myDataset) {
 			AlarmDataJSON.AlarmData alarmInfo = new AlarmDataJSON.AlarmData();
-			alarmInfo.setAction("edit");
+			if (!item.isAdded()) {
+			    alarmInfo.setAction("add");
+			    item.setAdded(true);
+            } else {
+                alarmInfo.setAction("edit");
+            }
 			alarmInfo.setAlarmId(Integer.toString(myDataset.indexOf(item) + 1));
 			alarmInfo.setAlarmtitle(item.getTitle());
 			alarmInfo.setHour(item.getDate().substring(0,2));

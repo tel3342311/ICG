@@ -8,6 +8,15 @@ public class AlarmItem {
 	public String Period;
 	public boolean Enabled;
 	public boolean isStateChange;
+	public boolean isAdded;
+
+	public boolean isAdded() {
+		return isAdded;
+	}
+
+	public void setAdded(boolean added) {
+		isAdded = added;
+	}
 
 	public boolean isStateChange() {
 		return isStateChange;

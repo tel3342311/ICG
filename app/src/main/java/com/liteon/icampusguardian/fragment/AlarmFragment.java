@@ -88,11 +88,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		if (isEditMode) {
-			menu.findItem(R.id.action_add).setVisible(true);
 			menu.findItem(R.id.action_complete).setVisible(true);
 			menu.findItem(R.id.action_edit).setVisible(false);
 		} else {
-			menu.findItem(R.id.action_add).setVisible(false);
 			menu.findItem(R.id.action_complete).setVisible(false);
 			menu.findItem(R.id.action_edit).setVisible(true);	
 		}
@@ -106,7 +104,6 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	public void exitEditMode() {
 		isEditMode = false;
 		getActivity().invalidateOptionsMenu();
-		mAddAlarm.setVisibility(View.VISIBLE);
 		((AlarmItemAdapter)mAdapter).setEditMode(false);
 		mTitleView.setText(getString(R.string.alarm));
         showSyncWindow();
@@ -115,7 +112,6 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	public void enterEditMode() {
 		isEditMode = true;
 		getActivity().invalidateOptionsMenu();
-		mAddAlarm.setVisibility(View.GONE);
 		((AlarmItemAdapter)mAdapter).setEditMode(true);
 		//mToolbar.setTitle("編輯鬧鈴");
 		mTitleView.setText(getString(R.string.alarm_edit_period));
@@ -126,14 +122,6 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		switch (item.getItemId()) {
 		case R.id.action_edit:
 			enterEditMode();
-			break;
-		case R.id.action_add:
-			exitEditMode();
-			if (AlarmManager.getDataSet().size() >= 4) {
-				showAddAlarmErrorDialog();
-				return super.onOptionsItemSelected(item);
-			}
-			mAddAlarmClicks.onAddAlarmClick();
 			break;
 		case R.id.action_complete:
 			exitEditMode();

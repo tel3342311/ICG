@@ -8,14 +8,9 @@
         app:showAsAction="ifRoom"
         android:title="edit"/>
      <item
-        android:id="@+id/action_add"
-        android:enabled="true"
-        app:showAsAction="always"
-        android:title="@string/alarm_add_new_alarm"/>
-     <item
         android:id="@+id/action_complete"
         android:enabled="true"
-        android:icon="@drawable/ic_check_black_24dp"
+        android:icon="@drawable/ic_check_white_24dp"
         app:showAsAction="always"
         android:title="完成"/>
 

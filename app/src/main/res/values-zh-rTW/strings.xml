@@ -235,4 +235,5 @@
 	<string name="drawer_setting">App資訊與設定</string>
 	<!-- Pin -->
 	<string name="pin_content_desc">PIN input field</string>
+	<string name="healthy_wake">起床</string>
 </resources>

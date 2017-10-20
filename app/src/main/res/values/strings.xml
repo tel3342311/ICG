@@ -235,4 +235,5 @@
 	<string name="drawer_setting">About and Settings</string>
 	<!-- Pin -->
 	<string name="pin_content_desc">PIN input field</string>
+    <string name="healthy_wake">Wake</string>
 </resources>

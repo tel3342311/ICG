@@ -1,76 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView 
-        android:id="@+id/pairing_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/pairing_title_margin_top"
-        android:layout_marginStart="@dimen/pairing_title_margin_horizontal"
-        android:layout_marginEnd="@dimen/pairing_title_margin_horizontal"
-        android:text="@string/pairing_watch_steps"
-        android:textSize="@dimen/pairing_title_text_size"
-        android:textColor="@color/md_black_1000"
-        android:lineSpacingExtra="@dimen/pairing_title_line_space"
-        android:layout_centerHorizontal="true"/>
+	<TextView
+		android:id="@+id/pairing_title"
+		android:layout_width="289dp"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_marginEnd="32dp"
+		android:layout_marginStart="32dp"
+		android:layout_marginTop="48dp"
+		android:lineSpacingExtra="@dimen/pairing_title_line_space"
+		android:text="@string/pairing_watch_steps"
+		android:textColor="@color/md_black_1000"
+		android:textSize="@dimen/pairing_title_text_size"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toTopOf="parent" />
 
-	<LinearLayout 
-	    android:id="@+id/login_btn_group"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_marginLeft="@dimen/pairing_title_margin_horizontal"
-	    android:layout_marginRight="@dimen/pairing_title_margin_horizontal"
-	    android:layout_marginBottom="@dimen/pairing_bottom_area_margin_vertical"
-	    android:orientation="vertical"
-	    android:layout_alignParentBottom="true">
+	<LinearLayout
+		android:id="@+id/login_btn_group"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_marginBottom="16dp"
+		android:layout_marginEnd="32dp"
+		android:layout_marginStart="32dp"
+		android:orientation="vertical"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent">
 
-	  	<android.support.v7.widget.AppCompatButton
-	        android:id="@+id/pairing_watch_now"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
-	        android:background="@color/md_red_700"
-	        style="@style/list_item"
-	        android:textColor="@color/md_white_1000"
-	        android:text="@string/pairing_watch_pair" />
-	    	    
-	    <android.support.v7.widget.AppCompatButton
-	        android:id="@+id/pairing_watch_later"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
-	        style="@style/list_item"
-	       	android:textColor="@color/md_white_1000"
-	        android:background="@color/md_red_700"
-	        android:text="@string/pairing_watch_later" />
+		<android.support.v7.widget.AppCompatButton
+			android:id="@+id/pairing_watch_now"
+			style="@style/list_item"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
+			android:background="@color/md_red_700"
+			android:text="@string/pairing_watch_pair"
+			android:textColor="@color/md_white_1000" />
 
-		<TextView 
+		<android.support.v7.widget.AppCompatButton
+			android:id="@+id/pairing_watch_later"
+			style="@style/list_item"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginBottom="@dimen/login_option_btn_margin_bottom"
+			android:background="@color/md_red_700"
+			android:text="@string/pairing_watch_later"
+			android:textColor="@color/md_white_1000" />
+
+		<TextView
+			style="@style/list_item"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/pairing_watch_later_in_setting" 
 			android:layout_gravity="center_horizontal"
-			style="@style/list_item"/>
+			android:text="@string/pairing_watch_later_in_setting" />
 	</LinearLayout>
-	
-	<ImageView 
-	    android:id="@+id/watch_bg"
-	    android:layout_width="@dimen/pairing_watch_bg_width"
-	    android:layout_height="@dimen/pairing_watch_bg_height"
-	    android:layout_above="@id/login_btn_group"
-	    android:layout_marginBottom="@dimen/pairing_watch_margin_bottom"
-	    android:layout_centerHorizontal="true"
-	    android:background="@drawable/login_img_watchpair"/>
-	
-	<ImageView 
-	    android:id="@+id/indicator_loading"
-	    android:layout_width="@dimen/pairing_watch_indicator_size"
-	    android:layout_height="@dimen/pairing_watch_indicator_size"
-	    android:layout_toEndOf="@id/watch_bg"
-	    android:layout_centerVertical="true"
-	    android:background="@drawable/login_ani_arrow"/>
-</RelativeLayout>
+
+	<ImageView
+		android:id="@+id/watch_bg"
+		android:layout_width="@dimen/pairing_watch_bg_width"
+		android:layout_height="@dimen/pairing_watch_bg_height"
+		android:layout_above="@id/login_btn_group"
+		android:layout_centerHorizontal="true"
+		android:layout_marginBottom="8dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="8dp"
+		android:background="@drawable/login_img_watchpair"
+		app:layout_constraintBottom_toTopOf="@+id/login_btn_group"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/pairing_title" />
+
+	<ImageView
+		android:id="@+id/indicator_loading"
+		android:layout_width="@dimen/pairing_watch_indicator_size"
+		android:layout_height="@dimen/pairing_watch_indicator_size"
+		android:layout_centerVertical="true"
+		android:layout_marginBottom="8dp"
+		android:layout_marginEnd="8dp"
+		android:layout_marginStart="8dp"
+		android:layout_toEndOf="@id/watch_bg"
+		android:background="@drawable/login_ani_arrow"
+		app:layout_constraintBottom_toBottomOf="@+id/watch_bg"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintHorizontal_bias="0.1"
+		app:layout_constraintStart_toEndOf="@+id/watch_bg"
+		app:layout_constraintTop_toTopOf="@+id/watch_bg"
+		app:layout_constraintVertical_bias="0.61" />
+</android.support.constraint.ConstraintLayout>

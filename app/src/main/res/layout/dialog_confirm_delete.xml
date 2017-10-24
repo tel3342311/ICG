@@ -22,7 +22,7 @@
         android:layout_width="@dimen/dialog_icon_size"
         android:layout_height="@dimen/dialog_icon_size"
         android:background="@drawable/ic_error_outline_black_24dp"
-        android:backgroundTint="@color/md_red_500"
+        app:backgroundTint="@color/md_red_500"
         android:layout_centerHorizontal="true"
         android:layout_above="@id/title"/>
     

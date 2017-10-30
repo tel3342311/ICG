@@ -1,5 +1,6 @@
 package com.liteon.icampusguardian.fragment;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,10 +23,12 @@ import com.liteon.icampusguardian.util.AlarmPeriodItem;
 import com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.SettingItemAdapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.TintableBackgroundView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,6 +49,7 @@ import android.widget.TextView;
 
 public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHolderClicks{
 
+    private final static String TAG = AlarmEditingFragment.class.getSimpleName();
 	private int mEditIdx = -1;
 	private AlarmItem mCurrentAlarmItem;
 	private WheelPicker mHourPicker;
@@ -56,12 +60,14 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	private RecyclerView mRecyclerView;
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
-	private IAlarmPeriodViewHolderClicks mOnItemClickListener;
+	private WeakReference<IAlarmPeriodViewHolderClicks> mOnItemClickListener;
 	private Toolbar mToolbar;
 	private TextView mTitleView;
 	private EditText mAlarmName;
+
+	public AlarmEditingFragment() {}
 	public AlarmEditingFragment(IAlarmPeriodViewHolderClicks clicks) {
-		mOnItemClickListener = clicks;
+		mOnItemClickListener = new WeakReference<IAlarmPeriodViewHolderClicks>(clicks);
 	}
 	
 	@Override
@@ -113,14 +119,18 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		public void afterTextChanged(Editable s) {
 			editStart = mAlarmName.getSelectionStart();  
 	        editEnd = mAlarmName.getSelectionEnd();  
-	        mAlarmName.removeTextChangedListener(mOnTitleChange);  
+	        if (TextUtils.equals(mAlarmName.getText(), s)) {
+	            Log.d(TAG, "Alarm name : " + s + "NO change");
+	            return;
+            }
+	        mAlarmName.removeTextChangedListener(mOnTitleChange);
 	        if (!TextUtils.isEmpty(mAlarmName.getText())) {  
 	            String etstring = mAlarmName.getText().toString().trim();  
 	            while (calculateLength(s.toString()) > maxLen) {  
 	                s.delete(editStart - 1, editEnd);  
 	                editStart--;  
 	                editEnd--;  
-	                Log.d("TextChanged", "editStart = " + editStart + " editEnd = " + editEnd);  
+	                Log.d(TAG, "editStart = " + editStart + " editEnd = " + editEnd);
 	            }  
 	        }  
 	  
@@ -143,11 +153,17 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	                varlength++;  
 	            }  
 	        }  
-	        Log.d("TextChanged", "varlength = " + varlength);  
+	        Log.d(TAG, "varlength = " + varlength);
 	        return varlength;  
 	    }  
 	};
-	
+
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		mOnItemClickListener = new WeakReference<IAlarmPeriodViewHolderClicks>((IAlarmPeriodViewHolderClicks)context);
+	}
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.one_confirm_menu, menu);
@@ -271,7 +287,7 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 			mCurrentAlarmItem.setPeriod(item.getTitle());
 
 		}
-		mOnItemClickListener.onClick(item, mCurrentAlarmItem);
+		mOnItemClickListener.get().onClick(item, mCurrentAlarmItem);
 
 		for (AlarmPeriodItem periodItem : alarmPeriodDataset) {
 			periodItem.setSelected(false);
@@ -279,4 +295,26 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		item.setSelected(true);
 		mAdapter.notifyDataSetChanged();
 	}
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Gson gson = new Gson();
+        String currentItemStr = gson.toJson(mCurrentAlarmItem);
+        outState.putString("CurrentItem", currentItemStr);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            String currentItemStr = savedInstanceState.getString("currentItem");
+            if (!TextUtils.isEmpty(currentItemStr)) {
+                Gson gson = new Gson();
+                Type typeOfAlarmItem = new TypeToken<AlarmItem>() {
+                }.getType();
+                mCurrentAlarmItem = gson.fromJson(currentItemStr, typeOfAlarmItem);
+            }
+        }
+    }
 }

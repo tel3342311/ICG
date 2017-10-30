@@ -287,19 +287,19 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 					byte[] readBuf = (byte[]) msg.obj;
 					// construct a string from the valid bytes in the buffer
 					String readMessage = new String(readBuf, 0, msg.arg1);
-					Toast.makeText(App.getContext(), "Response : "
-							+ readMessage, Toast.LENGTH_SHORT).show();
+//					Toast.makeText(App.getContext(), "Response : "
+//							+ readMessage, Toast.LENGTH_SHORT).show();
 					break;
 				case Def.MESSAGE_DEVICE_NAME:
 					// save the connected device's name
 					String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
-					Toast.makeText(App.getContext(), "Connected to "
-							+ mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+//					Toast.makeText(App.getContext(), "Connected to "
+//							+ mConnectedDeviceName, Toast.LENGTH_SHORT).show();
 
 					break;
 				case Def.MESSAGE_TOAST:
-                    Toast.makeText(App.getContext(), msg.getData().getString(Def.TOAST),
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(App.getContext(), msg.getData().getString(Def.TOAST),
+//                            Toast.LENGTH_SHORT).show();
 					break;
 			}
 		}

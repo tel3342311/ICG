@@ -162,7 +162,7 @@ public class HealthHistogramView extends View {
 		mHistogramGap = (mWidth - (mGraphMarginHorizon * 2) - (mHistogramWidth * HISTOGRAM_NUM)) / (HISTOGRAM_NUM - 1);
 
 		canvas.drawText(getResources().getString(R.string.activity_last_7_days), 50, mHeight - textFontSize, textPaint);
-		canvas.drawText(getResources().getString(R.string.activity_today), mWidth - 100, mHeight - textFontSize, textPaint);
+		canvas.drawText(getResources().getString(R.string.activity_today), mWidth - 150, mHeight - textFontSize, textPaint);
 		
 		mBottomPath = new Path();
 		mBottomPath.moveTo(0, graph_bottom);
@@ -187,9 +187,9 @@ public class HealthHistogramView extends View {
 		canvas.drawText(mSettingTarget, 0, 30, textPaint);
 
 	    Path path = new Path();
-		Point a = new Point(0, 45);
-	    Point b = new Point(30, 45);
-	    Point c = new Point(15, (int)(mHeight * 0.09) + mGraphMarginVertical);
+		Point a = new Point(0, 50);
+	    Point b = new Point(30, 50);
+	    Point c = new Point(15, (int)(mHeight * 0.08) + mGraphMarginVertical);
 	    path.moveTo(a.x, a.y);
 	    path.lineTo(b.x, b.y);
 	    path.lineTo(c.x, c.y);
@@ -197,7 +197,7 @@ public class HealthHistogramView extends View {
 	    path.close();
 	    canvas.drawPath(path, paintTriangle);
 	    
-		canvas.drawLine(0.f, (float) (mHeight * 0.09) + mGraphMarginVertical, (float)mWidth, (float)(mHeight * 0.09) + mGraphMarginVertical, textPaint);
+		canvas.drawLine(0.f, (float) (mHeight * 0.095) + mGraphMarginVertical, (float)mWidth, (float)(mHeight * 0.095) + mGraphMarginVertical, textPaint);
 		
 	}
 	
@@ -214,7 +214,7 @@ public class HealthHistogramView extends View {
 		switch(event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				for (int i = 0; i < HISTOGRAM_NUM; i++) {
-	                if(mRectList[i].contains(touchX,touchY)){
+	                if(mRectList[i].contains(touchX,touchY) || (mRectList[i].left < touchX && mRectList[i].right > touchX)){
 	                    mSelectedHistogram = i;
 	                    mHistogramChangeListener.onHistogramChanged(i, mValueList.get(i), mDateList.get(i));
 	                	break;

@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
@@ -75,6 +76,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	private boolean isGranted;
 	private boolean isFromWatchTheme;
 	private final static int MAX_SAVE_ITEM = 3;
+	private ConfirmDeleteDialog mPermissionDialog;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -238,7 +240,8 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	private void askPermisson() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			if (this.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(new String[] {android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST);
+				requestPermissions(new String[] {android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                                    android.Manifest.permission.READ_EXTERNAL_STORAGE }, PERMISSION_REQUEST);
 			} else {
 				initRecycleView();
 			}
@@ -255,35 +258,44 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 				Log.d(TAG, "read storage permission granted");
 				initRecycleView();
 			} else {
-				CustomDialog dialog = new CustomDialog();
-        		dialog.setTitle("應用程式要求權限以繼續");
-        		dialog.setIcon(0);
-        		dialog.setBtnText("好");
-        		dialog.setBtnConfirm(mClickListener);
-        		dialog.show(getSupportFragmentManager(), "dialog_fragment");
-			}
-			
-			if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-				Log.d(TAG, "write storage permission granted");
-			} else {
-				CustomDialog dialog = new CustomDialog();
-        		dialog.setTitle("應用程式要求權限以繼續");
-        		dialog.setIcon(0);
-        		dialog.setBtnText("好");
-        		dialog.setBtnConfirm(mClickListener);
-        		dialog.show(getSupportFragmentManager(), "dialog_fragment");
+				mPermissionDialog = new ConfirmDeleteDialog();
+				mPermissionDialog.setOnConfirmEventListener(mOnPermissionConfirmClickListener);
+				mPermissionDialog.setmOnCancelListener(mOnPermissionCancelClickListener);
+				mPermissionDialog.setmTitleText(getString(R.string.pairing_watch_ask_permission));
+				mPermissionDialog.setmBtnConfirmText(getString(android.R.string.ok));
+				mPermissionDialog.setmBtnCancelText(getString(R.string.bind_cancel));
+				mPermissionDialog.show(getSupportFragmentManager(), "dialog_fragment");
 			}
 			break;
 		}
 	}
-	private OnClickListener mClickListener = new OnClickListener() {
 
-		@Override
-		public void onClick(View v) {
-			onBackPressed();
-		}
-		
-	};
+    private View.OnClickListener mOnPermissionConfirmClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            if (mPermissionDialog != null) {
+                mPermissionDialog.dismiss();
+            }
+            askPermisson();
+        }
+    };
+
+    private View.OnClickListener mOnPermissionCancelClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            if (mPermissionDialog != null) {
+                mPermissionDialog.dismiss();
+            }
+            finish();
+            Intent intent = new Intent();
+            intent.setClass(ChoosePhotoActivity.this, MainActivity.class);
+            intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+            startActivity(intent);
+        }
+    };
+
 	public ArrayList<PhotoItem> getPhotoItem() {
 		ArrayList<PhotoItem> list = new ArrayList<>();
         int int_position = 0;

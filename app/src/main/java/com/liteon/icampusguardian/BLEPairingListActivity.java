@@ -97,7 +97,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
                 mPermissionDialog.setOnConfirmEventListener(mOnPermissionConfirmClickListener);
                 mPermissionDialog.setmOnCancelListener(mOnPermissionCancelClickListener);
                 mPermissionDialog.setmTitleText(getString(R.string.pairing_watch_ask_permission));
-                mPermissionDialog.setmBtnConfirmText(getString(R.string.bind_confirm));
+                mPermissionDialog.setmBtnConfirmText(getString(android.R.string.ok));
                 mPermissionDialog.setmBtnCancelText(getString(R.string.bind_cancel));
                 mPermissionDialog.show(getSupportFragmentManager(), "dialog_fragment");
 			}
@@ -127,7 +127,8 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
             Intent intent = new Intent();
             intent.setClass(BLEPairingListActivity.this, MainActivity.class);
             intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
-            startActivity(intent);        }
+            startActivity(intent);
+        }
     };
 
 	//for class BT set up

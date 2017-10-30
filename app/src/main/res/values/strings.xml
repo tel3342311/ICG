@@ -8,7 +8,7 @@
 	<string name="welcome_title">Hello, welcome to \niCampus Guardian\n </string>
 	<string name="welcome_user_term">End User License Agreement (EULA)</string>
 	<string name="welcome_read_eula">Please read the EULA and click on accept to proceed to the app</string> 
-	<string name="welcome_user_term_content">End User License Agreement (EULA) XXXX</string>
+	<string name="welcome_user_term_content">"END USER LICENSE AGREEMENT – CORPORATE SOLUTIONS V.01 Please read the following license agreement carefully before using this program. By accepting the agreement, you are agreeing to become the licensee and expressing your complete acceptance of all the terms and conditions of this license agreement. If you do not accept the terms of the agreement, do not install the program. Similarly, use of the program implies your acceptance to be bound by the terms and conditions of this license agreement. This license agreement represents the entire agreement. This license agreement supersedes any prior license agreements licensee with respect to this product or the product it replaces. Similarly, and where permissible under applicable legislation, the terms and conditions of the present license agreement shall take precedence over any communication or advertising material in the event that such material contradicts any of said terms and conditions or where such material predates this license agreement. The acceptance of the terms and conditions of this agreement does not confer any rights of ownership over the programs or products belonging to LITE-ON.  "</string>
 	<string name="welcome_join_program">Join iCG User Experience Improvement Program</string>
 	<string name="welcome_permission_term">Permission for school teacher to see your kid\'s sleeping information</string>
 	<string name="welcome_accept">Accept</string>
@@ -189,9 +189,8 @@
 	<string name="connect_failed">Connection Fail</string>
 	<string name="insufficient_space">Not enough space in your mobile device.</string>
 	<!-- device pairing -->
-	<string name="pairing_watch">Link with Device</string>
-	<string name="unbind_watch">Unlink Device</string>
-	<string name="bind_watch">Add Device</string>
+	<string name="unbind_watch">UNPAIR</string>
+	<string name="bind_watch">PAIR</string>
 	<string name="will_unbind_watch">Confirm to unlink with child\'s wearable device</string>
 	<string name="bind_cancel">Cancel</string>
 	<string name="bind_confirm">Confirm</string>
@@ -221,7 +220,7 @@
 	<string name="wrong_password">Invalid password</string>
 	<string name="password_not_match">Password and confirm password do not match!</string>
 	<!-- Dialog message -->
-	<string name="ask_bluetooth_permission">Application is requesting permission to turn on Bluetooth.</string>
+	<string name="ask_permission">Application is requesting permission to continue.</string>
 	<!-- old strings -->
 	<!-- Bottom Bar -->
 	<string name="safty_tab">Safety</string>

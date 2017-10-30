@@ -221,7 +221,7 @@
 	<string name="wrong_password">原密碼錯誤</string>
 	<string name="password_not_match">密碼與確認密碼不相同</string>
 	<!-- Dialog message -->
-	<string name="ask_bluetooth_permission">應用程式要求開啟藍芽功能</string>
+	<string name="ask_permission">應用程式要求權限以繼續</string>
 	<!-- old strings -->
 	<!-- Bottom Bar -->
 	<string name="safty_tab">安心</string>

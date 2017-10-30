@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 	private final static int RC_FACEBOOK_SIGNIN = 1001;
 	
 	private final static int RC_USER_TERM = 1002;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,13 +87,14 @@ public class LoginActivity extends AppCompatActivity {
 		setListener();
 		
 		mApiClient = new GuardianApiClient(this);
+
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
 		if (sp.getInt(Def.SP_USER_TERM_READ, 0) == 0) {
 			Intent intent = new Intent();
 			intent.setClass(LoginActivity.this, WelcomeActivity.class);
 			startActivityForResult(intent, RC_USER_TERM);
-		} else if (!TextUtils.isEmpty(token)) {
+		} else if (!TextUtils.isEmpty(token) || App.isOffline) {
     		
     		Intent intent = new Intent();
     		intent.setClass(getApplicationContext(), MainActivity.class);
@@ -273,7 +275,12 @@ public class LoginActivity extends AppCompatActivity {
 	    if (requestCode == RC_USER_TERM) {
 	    	if (resultCode == RESULT_CANCELED) {
 	    		finish();
-	    	}
+	    	} else if (App.isOffline) {
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), MainActivity.class);
+				startActivity(intent);
+				finish();
+			}
 	    } else if (requestCode == RC_GOOGLE_SIGNIN) {
 	    	// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
 	        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);

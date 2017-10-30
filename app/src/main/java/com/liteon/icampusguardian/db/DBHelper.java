@@ -3,6 +3,7 @@ package com.liteon.icampusguardian.db;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
 import com.liteon.icampusguardian.db.ChildLocationTable.ChildLocationEntry;
 import com.liteon.icampusguardian.db.ChildTable.ChildEntry;
@@ -30,13 +31,18 @@ public class DBHelper extends SQLiteOpenHelper {
 	public static final String SQL_QUERY_ALL_ACCOUNT_DATA = "SELECT * FROM " + AccountEntry.TABLE_NAME;
 	private static final String SQL_CREATE_ACCOUNT_TABLE = "CREATE TABLE " + AccountEntry.TABLE_NAME + " ("
 			+ AccountEntry.COLUMN_NAME_USER_NAME + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP
-			+ AccountEntry.COLUMN_NAME_PASSWORD + TEXT_TYPE + COMMA_SEP + AccountEntry.COLUMN_NAME_UUID + TEXT_TYPE
-			+ COMMA_SEP + AccountEntry.COLUMN_NAME_ROLE_TYPE + TEXT_TYPE + COMMA_SEP
-			+ AccountEntry.COLUMN_NAME_ACCOUNT_NAME + TEXT_TYPE + COMMA_SEP + AccountEntry.COLUMN_NAME_GIVEN_NAME
-			+ TEXT_TYPE + COMMA_SEP + AccountEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + COMMA_SEP
-			+ AccountEntry.COLUMN_NAME_GENDER + TEXT_TYPE + COMMA_SEP + AccountEntry.COLUMN_NAME_HEIGHT + INTEGER_TYPE
-			+ COMMA_SEP + AccountEntry.COLUMN_NAME_WEIGHT + INTEGER_TYPE + COMMA_SEP + AccountEntry.COLUMN_NAME_DOB
-			+ TEXT_TYPE + COMMA_SEP + AccountEntry.COLUMN_NAME_TOKEN + TEXT_TYPE + " )";
+			+ AccountEntry.COLUMN_NAME_PASSWORD + TEXT_TYPE + COMMA_SEP
+            + AccountEntry.COLUMN_NAME_UUID + TEXT_TYPE + COMMA_SEP
+            + AccountEntry.COLUMN_NAME_ROLE_TYPE + TEXT_TYPE + COMMA_SEP
+			+ AccountEntry.COLUMN_NAME_ACCOUNT_NAME + TEXT_TYPE + COMMA_SEP
+            + AccountEntry.COLUMN_NAME_MOBILE_NUMBER + TEXT_TYPE + COMMA_SEP
+            + AccountEntry.COLUMN_NAME_GIVEN_NAME + TEXT_TYPE + COMMA_SEP
+            + AccountEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + COMMA_SEP
+			+ AccountEntry.COLUMN_NAME_GENDER + TEXT_TYPE + COMMA_SEP
+            + AccountEntry.COLUMN_NAME_HEIGHT + INTEGER_TYPE + COMMA_SEP
+            + AccountEntry.COLUMN_NAME_WEIGHT + INTEGER_TYPE + COMMA_SEP
+            + AccountEntry.COLUMN_NAME_DOB + TEXT_TYPE + COMMA_SEP
+            + AccountEntry.COLUMN_NAME_TOKEN + TEXT_TYPE + " )";
 	private static final String SQL_DELETE_ACCOUNT_TABLE = "DROP TABLE IF EXISTS " + AccountEntry.TABLE_NAME;
 
 	// Child data
@@ -76,6 +82,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	private DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        if (App.isOffline) {
+            createDummyData(getWritableDatabase());
+        }
 	}
 
 	@Override
@@ -106,6 +115,8 @@ public class DBHelper extends SQLiteOpenHelper {
 				item.setPassword(cursor.getString(cursor.getColumnIndex(AccountEntry.COLUMN_NAME_PASSWORD)));
 				item.setGiven_name(cursor.getString(cursor.getColumnIndex(AccountEntry.COLUMN_NAME_GIVEN_NAME)));
 				item.setUsername(cursor.getString(cursor.getColumnIndex(AccountEntry.COLUMN_NAME_USER_NAME)));
+				item.setMobile_number(cursor.getString(cursor.getColumnIndex(AccountEntry.COLUMN_NAME_MOBILE_NUMBER)));
+				item.setToken(token);
 			} while (cursor.moveToNext());
 			cursor.close();
 			db.close();
@@ -140,6 +151,16 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.close();
 		return ret;
 	}
+
+    public void updateAccount(SQLiteDatabase db, Parent parent) {
+        ContentValues cv = new ContentValues();
+        String[] args = new String[]{parent.getToken()};
+        cv.put(AccountEntry.COLUMN_NAME_ACCOUNT_NAME, parent.getAccount_name());
+        cv.put(AccountEntry.COLUMN_NAME_MOBILE_NUMBER, parent.getMobile_number());
+        cv.put(AccountEntry.COLUMN_NAME_USER_NAME, parent.getUsername());
+        cv.put(AccountEntry.COLUMN_NAME_PASSWORD, parent.getPassword());
+        db.update(AccountEntry.TABLE_NAME, cv, "token=?", args);
+    }
 
 	public void insertChildList(SQLiteDatabase db, List<Student> childList) {
 		for (Student item : childList) {
@@ -215,5 +236,49 @@ public class DBHelper extends SQLiteOpenHelper {
 		cv.put(ChildEntry.COLUMN_NAME_UUID, student.getUuid());
 		cv.put(ChildEntry.COLUMN_NAME_IS_DELETED, student.getIsDelete());
 		db.update(ChildEntry.TABLE_NAME, cv, "student_id=?", args);
+	}
+
+	private void createDummyData(SQLiteDatabase db) {
+
+	    //Child Data
+        List<Student> studentList = new ArrayList<>();
+		Student item = new Student();
+		//student 1
+		item.setUuid("1111-1111-111111111");
+		item.setName("Name");
+		item.setNickname("Pink");
+		item.setGender("FeMale");
+		item.setDob("1995-01-01");
+		item.setHeight("150");
+		item.setWeight("40");
+		item.setRoll_no("1");
+		item.set_class("1");
+		item.setStudent_id("1");
+		studentList.add(item);
+
+		//student 2
+        item = new Student();
+		item.setUuid("2222-2222-22222222");
+		item.setName("Name");
+		item.setNickname("Gibert");
+		item.setGender("Male");
+		item.setDob("1996-03-01");
+		item.setHeight("140");
+		item.setWeight("40");
+		item.setRoll_no("2");
+		item.set_class("2");
+		item.setStudent_id("2");
+        studentList.add(item);
+
+		insertChildList(db, studentList);
+
+		//Parent Data
+        ContentValues cv = new ContentValues();
+        cv.put(AccountEntry.COLUMN_NAME_USER_NAME, "admin3@parent.com");
+        cv.put(AccountEntry.COLUMN_NAME_PASSWORD, "password");
+        cv.put(AccountEntry.COLUMN_NAME_TOKEN, "E8C33BCCC8A1E1627B28B65B0B4DE829");
+        cv.put(AccountEntry.COLUMN_NAME_ACCOUNT_NAME, "LO Parent User");
+        cv.put(AccountEntry.COLUMN_NAME_MOBILE_NUMBER, "9030008893");
+        insertAccount(getWritableDatabase(), cv);
 	}
 }

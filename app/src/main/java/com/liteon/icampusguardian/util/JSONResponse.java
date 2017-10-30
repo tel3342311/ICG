@@ -328,6 +328,26 @@ public class JSONResponse {
 		private String username;//email
 		private String password;
 		private String given_name;
+		private String mobile_number;
+		private String token;
+
+		public String getToken() {
+			return token;
+		}
+
+		public void setToken(String token) {
+			this.token = token;
+		}
+
+
+		public String getMobile_number() {
+			return mobile_number;
+		}
+
+		public void setMobile_number(String mobile_number) {
+			this.mobile_number = mobile_number;
+		}
+
 		/**
 		 * @return the account_name
 		 */

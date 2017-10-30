@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.ChildPairingActivity;
 import com.liteon.icampusguardian.LoginActivity;
 import com.liteon.icampusguardian.MainActivity;
@@ -141,7 +142,6 @@ public class SafetyFragment extends Fragment {
 	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		setRetainInstance(true);
 		super.onCreate(savedInstanceState);
 		if (mMapView != null) {
@@ -220,20 +220,30 @@ public class SafetyFragment extends Fragment {
 
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
-		//testData();
+		testData();
 		mAdapter = new GeoEventAdapter(myDataset);
 		mRecyclerView.setAdapter(mAdapter);
 	}
 
 	private void testData() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(calendar.getTime());
+		Date currentDate = calendar.getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 		if (myDataset.size() == 0) {
-			for (int i = 30; i > 11; i--) {
+			for (int i = 0; i < 30; i++) {
+			    calendar.setTime(currentDate);
+				calendar.add(Calendar.DATE , -i);
 				GeoEventItem item = new GeoEventItem();
-				item.setDate("2017/06/" + i);
-				item.setEnterSchool("06:" + i);
-				item.setLeaveSchool("16:" + i);
-				item.setEmergency("18:" + i);
-				item.setEmergencyRelease("18:" + i);
+				int enterSchool = (int)(Math.random()*60);
+                int leaveSchool = (int)(Math.random()*60);
+                int emergency = (int)(Math.random()*60);
+                int emergencyRelease = (int)(Math.random()*60);
+				item.setDate(sdf.format(calendar.getTime()));
+				item.setEnterSchool("06:" + String.format("%02d", enterSchool));
+				item.setLeaveSchool("16:" + String.format("%02d", leaveSchool));
+				item.setEmergency("18:" + String.format("%02d", emergency));
+				item.setEmergencyRelease("19:" + String.format("%02d", emergencyRelease));
 				myDataset.add(item);
 			}
 		}
@@ -256,8 +266,12 @@ public class SafetyFragment extends Fragment {
 		restoreGeoEvent();
 		if (mStudents.size() > 0) {
 			String id = mStudents.get(mCurrnetStudentIdx).getStudent_id();
-			new getEventReportTask().execute(id);
-			new getCurrentLocation().execute("");
+			if (!App.isOffline) {
+                new getEventReportTask().execute(id);
+                new getCurrentLocation().execute("");
+            } else {
+			    testData();
+            }
 		}
 		if (mCurrentItem != null) {
 			if (myDataset.indexOf(mCurrentItem) == -1) {

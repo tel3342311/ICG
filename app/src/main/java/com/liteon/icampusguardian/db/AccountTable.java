@@ -13,6 +13,7 @@ public class AccountTable {
         public static final String COLUMN_NAME_ROLE_TYPE = "role_type";
         public static final String COLUMN_NAME_UUID = "uuid";
         public static final String COLUMN_NAME_ACCOUNT_NAME = "account_name";
+        public static final String COLUMN_NAME_MOBILE_NUMBER = "mobile_number";
         public static final String COLUMN_NAME_GIVEN_NAME = "name";
         public static final String COLUMN_NAME_NICK_NAME = "nick_name";
         public static final String COLUMN_NAME_GENDER = "gender";

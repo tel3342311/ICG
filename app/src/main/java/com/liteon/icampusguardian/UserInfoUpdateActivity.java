@@ -46,10 +46,13 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	private String mNameGiven;
 	private String mMobile_number;
 	private ImageView mConfirm;
+	private String mToken;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_update);
+        SharedPreferences sp = getApplicationContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+        mToken = sp.getString(Def.SP_LOGIN_TOKEN, "E8C33BCCC8A1E1627B28B65B0B4DE829");
 		findViews();
 		setupToolbar();
 		updateEditText();
@@ -85,18 +88,19 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	protected void onResume() {
 		super.onResume();
 		mToolbar.setTitle(getString(R.string.parent_profile));
-		showSyncWindow();
+		if (!App.isOffline) {
+            showSyncWindow();
+        }
 	}
 	
 	private void updateEditText() {
 		DBHelper helper = DBHelper.getInstance(UserInfoUpdateActivity.this);
-    	SharedPreferences sp = getApplicationContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-    	String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
-    	if (!TextUtils.isEmpty(token)) {
+
+    	if (!TextUtils.isEmpty(mToken)) {
     		//Account values
-    		Parent parent = helper.getParentByToken(helper.getReadableDatabase(), token);
-    		
-    		mName.setText(parent.getGiven_name());
+    		Parent parent = helper.getParentByToken(helper.getReadableDatabase(), mToken);
+    		mName.setText(parent.getAccount_name());
+			mPhoneNumber.setText(parent.getMobile_number());
     		mPassword.setText(parent.getPassword());
     		mConfirmPassword.setText(parent.getPassword());
     		mAccount.setText(parent.getUsername());
@@ -146,7 +150,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 			
 			@Override
 			public void onClick(View v) {
-				new UpdateTask().execute("");
+				//new UpdateTask().execute("");
 			}
 		});
 	}
@@ -230,6 +234,14 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
         	
         	GuardianApiClient apiClient = new GuardianApiClient(UserInfoUpdateActivity.this);
         	apiClient.updateParentDetail(args[0], args[1], args[2], args[3]);
+        	Parent p = new Parent();
+            p.setAccount_name(args[0]);
+            p.setUsername(args[1]);
+            p.setPassword(args[2]);
+            p.setMobile_number(args[3]);
+            p.setToken(mToken);
+            DBHelper helper = DBHelper.getInstance(UserInfoUpdateActivity.this);
+            helper.updateAccount(helper.getWritableDatabase(), p);
         	return null;
         }
 
@@ -250,9 +262,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	}
 	
 	private void showSyncWindow() {
-		View contentview = mSyncView;
-		
-		
+		mSyncView.setVisibility(View.VISIBLE);
 	}
 	
 	class UpdateTask extends AsyncTask<String, Void, Boolean> {

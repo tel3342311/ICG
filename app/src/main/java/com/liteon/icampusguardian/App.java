@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatDelegate;
 public class App extends Application{
 
     private static Context mContext;
-
+    public static Boolean isOffline = true;
     @Override
     public void onCreate() {
         super.onCreate();

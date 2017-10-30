@@ -121,7 +121,7 @@ public class HealthMainFragment extends Fragment implements IHealthViewHolderCli
 		@Override
 		public Fragment getItem(int position) {
 			if (position == HEALTHY_MAIN) {
-				return new HealthFragment(HealthMainFragment.this);
+				return new HealthFragment();
 			} else if (position == HEALTHY_ACTIVITY) {
 				return new DailyHealthFragment(TYPE.ACTIVITY);
 			} else if (position == HEALTHY_CALORIES) {

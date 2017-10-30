@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.BLEPinCodeInputActivity;
 import com.liteon.icampusguardian.ChoosePhotoActivity;
 import com.liteon.icampusguardian.R;
@@ -51,9 +52,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -75,7 +79,7 @@ public class SettingFragment extends Fragment {
 	private boolean isEditMode;
 	private BluetoothAgent mBTAgent;
     private CustomDialog mCustomDialog;
-
+    private View mRootView;
 	public SettingFragment() {
 
 	}
@@ -87,8 +91,8 @@ public class SettingFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
-		View rootView = inflater.inflate(R.layout.fragment_setting, container, false);
-		findView(rootView);
+        mRootView = inflater.inflate(R.layout.fragment_setting, container, false);
+		findView(mRootView);
 		setOnClickListener();
 		initRecycleView();
 		mDbHelper = DBHelper.getInstance(getActivity());
@@ -98,10 +102,16 @@ public class SettingFragment extends Fragment {
 		mAdapter.notifyDataSetChanged();
 
 		mBTAgent = new BluetoothAgent(getApplicationContext(), mHandlerBTClassic);
-		return rootView;
+		return mRootView;
 	}
-	
-	private void setOnClickListener() {
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mClicks = new WeakReference<ISettingItemClickListener>((ISettingItemClickListener)context);
+	}
+
+    private void setOnClickListener() {
 		mChildIcon.setOnClickListener(mOnClickListener);
 		mChildName.addTextChangedListener(mOnChildNameChangedListener);
 	}
@@ -168,15 +178,26 @@ public class SettingFragment extends Fragment {
 
 	class UpdateTask extends AsyncTask<Void, Void, String> {
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(mChildName.getWindowToken(), 0);
+            mRootView.requestFocus();
+        }
+
         protected String doInBackground(Void... params) {
 
             SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
             String btAddress = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
-            BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-            BluetoothDevice mBluetoothDevice = btAdapter.getRemoteDevice(btAddress);
-            mBTAgent.connect(mBluetoothDevice, true);
-
-        	updateChildInfo();
+            if (!TextUtils.isEmpty(btAddress)) {
+                BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+                BluetoothDevice mBluetoothDevice = btAdapter.getRemoteDevice(btAddress);
+                mBTAgent.connect(mBluetoothDevice, true);
+            } else {
+                showBTErrorDialog();
+            }
+            updateChildInfo();
         	DBHelper helper = DBHelper.getInstance(getActivity());
         	SQLiteDatabase db = helper.getWritableDatabase();
         	helper.insertChildList(db, mStudents);

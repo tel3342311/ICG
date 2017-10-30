@@ -1,5 +1,6 @@
 package com.liteon.icampusguardian.fragment;
 
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,14 +33,15 @@ public class HealthFragment extends Fragment {
 	private RecyclerView mRecyclerView;
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
-	private IHealthViewHolderClicks mOnItemClickListener;
+	private WeakReference<IHealthViewHolderClicks> mOnItemClickListener;
 	private View mRootView;
 	private View mSyncView;
-	public HealthFragment(IHealthViewHolderClicks listener) {
-		super();
-		mOnItemClickListener = listener;
-		
-	}
+
+	public HealthFragment() {}
+//	public HealthFragment(IHealthViewHolderClicks listener) {
+//		super();
+//		mOnItemClickListener = new WeakReference<IHealthViewHolderClicks>(listener);
+//	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,13 +51,19 @@ public class HealthFragment extends Fragment {
 		return mRootView;
 	}
 
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		mOnItemClickListener = new WeakReference<>((IHealthViewHolderClicks)getParentFragment());
+	}
+
 	private void initRecycleView() {
 
 		mRecyclerView.setHasFixedSize(true);
 		mLayoutManager = new LinearLayoutManager(getContext());
 		mRecyclerView.setLayoutManager(mLayoutManager);
 		testData();
-		mAdapter = new HealthyItemAdapter(myDataset, mOnItemClickListener);
+		mAdapter = new HealthyItemAdapter(myDataset, mOnItemClickListener.get());
 		mRecyclerView.setAdapter(mAdapter);
 	}
 

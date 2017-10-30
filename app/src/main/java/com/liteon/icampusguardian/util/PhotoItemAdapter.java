@@ -3,6 +3,9 @@ package com.liteon.icampusguardian.util;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.PhotoItemAdapter.ViewHolder.IPhotoViewHolderClicks;
@@ -74,9 +77,14 @@ public class PhotoItemAdapter extends Adapter<PhotoItemAdapter.ViewHolder> {
     	} else {
     		holder.mCheckIcon.setVisibility(View.INVISIBLE);
     	}
+
+
+		RequestOptions options = new RequestOptions();
+		options.centerCrop();
     	//load bitmap 
-    	Bitmap resized = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(item.getFilePath()), (int)photoSize, (int)photoSize);
-    	holder.mPhotoItem.setImageBitmap(resized);
+    	Glide.with(App.getContext()).load(item.getUri()).apply(options).into(holder.mPhotoItem);
+		//Bitmap resized = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(item.getFilePath()), (int)photoSize, (int)photoSize);
+    	//holder.mPhotoItem.setImageBitmap(resized);
     	//crash issue, and need resize
     	//holder.mPhotoItem.setImageURI(item.getUri());
 	}

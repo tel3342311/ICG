@@ -1,40 +1,7 @@
 package com.liteon.icampusguardian;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.BLEItem;
-import com.liteon.icampusguardian.util.BLEItemAdapter;
-import com.liteon.icampusguardian.util.BLEItemAdapter.ViewHolder.IBLEItemClickListener;
-import com.liteon.icampusguardian.util.BluetoothAgent;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.Def;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -44,10 +11,9 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,53 +23,54 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.annotations.SerializedName;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.BLEItem;
+import com.liteon.icampusguardian.util.BLEItemAdapter;
+import com.liteon.icampusguardian.util.BLEItemAdapter.ViewHolder.IBLEItemClickListener;
+import com.liteon.icampusguardian.util.BluetoothAgent;
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 public class BLEPairingListActivity extends AppCompatActivity implements IBLEItemClickListener {
 
-	private final static String TAG = BLEPairingListActivity.class.getName();
+	private final static String TAG = BLEPairingListActivity.class.getSimpleName();
 	private RecyclerView mRecyclerView;
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
 	private List<BLEItem> mDataSet;
 	private ImageView mCancel;
-	//class BT flag
-    private boolean isClassBT = true;
-	//ble 
+	//ble
 	private BluetoothAdapter mBluetoothAdapter;
 	private boolean mScanning;
 	private Handler mHandler;
     private static final long SCAN_PERIOD = 10000;
     private int REQUEST_ENABLE_BT = 1;
-    private BluetoothLeScanner mLEScanner;
-    private ScanSettings settings;
-    private List<ScanFilter> filters;
-    private BluetoothGatt mGatt;
-    private static int VERSION_CODES = 21;
     private final static int PERMISSION_REQUEST = 3;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
 	private int mCurrnetStudentIdx;
     private BluetoothAgent mBTAgent = null;
-
+    private ConfirmDeleteDialog mPermissionDialog;
     //work around for uuid
     private UUIDList mUUIDList;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		askPermisson();
-		//read uuid file
-		File downloadDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" +"UUID.txt");
 
-		getFilesFromDir(downloadDir);	
 		setContentView(R.layout.activity_ble_pairing_list);
 		findViews();
 		setListener();
 		initRecycleView();
-		if (isClassBT) {
-            initClassicBT();
-        } else {
-            initBleComponent();
-        }
+		initClassicBT();
+
 		mDbHelper = DBHelper.getInstance(this);
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
@@ -111,47 +78,10 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 
 	}
 	
-	public static boolean hasPermissions(Context context, String... permissions) {
-	    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
-	        for (String permission : permissions) {
-	            if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-	                return false;
-	            }
-	        }
-	    }
-	    return true;
-	}
-	
-	public void getFilesFromDir(File currentFile) {
-
-		try {
-			FileInputStream iStream = new FileInputStream(currentFile);
-			mUUIDList = (UUIDList) getFakeUUID(iStream, UUIDList.class);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	private Object getFakeUUID(InputStream is, Class<?> class_type) {
-		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-        String line;
-        try {
-			while ((line = br.readLine()) != null) {
-			    sb.append(line+"\n");
-			}
-	        br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        return new Gson().fromJson(sb.toString(), class_type);
-	}
-	
 	private void askPermisson() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 			if (this.checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-				requestPermissions(new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.READ_EXTERNAL_STORAGE, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST);
+				requestPermissions(new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST);
 			}
 		}
 	}
@@ -163,35 +93,43 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 			if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 				Log.d(TAG, "coarse location permission granted");
 			} else {
-				CustomDialog dialog = new CustomDialog();
-        		dialog.setTitle("應用程式要求權限以繼續");
-        		dialog.setIcon(0);
-        		dialog.setBtnText("好");
-        		dialog.show(getSupportFragmentManager(), "dialog_fragment");
-			}
-			
-			if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-				Log.d(TAG, "coarse location permission granted");
-			} else {
-				CustomDialog dialog = new CustomDialog();
-        		dialog.setTitle("應用程式要求權限以繼續");
-        		dialog.setIcon(0);
-        		dialog.setBtnText("好");
-        		dialog.show(getSupportFragmentManager(), "dialog_fragment");
-			}
-			
-			if (grantResults[2] == PackageManager.PERMISSION_GRANTED) {
-				Log.d(TAG, "coarse location permission granted");
-			} else {
-				CustomDialog dialog = new CustomDialog();
-        		dialog.setTitle("應用程式要求權限以繼續");
-        		dialog.setIcon(0);
-        		dialog.setBtnText("好");
-        		dialog.show(getSupportFragmentManager(), "dialog_fragment");
+                mPermissionDialog = new ConfirmDeleteDialog();
+                mPermissionDialog.setOnConfirmEventListener(mOnPermissionConfirmClickListener);
+                mPermissionDialog.setmOnCancelListener(mOnPermissionCancelClickListener);
+                mPermissionDialog.setmTitleText(getString(R.string.pairing_watch_ask_permission));
+                mPermissionDialog.setmBtnConfirmText(getString(R.string.bind_confirm));
+                mPermissionDialog.setmBtnCancelText(getString(R.string.bind_cancel));
+                mPermissionDialog.show(getSupportFragmentManager(), "dialog_fragment");
 			}
 			break;
 		}
 	}
+
+	private View.OnClickListener mOnPermissionConfirmClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            if (mPermissionDialog != null) {
+                mPermissionDialog.dismiss();
+            }
+            askPermisson();
+        }
+    };
+
+    private View.OnClickListener mOnPermissionCancelClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            if (mPermissionDialog != null) {
+                mPermissionDialog.dismiss();
+            }
+            finish();
+            Intent intent = new Intent();
+            intent.setClass(BLEPairingListActivity.this, MainActivity.class);
+            intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+            startActivity(intent);        }
+    };
+
 	//for class BT set up
 	private void initClassicBT() {
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -207,19 +145,6 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 			}
 		}
 	}
-
-
-	private void initBleComponent() {
-		mHandler = new Handler();
-        if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(this, "BLE Not Supported",
-                    Toast.LENGTH_SHORT).show();
-            finish();
-        }
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = bluetoothManager.getAdapter();
-	}
 	
 	private void initRecycleView() {
 		mRecyclerView.setHasFixedSize(true);
@@ -232,20 +157,6 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	
 	private void setupData(){
 		mDataSet = new ArrayList<>();
-//		if (mUUIDList != null) {
-//			for (Device device : mUUIDList.getDevices()) {
-//				BLEItem item = new BLEItem();
-//				item.setId(device.getUuid());
-//				item.setName(device.getName());
-//				mDataSet.add(item);
-//			}
-//		} else {
-//			BLEItem item = new BLEItem();
-//			item.setId("0000-0000-0000-0000");
-//			item.setName("iCampus Guardian");
-//			item.setValue("Not Connected");
-//			mDataSet.add(item);
-//		}
 	}
 
 	@Override
@@ -255,47 +166,32 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else {
-		    if (isClassBT) {
-		        scanBTDevice();
-            } else {
-                if (Build.VERSION.SDK_INT >= VERSION_CODES) {
-                    mLEScanner = mBluetoothAdapter.getBluetoothLeScanner();
-                    settings = new ScanSettings.Builder()
-                            .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
-                            .build();
-                    filters = new ArrayList<ScanFilter>();
-                }
-                scanLeDevice(true);
-            }
+			scanBTDevice();
         }
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 
         // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        this.registerReceiver(mReceiver, filter);
-
         // Register for broadcasts when discovery has finished
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        //Register for broadcasts the UUID wrapped as a ParcelUuid of the remote device after it has been fetched.
+        //filter.addAction(BluetoothDevice.ACTION_UUID);
         this.registerReceiver(mReceiver, filter);
-
 	}
 	
 	@Override
     protected void onPause() {
         super.onPause();
-        if (isClassBT) {
-            if (mBluetoothAdapter.isDiscovering()) {
-                mBluetoothAdapter.cancelDiscovery();
-            }
-            this.unregisterReceiver(mReceiver);
-            if (mBTAgent != null) {
-                mBTAgent.stop();
-            }
-        }
-        else if (mBluetoothAdapter != null && mBluetoothAdapter.isEnabled()) {
-            scanLeDevice(false);
-        }
+
+		if (mBluetoothAdapter.isDiscovering()) {
+			mBluetoothAdapter.cancelDiscovery();
+		}
+		this.unregisterReceiver(mReceiver);
+		if (mBTAgent != null) {
+			mBTAgent.stop();
+		}
+
     }
  
     @Override
@@ -310,20 +206,9 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
         if (mBTAgent != null) {
             mBTAgent.stop();
         }
-    	if (mGatt == null) {
-            return;
-        }
-        mGatt.close();
-        mGatt = null;  
     }
 
     private void scanBTDevice() {
-        // Indicate scanning in the title
-        setProgressBarIndeterminateVisibility(true);
-        //setTitle(R.string.scanning);
-
-        // Turn on sub-title for new devices
-        //findViewById(R.id.title_new_devices).setVisibility(View.VISIBLE);
 
         // If we're already discovering, stop it
         if (mBluetoothAdapter.isDiscovering()) {
@@ -351,36 +236,22 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
                 // When discovery is finished, change the Activity title
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 setProgressBarIndeterminateVisibility(false);
-            }
+            } else if (BluetoothDevice.ACTION_UUID.equals(action)) {
+				// This is when we can be assured that fetchUuidsWithSdp has completed.
+				// So get the uuids and call fetchUuidsWithSdp on another device in list
+				BluetoothDevice deviceExtra = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+				Parcelable[] uuidExtra = intent.getParcelableArrayExtra(BluetoothDevice.EXTRA_UUID);
+				Log.d(TAG, "DeviceExtra address - " + deviceExtra.getAddress());
+				if (uuidExtra != null) {
+					for (Parcelable p : uuidExtra) {
+						Log.d(TAG, "uuidExtra - " + p);
+					}
+				} else {
+					Log.d(TAG, "uuidExtra is still null");
+				}
+			}
         }
     };
-
-	private void scanLeDevice(final boolean enable) {
-        if (enable) {
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT < VERSION_CODES) {
-                        mBluetoothAdapter.stopLeScan(mLeScanCallback);
-                    } else {
-                        mLEScanner.stopScan(mScanCallback);
- 
-                    }
-                }
-            }, SCAN_PERIOD);
-            if (Build.VERSION.SDK_INT < VERSION_CODES) {
-                mBluetoothAdapter.startLeScan(mLeScanCallback);
-            } else {
-                mLEScanner.startScan(filters, settings, mScanCallback);
-            }
-        } else {
-            if (Build.VERSION.SDK_INT < VERSION_CODES) {
-                mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            } else {
-                mLEScanner.stopScan(mScanCallback);
-            }
-        }
-    }
 	
 	private void updateList(BluetoothDevice device) {
 		BluetoothDevice btDevice = device;
@@ -412,86 +283,6 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
         mDataSet.add(item);
         mAdapter.notifyDataSetChanged();
 	}
-	
-	private ScanCallback mScanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            Log.i("callbackType", String.valueOf(callbackType));
-            Log.i("result", result.toString());
-            BluetoothDevice btDevice = result.getDevice();
-            updateList(btDevice);
-        }
- 
-        @Override
-        public void onBatchScanResults(List<ScanResult> results) {
-            for (ScanResult sr : results) {
-                Log.i("ScanResult - Results", sr.toString());
-            }
-        }
- 
-        @Override
-        public void onScanFailed(int errorCode) {
-            Log.e("Scan Failed", "Error Code: " + errorCode);
-        }
-    };
-    
-    private BluetoothAdapter.LeScanCallback mLeScanCallback =
-            new BluetoothAdapter.LeScanCallback() {
-                @Override
-                public void onLeScan(final BluetoothDevice device, int rssi,
-                                     byte[] scanRecord) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.i("onLeScan", device.toString());
-                            //connectToDevice(device);
-                            updateList(device);
-                        }
-                    });
-                }
-            };
- 
-    public void connectToDevice(BluetoothDevice device) {
-        if (mGatt == null) {
-            mGatt = device.connectGatt(this, false, gattCallback);
-            scanLeDevice(false);// will stop after first device detection
-        }
-    }
-    
-    private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-        @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            Log.i("onConnectionStateChange", "Status: " + status);
-            switch (newState) {
-                case BluetoothProfile.STATE_CONNECTED:
-                    Log.i("gattCallback", "STATE_CONNECTED");
-                    gatt.discoverServices();
-                    break;
-                case BluetoothProfile.STATE_DISCONNECTED:
-                    Log.e("gattCallback", "STATE_DISCONNECTED");
-                    break;
-                default:
-                    Log.e("gattCallback", "STATE_OTHER");
-            }
- 
-        }
- 
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            List<BluetoothGattService> services = gatt.getServices();
-            Log.i("onServicesDiscovered", services.toString());
-            gatt.readCharacteristic(services.get(1).getCharacteristics().get
-                    (0));
-        }
- 
-        @Override
-        public void onCharacteristicRead(BluetoothGatt gatt,
-                                         BluetoothGattCharacteristic
-                                                 characteristic, int status) {
-            Log.i("onCharacteristicRead", characteristic.toString());
-            gatt.disconnect();
-        }
-    };
     
 	private void findViews() {
 		mRecyclerView = (RecyclerView) findViewById(R.id.profile_view);
@@ -533,26 +324,13 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 
 	@Override
 	public void onBleItemClick(BLEItem item) {
-		
-		//if (TextUtils.isEmpty(mStudents.get(mCurrnetStudentIdx).getUuid())) {
-		//	mStudents.get(mCurrnetStudentIdx).setUuid(item.getId());
-		//	mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), mStudents.get(mCurrnetStudentIdx));
-		//}
-
-        BluetoothDevice device = item.getmBluetoothDevice();//mBluetoothAdapter.getRemoteDevice();
-        // Attempt to connect to the device
-        //mBTAgent.connect(device, true);
-
-        SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(Def.SP_BT_WATCH_ADDRESS, device.getAddress());
-        editor.commit();
-
         if (mBTAgent != null) {
             mBTAgent.stop();
         }
+        BluetoothDevice device = item.getmBluetoothDevice();
         Intent intent = new Intent();
         intent.setClass(BLEPairingListActivity.this, BLEPinCodeInputActivity.class);
+        intent.putExtra(Def.EXTRA_BT_ADDR, device.getAddress());
         startActivity(intent);
     }
 	
@@ -607,7 +385,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 		
 	}
 
-    private final Handler mHandlerBTClassic = new Handler() {
+    private final static Handler mHandlerBTClassic = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -642,12 +420,12 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
                 case Def.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
-                    Toast.makeText(getApplicationContext(), "Connected to "
+                    Toast.makeText(App.getContext(), "Connected to "
                                 + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
 
                     break;
                 case Def.MESSAGE_TOAST:
-                    Toast.makeText(getApplicationContext(), msg.getData().getString(Def.TOAST),
+                    Toast.makeText(App.getContext(), msg.getData().getString(Def.TOAST),
                                 Toast.LENGTH_SHORT).show();
                     break;
             }

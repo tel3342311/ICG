@@ -97,14 +97,14 @@ public class BluetoothAgent {
         }
 
         // Start the thread to listen on a BluetoothServerSocket
-        if (mSecureAcceptThread == null) {
-            mSecureAcceptThread = new AcceptThread(true);
-            mSecureAcceptThread.start();
-        }
-        if (mInsecureAcceptThread == null) {
-            mInsecureAcceptThread = new AcceptThread(false);
-            mInsecureAcceptThread.start();
-        }
+//        if (mSecureAcceptThread == null) {
+//            mSecureAcceptThread = new AcceptThread(true);
+//            mSecureAcceptThread.start();
+//        }
+//        if (mInsecureAcceptThread == null) {
+//            mInsecureAcceptThread = new AcceptThread(false);
+//            mInsecureAcceptThread.start();
+//        }
         // Update UI title
         updateUserInterfaceTitle();
     }

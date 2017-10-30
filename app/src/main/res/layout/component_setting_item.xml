@@ -27,7 +27,8 @@
          android:layout_toStartOf="@id/more_info_icon"
          android:layout_centerVertical="true"
 		 android:background="@drawable/btn_bg"
-		 android:textColor="@color/md_black_1000"/>
+		 android:textColor="@color/md_black_1000"
+         android:padding="8dp"/>
      
      <View 
          android:layout_width="match_parent"

@@ -1,13 +1,19 @@
 package com.liteon.icampusguardian;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
+import com.liteon.icampusguardian.fragment.SettingFragment;
 import com.liteon.icampusguardian.util.BluetoothAgent;
 import com.liteon.icampusguardian.util.ClsUtils;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
@@ -29,6 +35,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -53,6 +60,7 @@ import static com.liteon.icampusguardian.App.getContext;
 
 public class BLEPinCodeInputActivity extends AppCompatActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
+    private final static String TAG = BLEPairingListActivity.class.getSimpleName();
 	private ImageView mConfirm;
 	private ImageView mCancel;
 	private EditText mPinFirstDigitEditText;
@@ -70,6 +78,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 
     private BluetoothAgent mBTAgent = null;
     private BluetoothDevice mBluetoothDevice;
+    private int mLastBondState = BluetoothDevice.BOND_NONE;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -83,31 +92,40 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         mBTAgent = new BluetoothAgent(this, mHandlerBTClassic);
         SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
         mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(mReceiver, intentFilter);
+        Intent intent = getIntent();
+        String btAddress = intent.getStringExtra(Def.EXTRA_BT_ADDR);
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        String btAddress = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
         mBluetoothDevice = btAdapter.getRemoteDevice(btAddress);
-        mBTAgent.connect(mBluetoothDevice, true);
+
+        //check if target device is bonded
+        if (mBluetoothDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+            mBTAgent.connect(mBluetoothDevice, true);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mBluetoothDevice.createBond();
+            } else {
+                try {
+                    ClsUtils.createBond(mBluetoothDevice.getClass(), mBluetoothDevice);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            mBleConnectingView.setVisibility(View.VISIBLE);
+        }
     }
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		//IntentFilter intentFilter = new IntentFilter();
-        //intentFilter.addAction(BluetoothDevice.ACTION_PAIRING_REQUEST);//"android.bluetooth.device.action.PAIRING_REQUEST");
-        //registerReceiver(mReceiver, intentFilter);
-
-//        try {
-//            ClsUtils.createBond(mBluetoothDevice.getClass(), mBluetoothDevice);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -116,6 +134,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         if (mBTAgent != null) {
             mBTAgent.stop();
         }
+        unregisterReceiver(mReceiver);
     }
 
     private void findViews() {
@@ -200,20 +219,26 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 		
         protected Boolean doInBackground(Boolean... args) {
         	
-        	//TODO add ble connection function
             boolean ret = args[0];
             //setPin
             try {
-                 //ret = ClsUtils.setPin(mBluetoothDevice.getClass(), mBluetoothDevice, mPinHiddenEditText.getText().toString());
-                 //ClsUtils.cancelBondProcess(mBluetoothDevice.getClass(),mBluetoothDevice);
-                //Device name update
-                DeviceNameJSON deviceNameInfo = new DeviceNameJSON();
-                deviceNameInfo.setType("devicename");
-                deviceNameInfo.setName(mStudents.get(mCurrnetStudentIdx).getNickname());
-                Gson gson = new Gson();
-                String deviceNameStr = gson.toJson(deviceNameInfo);
+
                 if (ret && mBTAgent != null) {
+
+                    //Device name update
+                    DeviceNameJSON deviceNameInfo = new DeviceNameJSON();
+                    deviceNameInfo.setType("devicename");
+                    deviceNameInfo.setName(mStudents.get(mCurrnetStudentIdx).getNickname());
+
+                    Gson gson = new Gson();
+                    String deviceNameStr = gson.toJson(deviceNameInfo);
                     mBTAgent.write(deviceNameStr.getBytes());
+
+                    SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString(Def.SP_BT_WATCH_ADDRESS, mBluetoothDevice.getAddress());
+                    editor.commit();
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -471,18 +496,29 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals("android.bluetooth.device.action.PAIRING_REQUEST")) {
-                mBluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                try {
-                    //ClsUtils.setPairingConfirmation(mBluetoothDevice.getClass(), mBluetoothDevice, true);
-                    abortBroadcast();
-                    int pairingKey = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_KEY,
-                            BluetoothDevice.ERROR);
-                    Boolean b = ClsUtils.setPin(mBluetoothDevice.getClass(), mBluetoothDevice, Integer.toString(pairingKey) );
-                    Log.d("mBluetoothDevice", "onReceive: " + b);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if (intent.getAction().equals(BluetoothDevice.ACTION_PAIRING_REQUEST)) {
+//                mBluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+//                try {
+//                    //abortBroadcast();
+//                    int pairingKey = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_KEY,
+//                            BluetoothDevice.ERROR);
+//                    Boolean b = ClsUtils.setPin(mBluetoothDevice.getClass(), mBluetoothDevice, pairingKey);
+//                    ClsUtils.setPairingConfirmation(mBluetoothDevice.getClass(), mBluetoothDevice, true);
+//                    Log.d(TAG, "ClsUtils.setPin: " + b);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+            } else if (intent.getAction().equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                int bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE,
+                        BluetoothDevice.ERROR);
+                // New Paired device
+                Log.d(TAG, "bond state : " + bondState);
+                if (bondState == BluetoothDevice.BOND_BONDED) {
+                    mBTAgent.connect(mBluetoothDevice, true);
+                } else if (bondState == BluetoothDevice.BOND_NONE && mLastBondState == BluetoothDevice.BOND_BONDING) {
+                    new ConnectBleTask().execute(new Boolean(false));
                 }
+                mLastBondState = bondState;
             }
         }
     };

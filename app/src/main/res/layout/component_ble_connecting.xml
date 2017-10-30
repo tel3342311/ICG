@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:alpha="0.7"
     android:animateLayoutChanges="true"
-    android:background="@color/md_grey_800">
+    android:background="@color/md_grey_800"
+    android:clickable="true">
 
      <ImageView
          android:id="@+id/watch_bg"

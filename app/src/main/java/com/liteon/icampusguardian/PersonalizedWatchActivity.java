@@ -1,40 +1,62 @@
 package com.liteon.icampusguardian;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Map;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.AlarmItem;
+import com.liteon.icampusguardian.util.AlarmManager;
+import com.liteon.icampusguardian.util.BluetoothAgent;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.CustomSkinJSON;
+import com.liteon.icampusguardian.util.CustomSkinResponseJSON;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
 public class PersonalizedWatchActivity extends AppCompatActivity {
 
+	private static final String TAG = PersonalizedWatchActivity.class.getSimpleName();
 	private Toolbar mToolbar;
-	private TextView mTextViewUserTerm;
 	private ProgressBar mProgressBar;
-	private Handler mHandlerTime;
-	private int mProgressStep;
 	private ImageView mWatchSurface;
 	private TextView mTitleUpdating;
 	private DBHelper mDbHelper;
@@ -42,7 +64,12 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	private int mCurrnetStudentIdx;
 	private final static int REQUEST_WATCH_SURFACE = 1;
     private ConfirmDeleteDialog mBLEFailConfirmDialog;
-	
+	private ImageView mCancel;
+	private ImageView mConfirm;
+	private BluetoothAgent mBTAgent;
+	private BluetoothDevice mBTDevice;
+	private CustomDialog mCustomDialog;
+	private byte[] mFileBytes;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,6 +79,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		setupToolbar();
 		mProgressBar.setVisibility(View.INVISIBLE);
 		mTitleUpdating.setVisibility(View.INVISIBLE);
+        mBTAgent = new BluetoothAgent(this, mHandler);
 	}
 	
 	private void findViews() {
@@ -59,6 +87,8 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		mProgressBar = (ProgressBar) findViewById(R.id.loading_progress);
 		mWatchSurface = (ImageView) findViewById(R.id.watch_surface);
 		mTitleUpdating = (TextView) findViewById(R.id.watch_surface_updating_text);
+		mConfirm = findViewById(R.id.confirm);
+		mCancel = findViewById(R.id.back);
 	}
 	
 	private void setListener() {
@@ -67,10 +97,9 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	
 	private void setupToolbar() {
 		setSupportActionBar(mToolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		getSupportActionBar().setHomeButtonEnabled(false);
+		mCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
@@ -79,6 +108,16 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
             	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
             	startActivity(intent);
             	finish();
+			}
+		});
+
+		mConfirm.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+                mProgressBar.setVisibility(View.VISIBLE);
+                mTitleUpdating.setText(R.string.syncing_photo_to_watch);
+                mTitleUpdating.setVisibility(View.VISIBLE);
+                connectToBT();
 			}
 		});
 	}
@@ -97,10 +136,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_WATCH_SURFACE) {
 			if (resultCode == RESULT_OK) {
-				mProgressBar.setVisibility(View.VISIBLE);
-				mTitleUpdating.setText(R.string.syncing_photo_to_watch);
-				mTitleUpdating.setVisibility(View.VISIBLE);
-				new ConnectBleTask().execute("");
+
 			}
 		}
 	};
@@ -131,7 +167,6 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
 		setupWatchSurface();
-		mToolbar.setTitle(R.string.watch_surface);
 	}
 	
 	@Override
@@ -139,50 +174,12 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		super.onPause();
 	}
 	
-	class ConnectBleTask extends AsyncTask<String, Void, Boolean> {
-
-		@Override
-		protected void onPreExecute() {
-			mProgressBar.setVisibility(View.VISIBLE);
-			mTitleUpdating.setText(R.string.syncing_photo_to_watch);
-			mTitleUpdating.setVisibility(View.VISIBLE);
-		}
-		
-        protected Boolean doInBackground(String... args) {
-        	
-        	//TODO add ble connection function
-        	try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-        	return Boolean.FALSE;
-        }
-
-        protected void onPostExecute(Boolean success) {
-        	mProgressBar.setVisibility(View.INVISIBLE);
-        	if (success == true) {
-        		mTitleUpdating.setText(R.string.syncing_photo_to_watch_complete);
-        	} else {
-        		mTitleUpdating.setVisibility(View.INVISIBLE);
-        		mBLEFailConfirmDialog = new ConfirmDeleteDialog();
-        		mBLEFailConfirmDialog.setOnConfirmEventListener(mOnBLEFailConfirmClickListener);
-        		mBLEFailConfirmDialog.setmOnCancelListener(mOnBLEFailCancelClickListener);
-        		mBLEFailConfirmDialog.setmTitleText(getString(R.string.syncing_photo_to_watch_failed));
-        		mBLEFailConfirmDialog.setmBtnConfirmText(getString(R.string.syncing_photo_to_watch_synced));
-        		mBLEFailConfirmDialog.setmBtnCancelText(getString(R.string.syncing_photo_to_watch_cancel));
-        		mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
-        	}
-        }
-    }
-	
 	private View.OnClickListener mOnBLEFailConfirmClickListener = new OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
 			mBLEFailConfirmDialog.dismiss();
-			new ConnectBleTask().execute("");
-			
+            connectToBT();
 		}
 	};
 	
@@ -196,6 +193,145 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
         	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
         	startActivity(intent);
         	finish();
+		}
+	};
+
+    private void connectToBT() {
+        SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+        String btAddress = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
+
+        if (TextUtils.isEmpty(btAddress)) {
+            showBTErrorDialog();
+            return;
+        }
+        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+        BluetoothDevice target = btAdapter.getRemoteDevice(btAddress);
+
+        if (target != null) {
+            mBTAgent.connect(target, true);
+        }
+    }
+
+    private void syncDataToBT() {
+        mProgressBar.setVisibility(View.VISIBLE);
+        mTitleUpdating.setText(R.string.syncing_photo_to_watch);
+        mTitleUpdating.setVisibility(View.VISIBLE);
+
+        File watchSkinFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                .getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + "_watch.jpg");
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(watchSkinFile);
+            mFileBytes = IOUtils.toByteArray(fis);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (mFileBytes != null || mFileBytes.length > 0) {
+            //sync alarm data with watch
+            CustomSkinJSON customSkinJSON = new CustomSkinJSON();
+            customSkinJSON.setType("customskinmetadata");
+            customSkinJSON.setFileType("jpeg");
+            customSkinJSON.setFileSize(mFileBytes.length);
+			Gson gson = new Gson();
+			String requestStr = gson.toJson(customSkinJSON);
+            mBTAgent.write(requestStr.getBytes());
+		}
+
+        final Handler handler = new Handler();
+        final Runnable hideSyncView = new Runnable() {
+
+            @Override
+            public void run() {
+                mProgressBar.setVisibility(View.INVISIBLE);
+           		mTitleUpdating.setText(R.string.syncing_photo_to_watch_complete);
+            }
+        };
+        Runnable runnable = new Runnable(){
+            @Override
+            public void run() {
+                handler.postDelayed(hideSyncView, 3000);
+                if (mBTAgent != null) {
+                    mBTAgent.stop();
+                }
+            }
+        };
+        handler.postDelayed(runnable, 2000);
+    }
+
+    private void showBTErrorDialog() {
+        mTitleUpdating.setVisibility(View.INVISIBLE);
+        mBLEFailConfirmDialog = new ConfirmDeleteDialog();
+        mBLEFailConfirmDialog.setOnConfirmEventListener(mOnBLEFailConfirmClickListener);
+        mBLEFailConfirmDialog.setmOnCancelListener(mOnBLEFailCancelClickListener);
+        mBLEFailConfirmDialog.setmTitleText(getString(R.string.syncing_photo_to_watch_failed));
+        mBLEFailConfirmDialog.setmBtnConfirmText(getString(R.string.syncing_photo_to_watch_synced));
+        mBLEFailConfirmDialog.setmBtnCancelText(getString(R.string.syncing_photo_to_watch_cancel));
+        mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
+    }
+
+    //If customSkin data is successfully sent, then write skin image data.
+    private void syncImageToBT(String response) {
+        Type typeOfResponse = new TypeToken<CustomSkinResponseJSON>(){}.getType();
+        Gson gson = new GsonBuilder().create();
+        CustomSkinResponseJSON responseJSON = gson.fromJson(response, typeOfResponse);
+        if (responseJSON != null) {
+            if (TextUtils.equals(responseJSON.getType(), "customskinmetadata")&&
+                    TextUtils.equals(responseJSON.getAck(), "SUCCESS")) {
+                mBTAgent.write(mFileBytes);
+            }
+        }
+    }
+
+	private final Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case Def.MESSAGE_STATE_CHANGE:
+					switch (msg.arg1) {
+						case BluetoothAgent.STATE_CONNECTED:
+							Log.d(TAG, "[BT][STATE_CONNECTED]");
+							break;
+						case BluetoothAgent.STATE_CONNECTING:
+							Log.d(TAG, "[BT][STATE_CONNECTING]");
+							break;
+						case BluetoothAgent.STATE_LISTEN:
+						case BluetoothAgent.STATE_NONE:
+							Log.d(TAG, "[BT][STATE_NONE]");
+							break;
+					}
+					break;
+				case Def.MESSAGE_WRITE:
+					byte[] writeBuf = (byte[]) msg.obj;
+					// construct a string from the buffer
+					String writeMessage = new String(writeBuf);
+					Log.d(TAG, "Write data : " + writeMessage);
+					break;
+				case Def.MESSAGE_READ:
+					byte[] readBuf = (byte[]) msg.obj;
+					// construct a string from the valid bytes in the buffer
+					String readMessage = new String(readBuf, 0, msg.arg1);
+					syncImageToBT(readMessage);
+					Log.d(TAG, "Response : " + readMessage);
+					break;
+				case Def.MESSAGE_DEVICE_NAME:
+					// save the connected device's name
+					String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
+					//Toast.makeText(App.getContext(), "Connected to "
+					//        + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+					if (!TextUtils.isEmpty(mConnectedDeviceName)) {
+					    syncDataToBT();
+					}
+					break;
+				case Def.MESSAGE_TOAST:
+					String message = msg.getData().getString(Def.TOAST);
+					Log.d(TAG, msg.getData().getString(Def.TOAST));
+					if (TextUtils.equals(message, Def.BT_ERR_UNABLE_TO_CONNECT)) {
+						showBTErrorDialog();
+					}
+					break;
+			}
 		}
 	};
 }

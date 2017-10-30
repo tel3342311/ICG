@@ -15,6 +15,41 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent">
 
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" >
+
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="@dimen/toolbar_icon_size"
+                android:layout_height="@dimen/toolbar_icon_size"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:background="@drawable/ic_navigate_before_white_24dp"
+                app:backgroundTint="@color/md_white_1000" />
+
+			<TextView
+				android:id="@+id/login_title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginBottom="@dimen/activity_vertical_margin"
+				android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_centerInParent="true"
+				android:text="@string/watch_surface"
+				android:textColor="@color/md_white_1000"
+				android:textSize="@dimen/page_title_text_size" />
+
+			<ImageView
+				android:id="@+id/confirm"
+				android:layout_width="@dimen/toolbar_icon_size"
+				android:layout_height="@dimen/toolbar_icon_size"
+				android:layout_alignParentEnd="true"
+				android:layout_centerVertical="true"
+				android:layout_marginEnd="@dimen/activity_horizontal_margin"
+				android:background="@drawable/alarmset_btn_ok"
+				app:backgroundTint="@color/md_white_1000" />
+		</RelativeLayout>
 	</android.support.v7.widget.Toolbar>
 
 	<ImageView
@@ -46,6 +81,21 @@
 		app:layout_constraintTop_toTopOf="@+id/watch_bg"
 		app:layout_constraintVertical_bias="0.45" />
 
+	<ImageView
+		android:id="@+id/watch_cover"
+		android:layout_width="@dimen/watch_surface_center_width"
+		android:layout_height="@dimen/watch_surface_center_height"
+		android:layout_centerHorizontal="true"
+		android:layout_marginEnd="8dp"
+		android:layout_marginStart="8dp"
+		android:scaleType="fitXY"
+		android:background="@drawable/setup_img_surface3"
+		app:layout_constraintBottom_toBottomOf="@+id/watch_bg"
+		app:layout_constraintEnd_toEndOf="@+id/watch_bg"
+		app:layout_constraintStart_toStartOf="@+id/watch_bg"
+		app:layout_constraintTop_toTopOf="@+id/watch_bg"
+		app:layout_constraintVertical_bias="0.45" />
+
 	<ProgressBar
 		android:id="@+id/loading_progress"
 		style="?android:attr/progressBarStyleLarge"
@@ -63,20 +113,23 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-	<TextView
-		android:id="@+id/watch_surface_updating_text"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@id/watch_bg"
-		android:layout_centerHorizontal="true"
-		android:layout_marginBottom="24dp"
-		android:layout_marginTop="63dp"
-		android:text="@string/syncing_photo_to_watch"
-		android:textColor="@color/md_black_1000"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/watch_bg" />
+    <TextView
+        android:id="@+id/watch_surface_updating_text"
+        android:layout_width="@dimen/watch_surface_bg_width"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/watch_bg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        style="@style/list_item_big"
+        android:text="@string/syncing_photo_to_watch"
+        android:textColor="@color/md_black_1000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/watch_bg" />
 	
 	    
 </android.support.constraint.ConstraintLayout>

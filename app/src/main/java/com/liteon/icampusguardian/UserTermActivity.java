@@ -59,7 +59,7 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mToolbar.setTitle(getString(R.string.welcome_read_eula));
+		mToolbar.setTitle(getString(R.string.welcome_user_term));
 		Intent intent = getIntent();
 		boolean disableBottom = intent.getBooleanExtra(Def.EXTRA_DISABLE_USERTREM_BOTTOM, false);
 		if (disableBottom == true) {

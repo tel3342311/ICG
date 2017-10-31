@@ -305,11 +305,14 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		public void onClick(View v) {
 			SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 			SharedPreferences.Editor editor = sp.edit();
+			editor.remove(Def.SP_USER_TERM_READ);
 			editor.remove(Def.SP_LOGIN_TOKEN);
 			editor.commit();
-			
-			DBHelper helper = DBHelper.getInstance(MainActivity.this);
-			helper.deleteAccount(helper.getWritableDatabase());
+
+			if (!App.isOffline) {
+                DBHelper helper = DBHelper.getInstance(MainActivity.this);
+                helper.deleteAccount(helper.getWritableDatabase());
+            }
 			finish();
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, LoginActivity.class);

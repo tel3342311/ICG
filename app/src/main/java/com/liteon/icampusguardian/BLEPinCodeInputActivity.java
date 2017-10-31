@@ -5,12 +5,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.fragment.SafetyFragment;
 import com.liteon.icampusguardian.fragment.SettingFragment;
@@ -20,9 +22,11 @@ import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.DeviceNameJSON;
+import com.liteon.icampusguardian.util.DeviceUUIDJSON;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.UUIDResponseJSON;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -60,7 +64,7 @@ import static com.liteon.icampusguardian.App.getContext;
 
 public class BLEPinCodeInputActivity extends AppCompatActivity implements View.OnFocusChangeListener, View.OnKeyListener, TextWatcher {
 
-    private final static String TAG = BLEPairingListActivity.class.getSimpleName();
+    private final static String TAG = BLEPinCodeInputActivity.class.getSimpleName();
 	private ImageView mConfirm;
 	private ImageView mCancel;
 	private EditText mPinFirstDigitEditText;
@@ -557,18 +561,33 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
+                    Log.d(TAG, "Response :" + readMessage);
+                    if (readMessage.contains("uuid")) {
+                        Gson gson = new GsonBuilder().create();
+                        Type typeOfUUIDRepsonse = new TypeToken<UUIDResponseJSON>(){}.getType();
+
+                        UUIDResponseJSON responseJSON = gson.fromJson(readMessage, typeOfUUIDRepsonse);
+                        String uuid = responseJSON.getUuid();
+                        Log.d(TAG, "Device UUID : " + uuid);
+                    }
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;
                 case Def.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
-                    Toast.makeText(getApplicationContext(), "Connected to "
-                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-
+//                    Toast.makeText(getApplicationContext(), "Connected to "
+//                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    if (!TextUtils.isEmpty(mConnectedDeviceName)) {
+                        DeviceUUIDJSON deviceUUIDJSON = new DeviceUUIDJSON();
+                        deviceUUIDJSON.setType("getuuid");
+                        Gson gson = new Gson();
+                        String getUUIDJSON = gson.toJson(deviceUUIDJSON);
+                        mBTAgent.write(getUUIDJSON.getBytes());
+                    }
                     break;
                 case Def.MESSAGE_TOAST:
-                    Toast.makeText(getApplicationContext(), msg.getData().getString(Def.TOAST),
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), msg.getData().getString(Def.TOAST),
+//                            Toast.LENGTH_SHORT).show();
                     if (TextUtils.equals(msg.getData().getString(Def.TOAST), Def.BT_ERR_UNABLE_TO_CONNECT)) {
                         new ConnectBleTask().execute(new Boolean(false));
                     }

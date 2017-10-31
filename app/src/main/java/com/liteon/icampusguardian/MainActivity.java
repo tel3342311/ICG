@@ -339,11 +339,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				title = getString(R.string.healthy_today_reocrd);
 				break;
 			case R.id.action_alarm:
-				fragment = new AlarmFragment(MainActivity.this);
+				fragment = new AlarmFragment();
 				title = getString(R.string.alarm_tab);
 				break;
 			case R.id.action_setting:
-				fragment = new SettingFragment(MainActivity.this);
+				fragment = new SettingFragment();
 				title = getString(R.string.setting_tab);
 				break;
 			}
@@ -576,7 +576,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	public void onAddAlarmClick() {
 		if (mCurrentFragment instanceof AlarmFragment) {
 			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
-			changeFragment(new AlarmEditingFragment(this), getString(R.string.alarm_edit_period), 0);
+			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_edit_period), 0);
 
 			if (fragment.isEditMode()) {
 				fragment.exitEditMode();
@@ -587,7 +587,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 
 	public void onFinishEditPeriod(){
 		if (mCurrentFragment instanceof AlarmPeriodFragment) {
-			changeFragment(new AlarmEditingFragment(this), getString(R.string.alarm_edit_period), 0);
+			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_edit_period), 0);
 		}
 	}
 
@@ -596,7 +596,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		if (mCurrentFragment instanceof AlarmFragment) {
 			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
 
-			changeFragment(new AlarmEditingFragment(this), getString(R.string.alarm_edit_period), 0);
+			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_edit_period), 0);
 			
 			if (fragment.isEditMode()) {
 				fragment.exitEditMode();

@@ -66,9 +66,6 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 	private EditText mAlarmName;
 
 	public AlarmEditingFragment() {}
-	public AlarmEditingFragment(IAlarmPeriodViewHolderClicks clicks) {
-		mOnItemClickListener = new WeakReference<IAlarmPeriodViewHolderClicks>(clicks);
-	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -295,26 +292,4 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		item.setSelected(true);
 		mAdapter.notifyDataSetChanged();
 	}
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Gson gson = new Gson();
-        String currentItemStr = gson.toJson(mCurrentAlarmItem);
-        outState.putString("CurrentItem", currentItemStr);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            String currentItemStr = savedInstanceState.getString("currentItem");
-            if (!TextUtils.isEmpty(currentItemStr)) {
-                Gson gson = new Gson();
-                Type typeOfAlarmItem = new TypeToken<AlarmItem>() {
-                }.getType();
-                mCurrentAlarmItem = gson.fromJson(currentItemStr, typeOfAlarmItem);
-            }
-        }
-    }
 }

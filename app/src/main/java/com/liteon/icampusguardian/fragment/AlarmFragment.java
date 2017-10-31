@@ -1,5 +1,6 @@
 package com.liteon.icampusguardian.fragment;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Set;
 
@@ -49,7 +50,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;
 	private AppCompatButton mAddAlarm;
-	private IAddAlarmClicks mAddAlarmClicks;
+	private WeakReference<IAddAlarmClicks> mAddAlarmClicks;
 	private boolean isEditMode;
 	private Toolbar mToolbar;
 	private TextView mTitleView;
@@ -62,10 +63,11 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	//For bluetooth
 	private BluetoothAgent mBTAgent;
     private CustomDialog mCustomDialog;
+    //For First time, enter Alarm page, Sync data
+	private boolean mIsNeedToGetAlarmInfo;
 
-	public AlarmFragment(IAddAlarmClicks listener) {
-		mAddAlarmClicks = listener;
-	}
+    public AlarmFragment() {}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
@@ -79,7 +81,14 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mBTAgent = new BluetoothAgent(getContext(), mHandler);
 		return rootView;
 	}
-	
+
+	@Override
+	public void onAttach(Context context) {
+		super.onAttach(context);
+		mAddAlarmClicks = new WeakReference<>((IAddAlarmClicks)context);
+
+	}
+
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.alarm_menu, menu);
@@ -174,7 +183,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 				showAddAlarmErrorDialog();
 				return;
 			}
-			mAddAlarmClicks.onAddAlarmClick();
+			mAddAlarmClicks.get().onAddAlarmClick();
 			AlarmManager.setCurrentAction(AlarmManager.ACTION_ADDING);
 		}
 	};
@@ -187,7 +196,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	@Override
 	public void onEditAlarm(int position) {
 		if (isEditMode()) {
-			mAddAlarmClicks.onEditAlarm(position);
+			mAddAlarmClicks.get().onEditAlarm(position);
 			AlarmManager.setCurrentAction(AlarmManager.ACTION_EDITING);
 			AlarmManager.setCurrentItem(AlarmManager.getDataSet().get(position), position);
 		}
@@ -229,7 +238,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		if (mStudents.size() > 0 && mCurrnetStudentIdx >= mStudents.size()) {
 			mCurrnetStudentIdx = 0;
 		}
-
+		mIsNeedToGetAlarmInfo = sp.getBoolean(Def.SP_FIRST_SYNC_ALARM, true);
 		showSyncWindow();
 		restoreAlarm();
 	}
@@ -300,7 +309,10 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
     }
 	
 	private void restoreAlarm() {
-		AlarmManager.restoreAlarm();
+        AlarmManager.restoreAlarm();
+		if (mIsNeedToGetAlarmInfo) {
+		    connectToBT();
+		}
 	}
 	
 	private void saveAlarm() {
@@ -322,6 +334,11 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			mBTAgent.connect(target, true);
 		}
 	}
+
+    private void getAlarmFromBT() {
+        String requestStr = AlarmManager.requestAlarm();
+        mBTAgent.write(requestStr.getBytes());
+    }
 
 	private void showBTErrorDialog() {
         mCustomDialog = new CustomDialog();
@@ -371,6 +388,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Log.d(TAG, "Response : " + readMessage);
+                    if (readMessage.contains("getalarmdata")) {
+                        AlarmManager.syncAlarmFromJSON(readMessage);
+                    }
                     break;
                 case Def.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
@@ -378,7 +398,11 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
                     //Toast.makeText(App.getContext(), "Connected to "
                     //        + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     if (!TextUtils.isEmpty(mConnectedDeviceName)) {
-                        syncDataToBT();
+                        if (mIsNeedToGetAlarmInfo) {
+                            getAlarmFromBT();
+                        } else {
+                            syncDataToBT();
+                        }
                     }
                     break;
                 case Def.MESSAGE_TOAST:

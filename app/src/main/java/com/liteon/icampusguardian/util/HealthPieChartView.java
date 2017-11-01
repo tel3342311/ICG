@@ -1,18 +1,27 @@
 package com.liteon.icampusguardian.util;
 
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.HealthHistogramView.OnHistogramChangeListener;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 
 import android.R.string;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -23,6 +32,7 @@ import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -51,6 +61,13 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 	private int mDateOffsetY;
 	private int mCurrentValue;
 	private String mCurrentDate = "2017/06/20";
+	private String mSettingTarget;
+	private TargetItem mCurrentTargetItem;
+	private Map<String, TargetItem> mTargetMap;
+	private List<JSONResponse.Student> mStudents;
+	private int mCurrentStudentIdx;
+	private DBHelper mDbHelper;
+
 	public HealthPieChartView(Context context) {
 		super(context);
 	}
@@ -152,6 +169,11 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		arcClockBackGroundPaint.setColor(getResources().getColor(R.color.md_deep_purple_A700));
 		arcClockBackGroundPaint.setStrokeWidth(41);
 		arcClockBackGroundPaint.setAntiAlias(true);
+
+		mDbHelper = DBHelper.getInstance(getContext());
+		//get child list
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+		restoreTarget();
 	}
 	
 	@Override 
@@ -491,6 +513,8 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		mType = type;
 		arcPaintPrimary.setColor(getResources().getColor(type.getColorId()));
 		textTargetPaint.setColor(getResources().getColor(type.getColorId()));
+		mSettingTarget = getTarget();
+		mTargetValue = !TextUtils.isEmpty(mSettingTarget) ? Integer.parseInt(mSettingTarget) : 80;
 	}
 	
 	public void setTargetValue(int targetValue) {
@@ -502,5 +526,72 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		mCurrentValue = value;
 		mCurrentDate = date;
 		invalidate();
+	}
+
+	private void restoreTarget() {
+		SharedPreferences sp = getContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		String targetMap = sp.getString(Def.SP_TARGET_MAP, "");
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		Type typeOfHashMap = new TypeToken<Map<String, TargetItem >>() { }.getType();
+		Gson gson = new GsonBuilder().create();
+		mTargetMap = gson.fromJson(targetMap, typeOfHashMap);
+		if (TextUtils.isEmpty(targetMap)) {
+			mTargetMap = new HashMap<String, TargetItem>();
+			for (JSONResponse.Student student : mStudents) {
+				String studentId = student.getStudent_id();
+				TargetItem item = new TargetItem();
+				item.setCarlos("2000");
+				item.setStep("10000");
+				item.setWalking("30");
+				item.setRunning("30");
+				item.setCycling("30");
+				item.setSleep("9");
+				mTargetMap.put(studentId, item);
+			}
+		}
+		if (mTargetMap.get(mStudents.get(mCurrentStudentIdx).getStudent_id()) == null) {
+			TargetItem item = new TargetItem();
+			item.setCarlos("2000");
+			item.setStep("10000");
+			item.setWalking("30");
+			item.setRunning("30");
+			item.setCycling("30");
+			item.setSleep("9");
+			mTargetMap.put(mStudents.get(mCurrentStudentIdx).getStudent_id(), item);
+		}
+		mCurrentTargetItem = mTargetMap.get(mStudents.get(mCurrentStudentIdx).getStudent_id());
+	}
+
+	private String getTarget() {
+		String target = "";
+		switch(mType) {
+			case ACTIVITY:
+				target = "99";
+				break;
+			case CALORIES_BURNED:
+				target = mCurrentTargetItem.getCarlos();
+				break;
+			case CYCLING_TIME:
+				target = mCurrentTargetItem.getCycling();
+				break;
+			case HEART_RATE:
+				target = "80";
+				break;
+			case RUNNING_TIME:
+				target = mCurrentTargetItem.getRunning();
+				break;
+			case SLEEP_TIME:
+				target = mCurrentTargetItem.getSleep();
+				break;
+			case TOTAL_STEPS:
+				target = mCurrentTargetItem.getStep();
+				break;
+			case WALKING_TIME:
+				target = mCurrentTargetItem.getWalking();
+				break;
+			default:
+				break;
+		}
+		return target;
 	}
 }

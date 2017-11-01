@@ -298,8 +298,9 @@ public class HealthHistogramView extends View {
 			item.setRunning("30");
 			item.setCycling("30");
 			item.setSleep("9");
-			mTargetMap.put(mStudents.get(mCurrentStudentIdx).getStudent_id(), new TargetItem());
+			mTargetMap.put(mStudents.get(mCurrentStudentIdx).getStudent_id(), item);
 		}
 		mCurrentTargetItem = mTargetMap.get(mStudents.get(mCurrentStudentIdx).getStudent_id());
+
 	}
 }

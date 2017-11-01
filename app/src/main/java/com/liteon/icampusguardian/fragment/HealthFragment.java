@@ -4,13 +4,18 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.HealthyItem;
 import com.liteon.icampusguardian.util.HealthyItemAdapter;
 import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
+import com.liteon.icampusguardian.util.JSONResponse;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout.LayoutParams;
@@ -36,6 +41,9 @@ public class HealthFragment extends Fragment {
 	private WeakReference<IHealthViewHolderClicks> mOnItemClickListener;
 	private View mRootView;
 	private View mSyncView;
+    private DBHelper mDbHelper;
+    private List<JSONResponse.Student> mStudents;
+    private int mCurrnetStudentIdx;
 
 	public HealthFragment() {}
 //	public HealthFragment(IHealthViewHolderClicks listener) {
@@ -47,6 +55,10 @@ public class HealthFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mRootView = inflater.inflate(R.layout.fragment_healthy, container, false);
 		findView(mRootView);
+        mDbHelper = DBHelper.getInstance(getActivity());
+        //get child list
+        mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+
 		initRecycleView();
 		return mRootView;
 	}
@@ -72,11 +84,56 @@ public class HealthFragment extends Fragment {
 			for (HealthyItem.TYPE type : HealthyItem.TYPE.values()) {
 				HealthyItem item = new HealthyItem();
 				item.setItemType(type);
-				item.setValue((int)(Math.random() * 100)); 
+				item.setValue(getTestValue(type, mCurrnetStudentIdx));
 				myDataset.add(item);
 			}
 		}
 	}
+
+	private int getTestValue(HealthyItem.TYPE type, int idx) {
+        if (idx == 0) {
+            switch(type){
+
+                case ACTIVITY:
+                    return 85;
+                case CALORIES_BURNED:
+                    return 1060;
+                case TOTAL_STEPS:
+                    return 7600;
+                case WALKING_TIME:
+                    return 25;
+                case RUNNING_TIME:
+                    return 40;
+                case CYCLING_TIME:
+                    return 15;
+                case HEART_RATE:
+                    return 81;
+                case SLEEP_TIME:
+                    return 560;
+            }
+        } else {
+            switch(type){
+
+                case ACTIVITY:
+                    return 76;
+                case CALORIES_BURNED:
+                    return 830;
+                case TOTAL_STEPS:
+                    return 6400;
+                case WALKING_TIME:
+                    return 23;
+                case RUNNING_TIME:
+                    return 25;
+                case CYCLING_TIME:
+                    return 15;
+                case HEART_RATE:
+                    return 85;
+                case SLEEP_TIME:
+                    return 530;
+            }
+        }
+        return 0;
+    }
 
 	private void findView(View rootView) {
 		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.healthy_event_view);
@@ -87,7 +144,13 @@ public class HealthFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		showSyncWindow();
-	}
+        SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+
+        mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+        myDataset.clear();
+        testData();
+        mAdapter.notifyDataSetChanged();
+    }
 	
 	private void showSyncWindow() {
 		

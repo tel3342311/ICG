@@ -1,7 +1,10 @@
 package com.liteon.icampusguardian.fragment;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.text.SimpleDateFormat;
@@ -38,7 +41,8 @@ public class DailyHealthFragment extends Fragment {
 	private HealthHistogramView mHistogramView;
 	private HealthPieChartView mPiechartView;
 	private TYPE mType;
-	
+	private int mCurrnetStudentIdx;
+
 	public DailyHealthFragment(HealthyItem.TYPE type) {
 		mType = type;
 	}
@@ -52,16 +56,25 @@ public class DailyHealthFragment extends Fragment {
 		return rootView;
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		testData();
+		setupPieChart();
+		setupHistogram();
+	}
+
 	private void setupHistogram() {
 		mHistogramView.setType(mType);
 		mHistogramView.setOnHistogramClickListener(mPiechartView);
 		mHistogramView.setDates(mDateList);
 		mHistogramView.setValuesByDay(mDataList);
-		mHistogramView.setTargetNumber(mDataList.get(0));
+		//mHistogramView.setTargetNumber(getTargetByType(mType));
 	}
 	private void setupPieChart() {
 		mPiechartView.setType(mType);
-		mPiechartView.setTargetValue(mDataList.get(0));
 		mPiechartView.setValue(mDataList.get(mDataList.size() - 1));
 	}
 	private void findView(View rootView) {
@@ -69,18 +82,20 @@ public class DailyHealthFragment extends Fragment {
 		mPiechartView = (HealthPieChartView) rootView.findViewById(R.id.pie_chart_view);
 	}
 	private void testData() {
-		int target = getTargetByType(mType);
-		
-		mDataList = new ArrayList<>(7);
-		mDataList.add(target);
-		for (int i = 1; i < 7; i++) {
-			mDataList.add((int) (Math.random() * target));
-		}
+
+		mDataList = getTestValue(mType, mCurrnetStudentIdx);
 
 		mDateList = new ArrayList<>(7);
-
+		String dateStr = "2018/01/19";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = Calendar.getInstance().getTime();
+		try {
+			 date = sdf.parse(dateStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(Calendar.getInstance().getTime());
+		calendar.setTime(date);
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		for (int i = 0; i < 7; i++) {
 			calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
@@ -132,4 +147,87 @@ public class DailyHealthFragment extends Fragment {
 		}
 		return target;
 	}
+
+	private List<Integer> getTestValue(HealthyItem.TYPE type, int idx) {
+		List<Integer> list = new ArrayList<>();
+		switch(type) {
+			case ACTIVITY:
+				if (idx == 0) {
+					Integer[] data = {85,83,80,82,88,85,86};
+					list.addAll(Arrays.asList(data));
+				} else {
+					Integer[] data = {76,78,80,76,72,70,76};
+					list.addAll(Arrays.asList(data));
+				}
+				break;
+			case CALORIES_BURNED:
+				if (idx == 0) {
+					Integer[] data = {1060,1020,988,1005,1250,1190,1200};
+					list.addAll(Arrays.asList(data));
+				} else {
+					Integer[] data = {830,980,1100,920,940,932,860};
+					list.addAll(Arrays.asList(data));
+				}
+				break;
+			case CYCLING_TIME:
+				if (idx == 0) {
+					Integer[] data = {15,10,20,30,15,25,20};
+					list.addAll(Arrays.asList(data));
+				} else {
+					Integer[] data = {15,20,10,10,25,10,15};
+					list.addAll(Arrays.asList(data));
+				}
+				break;
+			case HEART_RATE:
+				if (idx == 0) {
+					Integer[] data = {81,80,82,81,83,79,80};
+					list.addAll(Arrays.asList(data));
+				} else {
+					Integer[] data = {85,87,86,85,83,84,86};
+					list.addAll(Arrays.asList(data));
+				}
+				break;
+			case RUNNING_TIME:
+				if (idx == 0) {
+					Integer[] data = {40,15,15,32,30,18,20};
+					list.addAll(Arrays.asList(data));
+				} else {
+					Integer[] data = {25,12,30,15,18,22,23};
+					list.addAll(Arrays.asList(data));
+				}
+				break;
+			case SLEEP_TIME:
+				if (idx == 0) {
+					Integer[] data = {560,575,560,573,590,610,535};
+					list.addAll(Arrays.asList(data));
+				} else {
+					Integer[] data = {530,523,515,520,560,592,490};
+					list.addAll(Arrays.asList(data));
+				}
+				break;
+			case TOTAL_STEPS:
+				if (idx == 0) {
+					Integer[] data = {7600,8200,7500,6691,5682,5498,6687};
+					list.addAll(Arrays.asList(data));
+				} else {
+					Integer[] data = {6400,5250,7123,4451,5338,5409,6127};
+					list.addAll(Arrays.asList(data));
+				}
+				break;
+			case WALKING_TIME:
+				if (idx == 0) {
+					Integer[] data = {25,42,37,27,22,20,27};
+					list.addAll(Arrays.asList(data));
+				} else {
+					Integer[] data = {23,18,35,18,22,23,20};
+					list.addAll(Arrays.asList(data));
+				}
+				break;
+			default:
+				break;
+
+		}
+        Collections.reverse(list);
+		return list;
+    }
 }

@@ -1,5 +1,6 @@
 package com.liteon.icampusguardian.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -76,7 +77,7 @@ public class HealthyItem {
 	}
 	
 	public String toString() {
-		String output;
+		String output = "";
 		switch(itemType) {
 			case ACTIVITY:
 				output = Integer.toString(value);
@@ -90,9 +91,14 @@ public class HealthyItem {
 				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_minutes);
 				break;
 			case SLEEP_TIME:
-				SimpleDateFormat sdf = new SimpleDateFormat(App.getContext().getString(R.string.healthy_hour_mins));
-				Date date = new Date(value);
-				output = sdf.format(date);
+				SimpleDateFormat sdf = new SimpleDateFormat("mm");
+				try {
+					Date date = sdf.parse(Integer.toString(value));
+					sdf.applyPattern(App.getContext().getString(R.string.healthy_hour_mins));
+					output = sdf.format(date);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 				break;
 			case HEART_RATE:
 				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_bpm);

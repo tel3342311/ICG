@@ -51,7 +51,11 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 			@Override
 			public void onClick(View v) {
 
-				onBackPressed();
+				finish();
+				Intent intent = new Intent();
+				intent.setClass(UserTermActivity.this, MainActivity.class);
+				intent.putExtra(Def.EXTRA_GOTO_APP_INFO, true);
+				startActivity(intent);
 			}
 		});
 	}

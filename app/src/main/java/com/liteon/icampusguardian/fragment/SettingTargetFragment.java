@@ -23,7 +23,12 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -66,8 +71,8 @@ public class SettingTargetFragment extends Fragment {
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-	
-		View rootView = inflater.inflate(R.layout.fragment_setting_target, container, false);
+        setHasOptionsMenu(true);
+        View rootView = inflater.inflate(R.layout.fragment_setting_target, container, false);
 		findView(rootView);
 		setupListener();
 		mDbHelper = DBHelper.getInstance(getActivity());
@@ -75,7 +80,32 @@ public class SettingTargetFragment extends Fragment {
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		return rootView;
 	}
-	
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.setting_profile_menu, menu);
+		super.onCreateOptionsMenu(menu, inflater);
+	}
+
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		menu.findItem(R.id.action_confirm).setVisible(true);
+		super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.action_confirm:
+				saveTarget();
+                if (getActivity() != null) {
+                    getActivity().onBackPressed();
+                }
+				break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	private void findView(View rootView) {
 		View carlos = rootView.findViewById(R.id.carlos);
 		carlos.setOnClickListener(mClickListener);
@@ -143,6 +173,13 @@ public class SettingTargetFragment extends Fragment {
 		mRunning.addTextChangedListener(mRunTextWatcher);
 		mCycling.addTextChangedListener(mCycleingTextWatcher);
 		mSleeping.addTextChangedListener(mSleepingTextWatcher);
+
+        mCarlos.setOnTouchListener(mOnEditTextTouchListener);
+		mStep.setOnTouchListener(mOnEditTextTouchListener);
+		mWalking.setOnTouchListener(mOnEditTextTouchListener);
+		mRunning.setOnTouchListener(mOnEditTextTouchListener);
+		mCycling.setOnTouchListener(mOnEditTextTouchListener);
+		mSleeping.setOnTouchListener(mOnEditTextTouchListener);
 	}
 	
 	@Override
@@ -197,7 +234,7 @@ public class SettingTargetFragment extends Fragment {
 	@Override
 	public void onPause() {
 		super.onPause();
-		saveTarget();
+
 	}
 	
 	private void saveTarget() {
@@ -218,8 +255,7 @@ public class SettingTargetFragment extends Fragment {
 		
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-			
-		}
+        }
 		
 		@Override
 		public void afterTextChanged(Editable s) {
@@ -363,4 +399,20 @@ public class SettingTargetFragment extends Fragment {
 			requestFocus(v);
 		}
 	};
+
+    private View.OnTouchListener mOnEditTextTouchListener = new View.OnTouchListener() {
+
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+
+            if (MotionEvent.ACTION_UP == motionEvent.getAction()){
+                for (TextView title : mTitleList) {
+                    title.setTextColor(getResources().getColor(R.color.md_black_1000));
+                }
+                requestFocus((ViewGroup)view.getParent());
+            }
+            return false;
+        }
+    };
 }

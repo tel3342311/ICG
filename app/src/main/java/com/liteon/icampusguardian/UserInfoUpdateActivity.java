@@ -9,6 +9,7 @@ import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Parent;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -115,7 +116,11 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 
-				onBackPressed();
+                finish();
+                Intent intent = new Intent();
+                intent.setClass(UserInfoUpdateActivity.this, MainActivity.class);
+                intent.putExtra(Def.EXTRA_GOTO_APP_INFO, true);
+                startActivity(intent);
 			}
 		});
 	}

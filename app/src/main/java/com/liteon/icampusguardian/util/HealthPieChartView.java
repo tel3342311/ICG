@@ -165,9 +165,9 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		arcClockBackGroundPaint = new Paint(); 
 		arcClockBackGroundPaint.setDither(true);
 		arcClockBackGroundPaint.setStyle(Paint.Style.STROKE);
-		arcClockBackGroundPaint.setStrokeCap(Cap.BUTT);
+		arcClockBackGroundPaint.setStrokeCap(Cap.ROUND);
 		arcClockBackGroundPaint.setColor(getResources().getColor(R.color.md_deep_purple_A700));
-		arcClockBackGroundPaint.setStrokeWidth(41);
+		arcClockBackGroundPaint.setStrokeWidth(60);
 		arcClockBackGroundPaint.setAntiAlias(true);
 
 		mDbHelper = DBHelper.getInstance(getContext());
@@ -269,7 +269,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 			mTypeIcon = getBitmap(R.drawable.health_img_sleep, mTypeIconSize, mTypeIconSize);
 		}
 		
-		int cx = (mWidth - mTypeIcon.getWidth()) >> 1; // same as (...) / 2
+        int cx = (mWidth - mTypeIcon.getWidth()) >> 1; // same as (...) / 2
 	    int cy = mTypeIconLocationY;//(mHeight - mTypeIcon.getHeight()) >> 1;
 	    canvas.drawBitmap(mTypeIcon, cx, cy, null);
 	    
@@ -279,8 +279,16 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 
 		// background full circle arc
 	    canvas.drawArc(rect, 270, (360 * ((float) mCurrentValue / mTargetValue)), false, arcClockBackGroundPaint);
-        canvas.drawArc(rect, 270, 360, false, arcClockPaint);
-        canvas.drawArc(rect, 270, 360, false, arcClockMinPaint);
+        //canvas.drawArc(rect, 270, 360, false, arcClockPaint);
+        //canvas.drawArc(rect, 270, 360, false, arcClockMinPaint);
+        if (mBackground == null) {
+            mBackground = getBitmap(R.drawable.health_img_sleep0scale1, mPieChartSize + 65, mPieChartSize + 65);
+        }
+
+        cx = (mWidth - mBackground.getWidth()) >> 1;
+        cy = (mHeight - mBackground.getHeight()) >> 1;
+
+        canvas.drawBitmap(mBackground, cx, cy, null);
 
         SimpleDateFormat sdf = new SimpleDateFormat(App.getContext().getString(R.string.healthy_hour_mins));
 		long hours = TimeUnit.MINUTES.toHours(mCurrentValue);
@@ -515,6 +523,9 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		textTargetPaint.setColor(getResources().getColor(type.getColorId()));
 		mSettingTarget = getTarget();
 		mTargetValue = !TextUtils.isEmpty(mSettingTarget) ? Integer.parseInt(mSettingTarget) : 80;
+        if (type == TYPE.SLEEP_TIME) {
+            mTargetValue *= 60;
+        }
 	}
 	
 	public void setTargetValue(int targetValue) {

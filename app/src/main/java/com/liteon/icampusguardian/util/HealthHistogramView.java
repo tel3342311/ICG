@@ -102,10 +102,10 @@ public class HealthHistogramView extends View {
 		baseLinePaint.setStrokeCap(Cap.ROUND);
 		baseLinePaint.setColor(Color.BLACK);  
 		baseLinePaint.setStrokeWidth(5);  
-		float[] intervals = new float[] {5.0f, 20.0f};
-		float phase = 1.f;
-		DashPathEffect effects = new DashPathEffect(intervals, phase);  
-		baseLinePaint.setPathEffect(effects);  
+		//float[] intervals = new float[] {5.0f, 20.0f};
+		//float phase = 1.f;
+		//DashPathEffect effects = new DashPathEffect(intervals, phase);
+		//baseLinePaint.setPathEffect(effects);
 		//Paint for Triangle
 		paintTriangle = new Paint();
 	    paintTriangle.setColor(android.graphics.Color.BLACK);
@@ -159,31 +159,35 @@ public class HealthHistogramView extends View {
 	public void onDraw(Canvas canvas)
 	{
 		int graph_bottom = mHeight - textFontSize * 2;
+		double histogram_top = (mHeight * 0.095) + mGraphMarginVertical;
 		mHistogramGap = (mWidth - (mGraphMarginHorizon * 2) - (mHistogramWidth * HISTOGRAM_NUM)) / (HISTOGRAM_NUM - 1);
 
 		canvas.drawText(getResources().getString(R.string.activity_last_7_days), 50, mHeight - textFontSize, textPaint);
 		canvas.drawText(getResources().getString(R.string.activity_today), mWidth - 150, mHeight - textFontSize, textPaint);
-		
-		mBottomPath = new Path();
-		mBottomPath.moveTo(0, graph_bottom);
-		mBottomPath.lineTo(mGraphMarginHorizon, graph_bottom);
+
+        canvas.drawLine(0.f, graph_bottom, (float)mWidth, graph_bottom, textPaint);
 		for (int i = 0; i < HISTOGRAM_NUM; i++) {
 			if (mRectList[i] == null) {
 				float ratio = 1 - ((float)mValueList.get(i) / mTargetNum);
-				float margin = (graph_bottom - mGraphMarginVertical) * ratio;
+                float margin = 0;
+                int top = 0;
+				if (ratio <= 0) {
+                    top = 50;
+                } else {
+                    margin = (graph_bottom - (float)histogram_top) * ratio;
+                    top = (int) (histogram_top + margin);
+                }
+
 				int left = mGraphMarginHorizon + i * (mHistogramWidth + mHistogramGap);
 				int right = left + mHistogramWidth;
-				mRectList[i] = new Rect(left, (int) (mGraphMarginVertical + margin), right , graph_bottom);
+				mRectList[i] = new Rect(left, top, right , graph_bottom);
 			}
 			if (mSelectedHistogram == i) {
 				canvas.drawRect(mRectList[i], paintSelected);
 			} else {
 				canvas.drawRect(mRectList[i], paintOthers);
 			}
-			mBottomPath.moveTo(mRectList[i].right + 10 , graph_bottom);  
-			mBottomPath.lineTo(mRectList[i].right + mHistogramGap, graph_bottom);
 		}
-        canvas.drawPath(mBottomPath, baseLinePaint);
 		canvas.drawText(mSettingTarget, 0, 30, textPaint);
 
 	    Path path = new Path();
@@ -267,6 +271,9 @@ public class HealthHistogramView extends View {
 		paintOthers.setAlpha(128);
 		mSettingTarget = getTarget();
 		mTargetNum = !TextUtils.isEmpty(mSettingTarget) ? Integer.parseInt(mSettingTarget) : 80;
+		if (type == TYPE.SLEEP_TIME) {
+            mTargetNum *= 60;
+        }
 	}
 	
 	private void restoreTarget() {

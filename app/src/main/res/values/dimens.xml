@@ -64,7 +64,7 @@
 	<dimen name="setting_child_name_max_width">150dp</dimen>
 	<dimen name="setting_child_name_min_width">50dp</dimen>
 	<dimen name="setting_profile_list_height">240dp</dimen>
-	<dimen name="setting_profile_item_height">60dp</dimen>
+	<dimen name="setting_profile_item_height">50dp</dimen>
 	<dimen name="setting_profile_option_height">220dp</dimen>
 	<dimen name="setting_target_margin_left">5dp</dimen>
 	<dimen name="setting_target_size">20sp</dimen>

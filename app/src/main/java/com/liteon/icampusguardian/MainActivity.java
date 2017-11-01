@@ -185,10 +185,12 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	protected void onResume() {
 		super.onResume();
 		if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
-			SettingFragment settingFragment = new SettingFragment(this);
+			SettingFragment settingFragment = new SettingFragment();
 			changeFragment(settingFragment);
-		} 
-
+		} else if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_APP_INFO, false)) {
+            AppInfoPrivacyFragment appFragment = new AppInfoPrivacyFragment(this);
+            changeFragment(appFragment);
+        }
 		if (getIntent().getExtras() != null) {
 			if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
 				mBottomView.setSelectedItemId(R.id.action_setting);

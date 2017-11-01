@@ -21,6 +21,7 @@ import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItem;
 import com.liteon.icampusguardian.util.SettingItemAdapter;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
+import com.liteon.icampusguardian.util.WearableInfo;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -188,8 +189,7 @@ public class SettingFragment extends Fragment {
 
         protected String doInBackground(Void... params) {
 
-            SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-            String btAddress = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
+            String btAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), mStudents.get(mCurrnetStudentIdx).getStudent_id());
             if (!TextUtils.isEmpty(btAddress)) {
                 BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
                 BluetoothDevice mBluetoothDevice = btAdapter.getRemoteDevice(btAddress);
@@ -200,7 +200,7 @@ public class SettingFragment extends Fragment {
             updateChildInfo();
         	DBHelper helper = DBHelper.getInstance(getActivity());
         	SQLiteDatabase db = helper.getWritableDatabase();
-        	helper.insertChildList(db, mStudents);
+            helper.updateChildByStudentId(db, mStudents.get(mCurrnetStudentIdx));
         	return null;
         }
 
@@ -333,7 +333,9 @@ public class SettingFragment extends Fragment {
     };
 
     public void notifyBTState() {
-		mAdapter.notifyDataSetChanged();
+        mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+        ((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrnetStudentIdx));
+        mAdapter.notifyDataSetChanged();
 	}
 
     private final Handler mHandlerBTClassic = new Handler() {

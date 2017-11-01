@@ -2,7 +2,6 @@ package com.liteon.icampusguardian.util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,11 +13,15 @@ import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
-import android.R.integer;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.MatrixCursor;
 import android.text.TextUtils;
+
+import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.CUSTOMIZE;
+import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.EVERYDAY;
+import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.ONCE;
+import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.WEEKEND;
+import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.WEEK_DAY;
 
 public class AlarmManager {
 
@@ -26,7 +29,7 @@ public class AlarmManager {
 	private static Map<String, List<AlarmItem>> mAlarmMap;
 	private static DBHelper mDbHelper;
 	private static List<Student> mStudents;
-	private static int mCurrnetStudentIdx;
+	private static int mCurrentStudentIdx;
 	public static final int ACTION_EDITING = 1;
 	public static final int ACTION_ADDING = 2;
 	public static int mCurrentAction = -1;
@@ -78,15 +81,15 @@ public class AlarmManager {
 				mAlarmMap.put(studentId, new ArrayList<AlarmItem>());
 			}
 		}
-		if (mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()) == null) {
-			mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), new ArrayList<AlarmItem>());
+		if (mAlarmMap.get(mStudents.get(mCurrentStudentIdx).getStudent_id()) == null) {
+			mAlarmMap.put(mStudents.get(mCurrentStudentIdx).getStudent_id(), new ArrayList<AlarmItem>());
 		}
 		myDataset.clear();
-		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrnetStudentIdx).getStudent_id()));
+		myDataset.addAll((ArrayList) mAlarmMap.get(mStudents.get(mCurrentStudentIdx).getStudent_id()));
 	}
 	
 	public static void saveAlarm() {
-		mAlarmMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), myDataset);
+		mAlarmMap.put(mStudents.get(mCurrentStudentIdx).getStudent_id(), myDataset);
 		Gson gson = new Gson();
 		String input = gson.toJson(mAlarmMap);
 		SharedPreferences sp = App.getContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
@@ -171,5 +174,71 @@ public class AlarmManager {
             return alarmStr;
         }
         return "";
+    }
+
+    public static String requestAlarm() {
+		RequestAlarmJSON requestAlarmJSON = new RequestAlarmJSON();
+		requestAlarmJSON.setType("getalarmdata");
+
+		Gson gson = new Gson();
+		return gson.toJson(requestAlarmJSON);
+	}
+
+    public static void syncAlarmFromJSON(String readMessage) {
+        myDataset.clear();
+	    Type typeOfRequestAlarmResponse = new TypeToken<RequestAlarmResponseJSON>(){}.getType();
+	    Gson gson = new Gson();
+	    RequestAlarmResponseJSON responseJSON = gson.fromJson(readMessage, typeOfRequestAlarmResponse);
+	    if (TextUtils.equals(responseJSON.getAck(), "SUCCESS")) {
+            AlarmDataJSON.AlarmData[] data = responseJSON.getAlarmList();
+            for (AlarmDataJSON.AlarmData item : data) {
+                AlarmItem alarmItem = new AlarmItem();
+                alarmItem.setAdded(true);
+                alarmItem.setTitle(item.getAlarmtitle());
+                alarmItem.setDate(item.getHour() + ":" +item.getMinutes());
+                setPeriodItem(alarmItem, Integer.parseInt(item.getRepeat()));
+                myDataset.add(alarmItem);
+            }
+        }
+    }
+
+    public static void setPeriodItem(AlarmItem item, int repeat) {
+        AlarmPeriodItem periodItem = new AlarmPeriodItem();
+
+        switch (AlarmPeriodItem.TYPE.values()[repeat]) {
+
+            case WEEK_DAY:
+                periodItem.setItemType(WEEK_DAY);
+                break;
+            case WEEKEND:
+                periodItem.setItemType(WEEKEND);
+                break;
+            case EVERYDAY:
+                periodItem.setItemType(EVERYDAY);
+                break;
+            case ONCE:
+                periodItem.setItemType(ONCE);
+                break;
+            default:
+                periodItem.setItemType(CUSTOMIZE);
+                periodItem.setCustomValue(repeat);
+                break;
+        }
+        item.setPeriodItem(periodItem);
+        if (periodItem.getItemType() != CUSTOMIZE) {
+            item.setPeriod(periodItem.getTitle());
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (WeekPeriodItem.TYPE type : WeekPeriodItem.TYPE.values()) {
+                if ((repeat & type.getValue()) == type.getValue()) {
+                    sb.append(type.getName() + " ");
+                }
+            }
+            item.setPeriod(sb.toString());
+        }
+    }
+
+    public static void setCurrentStudentIdx(int currentStudentIdx) {
+        mCurrentStudentIdx = currentStudentIdx;
     }
 }

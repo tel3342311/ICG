@@ -63,8 +63,6 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	//For bluetooth
 	private BluetoothAgent mBTAgent;
     private CustomDialog mCustomDialog;
-    //For First time, enter Alarm page, Sync data
-	private boolean mIsNeedToGetAlarmInfo;
 
     public AlarmFragment() {}
 
@@ -238,7 +236,6 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		if (mStudents.size() > 0 && mCurrnetStudentIdx >= mStudents.size()) {
 			mCurrnetStudentIdx = 0;
 		}
-		mIsNeedToGetAlarmInfo = sp.getBoolean(Def.SP_FIRST_SYNC_ALARM, true);
 		showSyncWindow();
 		restoreAlarm();
 	}
@@ -309,10 +306,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
     }
 	
 	private void restoreAlarm() {
+	    AlarmManager.setCurrentStudentIdx(mCurrnetStudentIdx);
         AlarmManager.restoreAlarm();
-		if (mIsNeedToGetAlarmInfo) {
-		    connectToBT();
-		}
 	}
 	
 	private void saveAlarm() {
@@ -398,16 +393,15 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
                     //Toast.makeText(App.getContext(), "Connected to "
                     //        + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     if (!TextUtils.isEmpty(mConnectedDeviceName)) {
-                        if (mIsNeedToGetAlarmInfo) {
-                            getAlarmFromBT();
-                        } else {
-                            syncDataToBT();
-                        }
+                        syncDataToBT();
                     }
                     break;
                 case Def.MESSAGE_TOAST:
                     String message = msg.getData().getString(Def.TOAST);
                     Log.d(TAG, msg.getData().getString(Def.TOAST));
+                    if (getActivity() == null) {
+                        return;
+                    }
                     if (TextUtils.equals(message, Def.BT_ERR_UNABLE_TO_CONNECT)) {
                         showBTErrorDialog();
                     }

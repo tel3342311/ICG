@@ -1,15 +1,19 @@
 package com.liteon.icampusguardian.db;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
 import com.liteon.icampusguardian.db.ChildLocationTable.ChildLocationEntry;
 import com.liteon.icampusguardian.db.ChildTable.ChildEntry;
 import com.liteon.icampusguardian.db.EventListTable.EventListEntry;
+import com.liteon.icampusguardian.db.WearableTable.WearableEntry;
 import com.liteon.icampusguardian.util.JSONResponse.Parent;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.WearableInfo;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -48,13 +52,17 @@ public class DBHelper extends SQLiteOpenHelper {
 	// Child data
 	public static final String SQL_QUERY_ALL_CHILDREN_DATA = "SELECT * FROM " + ChildEntry.TABLE_NAME;
 	private static final String SQL_CREATE_CHILDREN_TABLE = "CREATE TABLE " + ChildEntry.TABLE_NAME + " ("
-			+ ChildEntry.COLUMN_NAME_UUID + TEXT_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_GIVEN_NAME
-			+ TEXT_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + COMMA_SEP
-			+ ChildEntry.COLUMN_NAME_GENDER + TEXT_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_HEIGHT + INTEGER_TYPE
-			+ COMMA_SEP + ChildEntry.COLUMN_NAME_WEIGHT + INTEGER_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_CLASS
-			+ TEXT_TYPE + COMMA_SEP + ChildEntry.COLUMN_NAME_ROLL_NO + TEXT_TYPE + COMMA_SEP
+            + ChildEntry.COLUMN_NAME_STUDENT_ID + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP
+            + ChildEntry.COLUMN_NAME_UUID + TEXT_TYPE + COMMA_SEP
+            + ChildEntry.COLUMN_NAME_GIVEN_NAME + TEXT_TYPE + COMMA_SEP
+            + ChildEntry.COLUMN_NAME_NICK_NAME + TEXT_TYPE + COMMA_SEP
+			+ ChildEntry.COLUMN_NAME_GENDER + TEXT_TYPE + COMMA_SEP
+            + ChildEntry.COLUMN_NAME_HEIGHT + INTEGER_TYPE + COMMA_SEP
+            + ChildEntry.COLUMN_NAME_WEIGHT + INTEGER_TYPE + COMMA_SEP
+            + ChildEntry.COLUMN_NAME_CLASS + TEXT_TYPE + COMMA_SEP
+            + ChildEntry.COLUMN_NAME_ROLL_NO + TEXT_TYPE + COMMA_SEP
 			+ ChildEntry.COLUMN_NAME_IS_DELETED +  INTEGER_TYPE + COMMA_SEP
-			+ ChildEntry.COLUMN_NAME_STUDENT_ID +  TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP + ChildEntry.COLUMN_NAME_DOB + TEXT_TYPE + " )";
+            + ChildEntry.COLUMN_NAME_DOB + TEXT_TYPE + " )";
 	private static final String SQL_DELETE_CHILD_TABLE = "DROP TABLE IF EXISTS " + ChildEntry.TABLE_NAME;
 	
 	// Event list data
@@ -65,6 +73,14 @@ public class DBHelper extends SQLiteOpenHelper {
 			+ TEXT_TYPE + " )";
 	private static final String SQL_DELETE_EVENT_TABLE = "DROP TABLE IF EXISTS " + EventListEntry.TABLE_NAME;
 
+	//Wearable data
+    public static final String SQL_QUERY_ALL_WEARABLE_DATA = "SELECT * FROM " + WearableTable.WearableEntry.TABLE_NAME;
+    private static final String SQL_CREATE_WEARABLE_TABLE = "CREATE TABLE " + WearableTable.WearableEntry.TABLE_NAME + " ("
+            + WearableEntry.COLUMN_NAME_UUID + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP
+            + WearableEntry.COLUMN_NAME_ADDR + TEXT_TYPE  + COMMA_SEP
+            + WearableEntry.COLUMN_NAME_STUDENT_ID + TEXT_TYPE   + " )";
+    private static final String SQL_DELETE_WEARABLE_TABLE = "DROP TABLE IF EXISTS " + WearableEntry.TABLE_NAME;
+
 	public static DBHelper getInstance(Context ctx) {
 		if (mInstance == null) {
 			mInstance = new DBHelper(ctx.getApplicationContext());
@@ -72,12 +88,13 @@ public class DBHelper extends SQLiteOpenHelper {
 		return mInstance;
 	}
 
-	// childe location data
+	// child location data
 	public static final String SQL_QUERY_CHILD_LOCATION_DATA = "SELECT * FROM " + ChildLocationEntry.TABLE_NAME;
 	private static final String SQL_CREATE_CHILD_LOCAITON_TABLE = "CREATE TABLE " + ChildLocationEntry.TABLE_NAME + " ("
-			+ ChildLocationEntry.COLUMN_NAME_UUID + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP
-			+ ChildLocationEntry.COLUMN_NAME_LATITUDE + TEXT_TYPE + COMMA_SEP + ChildLocationEntry.COLUMN_NAME_LONGITUDE
-			+ TEXT_TYPE + " )";
+			+ ChildLocationEntry.COLUMN_NAME_STUDENTID + TEXT_TYPE + " PRIMARY KEY" + COMMA_SEP
+			+ ChildLocationEntry.COLUMN_NAME_LATITUDE + TEXT_TYPE + COMMA_SEP
+            + ChildLocationEntry.COLUMN_NAME_LONGITUDE + TEXT_TYPE + COMMA_SEP
+            + ChildLocationEntry.COLUMN_NAME_UPDATE_TIME + INTEGER_TYPE + " )";
 	private static final String SQL_DELETE_CHILD_LOCATION_TABLE = "DROP TABLE IF EXISTS " + ChildLocationEntry.TABLE_NAME;
 
 	private DBHelper(Context context) {
@@ -93,6 +110,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_CREATE_CHILDREN_TABLE);
 		db.execSQL(SQL_CREATE_EVENT_TABLE);
 		db.execSQL(SQL_CREATE_CHILD_LOCAITON_TABLE);
+		db.execSQL(SQL_CREATE_WEARABLE_TABLE);
 	}
 
 	@Override
@@ -101,6 +119,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_DELETE_CHILD_TABLE);
 		db.execSQL(SQL_DELETE_EVENT_TABLE);
 		db.execSQL(SQL_DELETE_CHILD_LOCATION_TABLE);
+        db.execSQL(SQL_DELETE_WEARABLE_TABLE);
 		onCreate(db);
 	}
 
@@ -154,12 +173,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void updateAccount(SQLiteDatabase db, Parent parent) {
         ContentValues cv = new ContentValues();
-        String[] args = new String[]{parent.getToken()};
+        String[] args = new String[]{parent.getUsername()};
         cv.put(AccountEntry.COLUMN_NAME_ACCOUNT_NAME, parent.getAccount_name());
         cv.put(AccountEntry.COLUMN_NAME_MOBILE_NUMBER, parent.getMobile_number());
-        cv.put(AccountEntry.COLUMN_NAME_USER_NAME, parent.getUsername());
         cv.put(AccountEntry.COLUMN_NAME_PASSWORD, parent.getPassword());
-        db.update(AccountEntry.TABLE_NAME, cv, "token=?", args);
+        db.update(AccountEntry.TABLE_NAME, cv, "username=?", args);
     }
 
 	public void insertChildList(SQLiteDatabase db, List<Student> childList) {
@@ -175,25 +193,39 @@ public class DBHelper extends SQLiteOpenHelper {
 			cv.put(ChildEntry.COLUMN_NAME_ROLL_NO, item.getRoll_no());
 			cv.put(ChildEntry.COLUMN_NAME_CLASS, item.get_class());
 			cv.put(ChildEntry.COLUMN_NAME_STUDENT_ID, item.getStudent_id());
-			if (isChildExist(db, item.getUuid())) {
-				db.update(ChildEntry.TABLE_NAME, cv, "uuid=?", new String[] { item.getUuid() });
-			} else {
-				long ret = db.insert(ChildEntry.TABLE_NAME, null, cv);
-				Log.d(DATABASE_NAME, "insert RET is " + ret);
-			}
+
+            long ret = db.insert(ChildEntry.TABLE_NAME, null, cv);
+            Log.d(DATABASE_NAME, "insert " + item.getNickname() + "RET is " + ret);
 		}
 		db.close();
 	}
+
+	public void updateChildByStudentId(SQLiteDatabase db, Student item) {
+        String studentID = item.getStudent_id();
+	    ContentValues cv = new ContentValues();
+        cv.put(ChildEntry.COLUMN_NAME_UUID, item.getUuid());
+        cv.put(ChildEntry.COLUMN_NAME_GIVEN_NAME, item.getName());
+        cv.put(ChildEntry.COLUMN_NAME_NICK_NAME, item.getNickname());
+        cv.put(ChildEntry.COLUMN_NAME_GENDER, item.getGender());
+        cv.put(ChildEntry.COLUMN_NAME_DOB, item.getDob());
+        cv.put(ChildEntry.COLUMN_NAME_HEIGHT, item.getHeight());
+        cv.put(ChildEntry.COLUMN_NAME_WEIGHT, item.getWeight());
+        cv.put(ChildEntry.COLUMN_NAME_ROLL_NO, item.getRoll_no());
+        cv.put(ChildEntry.COLUMN_NAME_CLASS, item.get_class());
+
+        int ret = db.update(ChildEntry.TABLE_NAME, cv, "student_id=?", new String[] { studentID });
+    }
 
 	public void clearChildList(SQLiteDatabase db) {
 		db.execSQL("delete from "+ ChildEntry.TABLE_NAME);
 		db.close();
 	}
-	public boolean isChildExist(SQLiteDatabase db, String uuid) {
-		if (TextUtils.isEmpty(uuid)) {
+
+	public boolean isChildExist(SQLiteDatabase db, String studentId) {
+		if (TextUtils.isEmpty(studentId)) {
 			return false;
 		}
-		Cursor c = db.query(ChildEntry.TABLE_NAME, null, "uuid =?", new String[] { uuid }, null, null, null, null);
+		Cursor c = db.query(ChildEntry.TABLE_NAME, null, "student_id =?", new String[] { studentId }, null, null, null, null);
 		if (c.moveToFirst()) { // if the row exist then return the id
 			c.close();
 			return true;
@@ -238,13 +270,50 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.update(ChildEntry.TABLE_NAME, cv, "student_id=?", args);
 	}
 
+	public long insertWearableData(SQLiteDatabase db, WearableInfo info) {
+        ContentValues cv = new ContentValues();
+        cv.put(WearableEntry.COLUMN_NAME_UUID, info.getUuid());
+        cv.put(WearableEntry.COLUMN_NAME_ADDR, info.getBtAddr());
+        cv.put(WearableEntry.COLUMN_NAME_STUDENT_ID, info.getStudentID());
+        return db.insert(WearableEntry.TABLE_NAME, null, cv);
+    }
+
+    public String getBlueToothAddrByStudentId(SQLiteDatabase db, String student_id) {
+        Cursor c = db.query(WearableEntry.TABLE_NAME, new String[] { WearableEntry.COLUMN_NAME_ADDR}, "student_id =?",
+                new String[] { student_id }, null, null, null, null);
+        if (c.moveToFirst()) // if the row exist then return the id
+            return c.getString(c.getColumnIndex(WearableEntry.COLUMN_NAME_ADDR));
+        return "";
+	}
+
+    public void updateWearableData(SQLiteDatabase db, WearableInfo info) {
+        ContentValues cv = new ContentValues();
+        String[] args = new String[]{info.getUuid()};
+        cv.put(WearableEntry.COLUMN_NAME_ADDR, info.getBtAddr());
+        cv.put(WearableEntry.COLUMN_NAME_STUDENT_ID, info.getStudentID());
+        db.update(WearableEntry.TABLE_NAME, cv, "uuid=?", args);
+    }
+
+    public boolean isWearableExist(SQLiteDatabase db, String uuid) {
+        if (TextUtils.isEmpty(uuid)) {
+            return false;
+        }
+        Cursor c = db.query(WearableEntry.TABLE_NAME, null, "uuid =?", new String[] { uuid }, null, null, null, null);
+        if (c.moveToFirst()) { // if the row exist then return the id
+            c.close();
+            return true;
+        }
+        c.close();
+        return false;
+    }
+
 	private void createDummyData(SQLiteDatabase db) {
 
 	    //Child Data
         List<Student> studentList = new ArrayList<>();
 		Student item = new Student();
 		//student 1
-		item.setUuid("1111-1111-111111111");
+		item.setUuid("");
 		item.setName("Name");
 		item.setNickname("Pink");
 		item.setGender("FeMale");
@@ -258,7 +327,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		//student 2
         item = new Student();
-		item.setUuid("2222-2222-22222222");
+		item.setUuid("");
 		item.setName("Name");
 		item.setNickname("Gibert");
 		item.setGender("Male");
@@ -280,5 +349,37 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(AccountEntry.COLUMN_NAME_ACCOUNT_NAME, "LO Parent User");
         cv.put(AccountEntry.COLUMN_NAME_MOBILE_NUMBER, "9030008893");
         insertAccount(getWritableDatabase(), cv);
+
+        //location Data child 1
+        cv.clear();
+        cv.put(ChildLocationEntry.COLUMN_NAME_STUDENTID, "1");
+        cv.put(ChildLocationEntry.COLUMN_NAME_LATITUDE, "25.029600");
+        cv.put(ChildLocationEntry.COLUMN_NAME_LONGITUDE, "121.533260");
+        cv.put(ChildLocationEntry.COLUMN_NAME_UPDATE_TIME, Calendar.getInstance().getTimeInMillis());
+        insertChildLocation(getWritableDatabase(), cv);
+        //location Data child 2
+        cv.clear();
+        cv.put(ChildLocationEntry.COLUMN_NAME_STUDENTID, "2");
+        cv.put(ChildLocationEntry.COLUMN_NAME_LATITUDE, "25.039594");
+        cv.put(ChildLocationEntry.COLUMN_NAME_LONGITUDE, "121.559538");
+        cv.put(ChildLocationEntry.COLUMN_NAME_UPDATE_TIME, Calendar.getInstance().getTimeInMillis());
+        insertChildLocation(getWritableDatabase(), cv);
 	}
+
+    public void insertChildLocation(SQLiteDatabase db, ContentValues cv) {
+        db.insert(ChildLocationEntry.TABLE_NAME, null, cv);
+        db.close();
+	}
+
+	public LatLng getChildLocationByID(SQLiteDatabase db, String studentID) {
+        Cursor c = db.query(ChildLocationEntry.TABLE_NAME, new String[] { ChildLocationEntry.COLUMN_NAME_LATITUDE, ChildLocationEntry.COLUMN_NAME_LONGITUDE}, "student_id =?",
+                new String[] { studentID }, null, null, null, null);
+        if (c.moveToFirst()) {// if the row exist then return the id
+            String lat = c.getString(c.getColumnIndex(ChildLocationEntry.COLUMN_NAME_LATITUDE));
+            String lng = c.getString(c.getColumnIndex(ChildLocationEntry.COLUMN_NAME_LONGITUDE));
+            LatLng location = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+            return location;
+        }
+        return null;
+    }
 }

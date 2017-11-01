@@ -71,9 +71,7 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
         holder.mTitleTextView.setText(item.getTitle());
         if (item.getItemType() == SettingItem.TYPE.PAIRING) {
         	holder.mValueBtn.setVisibility(View.VISIBLE);
-            SharedPreferences sp = App.getContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-            String btAdderss = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
-            if (!TextUtils.isEmpty(btAdderss)) {
+            if (!TextUtils.isEmpty(mStudent.getUuid())) {
                 holder.mValueBtn.setText(holder.mValueBtn.getResources().getString(R.string.unbind_watch));
             } else {
                 holder.mValueBtn.setText(holder.mValueBtn.getResources().getString(R.string.bind_watch));

@@ -114,45 +114,10 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		
 		@Override
 		public void afterTextChanged(Editable s) {
-			editStart = mAlarmName.getSelectionStart();  
-	        editEnd = mAlarmName.getSelectionEnd();  
-	        if (TextUtils.equals(mAlarmName.getText(), s)) {
-	            Log.d(TAG, "Alarm name : " + s + "NO change");
-	            return;
-            }
-	        mAlarmName.removeTextChangedListener(mOnTitleChange);
-	        if (!TextUtils.isEmpty(mAlarmName.getText())) {  
-	            String etstring = mAlarmName.getText().toString().trim();  
-	            while (calculateLength(s.toString()) > maxLen) {  
-	                s.delete(editStart - 1, editEnd);  
-	                editStart--;  
-	                editEnd--;  
-	                Log.d(TAG, "editStart = " + editStart + " editEnd = " + editEnd);
-	            }  
-	        }  
-	  
-	        mAlarmName.setText(s);  
-	        mAlarmName.setSelection(editStart);  
-	  
- 
-	        mAlarmName.addTextChangedListener(mOnTitleChange);  
+
 			mCurrentAlarmItem.setTitle(s.toString());
+			Log.d(TAG, "Current item title : " + mCurrentAlarmItem.getTitle());
 		}
-		
-		private int calculateLength(String etstring) {  
-	        char[] ch = etstring.toCharArray();  
-	  
-	        int varlength = 0;  
-	        for (int i = 0; i < ch.length; i++) {  
-	            if ((ch[i] >= 0x2E80 && ch[i] <= 0xFE4F) || (ch[i] >= 0xA13F && ch[i] <= 0xAA40) || ch[i] >= 0x80) { // 中文字符範圍0x4e00 0x9fbb  
-	                varlength = varlength + 2;  
-	            } else {  
-	                varlength++;  
-	            }  
-	        }  
-	        Log.d(TAG, "varlength = " + varlength);
-	        return varlength;  
-	    }  
 	};
 
 	@Override

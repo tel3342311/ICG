@@ -27,6 +27,7 @@ import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.UUIDResponseJSON;
+import com.liteon.icampusguardian.util.WearableInfo;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -242,6 +243,12 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putString(Def.SP_BT_WATCH_ADDRESS, mBluetoothDevice.getAddress());
                     editor.commit();
+                    Thread.sleep(1000);
+
+                    DeviceUUIDJSON deviceUUIDJSON = new DeviceUUIDJSON();
+                    deviceUUIDJSON.setType("getuuid");
+                    String getUUIDJSON = gson.toJson(deviceUUIDJSON);
+                    mBTAgent.write(getUUIDJSON.getBytes());
 
                 }
             } catch (Exception e) {
@@ -569,6 +576,18 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                         UUIDResponseJSON responseJSON = gson.fromJson(readMessage, typeOfUUIDRepsonse);
                         String uuid = responseJSON.getUuid();
                         Log.d(TAG, "Device UUID : " + uuid);
+                        //Save Wearable info
+                        WearableInfo info = new WearableInfo();
+                        info.setUuid(uuid);
+                        info.setBtAddr(mBluetoothDevice.getAddress());
+                        info.setStudentID(mStudents.get(mCurrnetStudentIdx).getStudent_id());
+                        if (!mDbHelper.isWearableExist(mDbHelper.getReadableDatabase(), uuid)){
+                            mDbHelper.insertWearableData(mDbHelper.getWritableDatabase(), info);
+                        } else {
+                            mDbHelper.updateWearableData(mDbHelper.getWritableDatabase(), info);
+                        }
+                        mStudents.get(mCurrnetStudentIdx).setUuid(uuid);
+                        mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), mStudents.get(mCurrnetStudentIdx));
                     }
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;
@@ -578,11 +597,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 //                    Toast.makeText(getApplicationContext(), "Connected to "
 //                            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     if (!TextUtils.isEmpty(mConnectedDeviceName)) {
-                        DeviceUUIDJSON deviceUUIDJSON = new DeviceUUIDJSON();
-                        deviceUUIDJSON.setType("getuuid");
-                        Gson gson = new Gson();
-                        String getUUIDJSON = gson.toJson(deviceUUIDJSON);
-                        mBTAgent.write(getUUIDJSON.getBytes());
+
                     }
                     break;
                 case Def.MESSAGE_TOAST:

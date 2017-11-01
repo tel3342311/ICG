@@ -133,9 +133,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		initChildInfo();
 		updateMenuItem();
 		BottomNavigationViewHelper.disableShiftMode(mBottomView);
-
-		//get current bt address
-		mBtAddress = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
 	}
 
 	private void registerNotification() {
@@ -433,6 +430,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 					Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/"
 							+ mStudents.get(mCurrentStudentIdx).getStudent_id() + ".jpg",
 					options);
+            //get current bt address
+            String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
+            mBtAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
 		}
 
 		if (bitmap != null) {
@@ -626,25 +626,18 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		case PAIRING:
 			//TODO For BT Testing
 			//Get BT device and check if the device is BONDED
-			Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
-			if (pairedDevices.size() >= 1 && !TextUtils.isEmpty(mBtAddress)) {
-				for (BluetoothDevice device : pairedDevices) {
-					if (TextUtils.equals(device.getAddress(), mBtAddress)) {
-						mBTDevice = device;
-					}
-					break;
-				}
-				showUnPairDialog();
 
-			} else {
-				showPairingPage();
-			}
-			//For Cloud's pair/unpair
-//			if (!TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
+//			if (!TextUtils.isEmpty(mBtAddress)) {
 //				showUnPairDialog();
 //			} else {
 //				showPairingPage();
 //			}
+			//For Cloud's pair/unpair
+			if (!TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
+				showUnPairDialog();
+			} else {
+				showPairingPage();
+			}
 			break;
 		case PRIVACY_INFO:
 			UpdateWatchInfoAndPrivacy();
@@ -677,8 +670,15 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		@Override
 		public void onClick(View v) {
 			mUnPairConfirmDialog.dismiss();
-			//new UnPairTask().execute();
-			new UnPairBTTask().execute(mBTDevice);
+            String btAddr = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id());
+            Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
+            for (BluetoothDevice device : pairedDevices) {
+                if (TextUtils.equals(device.getAddress(), btAddr)) {
+                    mBTDevice = device;
+                    break;
+                }
+            }
+            new UnPairBTTask().execute(mBTDevice);
 		}
 	};
 	
@@ -796,10 +796,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			} catch (Exception e) {
 				Log.e("RemoveBond failed.", e.getMessage());
 			}
-			SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sp.edit();
-			editor.remove(Def.SP_BT_WATCH_ADDRESS);
-			editor.commit();
+			mStudents.get(mCurrentStudentIdx).setUuid("");
+			mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), mStudents.get(mCurrentStudentIdx));
 			return null;
 		}
 		@Override

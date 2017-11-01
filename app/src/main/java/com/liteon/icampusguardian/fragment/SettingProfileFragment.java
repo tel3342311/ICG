@@ -363,8 +363,8 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
         	updateChildInfo();
         	DBHelper helper = DBHelper.getInstance(mActivity);
         	SQLiteDatabase db = helper.getWritableDatabase();
-        	helper.insertChildList(db, mStudents);
-        	return null;
+			helper.updateChildByStudentId(db, mStudents.get(mCurrentStudentIdx));
+			return null;
         }
 
         protected void onPostExecute(String token) {

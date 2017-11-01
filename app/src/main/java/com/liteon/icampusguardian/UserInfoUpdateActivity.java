@@ -215,8 +215,6 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		String strName = mName.getText().toString();
 		String strAccount = mAccount.getText().toString();
 		String strPhoneNumber = mPhoneNumber.getText().toString();
-		strAccount = strAccount.trim();
-		strAccount = strAccount.substring(0, strAccount.indexOf("@"));
 		String strPassword = mPassword.getText().toString();
 		new UpdateInfoTask().execute(strName, strAccount, strPassword, strPhoneNumber);
 	}

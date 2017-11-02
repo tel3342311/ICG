@@ -158,8 +158,8 @@ public class SafetyFragment extends Fragment {
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		if (mMapView != null) {
 			mMapView.onCreate(savedInstanceState);
+			mMapView.setVisibility(View.INVISIBLE);
 		}
-		mMapView.setVisibility(View.INVISIBLE);
 		mLocationOnMap.setVisibility(View.INVISIBLE);
 		initMapComponent();
 		initRecycleView();
@@ -348,7 +348,9 @@ public class SafetyFragment extends Fragment {
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
-		mMapView.onLowMemory();
+		if (mMapView != null) {
+			mMapView.onLowMemory();
+		}
 	}
 
 	private OnMapReadyCallback mOnMapReadyCallback = new OnMapReadyCallback() {
@@ -408,11 +410,11 @@ public class SafetyFragment extends Fragment {
 		}
 
 		protected void onPostExecute(String result) {
-			mMapView.setVisibility(View.VISIBLE);
 			if (TextUtils.equals(Def.RET_ERR_02, result)) {
 				Toast.makeText(mContext, "Token provided is expired, need to re-login", Toast.LENGTH_LONG).show();
 				return;
 			}
+			mMapView.setVisibility(View.GONE);
 			if (mGoogleMap != null) {
 				mGoogleMap.addMarker(new MarkerOptions().position(mLastPosition).title("最後位置"));
 				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mLastPosition, 16);

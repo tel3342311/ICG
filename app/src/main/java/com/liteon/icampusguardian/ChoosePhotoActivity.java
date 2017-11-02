@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import org.apache.commons.io.FileUtils;
 
 public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoViewHolderClicks {
 
@@ -123,12 +126,11 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		public void onClick(View v) {
 			Bitmap bitmap = null;
 			if (!isFromWatchTheme) {
-				if (mCurrentItem != null && !TextUtils.isEmpty(mCurrentItem.getUri())) {
-					try {
-						bitmap = getThumbnail(Uri.parse(mCurrentItem.getUri()));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+				if (mCurrentItem != null && !TextUtils.isEmpty(mCurrentItem.getFilePath())) {
+                        float photoSize = convertDpToPixel(getResources().getDimension(R.dimen.choose_photo_item_size), ChoosePhotoActivity.this);
+						bitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(mCurrentItem.getFilePath()),
+                                (int) photoSize, (int) photoSize);
+
 				}
 			} else {
 				int idx = 0;
@@ -441,14 +443,22 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	            }
 	        } 
 	        if (bitmap != null) {	        
-	        	saveBitmapAsIcon(bitmap);
+	        	File f = saveBitmapAsIcon(bitmap);
 	        	if (RESULT_OK == resultCode) {
 	        		if (!isFromWatchTheme) {
 	        			mCurrentItem = mDataSet.get(mCurrentItemIdx);
+                        mCurrentItem.filePath = f.getAbsolutePath();
 	        			mPhotoMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), mCurrentItem);
 	        		} else {
 	        			PhotoItem item = mDataSet.get(mCurrentItemIdx);
-	        			List listPhotoItem = mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
+                        File temp = new File(f.getAbsolutePath() + Long.toString(Calendar.getInstance().getTimeInMillis()));
+                        try {
+                            FileUtils.copyFile(f, temp);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        item.filePath = temp.getAbsolutePath();
+                        List listPhotoItem = mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
 	        			if (listPhotoItem.size() < 3) {
 	        				listPhotoItem.add(0,item);
 	        			} else {
@@ -479,7 +489,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		}
 	}
 	
-	private void saveBitmapAsIcon(Bitmap bitmap) {
+	private File saveBitmapAsIcon(Bitmap bitmap) {
 		File cropFile = null;
 		if (!isFromWatchTheme) {
 			cropFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -496,6 +506,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return cropFile;
 	}
 	public static float convertDpToPixel(float dp, Context context) {
 	    Resources resources = context.getResources();

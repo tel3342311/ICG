@@ -66,7 +66,7 @@
 	<string name="pairing_watch_pin_error">Invalid PIN code or connection fail, please re-enter the PIN code and make sure your wearable device is near you.</string>
 	<string name="pairing_watch_success">Successfully paired with %s wearable device.</string>
 	<string name="pairing_watch_quit">Quit</string>
-	<string name="pairing_watch_ask_permission">Application is requesting permission to turn on Bluetooth.</string>
+	<string name="pairing_watch_ask_permission">Application is requesting permission to continue.</string>
 	<string name="pairing_watch_deny">Reject</string>
 	<string name="pairing_watch_accept">Allow</string>
 	<!-- Safty -->

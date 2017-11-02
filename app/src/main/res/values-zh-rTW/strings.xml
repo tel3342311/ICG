@@ -66,7 +66,7 @@
 	<string name="pairing_watch_pin_error">PIN碼輸入錯誤或連接失敗,請重新輸入PIN碼並且將手錶靠近裝置</string>
 	<string name="pairing_watch_success">iCG智慧手錶配對成功, 已綁定為%s智慧手錶</string>
 	<string name="pairing_watch_quit">退出</string>
-	<string name="pairing_watch_ask_permission">應用程式要求開啟藍芽功能</string>
+	<string name="pairing_watch_ask_permission">應用程式要求以繼續</string>
 	<string name="pairing_watch_deny">拒絕</string>
 	<string name="pairing_watch_accept">允許</string>
 	<!-- Safty -->
@@ -189,8 +189,7 @@
 	<string name="connect_failed">連線失敗</string>
 	<string name="insufficient_space">您的手機空間不足</string>
 	<!-- device pairing -->
-	<string name="pairing_watch">配對智慧手錶</string>
-	<string name="unbind_watch">解除綁定</string>
+    <string name="unbind_watch">解除綁定</string>
 	<string name="bind_watch">新增綁定</string>
 	<string name="will_unbind_watch">將解除已綁定的智慧手錶</string>
 	<string name="bind_cancel">取消</string>

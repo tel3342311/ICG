@@ -58,6 +58,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	private Toolbar mToolbar;
 	private ProgressBar mProgressBar;
 	private ImageView mWatchSurface;
+	private ImageView mWatchCover;
 	private TextView mTitleUpdating;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
@@ -87,6 +88,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		mProgressBar = (ProgressBar) findViewById(R.id.loading_progress);
 		mWatchSurface = (ImageView) findViewById(R.id.watch_surface);
 		mTitleUpdating = (TextView) findViewById(R.id.watch_surface_updating_text);
+		mWatchCover = findViewById(R.id.watch_cover);
 		mConfirm = findViewById(R.id.confirm);
 		mCancel = findViewById(R.id.back);
 	}
@@ -154,8 +156,10 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		}
 		if (bitmap != null) {
 			mWatchSurface.setImageBitmap(bitmap);
+			mWatchCover.setVisibility(View.VISIBLE);
 		} else {
 			mWatchSurface.setImageDrawable(null);
+			mWatchCover.setVisibility(View.GONE);
 		}
 	}
 	@Override

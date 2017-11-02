@@ -94,7 +94,8 @@
 		app:layout_constraintEnd_toEndOf="@+id/watch_bg"
 		app:layout_constraintStart_toStartOf="@+id/watch_bg"
 		app:layout_constraintTop_toTopOf="@+id/watch_bg"
-		app:layout_constraintVertical_bias="0.45" />
+		app:layout_constraintVertical_bias="0.45"
+		android:visibility="gone"/>
 
 	<ProgressBar
 		android:id="@+id/loading_progress"

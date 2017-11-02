@@ -43,6 +43,8 @@ import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -89,8 +91,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		mWatchSurface = (ImageView) findViewById(R.id.watch_surface);
 		mTitleUpdating = (TextView) findViewById(R.id.watch_surface_updating_text);
 		mWatchCover = findViewById(R.id.watch_cover);
-		mConfirm = findViewById(R.id.confirm);
-		mCancel = findViewById(R.id.back);
+		mCancel = findViewById(R.id.cancel);
 	}
 	
 	private void setListener() {
@@ -112,16 +113,31 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
             	finish();
 			}
 		});
+	}
 
-		mConfirm.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-                mProgressBar.setVisibility(View.VISIBLE);
-                mTitleUpdating.setText(R.string.syncing_photo_to_watch);
-                mTitleUpdating.setVisibility(View.VISIBLE);
-                connectToBT();
-			}
-		});
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.one_confirm_menu, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	public boolean onPrepareOptionsMenu(Menu menu) {
+
+		menu.findItem(R.id.action_confirm).setVisible(true);
+		return true;
+	};
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+			case R.id.action_confirm:
+				mProgressBar.setVisibility(View.VISIBLE);
+				mTitleUpdating.setText(R.string.syncing_photo_to_watch);
+				mTitleUpdating.setVisibility(View.VISIBLE);
+				connectToBT();
+				break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	private View.OnClickListener mOnChangeSurfaceListener = new OnClickListener() {
@@ -165,6 +181,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mToolbar.setTitle("");
 		mDbHelper = DBHelper.getInstance(this);
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());

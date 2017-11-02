@@ -43,6 +43,7 @@ import android.widget.Toast;
 public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 
 	private Toolbar mToolbar;
+	private ImageView mBackBtn;
 	private AppCompatCheckBox mTeacherCheck;
 	private TextView mTextViewDeviceName;
 	private TextView mTextViewFirmwardVersion;
@@ -66,13 +67,12 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_watch_info_and_privacy);
 		findViews();
 		setListener();
-		setupToolbar();
 		mBTAgent = new BluetoothAgent(this, mHandler);
-
 	}
 	
 	private void findViews() {
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mBackBtn = findViewById(R.id.cancel);
 		mTeacherCheck = (AppCompatCheckBox) findViewById(R.id.teacher_user_plan);
 		mTextViewDeviceName = (TextView) findViewById(R.id.watch_info_device_title_value);
 		mTextViewFirmwardVersion = (TextView) findViewById(R.id.watch_info_firmware_title_value);
@@ -83,6 +83,17 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 	private void setListener() {
 		mTeacherCheck.setOnCheckedChangeListener(mOnCheckedChangeListener);
 		mUpdateFirmwareBtn.setOnClickListener(mOnUpdateBtnClickListener);
+		mBackBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				Intent intent = new Intent();
+				intent.setClass(WatchInfoAndPrivacyActivity.this, MainActivity.class);
+				intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+				startActivity(intent);
+				finish();
+			}
+		});
 	}
 	
 	@Override
@@ -126,23 +137,6 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		}
 		
 	};
-	private void setupToolbar() {
-		setSupportActionBar(mToolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-				Intent intent = new Intent();
-            	intent.setClass(WatchInfoAndPrivacyActivity.this, MainActivity.class);
-            	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
-            	startActivity(intent);
-            	finish();
-			}
-		});
-	}
 	
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_WATCH_UPDATE) {
@@ -165,7 +159,6 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
 		mIsTeacher = sp.getBoolean(Def.SP_TEACHER_PLAN, false);
-		mToolbar.setTitle(R.string.watch_info_privacy);
 		mTeacherCheck.setChecked(mIsTeacher);
 
 		//Get BT device and check if the device is BONDED

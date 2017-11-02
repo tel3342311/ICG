@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfileItemClickListener{
@@ -56,7 +57,8 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 	private Toolbar mToolbar;
 	private View mSyncView;
 	private Student mStudent;
-	
+	private ImageView mBackBtn;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -139,31 +141,23 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mToolbar.setTitle(getString(R.string.setup_kid_profile));
+        mToolbar.setTitle("");
 	}
 	
 	private void setupToolbar() {
 		setSupportActionBar(mToolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				
-				Intent intent = new Intent();
-				intent.setClass(ChildInfoUpdateActivity.this, MainActivity.class);
-				startActivity(intent);
-			}
-		});
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		getSupportActionBar().setHomeButtonEnabled(false);
 	}
 	
 	private void findViews() {
 		mName = (EditText) findViewById(R.id.login_name);
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mBackBtn = findViewById(R.id.cancel);
 		mRecyclerView = (RecyclerView) findViewById(R.id.profile_view);
 		mCardView = (CardView) findViewById(R.id.option_wheel);
 		three_wheel = findViewById(R.id.three_wheel);
@@ -183,6 +177,15 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		mWheel_center.setOnItemSelectedListener(mWheelClickListener);
 		mWheel_right.setOnItemSelectedListener(mWheelClickListener);
 		mWheel_single.setOnItemSelectedListener(mWheelClickListener);
+		mBackBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				Intent intent = new Intent();
+				intent.setClass(ChildInfoUpdateActivity.this, MainActivity.class);
+				startActivity(intent);
+			}
+		});
 	}
 	
 	public void UpdateWheelForDate(Calendar date) {

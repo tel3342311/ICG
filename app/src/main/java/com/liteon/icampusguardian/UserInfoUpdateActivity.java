@@ -42,6 +42,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	private EditText mPassword;
 	private EditText mConfirmPassword;
 	private Toolbar mToolbar;
+	private ImageView mBackBtn;
 	private View mSyncView;
 	private FrameLayout progressBarHolder;
 	private String mNameGiven;
@@ -55,9 +56,9 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
         SharedPreferences sp = getApplicationContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
         mToken = sp.getString(Def.SP_LOGIN_TOKEN, "E8C33BCCC8A1E1627B28B65B0B4DE829");
 		findViews();
-		setupToolbar();
 		updateEditText();
 		setListener();
+		setupToolbar();
 	}
 	
 	@Override
@@ -88,7 +89,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mToolbar.setTitle(getString(R.string.parent_profile));
+		mToolbar.setTitle("");
 		if (!App.isOffline) {
             showSyncWindow();
         }
@@ -107,23 +108,6 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
     		mAccount.setText(parent.getUsername());
     	}
 	}
-	private void setupToolbar() {
-		setSupportActionBar(mToolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-                finish();
-                Intent intent = new Intent();
-                intent.setClass(UserInfoUpdateActivity.this, MainActivity.class);
-                intent.putExtra(Def.EXTRA_GOTO_APP_INFO, true);
-                startActivity(intent);
-			}
-		});
-	}
 	
 	private void findViews() {
 		mName = (EditText) findViewById(R.id.login_name);
@@ -132,6 +116,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		mPassword = (EditText) findViewById(R.id.login_password);
 		mConfirmPassword = (EditText) findViewById(R.id.login_password_confirm);
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mBackBtn = findViewById(R.id.cancel);
 		mSyncView = (View) findViewById(R.id.sync_view);
 		progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
 	}
@@ -158,8 +143,26 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 				//new UpdateTask().execute("");
 			}
 		});
+
+		mBackBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+
+				finish();
+				Intent intent = new Intent();
+				intent.setClass(UserInfoUpdateActivity.this, MainActivity.class);
+				intent.putExtra(Def.EXTRA_GOTO_APP_INFO, true);
+				startActivity(intent);
+			}
+		});
 	}
-	
+
+	private void setupToolbar() {
+		setSupportActionBar(mToolbar);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		getSupportActionBar().setHomeButtonEnabled(false);
+	}
+
 	private OnFocusChangeListener mOnFocusChangeListener = new OnFocusChangeListener() {
 		
 		@Override

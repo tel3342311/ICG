@@ -193,7 +193,7 @@ public class SafetyFragment extends Fragment {
 
 	    mBitmap = Bitmap.createBitmap(mGradientDrawable.getIntrinsicWidth()
 	            , mGradientDrawable.getIntrinsicHeight()
-	            , Bitmap.Config.ARGB_8888);
+	            , Bitmap.Config.RGB_565);
 	}
 	private void setListener() {
 		mLocationOnMap.setOnClickListener(mOnLocateClickListener);

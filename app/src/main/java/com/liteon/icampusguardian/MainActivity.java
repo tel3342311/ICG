@@ -427,7 +427,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			mChildName.setText(mStudents.get(mCurrentStudentIdx).getNickname());
 			//read child image file
 			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			options.inPreferredConfig = Bitmap.Config.RGB_565;
 			bitmap = BitmapFactory.decodeFile(
 					Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/"
 							+ mStudents.get(mCurrentStudentIdx).getStudent_id() + ".jpg",

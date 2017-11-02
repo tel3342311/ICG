@@ -147,7 +147,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		if (mStudents.size() > 0) {
 			// read child image file
 			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			options.inPreferredConfig = Bitmap.Config.RGB_565;
 			bitmap = BitmapFactory
 					.decodeFile(
 							Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)

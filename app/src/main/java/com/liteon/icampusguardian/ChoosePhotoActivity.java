@@ -511,7 +511,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		BitmapFactory.Options onlyBoundsOptions = new BitmapFactory.Options();
 		onlyBoundsOptions.inJustDecodeBounds = true;
 		onlyBoundsOptions.inDither = true;// optional
-		onlyBoundsOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;// optional
+		onlyBoundsOptions.inPreferredConfig = Bitmap.Config.RGB_565;// optional
 		BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
 		input.close();
 
@@ -527,7 +527,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
 		bitmapOptions.inSampleSize = 1;//getPowerOfTwoForSampleRatio(ratio);
 		bitmapOptions.inDither = true; // optional
-		bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;//
+		bitmapOptions.inPreferredConfig = Bitmap.Config.RGB_565;//
 		input = this.getContentResolver().openInputStream(uri);
 		Bitmap bitmap = BitmapFactory.decodeStream(input, null, bitmapOptions);
 		input.close();

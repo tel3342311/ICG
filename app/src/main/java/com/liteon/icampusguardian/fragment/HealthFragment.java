@@ -162,7 +162,8 @@ public class HealthFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				title.setText(getString(R.string.alarm_syncing));
-				final Handler handler= new Handler();
+				SimpleDateFormat sdf = new SimpleDateFormat(getString(R.string.healthy_update_time));
+				final String currentDateandTime = sdf.format(Calendar.getInstance().getTime());				final Handler handler= new Handler();
 				final Runnable hideSyncView = new Runnable() {
 					
 					@Override
@@ -173,10 +174,10 @@ public class HealthFragment extends Fragment {
 				Runnable runnable = new Runnable(){
 					   @Override
 					   public void run() {
-						   SimpleDateFormat sdf = new SimpleDateFormat(getString(R.string.healthy_update_time));
-						   String currentDateandTime = sdf.format(Calendar.getInstance().getTime());
-						   title.setText(currentDateandTime);
-						   handler.postDelayed(hideSyncView, 3000);
+					   	if (!isDetached()) {
+							title.setText(currentDateandTime);
+							handler.postDelayed(hideSyncView, 3000);
+						}
 					} 
 				};
 				handler.postDelayed(runnable, 2000);

@@ -127,7 +127,7 @@ public class HealthHistogramView extends View {
 		String target = "";
 		switch(mType) {
 		case ACTIVITY:
-			target = "99";
+			target = "80";
 			break;
 		case CALORIES_BURNED:
 	    	target = mCurrentTargetItem.getCarlos();

@@ -2,9 +2,7 @@ package com.liteon.icampusguardian.fragment;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Set;
 
-import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.AlarmItemAdapter;
@@ -39,9 +37,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 
@@ -56,7 +51,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private TextView mTitleView;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
-	private int mCurrnetStudentIdx;
+	private int mCurrentStudentIdx;
 	private ConfirmDeleteDialog mConfirmDeleteDialog;
 	private PopupWindow mPopupWindow;
 	private View mSyncView;
@@ -232,9 +227,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	public void onResume() {
 		super.onResume();
 		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
-		if (mStudents.size() > 0 && mCurrnetStudentIdx >= mStudents.size()) {
-			mCurrnetStudentIdx = 0;
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		if (mStudents.size() > 0 && mCurrentStudentIdx >= mStudents.size()) {
+			mCurrentStudentIdx = 0;
 		}
 		showSyncWindow();
 		restoreAlarm();
@@ -306,7 +301,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
     }
 	
 	private void restoreAlarm() {
-	    AlarmManager.setCurrentStudentIdx(mCurrnetStudentIdx);
+	    AlarmManager.setCurrentStudentIdx(mCurrentStudentIdx);
         AlarmManager.restoreAlarm();
 	}
 	
@@ -315,13 +310,15 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	}
 
 	private void connectToBT() {
-        SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-        String btAddress = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
+        //get current bt address
+        String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
+        String btAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
 
-        if (TextUtils.isEmpty(btAddress)) {
+        if (TextUtils.isEmpty(btAddress) || !mBTAgent.isBluetoothAvailable()) {
             showBTErrorDialog();
             return;
         }
+
         BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice target = btAdapter.getRemoteDevice(btAddress);
 

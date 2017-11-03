@@ -271,6 +271,10 @@ public class BluetoothAgent {
         BluetoothAgent.this.start();
     }
 
+    public static boolean isBluetoothAvailable() {
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        return (bluetoothAdapter != null && bluetoothAdapter.isEnabled());
+    }
     /**
      * This thread runs while listening for incoming connections. It behaves
      * like a server-side client. It runs until a connection is accepted

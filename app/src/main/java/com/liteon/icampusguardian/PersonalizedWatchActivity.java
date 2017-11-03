@@ -5,16 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.AlarmItem;
-import com.liteon.icampusguardian.util.AlarmManager;
 import com.liteon.icampusguardian.util.BluetoothAgent;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
@@ -30,16 +26,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -51,7 +42,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 public class PersonalizedWatchActivity extends AppCompatActivity {
@@ -64,7 +54,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	private TextView mTitleUpdating;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
-	private int mCurrnetStudentIdx;
+	private int mCurrentStudentIdx;
 	private final static int REQUEST_WATCH_SURFACE = 1;
     private ConfirmDeleteDialog mBLEFailConfirmDialog;
 	private ImageView mCancel;
@@ -167,7 +157,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 			bitmap = BitmapFactory
 					.decodeFile(
 							Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-									.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + "_watch.jpg",
+									.getAbsolutePath() + "/" + mStudents.get(mCurrentStudentIdx).getStudent_id() + "_watch.jpg",
 							options);
 		}
 		if (bitmap != null) {
@@ -186,7 +176,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		setupWatchSurface();
 	}
 	
@@ -218,10 +208,12 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	};
 
     private void connectToBT() {
-        SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-        String btAddress = sp.getString(Def.SP_BT_WATCH_ADDRESS, "");
 
-        if (TextUtils.isEmpty(btAddress)) {
+        //get current bt address
+        String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
+        String btAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
+
+        if (TextUtils.isEmpty(btAddress) || !mBTAgent.isBluetoothAvailable()) {
             showBTErrorDialog();
             return;
         }
@@ -239,7 +231,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
         mTitleUpdating.setVisibility(View.VISIBLE);
 
         File watchSkinFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                .getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + "_watch.jpg");
+                .getAbsolutePath() + "/" + mStudents.get(mCurrentStudentIdx).getStudent_id() + "_watch.jpg");
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(watchSkinFile);
@@ -249,7 +241,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (mFileBytes != null || mFileBytes.length > 0) {
+        if (mFileBytes != null && mFileBytes.length > 0) {
             //sync alarm data with watch
             CustomSkinJSON customSkinJSON = new CustomSkinJSON();
             customSkinJSON.setType("customskinmetadata");

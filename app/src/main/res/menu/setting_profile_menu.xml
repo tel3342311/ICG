@@ -6,6 +6,6 @@
         android:enabled="true"
         app:showAsAction="ifRoom"
         android:icon="@drawable/alarmset_btnf_ok"
-        android:title="確認"/>
+        android:title="@string/delete_child_confirm"/>
 
 </menu>

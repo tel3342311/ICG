@@ -151,7 +151,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 				finish();
 				Intent intent = new Intent();
 				intent.setClass(UserInfoUpdateActivity.this, MainActivity.class);
-				intent.putExtra(Def.EXTRA_GOTO_APP_INFO, true);
+				//intent.putExtra(Def.EXTRA_GOTO_APP_INFO, true);
 				startActivity(intent);
 			}
 		});

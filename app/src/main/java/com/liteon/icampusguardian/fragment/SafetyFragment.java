@@ -266,12 +266,8 @@ public class SafetyFragment extends Fragment {
 		restoreGeoEvent();
 		if (mStudents.size() > 0) {
 			String id = mStudents.get(mCurrnetStudentIdx).getStudent_id();
-			if (!App.isOffline) {
-                new getEventReportTask().execute(id);
-                new getCurrentLocation().execute("");
-            } else {
-			    testData();
-            }
+			new getEventReportTask().execute(id);
+			new getCurrentLocation().execute("");
 		}
 		if (mCurrentItem != null) {
 			if (myDataset.indexOf(mCurrentItem) == -1) {

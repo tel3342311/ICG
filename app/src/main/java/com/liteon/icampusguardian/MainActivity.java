@@ -113,10 +113,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		// registerNotification();
 		mDbHelper = DBHelper.getInstance(this);
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		if (!App.isOffline) {
-			String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
-			new checkTokenTask().execute(token, null, null);
-		}
+
+		String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
+		new checkTokenTask().execute(token, null, null);
+
 		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		//mDbHelper.getAccountToken(mDbHelper.getReadableDatabase(), name)
 		mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
@@ -309,10 +309,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			editor.remove(Def.SP_LOGIN_TOKEN);
 			editor.commit();
 
-			if (!App.isOffline) {
-                DBHelper helper = DBHelper.getInstance(MainActivity.this);
-                helper.deleteAccount(helper.getWritableDatabase());
-            }
+
+			DBHelper helper = DBHelper.getInstance(MainActivity.this);
+			helper.deleteAccount(helper.getWritableDatabase());
+
 			finish();
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, LoginActivity.class);

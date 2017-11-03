@@ -59,9 +59,6 @@ public class GuardianApiClient {
 		mContext = new WeakReference<Context>(context);
 	}
 	public JSONResponse login(String user, String password) {
-		if (App.isOffline) {
-			return null;
-		}
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USERLOGIN).build();
 		try {
 			URL url = new URL(uri.toString());
@@ -104,9 +101,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse registerUser(String userEmail, String password, String role_type, String uuid, String account_name) {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_REGISTRATION).build();
 		try {
 			URL url = new URL(uri.toString());
@@ -164,9 +159,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse updateParentDetail(String given_name, String account_name, String password, String phoneNumber) {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_UPDATE).appendPath(mToken).build();
 		try {
 			URL url = new URL(uri.toString());
@@ -219,9 +212,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse resetPassword(String userEmail) {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_PASSWORD_REST).build();
 		try {
 			URL url = new URL(uri.toString());
@@ -288,9 +279,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse getChildrenList() {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_CHILDREN_LIST).
 				appendPath(mToken).build();
 		try {
@@ -325,9 +314,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse getDeviceEventReport(String student_id, String event_id, String duration) {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_DEVICE_EVENT_REPORT).
 				appendPath(mToken).
 				appendPath(student_id).
@@ -364,9 +351,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse updateChildData(Student student) {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_UPDATE_CHILD_INFO).
 					appendPath(mToken).build();
 		try {
@@ -431,9 +416,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse pairNewDevice(Student student) {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_PAIR_NEW_DEVICE).
 				appendPath(mToken).
 				appendPath(student.getUuid()).build();
@@ -494,9 +477,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse unpairDevice(Student student) {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_UNPAIR_DEVICE).
 				appendPath(mToken).
 				appendPath(student.getUuid()).build();
@@ -555,9 +536,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse updateAppToken(String fireBaseInstanceToken) {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_UPDATE_APP_TOKEN).
 				appendPath(mToken).build();
 		
@@ -610,9 +589,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse getStudentLocation(Student student) {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_CHILDREN_LOCATION).
 				appendPath(mToken).
 				appendPath(student.getUuid()).build();
@@ -647,9 +624,7 @@ public class GuardianApiClient {
 	}
 	
 	public JSONResponse getUserDetail() {
-		if (App.isOffline) {
-			return null;
-		}
+
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_DETAIL).
 				appendPath(mToken).build();
 		try {

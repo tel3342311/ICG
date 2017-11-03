@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
 			Intent intent = new Intent();
 			intent.setClass(LoginActivity.this, WelcomeActivity.class);
 			startActivityForResult(intent, RC_USER_TERM);
-		} else if (!TextUtils.isEmpty(token) || App.isOffline) {
+		} else if (!TextUtils.isEmpty(token)) {
     		
     		Intent intent = new Intent();
     		intent.setClass(getApplicationContext(), MainActivity.class);
@@ -275,12 +275,7 @@ public class LoginActivity extends AppCompatActivity {
 	    if (requestCode == RC_USER_TERM) {
 	    	if (resultCode == RESULT_CANCELED) {
 	    		finish();
-	    	} else if (App.isOffline) {
-				Intent intent = new Intent();
-				intent.setClass(getApplicationContext(), MainActivity.class);
-				startActivity(intent);
-				finish();
-			}
+	    	}
 	    } else if (requestCode == RC_GOOGLE_SIGNIN) {
 	    	// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
 	        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);

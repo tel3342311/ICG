@@ -90,9 +90,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	protected void onResume() {
 		super.onResume();
 		mToolbar.setTitle("");
-		if (!App.isOffline) {
-            showSyncWindow();
-        }
+		showSyncWindow();
 	}
 	
 	private void updateEditText() {

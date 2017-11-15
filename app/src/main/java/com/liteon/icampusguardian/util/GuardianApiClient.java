@@ -585,7 +585,50 @@ public class GuardianApiClient {
 		}
 		return null;
 	}
-	
+
+	public JSONResponse socialSignIn(String name, String email, String token) {
+        Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_FEDERATEDLOGIN).build();
+        try {
+
+            URL url = new URL(uri.toString());
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.setUseCaches(false);
+
+            JSONObject jsonParam = new JSONObject();
+
+            jsonParam.put(Def.KEY_SOCIAL_NAME, name);
+            jsonParam.put(Def.KEY_SOCIAL_EMAIL, email);
+            jsonParam.put(Def.KEY_SOCIAL_TOKEN, token);
+            jsonParam.put(Def.KEY_SOCIAL_USERAGENT, Def.VALUE_SOCIAL_USERAGENT);
+            OutputStream os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonParam.toString());
+            writer.flush();
+            writer.close();
+            int status = urlConnection.getResponseCode();
+            if (status == HttpURLConnection.HTTP_OK) {
+                JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+                if (result.getReturn() != null) {
+                    mToken = result.getReturn().getResponseSummary().getSessionId();
+                }
+                return result;
+            } else {
+                showError(status);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 	public JSONResponse getStudentLocation(Student student) {
 
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_CHILDREN_LOCATION).

@@ -52,6 +52,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -198,7 +200,8 @@ public class LoginActivity extends AppCompatActivity {
 		// Configure sign-in to request the user's ID, email address, and basic
 		// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
 		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-		        .requestEmail()
+                .requestEmail()
+                .requestId()
 		        .build();
 		
 		// Build a GoogleApiClient with access to the Google Sign-In API and the
@@ -207,6 +210,8 @@ public class LoginActivity extends AppCompatActivity {
 		        .enableAutoManage(this, mOnConnectionFailedListener)
 		        .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
 		        .build();
+
+
 	}
 	
 	private void setupFacebookSignIn() {
@@ -293,12 +298,12 @@ public class LoginActivity extends AppCompatActivity {
 	    if (result.isSuccess()) {
 	        // Signed in successfully, show authenticated UI.
 	        GoogleSignInAccount acct = result.getSignInAccount();
+			new SocialLoginTask().execute(acct.getDisplayName(), acct.getEmail(), acct.getId());
+
 	        //Toast.makeText(this, "Google sign in " + acct.getDisplayName() + ", Email : " + acct.getEmail(), Toast.LENGTH_LONG).show();
 	        //mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 	        //updateUI(true);
-			Intent intent = new Intent();
-			intent.setClass(getApplicationContext(), MainActivity.class);
-			startActivity(intent);
+
 	    } else {
 	        // Signed out, show unauthenticated UI.
 	        //updateUI(false);
@@ -335,7 +340,31 @@ public class LoginActivity extends AppCompatActivity {
 		});
 		dialog.show(getSupportFragmentManager(), "dialog_fragment");
 	}
-	
+
+    class SocialLoginTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            String name = strings[0];
+            String email = strings[1];
+            String token = strings[2];
+            final JSONResponse response = mApiClient.socialSignIn(name, email, token);
+            if (response != null) {
+                return response.getReturn().getResults().getToken();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String token) {
+            super.onPostExecute(token);
+            if (!TextUtils.isEmpty(token)) {
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        }
+    }
+
 	class LoginTask extends AsyncTask<String, Void, String> {
 
         protected String doInBackground(String... args) {

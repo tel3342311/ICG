@@ -36,7 +36,15 @@ public class Def {
 	public static final String KEY_USERNAME = "username";
 	public static final String KEY_PASSWORD = "password";
 	public static final String KEY_FORCELOGIN = "forcelogin";
-	//API 04 Update Parent account detail.
+	//API 04 Social Login
+	public static final String REQUEST_FEDERATEDLOGIN = "FederatedLogin";
+    public static final String KEY_SOCIAL_NAME = "name";
+    public static final String KEY_SOCIAL_EMAIL = "email";
+    public static final String KEY_SOCIAL_TOKEN = "token";
+    public static final String KEY_SOCIAL_USERAGENT = "useragent";
+    public static final String VALUE_SOCIAL_USERAGENT = "MOBILE";
+
+    //API 06 Update Parent account detail.
 	public static final String REQUEST_USER_UPDATE = "UserUpdate";
 	public static final String KEY_PHONE_NUMBER = "mobile_number";
 	//API 07 get student list
@@ -80,9 +88,9 @@ public class Def {
 	//EVENT ID LIST
 	public static final String EVENT_ID_ENTER_SCHOOL = "1";
 	public static final String EVENT_ID_LEAVE_SCHOOL = "2";
-	public static final String EVENT_ID_SOS_ALERT = "11";
-	public static final String EVENT_ID_SOS_REMOVE = "12";
-	public static final String EVENT_ID_GPS_LOCATION = "17";
+	public static final String EVENT_ID_SOS_ALERT = "13";
+	public static final String EVENT_ID_SOS_REMOVE = "14";
+	public static final String EVENT_ID_GPS_LOCATION = "19";
 	
 	//EVENT DURATION
 	public static final String EVENT_DURATION_ONE_DAY = "1";

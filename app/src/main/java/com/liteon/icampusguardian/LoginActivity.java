@@ -399,16 +399,7 @@ public class LoginActivity extends AppCompatActivity {
         	helper.clearChildList(helper.getWritableDatabase());
         	//Save child list to db
         	helper.insertChildList(helper.getWritableDatabase(), mStudentList);
-        	
-        	//get Device event report
-        	String eventId = Def.EVENT_ID_GPS_LOCATION;
-        	String duration = Def.EVENT_DURATION_WEEK;
-        	for (Student student : mStudentList) {
-        		JSONResponse res = mApiClient.getDeviceEventReport(student.getStudent_id(), eventId, duration);
-        		if (res != null) {
-        			res.getReturn().getResults().getDevices();
-        		}
-        	}
+
     		//Send FireBase Instance token to server
         	String fcmToken = FirebaseInstanceId.getInstance().getToken();
         	mApiClient.updateAppToken(fcmToken);

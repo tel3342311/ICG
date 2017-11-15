@@ -82,8 +82,8 @@ public class GuardianApiClient {
             int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
             	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
-            	if (result.getReturn().getResults() != null) {
-            		mToken = result.getReturn().getResults().getToken();
+            	if (result.getReturn() != null) {
+            		mToken = result.getReturn().getResponseSummary().getSessionId();
             	}
             	return result;
             } else {
@@ -315,11 +315,19 @@ public class GuardianApiClient {
 	
 	public JSONResponse getDeviceEventReport(String student_id, String event_id, String duration) {
 
+		Calendar calendar = Calendar.getInstance();
+		Date date = calendar.getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String endDate = sdf.format(date);
+		calendar.add(Calendar.DAY_OF_YEAR, -Integer.parseInt(duration));
+		date = calendar.getTime();
+		String startDate = sdf.format(date);
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_DEVICE_EVENT_REPORT).
 				appendPath(mToken).
 				appendPath(student_id).
 				appendPath(event_id).
-				appendPath(duration).build();
+				appendPath(startDate).
+                appendPath(endDate).build();
 		try {
 
 			URL url = new URL(uri.toString());
@@ -368,15 +376,7 @@ public class GuardianApiClient {
 			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
 			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
 			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());
-			//Workaround for API. convert 2017-01-31 to 31-01-2017
-			String dob = student.getDob();
-			if (!TextUtils.isEmpty(dob)) {
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				Date date = sdf.parse(dob);
-				sdf.applyPattern("dd-MM-yyyy");
-				dob = sdf.format(date);
-			}
-			jsonParam.put(Def.KEY_DOB, dob);
+			jsonParam.put(Def.KEY_DOB, student.getDob());
 			jsonParam.put(Def.KEY_GENDER, student.getGender());
 			
 			OutputStream os = urlConnection.getOutputStream();
@@ -408,10 +408,8 @@ public class GuardianApiClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
 		return null;
 	}
 	

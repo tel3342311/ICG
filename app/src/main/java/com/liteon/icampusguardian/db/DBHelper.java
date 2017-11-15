@@ -248,9 +248,9 @@ public class DBHelper extends SQLiteOpenHelper {
 				item.setDob(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_DOB)));
 				item.setHeight(Integer.toString(cursor.getInt(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_HEIGHT))));
 				item.setWeight(Integer.toString(cursor.getInt(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_WEIGHT))));
-				item.setRoll_no(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_ROLL_NO)));
+				item.setRoll_no(Integer.parseInt(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_ROLL_NO))));
 				item.set_class(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_CLASS)));
-				item.setStudent_id(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_STUDENT_ID)));
+				item.setStudent_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_STUDENT_ID))));
 				list.add(item);
 			} while (cursor.moveToNext());
 			cursor.close();
@@ -317,9 +317,9 @@ public class DBHelper extends SQLiteOpenHelper {
 		item.setDob("1995-01-01");
 		item.setHeight("150");
 		item.setWeight("40");
-		item.setRoll_no("1");
+		item.setRoll_no(11);
 		item.set_class("1");
-		item.setStudent_id("1");
+		item.setStudent_id(1);
 		studentList.add(item);
 
 		//student 2
@@ -331,9 +331,9 @@ public class DBHelper extends SQLiteOpenHelper {
 		item.setDob("1996-03-01");
 		item.setHeight("140");
 		item.setWeight("40");
-		item.setRoll_no("2");
+		item.setRoll_no(12);
 		item.set_class("2");
-		item.setStudent_id("2");
+		item.setStudent_id(2);
         studentList.add(item);
 
 		insertChildList(db, studentList);

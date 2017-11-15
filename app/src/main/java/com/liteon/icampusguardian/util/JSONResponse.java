@@ -6,7 +6,7 @@ public class JSONResponse {
 	
 	@SerializedName("Return")
 	private Return Return;
-	
+
 	/**
 	 * @return the return
 	 */
@@ -22,30 +22,35 @@ public class JSONResponse {
 	}
 
 	public static class Return {
-	      @SerializedName("Type")
-	      private String Type;
-	      @SerializedName("ResponseSummary")
-	      private ResponseSummary ResponseSummary;
-	      @SerializedName("Results")
-	      private Results Results;
-		/**
-		 * @return the type
-		 */
-		public String getType() {
-			return Type;
-		}
-		/**
-		 * @return the results
-		 */
-		public Results getResults() {
-			return Results;
-		}
-		/**
-		 * @param results the results to set
-		 */
-		public void setResults(Results results) {
-			Results = results;
-		}
+        @SerializedName("Type")
+        private String Type;
+        @SerializedName("ResponseSummary")
+        private ResponseSummary ResponseSummary;
+
+        @SerializedName("Results")
+        private Results Results;
+
+        /**
+         * @return the results
+         */
+        public Results getResults() {
+            return Results;
+        }
+
+        /**
+         * @param results the results to set
+         */
+        public void setResults(Results results) {
+            Results = results;
+        }
+
+        /**
+         * @return the type
+         */
+        public String getType() {
+            return Type;
+        }
+
 		/**
 		 * @param type the type to set
 		 */
@@ -400,7 +405,7 @@ public class JSONResponse {
 	
 	public static class Student {
 		@SerializedName("student_id")
-		private String student_id;
+		private int student_id;
 		@SerializedName("name")
 		private String name;
 		@SerializedName("nickname")
@@ -408,7 +413,7 @@ public class JSONResponse {
 		@SerializedName("class")
 		private String _class;
 		@SerializedName("roll_no")
-		private String roll_no;
+		private int roll_no;
 		@SerializedName("height")
 		private String height;
 		@SerializedName("weight")
@@ -438,12 +443,12 @@ public class JSONResponse {
 		 * @return the student_id
 		 */
 		public String getStudent_id() {
-			return student_id;
+			return Integer.toString(student_id);
 		}
 		/**
 		 * @param student_id the student_id to set
 		 */
-		public void setStudent_id(String student_id) {
+		public void setStudent_id(int student_id) {
 			this.student_id = student_id;
 		}
 		/**
@@ -486,12 +491,12 @@ public class JSONResponse {
 		 * @return the roll_no
 		 */
 		public String getRoll_no() {
-			return roll_no;
+			return Integer.toString(roll_no);
 		}
 		/**
 		 * @param roll_no the roll_no to set
 		 */
-		public void setRoll_no(String roll_no) {
+		public void setRoll_no(int roll_no) {
 			this.roll_no = roll_no;
 		}
 		/**

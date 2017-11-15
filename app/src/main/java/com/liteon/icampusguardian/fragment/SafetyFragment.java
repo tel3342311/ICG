@@ -406,11 +406,11 @@ public class SafetyFragment extends Fragment {
 		}
 
 		protected void onPostExecute(String result) {
+			mMapView.setVisibility(View.VISIBLE);
 			if (TextUtils.equals(Def.RET_ERR_02, result)) {
 				Toast.makeText(mContext, "Token provided is expired, need to re-login", Toast.LENGTH_LONG).show();
 				return;
 			}
-			mMapView.setVisibility(View.GONE);
 			if (mGoogleMap != null) {
 				mGoogleMap.addMarker(new MarkerOptions().position(mLastPosition).title("最後位置"));
 				CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(mLastPosition, 16);
@@ -441,9 +441,9 @@ public class SafetyFragment extends Fragment {
 		@Override
 		protected Boolean doInBackground(String... args) {
 			GuardianApiClient apiClient = new GuardianApiClient(getActivity());
-			JSONResponse responseEnter = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_ENTER_SCHOOL, "30");
+			JSONResponse responseEnter = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_ENTER_SCHOOL, "60");
 			parseEvent(responseEnter);
-			JSONResponse responseSOS = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_SOS_ALERT, "30");
+			JSONResponse responseSOS = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_SOS_ALERT, "60");
 			parseEvent(responseSOS);
 			if (mCurrentItem != null) {
 				GeoEventItem item = mEventReport.get(mCurrentItem.getDate());
@@ -480,7 +480,7 @@ public class SafetyFragment extends Fragment {
 			if (results != null) {
 				String event_id = results.getEvent_id();
 				Device[] devices = results.getDevices();
-				if (devices[0] != null) {
+				if (devices != null && devices.length > 0) {
 					DeviceEvent[] events = devices[0].getDevice_events();
 					for (DeviceEvent event : events) {
 						String event_occured_date = event.getEvent_occured_date();

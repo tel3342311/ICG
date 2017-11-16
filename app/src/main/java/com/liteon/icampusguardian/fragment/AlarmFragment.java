@@ -382,16 +382,14 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
                     Log.d(TAG, "Response : " + readMessage);
                     if (readMessage.contains("getalarmdata")) {
                         AlarmManager.syncAlarmFromJSON(readMessage);
-                    }
+						mAdapter.notifyDataSetChanged();
+						syncDataToBT();
+					}
                     break;
                 case Def.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
-                    String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
-                    //Toast.makeText(App.getContext(), "Connected to "
-                    //        + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
-                    if (!TextUtils.isEmpty(mConnectedDeviceName)) {
-                        syncDataToBT();
-                    }
+                    //Connected device's name
+                    //String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
+					getAlarmFromBT();
                     break;
                 case Def.MESSAGE_TOAST:
                     String message = msg.getData().getString(Def.TOAST);

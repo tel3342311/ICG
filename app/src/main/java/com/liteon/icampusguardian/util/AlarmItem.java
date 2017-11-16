@@ -2,6 +2,16 @@ package com.liteon.icampusguardian.util;
 
 public class AlarmItem {
 
+	public String id;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	public String Title;
 	public String Date;
 	public AlarmPeriodItem PeriodItem;

@@ -2,6 +2,8 @@ package com.liteon.icampusguardian.util;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,8 @@ import com.liteon.icampusguardian.util.JSONResponse.Student;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+
+import org.w3c.dom.Text;
 
 import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.CUSTOMIZE;
 import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.EVERYDAY;
@@ -143,8 +147,8 @@ public class AlarmManager {
         alarmDataJSON.setType("alarm");
         List<AlarmDataJSON.AlarmData> data = new ArrayList<>();
         for (AlarmItem item : myDataset) {
-            if (item.isStateChange()) {
-                item.setStateChange(false);
+//            if (item.isStateChange()) {
+//                item.setStateChange(false);
                 AlarmDataJSON.AlarmData alarmInfo = new AlarmDataJSON.AlarmData();
                 if (item.getEnabled()) {
                     alarmInfo.setAction("enable");
@@ -161,7 +165,7 @@ public class AlarmManager {
                     alarmInfo.setRepeat(Long.toString(item.getPeriodItem().getValue()));
                 }
                 data.add(alarmInfo);
-            }
+//            }
         }
 
         if (data.size() > 0) {
@@ -185,7 +189,6 @@ public class AlarmManager {
 	}
 
     public static void syncAlarmFromJSON(String readMessage) {
-        myDataset.clear();
 	    Type typeOfRequestAlarmResponse = new TypeToken<RequestAlarmResponseJSON>(){}.getType();
 	    Gson gson = new Gson();
 	    RequestAlarmResponseJSON responseJSON = gson.fromJson(readMessage, typeOfRequestAlarmResponse);
@@ -193,37 +196,53 @@ public class AlarmManager {
             AlarmDataJSON.AlarmData[] data = responseJSON.getAlarmList();
             for (AlarmDataJSON.AlarmData item : data) {
                 AlarmItem alarmItem = new AlarmItem();
-                alarmItem.setAdded(true);
-                alarmItem.setTitle(item.getAlarmtitle());
-                alarmItem.setDate(item.getHour() + ":" +item.getMinutes());
-                setPeriodItem(alarmItem, Integer.parseInt(item.getRepeat()));
-                myDataset.add(alarmItem);
+                if (!isAlarmIDExist(item.getAlarmId())) {
+                    alarmItem.setAdded(false);
+                    alarmItem.setId(item.getAlarmId());
+                    alarmItem.setTitle(item.getAlarmtitle());
+                    alarmItem.setDate(String.format("%02d:%02d", Integer.parseInt(item.getHour()), Integer.parseInt(item.getMinutes())));
+                    if (TextUtils.equals(item.getStatus(), "active")) {
+                        alarmItem.setEnabled(true);
+                    } else {
+                        alarmItem.setEnabled(false);
+                    }
+                    setPeriodItem(alarmItem, Integer.parseInt(item.getRepeat()));
+                    myDataset.add(alarmItem);
+                } else {
+                    alarmItem.setAdded(true);
+
+                }
+            }
+            Collections.sort(myDataset, comparator);
+        }
+    }
+
+    private static boolean isAlarmIDExist(String id) {
+	    boolean isExist = false;
+	    for (AlarmItem item : myDataset) {
+	        if (TextUtils.equals(id, item.getId())) {
+	            isExist = true;
+	            break;
             }
         }
+	    return isExist;
     }
 
     public static void setPeriodItem(AlarmItem item, int repeat) {
         AlarmPeriodItem periodItem = new AlarmPeriodItem();
-
-        switch (AlarmPeriodItem.TYPE.values()[repeat]) {
-
-            case WEEK_DAY:
-                periodItem.setItemType(WEEK_DAY);
+        boolean isFound = false;
+        for (AlarmPeriodItem.TYPE type : AlarmPeriodItem.TYPE.values()) {
+            if (type.value == repeat) {
+                periodItem.setItemType(type);
+                isFound = true;
                 break;
-            case WEEKEND:
-                periodItem.setItemType(WEEKEND);
-                break;
-            case EVERYDAY:
-                periodItem.setItemType(EVERYDAY);
-                break;
-            case ONCE:
-                periodItem.setItemType(ONCE);
-                break;
-            default:
-                periodItem.setItemType(CUSTOMIZE);
-                periodItem.setCustomValue(repeat);
-                break;
+            }
         }
+        if (!isFound) {
+            periodItem.setItemType(AlarmPeriodItem.TYPE.CUSTOMIZE);
+            periodItem.setCustomValue(repeat);
+        }
+
         item.setPeriodItem(periodItem);
         if (periodItem.getItemType() != CUSTOMIZE) {
             item.setPeriod(periodItem.getTitle());
@@ -240,5 +259,22 @@ public class AlarmManager {
 
     public static void setCurrentStudentIdx(int currentStudentIdx) {
         mCurrentStudentIdx = currentStudentIdx;
+    }
+
+    public static Comparator<AlarmItem> comparator = new Comparator<AlarmItem>() {
+        @Override
+        public int compare(AlarmItem left, AlarmItem right) {
+            return left.getId().compareTo(right.getId());
+        }
+    };
+
+	public static String getNextAlarmId() {
+	    for (int i = 1; i <= 4; i++) {
+            String id = Integer.toString(i);
+            if (!isAlarmIDExist(id)){
+                return id;
+            }
+        }
+        return "";
     }
 }

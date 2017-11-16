@@ -47,6 +47,17 @@ public class AlarmDataJSON {
         @SerializedName("alarmtitle")
         public String alarmtitle;
 
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        @SerializedName("status")
+        public String status;
+
         public String getAlarmId() {
             return alarmId;
         }

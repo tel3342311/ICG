@@ -150,6 +150,8 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		if (item.getItemId() == R.id.action_confirm) {
 			getActivity().onBackPressed();
 			if (AlarmManager.ACTION_ADDING == AlarmManager.getCurrentAction()) {
+				//find Empty Alarm Id for this item
+				mCurrentAlarmItem.setId(AlarmManager.getNextAlarmId());
 				AlarmManager.getDataSet().add(mCurrentAlarmItem);
 				AlarmManager.mNewItem = null;
 			}

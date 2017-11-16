@@ -1,9 +1,17 @@
 package com.liteon.icampusguardian.fragment;
 
 import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Key;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.BLEPinCodeInputActivity;
@@ -31,11 +39,13 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
@@ -252,25 +262,38 @@ public class SettingFragment extends Fragment {
 		mChildIcon.setSelectorStrokeWidth(10);
 		mChildIcon.addShadow();
 		
-		Bitmap bitmap = null;
 		if (mStudents.size() > 0) {
 			if (mCurrnetStudentIdx >= mStudents.size()) {
 				mCurrnetStudentIdx =  0;
 			}
 			mChildName.setText(mStudents.get(mCurrnetStudentIdx).getNickname());
 			// read child image file
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inPreferredConfig = Bitmap.Config.RGB_565;
-			bitmap = BitmapFactory
-					.decodeFile(
-							Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-									.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + ".jpg",
-							options);
-		}
-		if (bitmap != null) {
-			mChildIcon.setImageBitmap(bitmap);
-		} else {
-			mChildIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.setup_img_picture));
+			RequestOptions options = new RequestOptions();
+			options.centerCrop();
+			options.placeholder(R.drawable.setup_img_picture);
+			options.error(R.drawable.setup_img_picture);
+            options.diskCacheStrategy(DiskCacheStrategy.NONE);
+            options.signature(new Key() {
+                @Override
+                public void updateDiskCacheKey(MessageDigest messageDigest) {
+                    messageDigest.update(ByteBuffer.allocate(Integer.SIZE).putInt((int)System.currentTimeMillis()).array());
+                }
+            });
+            Glide.with(App.getContext()).asBitmap().load(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+					.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + ".jpg").apply(options).into(new SimpleTarget<Bitmap>() {
+
+				@Override
+				public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+					mChildIcon.setImageBitmap(resource);
+				}
+
+                @Override
+                public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                    super.onLoadFailed(errorDrawable);
+                    mChildIcon.setImageDrawable(errorDrawable);
+                }
+            });
+
 		}
 	}
 	

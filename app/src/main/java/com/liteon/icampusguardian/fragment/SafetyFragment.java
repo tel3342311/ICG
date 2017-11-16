@@ -391,6 +391,9 @@ public class SafetyFragment extends Fragment {
 				return null;
 			}
 			if (TextUtils.equals(Def.RET_SUCCESS_1, response.getReturn().getResponseSummary().getStatusCode())) {
+				if (response.getReturn().getResults() == null) {
+					return "";
+				}
 				String lat = response.getReturn().getResults().getLatitude();
 				String lnt = response.getReturn().getResults().getLongitude();
 				if (TextUtils.isEmpty(lat) || TextUtils.isEmpty(lnt)) {

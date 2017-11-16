@@ -649,7 +649,11 @@ public class GuardianApiClient {
             	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
             	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
             	if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
-            		Log.e(TAG, "lat: " + result.getReturn().getResults().getLatitude() + ", longtitude " + result.getReturn().getResults().getLongitude());
+                    if (result.getReturn().getResults() != null) {
+                        Log.e(TAG, "lat: " + result.getReturn().getResults().getLatitude() + ", longtitude " + result.getReturn().getResults().getLongitude());
+                    } else {
+                        Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
+                    }
             	} else {
             		Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
             	}

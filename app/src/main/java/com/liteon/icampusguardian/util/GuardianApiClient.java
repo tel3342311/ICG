@@ -422,28 +422,12 @@ public class GuardianApiClient {
 		try {
 			URL url = new URL(uri.toString());
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-			urlConnection.setRequestMethod("POST");
+			urlConnection.setRequestMethod("GET");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
-			urlConnection.setDoOutput(true);
+			urlConnection.setDoOutput(false);
 			urlConnection.setUseCaches(false);
 
-			JSONObject jsonParam = new JSONObject();
-
-			jsonParam.put(Def.KEY_UUID, student.getUuid());
-			jsonParam.put(Def.KEY_EMAIL, student.getName());
-			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
-			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
-			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());
-			jsonParam.put(Def.KEY_DOB, student.getDob());
-			jsonParam.put(Def.KEY_GENDER, student.getGender());
-
-
-			OutputStream os = urlConnection.getOutputStream();
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-			writer.write(jsonParam.toString());
-			writer.flush();
-			writer.close();
 			final int status = urlConnection.getResponseCode();
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
@@ -467,8 +451,6 @@ public class GuardianApiClient {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -489,20 +471,6 @@ public class GuardianApiClient {
 			urlConnection.setDoOutput(true);
 			urlConnection.setUseCaches(false);
 
-			JSONObject jsonParam = new JSONObject();
-
-			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
-			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
-			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());
-			jsonParam.put(Def.KEY_DOB, student.getDob());
-			jsonParam.put(Def.KEY_GENDER, student.getGender());
-
-
-			OutputStream os = urlConnection.getOutputStream();
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-			writer.write(jsonParam.toString());
-			writer.flush();
-			writer.close();
 			final int status = urlConnection.getResponseCode();
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
@@ -526,8 +494,6 @@ public class GuardianApiClient {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -701,7 +667,41 @@ public class GuardianApiClient {
 		}
 		return null;
 	}
-	
+
+	public JSONResponse grantTeacherAccessToSleepData(Student student) {
+        Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GRANT_TEDETAIL).
+                appendPath(mToken).
+                appendPath(student.getStudent_id()).build();
+        try {
+
+            URL url = new URL(uri.toString());
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(false);
+            urlConnection.setUseCaches(false);
+
+            int status = urlConnection.getResponseCode();
+            if (status == HttpURLConnection.HTTP_OK) {
+                JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+                String statusCode = result.getReturn().getResponseSummary().getStatusCode();
+                if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+
+                } else {
+                    Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
+                }
+                return result;
+            } else {
+                showError(status);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 	private void showError(int status) {
 		final int status_code = status; 
 		if (mContext.get() != null) {

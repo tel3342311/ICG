@@ -26,6 +26,7 @@ public class Def {
 	public static final String RET_SUCCESS_2 = "WSUC01";
 	public static final String RET_ERR_01 = "ERR01";
 	public static final String RET_ERR_02 = "ERR02";
+    public static final String RET_ERR_16 = "ERR16";
 
 	//API 01 registration
 	public static final String REQUEST_USER_REGISTRATION = "ParentUserRegistration";
@@ -84,7 +85,8 @@ public class Def {
 
 	//API 36 get user detail
 	public static final String REQUEST_USER_DETAIL = "UserDetails";
-	
+	//API 36 GrantTeacherAccessToSleepData
+    public static final String REQUEST_GRANT_TEDETAIL = "GrantTeacherAccessToSleepData";
 	//EVENT ID LIST
 	public static final String EVENT_ID_ENTER_SCHOOL = "1";
 	public static final String EVENT_ID_LEAVE_SCHOOL = "2";

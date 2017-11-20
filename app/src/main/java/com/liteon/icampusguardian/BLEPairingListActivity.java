@@ -30,6 +30,7 @@ import com.liteon.icampusguardian.util.BLEItemAdapter;
 import com.liteon.icampusguardian.util.BLEItemAdapter.ViewHolder.IBLEItemClickListener;
 import com.liteon.icampusguardian.util.BluetoothAgent;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
@@ -329,12 +330,42 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
             mBTAgent.stop();
         }
         BluetoothDevice device = item.getmBluetoothDevice();
+        for (int i = 0; i < mStudents.size();i++) {
+        	if (mCurrnetStudentIdx != i) {
+				String btAddr = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), mStudents.get(i).getStudent_id());
+				if (TextUtils.equals(btAddr, item.getmBluetoothDevice().getAddress())) {
+					showErrorDialog(mStudents.get(i).getNickname());
+				}
+        	}
+		}
+
         Intent intent = new Intent();
         intent.setClass(BLEPairingListActivity.this, BLEPinCodeInputActivity.class);
         intent.putExtra(Def.EXTRA_BT_ADDR, device.getAddress());
         startActivity(intent);
     }
-	
+
+	private View.OnClickListener mOnBLEFailCancelClickListener = new View.OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			finish();
+			Intent intent = new Intent();
+			intent.setClass(BLEPairingListActivity.this, MainActivity.class);
+			intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+			startActivity(intent);
+		}
+	};
+
+    private void showErrorDialog(String name) {
+		CustomDialog dialog = new CustomDialog();
+		String title = String.format(getString(R.string.already_paired), name);
+		dialog.setTitle(title);
+		dialog.setIcon(0);
+		dialog.setBtnText(getString(android.R.string.ok));
+		dialog.setBtnConfirm(mOnBLEFailCancelClickListener);
+		dialog.show(getSupportFragmentManager(), "dialog_fragment");
+	}
 	class UUIDList {
 		
 		@SerializedName("devices")

@@ -763,21 +763,24 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			}
 		};
 	}
-	
-	class UnPairTask extends AsyncTask<Void, Void, Void> {
+	//To send unpair event to cloud
+	class UnPairCloudTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
 		protected Void doInBackground(Void... params) {
+            Student student = mStudents.get(mCurrentStudentIdx);
 			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
-			JSONResponse response = apiClient.unpairDevice(mStudents.get(mCurrentStudentIdx));
+			JSONResponse response = apiClient.unpairDevice(student);
 			if (response != null) {
 				if (response.getReturn() != null) {
 					String statusCode = response.getReturn().getResponseSummary().getStatusCode(); 
 					if (TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
-						Student student = mStudents.get(mCurrentStudentIdx);
-						student.setUuid("");
-						mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
-					}
+                        student.setUuid("");
+                        mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+					} else if (TextUtils.equals(statusCode, Def.RET_ERR_16)) {
+                        student.setUuid("");
+                        mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+                    }
 				}
 			}
 			return null;

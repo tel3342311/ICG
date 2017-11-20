@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -214,6 +215,56 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 			
 		}
 	};
+
+	class UpdateUUIDToCloud extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String uuid = strings[0];
+            Student student = mStudents.get(mCurrnetStudentIdx);
+            //Save Wearable info
+            WearableInfo info = new WearableInfo();
+            info.setUuid(uuid);
+            info.setBtAddr(mBluetoothDevice.getAddress());
+            info.setStudentID(mStudents.get(mCurrnetStudentIdx).getStudent_id());
+            if (!mDbHelper.isWearableExist(mDbHelper.getReadableDatabase(), uuid)){
+                mDbHelper.insertWearableData(mDbHelper.getWritableDatabase(), info);
+            } else {
+                mDbHelper.updateWearableData(mDbHelper.getWritableDatabase(), info);
+            }
+
+            GuardianApiClient mApiClient = new GuardianApiClient(BLEPinCodeInputActivity.this);
+            student.setUuid(uuid);
+            JSONResponse response = mApiClient.pairNewDevice(mStudents.get(mCurrnetStudentIdx));
+            if (response != null) {
+                String statusCode = response.getReturn().getResponseSummary().getStatusCode();
+                if (!TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+                    //student.setUuid("");
+                    //mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+                } else {
+                    if (response.getReturn().getResults() != null) {
+
+                        String studentID = Integer.toString(response.getReturn().getResults().getStudent_id());
+                        String nickName = response.getReturn().getResults().getNickname();
+                        String roll_no = Integer.toString(response.getReturn().getResults().getRoll_no());
+                        if (!TextUtils.equals(studentID, student.getStudent_id())) {
+                            mDbHelper.deleteChildByStudentID(mDbHelper.getWritableDatabase(), student.getStudent_id());
+                            Student item = new Student();
+                            item.setUuid(uuid);
+                            item.setStudent_id(Integer.parseInt(studentID));
+                            item.setNickname(nickName);
+                            item.setRoll_no(Integer.parseInt(roll_no));
+                            mDbHelper.insertChild(mDbHelper.getWritableDatabase(), item);
+                            mApiClient.updateChildData(item);
+                        }
+                    }
+                    mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), student);
+                }
+
+            }
+            return null;
+        }
+    }
 	
 	class ConnectBleTask extends AsyncTask<Boolean, Void, Boolean> {
 
@@ -254,17 +305,6 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-//        	GuardianApiClient mApiClient = new GuardianApiClient(BLEPinCodeInputActivity.this);
-//        	JSONResponse response = mApiClient.pairNewDevice(mStudents.get(mCurrnetStudentIdx));
-//        	if (response != null) {
-//        		String statusCode = response.getReturn().getResponseSummary().getStatusCode();
-//        		if (!TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
-//        			Student student = mStudents.get(mCurrnetStudentIdx);
-//        			student.setUuid("");
-//        			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
-//        		}
-//        	}
         	return ret;
         }
 
@@ -576,20 +616,11 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                         UUIDResponseJSON responseJSON = gson.fromJson(readMessage, typeOfUUIDRepsonse);
                         String uuid = responseJSON.getUuid();
                         Log.d(TAG, "Device UUID : " + uuid);
-                        //Save Wearable info
-                        WearableInfo info = new WearableInfo();
-                        info.setUuid(uuid);
-                        info.setBtAddr(mBluetoothDevice.getAddress());
-                        info.setStudentID(mStudents.get(mCurrnetStudentIdx).getStudent_id());
-                        if (!mDbHelper.isWearableExist(mDbHelper.getReadableDatabase(), uuid)){
-                            mDbHelper.insertWearableData(mDbHelper.getWritableDatabase(), info);
-                        } else {
-                            mDbHelper.updateWearableData(mDbHelper.getWritableDatabase(), info);
-                        }
-                        mStudents.get(mCurrnetStudentIdx).setUuid(uuid);
-                        mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), mStudents.get(mCurrnetStudentIdx));
+                        new UpdateUUIDToCloud().execute(uuid);
+
                     }
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+
                     break;
                 case Def.MESSAGE_DEVICE_NAME:
                     // save the connected device's name

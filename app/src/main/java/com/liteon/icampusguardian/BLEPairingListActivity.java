@@ -266,7 +266,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 				break;
 			}
 		}
-		if (isDuplicated) {
+		if (isDuplicated || TextUtils.isEmpty(btDevice.getName()) || !btDevice.getName().startsWith("Watch_#")) {
 			return;
 		}
         BLEItem item = new BLEItem();

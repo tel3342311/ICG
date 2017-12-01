@@ -14,6 +14,7 @@ import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -36,6 +37,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
@@ -55,10 +57,11 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private ConfirmDeleteDialog mConfirmDeleteDialog;
 	private PopupWindow mPopupWindow;
 	private View mSyncView;
+	private View mProgressView;
 	//For bluetooth
 	private BluetoothAgent mBTAgent;
     private CustomDialog mCustomDialog;
-
+    private ProgressBar mProgressBar;
     public AlarmFragment() {}
 
 	@Override
@@ -90,13 +93,18 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		if (isEditMode) {
-			menu.findItem(R.id.action_complete).setVisible(true);
-			menu.findItem(R.id.action_edit).setVisible(false);
-		} else {
-			menu.findItem(R.id.action_complete).setVisible(false);
-			menu.findItem(R.id.action_edit).setVisible(true);	
-		}
+		if (AlarmManager.getDataSet().size() == 0 ) {
+            menu.findItem(R.id.action_complete).setVisible(false);
+            menu.findItem(R.id.action_edit).setVisible(false);
+        } else {
+            if (isEditMode) {
+                menu.findItem(R.id.action_complete).setVisible(true);
+                menu.findItem(R.id.action_edit).setVisible(false);
+            } else {
+                menu.findItem(R.id.action_complete).setVisible(false);
+                menu.findItem(R.id.action_edit).setVisible(true);
+            }
+        }
 	    super.onPrepareOptionsMenu(menu);
 	}
 	
@@ -122,6 +130,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+        if (mProgressView.getVisibility() == View.VISIBLE) {
+            return super.onOptionsItemSelected(item);
+        }
 		switch (item.getItemId()) {
 		case R.id.action_edit:
 			enterEditMode();
@@ -154,6 +165,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
 		mTitleView = (TextView) getActivity().findViewById(R.id.toolbar_title);
 		mSyncView = rootView.findViewById(R.id.sync_view);
+        mProgressView = rootView.findViewById(R.id.progress_view);
 	}
 	
 	public void initRecycleView() {
@@ -178,6 +190,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			}
 			mAddAlarmClicks.get().onAddAlarmClick();
 			AlarmManager.setCurrentAction(AlarmManager.ACTION_ADDING);
+            getActivity().invalidateOptionsMenu();
 		}
 	};
 
@@ -221,6 +234,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			if (AlarmManager.getDataSet().size() == 0) {
 				exitEditMode();
 			}
+            getActivity().invalidateOptionsMenu();
 		}
 	};
 	@Override
@@ -252,6 +266,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	}
 	private void showSyncWindow() {
 		View contentview = mSyncView;
+        mProgressView.setVisibility(View.INVISIBLE);
 		final TextView title = (TextView) contentview.findViewById(R.id.title);
 		AppCompatButton button = (AppCompatButton) contentview.findViewById(R.id.button_sync);
 		button.setOnClickListener(new OnClickListener() {
@@ -262,6 +277,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 				//connect to BT device
                 connectToBT();
 
+                mProgressView.setVisibility(View.VISIBLE);
 			}
 		});
 	}
@@ -295,6 +311,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
                 if (mBTAgent != null) {
                     mBTAgent.stop();
                 }
+                mProgressView.setVisibility(View.INVISIBLE);
             }
         };
         handler.postDelayed(runnable, 2000);
@@ -348,6 +365,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
             mCustomDialog.dismiss();
             TextView title = mSyncView.findViewById(R.id.title);
             title.setText(R.string.alarm_no_watch_synced);
+            mProgressView.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -384,6 +402,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
                         AlarmManager.syncAlarmFromJSON(readMessage);
 						mAdapter.notifyDataSetChanged();
 						syncDataToBT();
+                        getActivity().invalidateOptionsMenu();
 					}
                     break;
                 case Def.MESSAGE_DEVICE_NAME:

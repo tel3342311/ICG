@@ -62,6 +62,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	private ImageView mUsedPhoto;
 	private ImageView mUsedPhoto2;
 	private ImageView mUsedPhoto3;
+	private ImageView mCancel;
 	private RecyclerView mRecyclerView;
 	private RecyclerView.Adapter mAdapter;
 	private RecyclerView.LayoutManager mLayoutManager;	
@@ -112,6 +113,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		mUsedPhoto = (ImageView) findViewById(R.id.used_img);
 		mUsedPhoto2 = (ImageView) findViewById(R.id.used_img2);
 		mUsedPhoto3 = (ImageView) findViewById(R.id.used_img3);
+		mCancel = (ImageView) findViewById(R.id.cancel);
 	}
 	
 	private void setListener() {
@@ -157,7 +159,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mToolbar.setTitle(R.string.child_photo_photo_select_pic);
+		mToolbar.setTitle("");
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		if (!isFromWatchTheme) {
@@ -368,24 +370,23 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	
 	private void setupToolbar() {
 		setSupportActionBar(mToolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		mToolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
-		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		getSupportActionBar().setHomeButtonEnabled(false);
+		mCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
-            	if (!isFromWatchTheme) {
-	            	Intent intent = new Intent();
-	            	intent.setClass(ChoosePhotoActivity.this, MainActivity.class);
-	            	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
-	            	startActivity(intent);
-            	} else {
-            		Intent intent = new Intent();
-	            	intent.setClass(ChoosePhotoActivity.this, PersonalizedWatchActivity.class);
-	            	startActivity(intent);
-            	}
-            	finish();
+				if (!isFromWatchTheme) {
+					Intent intent = new Intent();
+					intent.setClass(ChoosePhotoActivity.this, MainActivity.class);
+					intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+					startActivity(intent);
+				} else {
+					Intent intent = new Intent();
+					intent.setClass(ChoosePhotoActivity.this, PersonalizedWatchActivity.class);
+					startActivity(intent);
+				}
+				finish();
 			}
 		});
 	}

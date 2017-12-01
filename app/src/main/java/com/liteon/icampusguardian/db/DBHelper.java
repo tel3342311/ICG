@@ -11,6 +11,7 @@ import com.liteon.icampusguardian.db.ChildLocationTable.ChildLocationEntry;
 import com.liteon.icampusguardian.db.ChildTable.ChildEntry;
 import com.liteon.icampusguardian.db.EventListTable.EventListEntry;
 import com.liteon.icampusguardian.db.WearableTable.WearableEntry;
+import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Parent;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.WearableInfo;
@@ -213,6 +214,12 @@ public class DBHelper extends SQLiteOpenHelper {
         int ret = db.update(ChildEntry.TABLE_NAME, cv, "student_id=?", new String[] { studentID });
     }
 
+    public void deleteChildByStudentID(SQLiteDatabase db, String studentId) {
+		long ret = db.delete(ChildEntry.TABLE_NAME, ChildEntry.COLUMN_NAME_STUDENT_ID + "=" + studentId, null);
+		db.close();
+		return ;
+	}
+
 	public void clearChildList(SQLiteDatabase db) {
 		db.execSQL("delete from "+ ChildEntry.TABLE_NAME);
 		db.close();
@@ -258,6 +265,17 @@ public class DBHelper extends SQLiteOpenHelper {
 		}
 		return list;
 	}
+
+    public void insertChild(SQLiteDatabase db, Student item) {
+        ContentValues cv = new ContentValues();
+        cv.put(ChildEntry.COLUMN_NAME_UUID, item.getUuid());
+        cv.put(ChildEntry.COLUMN_NAME_NICK_NAME, item.getNickname());
+        cv.put(ChildEntry.COLUMN_NAME_ROLL_NO, item.getRoll_no());
+        cv.put(ChildEntry.COLUMN_NAME_STUDENT_ID, item.getStudent_id());
+
+        long ret = db.insert(ChildEntry.TABLE_NAME, null, cv);
+        Log.d(DATABASE_NAME, "insert " + item.getNickname() + "RET is " + ret);
+    }
 	
 	public void updateChildData(SQLiteDatabase db, Student student) {
 		ContentValues cv = new ContentValues();

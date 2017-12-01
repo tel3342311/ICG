@@ -310,7 +310,7 @@ public class SettingFragment extends Fragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+        mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
 		initChildInfo();
 		((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrnetStudentIdx));

@@ -7,8 +7,8 @@
 	<!-- Welcome Page -->
 	<string name="welcome_title">您好，歡迎使用 \niCampus Guardian\n 校園守護者</string>
 	<string name="welcome_user_term">使用者協議及隱私政策</string>
-	<string name="welcome_read_eula">點選同意以確認iCG校園守護者的使用者協議及隱私政策</string> 
-	<string name="welcome_user_term_content">使用者協議及隱私政策內文xxxxxxxxxxxxxxxx</string>
+	<string name="welcome_read_eula">點選同意以確認iCG校園守護者的使用者協議及隱私政策</string>
+    <string name="welcome_user_term_content">"END USER LICENSE AGREEMENT – CORPORATE SOLUTIONS V.01 Please read the following license agreement carefully before using this program. By accepting the agreement, you are agreeing to become the licensee and expressing your complete acceptance of all the terms and conditions of this license agreement. If you do not accept the terms of the agreement, do not install the program. Similarly, use of the program implies your acceptance to be bound by the terms and conditions of this license agreement. This license agreement represents the entire agreement. This license agreement supersedes any prior license agreements licensee with respect to this product or the product it replaces. Similarly, and where permissible under applicable legislation, the terms and conditions of the present license agreement shall take precedence over any communication or advertising material in the event that such material contradicts any of said terms and conditions or where such material predates this license agreement. The acceptance of the terms and conditions of this agreement does not confer any rights of ownership over the programs or products belonging to LITE-ON.  "</string>
 	<string name="welcome_join_program">參與使用者體驗改善計畫</string>
 	<string name="welcome_permission_term">學校老師可以獲得寶貝睡眠資訊</string>
 	<string name="welcome_accept">同意</string>
@@ -79,6 +79,7 @@
 	<string name="safty_no_watch_detected">未感應手錶</string>
 	<!-- healthy -->
 	<string name="healthy_today_reocrd">今日紀錄</string>
+    <string name="healthy_today_reocrd_not_update">今日紀錄(未更新)</string>
 	<string name="healthy_update_time">已於MM/dd hh:mm更新</string>
 	<string name="healthy_sync_failed">資料同步失敗</string>
 	<string name="healthy_sync">同步</string>
@@ -129,6 +130,7 @@
 	<string name="alarm_customize">自訂</string>
 	<string name="alarm_period">設定鬧鈴週期</string>
 	<string name="alarm_edit_period">編輯鬧鈴</string>
+    <string name="alarm_edit_period_add">設定鬧鈴</string>
 	<string name="alarm_delete">刪除鬧鈴</string>
 	<string name="alarm_max_alarm">新增鬧鈴最多為四組</string>
 	<string name="alarm_sun">週日</string>
@@ -221,6 +223,8 @@
 	<string name="password_not_match">密碼與確認密碼不相同</string>
 	<!-- Dialog message -->
 	<string name="ask_permission">應用程式要求權限以繼續</string>
+	<string name="already_paired">此手錶已跟小孩%s綁定, 請選擇其他裝置</string>
+
 	<!-- old strings -->
 	<!-- Bottom Bar -->
 	<string name="safty_tab">安心</string>
@@ -237,4 +241,6 @@
 	<string name="healthy_wake">起床</string>
     <string name="alarm_hint">鬧鈴名稱(英數8字元，中文字4個字為限)</string>
 	<string name="alarm_dialog_delete">刪除</string>
+    <!-- Password hint -->
+    <string name="password_hint">如有更改密碼將重新登入，請記住新密碼</string>
 </resources>

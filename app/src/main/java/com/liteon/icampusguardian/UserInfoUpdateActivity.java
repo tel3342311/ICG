@@ -49,6 +49,8 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	private String mMobile_number;
 	private ImageView mConfirm;
 	private String mToken;
+	private Parent mParent;
+	private TextView mPasswordHint;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -98,12 +100,13 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 
     	if (!TextUtils.isEmpty(mToken)) {
     		//Account values
-    		Parent parent = helper.getParentByToken(helper.getReadableDatabase(), mToken);
-    		mName.setText(parent.getAccount_name());
-			mPhoneNumber.setText(parent.getMobile_number());
-    		mPassword.setText(parent.getPassword());
-    		mConfirmPassword.setText(parent.getPassword());
-    		mAccount.setText(parent.getUsername());
+    		mParent = helper.getParentByToken(helper.getReadableDatabase(), mToken);
+    		mName.setText(mParent.getAccount_name());
+			mPhoneNumber.setText(mParent.getMobile_number());
+    		mPassword.setText(mParent.getPassword());
+    		mConfirmPassword.setVisibility(View.INVISIBLE);
+			mPasswordHint.setVisibility(View.INVISIBLE);
+    		mAccount.setText(mParent.getUsername());
     	}
 	}
 	
@@ -117,6 +120,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		mBackBtn = findViewById(R.id.cancel);
 		mSyncView = (View) findViewById(R.id.sync_view);
 		progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
+		mPasswordHint = (TextView) findViewById(R.id.password_hint);
 	}
 	
 	private void setListener() {
@@ -184,6 +188,14 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		
 		@Override
 		public void afterTextChanged(Editable s) {
+			if (!TextUtils.equals(mParent.getPassword(), mPassword.getText())) {
+				mConfirmPassword.setVisibility(View.VISIBLE);
+				mPasswordHint.setVisibility(View.VISIBLE);
+			} else {
+				mConfirmPassword.setVisibility(View.INVISIBLE);
+				mPasswordHint.setVisibility(View.INVISIBLE);
+
+			}
 			if (validateInput()) {
 				//mConfirm.setEnabled(true);
 				mIsEditMode = true;
@@ -199,8 +211,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		if (TextUtils.isEmpty(mName.getText()) || 
 			TextUtils.isEmpty(mAccount.getText()) ||
 			TextUtils.isEmpty(mPhoneNumber.getText()) ||
-			TextUtils.isEmpty(mPassword.getText()) ||
-			TextUtils.isEmpty(mConfirmPassword.getText())) {
+			TextUtils.isEmpty(mPassword.getText())) {
 			return false;
 		}
 		//check if acount email is valid
@@ -210,9 +221,11 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 			Toast.makeText(this, "invalid Email Account" , Toast.LENGTH_SHORT).show();
 			return false;
 		}
-		//check if password & password confirm is match
-		if (!TextUtils.equals(mPassword.getText(), mConfirmPassword.getText())) {
-			return false;
+		if (!TextUtils.equals(mParent.getPassword(), mPassword.getText())) {
+			//check if password & password confirm is match
+			if (!TextUtils.equals(mPassword.getText(), mConfirmPassword.getText()) || mPassword.getText().length() < 8) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -238,14 +251,14 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
         	
         	GuardianApiClient apiClient = new GuardianApiClient(UserInfoUpdateActivity.this);
         	apiClient.updateParentDetail(args[0], args[1], args[2], args[3]);
-        	Parent p = new Parent();
-            p.setAccount_name(args[0]);
-            p.setUsername(args[1]);
-            p.setPassword(args[2]);
-            p.setMobile_number(args[3]);
-            p.setToken(mToken);
+			mParent = new Parent();
+			mParent.setAccount_name(args[0]);
+			mParent.setUsername(args[1]);
+			mParent.setPassword(args[2]);
+			mParent.setMobile_number(args[3]);
+			mParent.setToken(mToken);
             DBHelper helper = DBHelper.getInstance(UserInfoUpdateActivity.this);
-            helper.updateAccount(helper.getWritableDatabase(), p);
+            helper.updateAccount(helper.getWritableDatabase(), mParent);
         	return null;
         }
 

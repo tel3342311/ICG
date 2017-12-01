@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +45,7 @@ public class HealthFragment extends Fragment {
     private DBHelper mDbHelper;
     private List<JSONResponse.Student> mStudents;
     private int mCurrnetStudentIdx;
-
+	private TextView mTitleView;
 	public HealthFragment() {}
 //	public HealthFragment(IHealthViewHolderClicks listener) {
 //		super();
@@ -138,6 +139,8 @@ public class HealthFragment extends Fragment {
 	private void findView(View rootView) {
 		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.healthy_event_view);
 		mSyncView = rootView.findViewById(R.id.sync_view);
+		mTitleView = getActivity().findViewById(R.id.toolbar_title);
+
 	}
 	
 	@Override
@@ -177,6 +180,7 @@ public class HealthFragment extends Fragment {
 					   	if (!isDetached()) {
 							title.setText(currentDateandTime);
 							handler.postDelayed(hideSyncView, 3000);
+							mTitleView.setText(R.string.healthy_today_reocrd);
 						}
 					} 
 				};

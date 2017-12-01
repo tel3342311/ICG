@@ -8,6 +8,7 @@ import com.liteon.icampusguardian.util.BluetoothAgent;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import android.bluetooth.BluetoothAdapter;
@@ -134,6 +135,8 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 			Editor editor = sp.edit();
 			editor.putBoolean(Def.SP_TEACHER_PLAN, isChecked);
 			editor.commit();
+
+			new GrantTeacherTask().execute();
 		}
 		
 	};
@@ -180,7 +183,16 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 			mBTAgent .stop();
 		}
 	}
-	
+
+	class GrantTeacherTask extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected Void doInBackground(Void... voids) {
+			GuardianApiClient mApiClient = new GuardianApiClient(WatchInfoAndPrivacyActivity.this);
+			mApiClient.grantTeacherAccessToSleepData(mStudents.get(mCurrnetStudentIdx));
+			return null;
+		}
+	}
+
 	class UpdateTask extends AsyncTask<String, Void, Boolean> {
 
 		@Override

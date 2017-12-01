@@ -28,9 +28,11 @@
 	<dimen name="dialog_confirm_btn_height">75dp</dimen>
 	<dimen name="dialog_btn_margin_bottom">13dp</dimen>
 	<!-- Safty page -->
-	<dimen name="safty_map_view_height">375dp</dimen>
+	<dimen name="safty_map_container_height">375dp</dimen>
+	<dimen name="safty_map_view_height">300dp</dimen>
 	<dimen name="geo_event_view_fix_height">97dp</dimen>
 	<dimen name="geo_event_detail_item_height">52dp</dimen>
+	<dimen name="safty_map_text_size">18sp</dimen>
 	<!-- Health page -->
 	<dimen name="healthy_item_height">135dp</dimen>
 	<dimen name="healthy_item_icon_size">67dp</dimen>

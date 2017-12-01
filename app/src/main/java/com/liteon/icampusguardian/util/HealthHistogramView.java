@@ -36,6 +36,7 @@ public class HealthHistogramView extends View {
 	private Paint paintSelected;
 	private Paint paintOthers;
 	private Paint textPaint;
+	private Paint textPaint2;
 	private Paint baseLinePaint;
 	private Paint paintTriangle;
 	//Text size for graph
@@ -101,11 +102,18 @@ public class HealthHistogramView extends View {
 		baseLinePaint.setStyle(Style.STROKE);
 		baseLinePaint.setStrokeCap(Cap.ROUND);
 		baseLinePaint.setColor(Color.BLACK);  
-		baseLinePaint.setStrokeWidth(5);  
-		//float[] intervals = new float[] {5.0f, 20.0f};
-		//float phase = 1.f;
-		//DashPathEffect effects = new DashPathEffect(intervals, phase);
-		//baseLinePaint.setPathEffect(effects);
+		baseLinePaint.setStrokeWidth(5);
+
+		textPaint2 = new Paint();
+		textPaint2.setColor(Color.BLACK);
+		textPaint2.setTextSize(textFontSize);
+		textPaint2.setAntiAlias(true);
+		textPaint2.setStrokeCap(Cap.ROUND);
+		textPaint2.setStrokeWidth(1);
+		float[] intervals = new float[] {2.0f, 2.0f};
+		float phase = 0.f;
+		DashPathEffect effects = new DashPathEffect(intervals, phase);
+		textPaint2.setPathEffect(effects);
 		//Paint for Triangle
 		paintTriangle = new Paint();
 	    paintTriangle.setColor(android.graphics.Color.BLACK);
@@ -188,21 +196,29 @@ public class HealthHistogramView extends View {
 				canvas.drawRect(mRectList[i], paintOthers);
 			}
 		}
-		canvas.drawText(mSettingTarget, 0, 30, textPaint);
+		if (mType != TYPE.HEART_RATE) {
+			canvas.drawText(mSettingTarget, 0, 30, textPaint);
 
-	    Path path = new Path();
-		Point a = new Point(0, 50);
-	    Point b = new Point(30, 50);
-	    Point c = new Point(15, (int)(mHeight * 0.08) + mGraphMarginVertical);
-	    path.moveTo(a.x, a.y);
-	    path.lineTo(b.x, b.y);
-	    path.lineTo(c.x, c.y);
-	   
-	    path.close();
-	    canvas.drawPath(path, paintTriangle);
-	    
-		canvas.drawLine(0.f, (float) (mHeight * 0.095) + mGraphMarginVertical, (float)mWidth, (float)(mHeight * 0.095) + mGraphMarginVertical, textPaint);
-		
+			Path path = new Path();
+			Point a = new Point(0, 50);
+			Point b = new Point(30, 50);
+			Point c = new Point(15, (int) (mHeight * 0.08) + mGraphMarginVertical);
+			path.moveTo(a.x, a.y);
+			path.lineTo(b.x, b.y);
+			path.lineTo(c.x, c.y);
+
+			path.close();
+			canvas.drawPath(path, paintTriangle);
+
+			canvas.drawLine(0.f, (float) (mHeight * 0.095) + mGraphMarginVertical, (float) mWidth, (float) (mHeight * 0.095) + mGraphMarginVertical, textPaint);
+		} else {
+			canvas.drawText("80", 0, (float) (mHeight * 0.095) + mGraphMarginVertical, textPaint);
+			canvas.drawLine(50.f, (float) (mHeight * 0.095) + mGraphMarginVertical - 20, (float) mWidth, (float) (mHeight * 0.095) + mGraphMarginVertical - 20, textPaint2);
+
+			canvas.drawText("70", 0, (float) (mHeight * 0.095) + mGraphMarginVertical + 50, textPaint);
+			canvas.drawLine(50.f, (float) (mHeight * 0.095) + mGraphMarginVertical + 50 - 20, (float) mWidth, (float) (mHeight * 0.095) + mGraphMarginVertical + 50 - 20, textPaint2);
+
+		}
 	}
 	
 	@Override

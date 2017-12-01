@@ -129,7 +129,51 @@ public class JSONResponse {
 		private String event_name;
 		@SerializedName("devices")
 		private Device devices[];
-		/**
+        /**
+         * API 18
+         */
+        @SerializedName("student_id")
+        private int student_id;
+        @SerializedName("nickname")
+        private String nickname;
+        @SerializedName("roll_no")
+        private int roll_no;
+        @SerializedName("uuid")
+        private String uuid;
+
+        public int getStudent_id() {
+            return student_id;
+        }
+
+        public void setStudent_id(int student_id) {
+            this.student_id = student_id;
+        }
+
+        public String getNickname() {
+            return nickname;
+        }
+
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
+        }
+
+        public int getRoll_no() {
+            return roll_no;
+        }
+
+        public void setRoll_no(int roll_no) {
+            this.roll_no = roll_no;
+        }
+
+        public String getUuid() {
+            return uuid;
+        }
+
+        public void setUuid(String uuid) {
+            this.uuid = uuid;
+        }
+
+        /**
 		 * API 36
 		 */
 		@SerializedName("name")

@@ -264,7 +264,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				return;
 			} else if (mCurrentFragment instanceof SettingProfileFragment || mCurrentFragment instanceof SettingTargetFragment) {
 				hideSoftKeyboard();
-				changeFragment(new SettingFragment(MainActivity.this), getString(R.string.setting_tab),
+				changeFragment(new SettingFragment(MainActivity.this), getString(R.string.child_setup_profile),
 						NAVIGATION_DRAWER);
 				return;
 			} else {
@@ -337,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			case R.id.action_health:
 				//fragment = new HealthFragment(MainActivity.this);
 				fragment = new HealthMainFragment();
-				title = getString(R.string.healthy_today_reocrd);
+				title = getString(R.string.healthy_today_reocrd_not_update);
 				break;
 			case R.id.action_alarm:
 				fragment = new AlarmFragment();
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				break;
 			case R.id.action_setting:
 				fragment = new SettingFragment();
-				title = getString(R.string.setting_tab);
+				title = getString(R.string.child_setup_profile);
 				break;
 			}
 			if (fragment == null) {
@@ -547,7 +547,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	}
 	private void switchSetting() {
 		AppInfoPrivacyFragment frag = new AppInfoPrivacyFragment(this);
-		changeFragment(frag, getString(R.string.drawer_setting), NAVIGATION_BACK);
+		changeFragment(frag, getString(R.string.child_setup_profile), NAVIGATION_BACK);
 	}
 	
 	private void switchAccount() {
@@ -580,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	public void onAddAlarmClick() {
 		if (mCurrentFragment instanceof AlarmFragment) {
 			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
-			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_edit_period), 0);
+			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_edit_period_add), 0);
 
 			if (fragment.isEditMode()) {
 				fragment.exitEditMode();
@@ -591,7 +591,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 
 	public void onFinishEditPeriod(){
 		if (mCurrentFragment instanceof AlarmPeriodFragment) {
-			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_edit_period), 0);
+			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_period), 0);
 		}
 	}
 
@@ -788,6 +788,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
+            Toast.makeText(App.getContext(), getString(R.string.unbind_watch),Toast.LENGTH_SHORT).show();
+            if (mCurrentFragment instanceof SettingFragment) {
+                ((SettingFragment)mCurrentFragment).notifyBTState();
+            }
 		}
 	}
 
@@ -803,17 +807,14 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			} catch (Exception e) {
 				Log.e("RemoveBond failed.", e.getMessage());
 			}
-			mStudents.get(mCurrentStudentIdx).setUuid("");
-			mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), mStudents.get(mCurrentStudentIdx));
+
 			return null;
 		}
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			Toast.makeText(App.getContext(), getString(R.string.unbind_watch),Toast.LENGTH_SHORT).show();
-			if (mCurrentFragment instanceof SettingFragment) {
-				((SettingFragment)mCurrentFragment).notifyBTState();
-			}
+			//call Cloud API 19 to Unpair
+            new UnPairCloudTask().execute();
 		}
 	}
 

@@ -1,26 +1,12 @@
 package com.liteon.icampusguardian;
 
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.Def;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatRadioButton;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 public class LoadingPageActivity extends AppCompatActivity {
 
-	
-	private TextView mTextViewUserTerm;
 	private ProgressBar mProgressBar;
 	private Handler mHandlerTime;
 	private int mProgressStep;

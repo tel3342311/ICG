@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class UserTermActivity extends AppCompatActivity implements OnClickListener {
@@ -24,6 +25,7 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 	private Toolbar mToolbar;
 	private View mBottomView;
 	private AppCompatCheckBox mRadioButton;
+	private ImageView mCancel;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +42,14 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 		mToolbar = (Toolbar) findViewById(R.id.toolbar);
 		mBottomView = (View) findViewById(R.id.bottom_bar); 
 		mRadioButton = (AppCompatCheckBox) findViewById(R.id.user_improve_plan);
+		mCancel = findViewById(R.id.cancel);
 	}
 	
 	private void setupToolbar() {
 		setSupportActionBar(mToolbar);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSupportActionBar().setHomeButtonEnabled(true);
-		mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+		getSupportActionBar().setHomeButtonEnabled(false);
+		mCancel.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
@@ -64,7 +66,7 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mToolbar.setTitle(getString(R.string.welcome_user_term));
+		mToolbar.setTitle("");
 		Intent intent = getIntent();
 		boolean disableBottom = intent.getBooleanExtra(Def.EXTRA_DISABLE_USERTREM_BOTTOM, false);
 		if (disableBottom == true) {

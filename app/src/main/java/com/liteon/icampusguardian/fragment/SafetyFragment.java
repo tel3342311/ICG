@@ -1,17 +1,28 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import android.animation.FloatEvaluator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,13 +37,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.liteon.icampusguardian.App;
-import com.liteon.icampusguardian.ChildPairingActivity;
 import com.liteon.icampusguardian.LoginActivity;
-import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.AlarmItem;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GeoEventAdapter;
 import com.liteon.icampusguardian.util.GeoEventItem;
@@ -43,30 +50,17 @@ import com.liteon.icampusguardian.util.JSONResponse.DeviceEvent;
 import com.liteon.icampusguardian.util.JSONResponse.Results;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
-import android.animation.FloatEvaluator;
-import android.animation.PropertyValuesHolder;
-import android.animation.ValueAnimator;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.opengl.Visibility;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.TextView;
-import android.widget.Toast;
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SafetyFragment extends Fragment {
 
@@ -250,10 +244,10 @@ public class SafetyFragment extends Fragment {
 	}
 
 	private void findView(View rootView) {
-		mMapView = (MapView) rootView.findViewById(R.id.map_view);
-		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.daily_event_view);
-		mLocationOnMap = (FloatingActionButton) rootView.findViewById(R.id.map_location);
-		mUpdateText = (TextView) rootView.findViewById(R.id.gps_update_time);
+		mMapView = rootView.findViewById(R.id.map_view);
+		mRecyclerView = rootView.findViewById(R.id.daily_event_view);
+		mLocationOnMap = rootView.findViewById(R.id.map_location);
+		mUpdateText = rootView.findViewById(R.id.gps_update_time);
 	}
 
 	@Override

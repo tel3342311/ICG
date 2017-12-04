@@ -30,7 +30,9 @@ public class AppInfoPrivacyFragment extends Fragment {
 	public AppInfoPrivacyFragment(IAppInfoPrivacyViewHolderClicks clicks) {
 		mClicks = new WeakReference<IAppInfoPrivacyViewHolderClicks>(clicks);
 	}
-	
+
+	public AppInfoPrivacyFragment() {}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		 mRootView = inflater.inflate(R.layout.fragment_app_info_privacy, container, false);
@@ -40,7 +42,7 @@ public class AppInfoPrivacyFragment extends Fragment {
 	}
 	
 	private void findView(View rootView) {
-		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.app_info_view);
+		mRecyclerView = rootView.findViewById(R.id.app_info_view);
 	}
 	
 	public void initRecycleView() {

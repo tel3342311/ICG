@@ -1,41 +1,12 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.aigestudio.wheelpicker.WheelPicker;
-import com.aigestudio.wheelpicker.WheelPicker.OnItemSelectedListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.liteon.icampusguardian.MainActivity;
-import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.AlarmItem;
-import com.liteon.icampusguardian.util.AlarmManager;
-import com.liteon.icampusguardian.util.AlarmPeriodAdapter;
-import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
-import com.liteon.icampusguardian.util.AlarmPeriodItem;
-import com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE;
-import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.SettingItemAdapter;
-
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.TintableBackgroundView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +17,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.aigestudio.wheelpicker.WheelPicker;
+import com.aigestudio.wheelpicker.WheelPicker.OnItemSelectedListener;
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.AlarmItem;
+import com.liteon.icampusguardian.util.AlarmManager;
+import com.liteon.icampusguardian.util.AlarmPeriodAdapter;
+import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
+import com.liteon.icampusguardian.util.AlarmPeriodItem;
+import com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHolderClicks{
 
@@ -160,12 +145,12 @@ public class AlarmEditingFragment extends Fragment implements IAlarmPeriodViewHo
 		return super.onOptionsItemSelected(item);
 	}
 	private void findView(View rootView) {
-		mAlarmName = (EditText) rootView.findViewById(R.id.alarm_name);
-		mHourPicker = (WheelPicker) rootView.findViewById(R.id.main_wheel_left);
-		mMinutePicker = (WheelPicker) rootView.findViewById(R.id.main_wheel_right);
-		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.alarm_period_view);
-		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-		mTitleView = (TextView) getActivity().findViewById(R.id.toolbar_title);
+		mAlarmName = rootView.findViewById(R.id.alarm_name);
+		mHourPicker = rootView.findViewById(R.id.main_wheel_left);
+		mMinutePicker = rootView.findViewById(R.id.main_wheel_right);
+		mRecyclerView = rootView.findViewById(R.id.alarm_period_view);
+		mToolbar = getActivity().findViewById(R.id.toolbar);
+		mTitleView = getActivity().findViewById(R.id.toolbar_title);
 	}
 	
 	private void initRecycleView() {

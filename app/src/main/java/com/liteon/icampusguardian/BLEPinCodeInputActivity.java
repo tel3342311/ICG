@@ -1,39 +1,8 @@
 package com.liteon.icampusguardian;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.fragment.SafetyFragment;
-import com.liteon.icampusguardian.fragment.SettingFragment;
-import com.liteon.icampusguardian.util.BluetoothAgent;
-import com.liteon.icampusguardian.util.ClsUtils;
-import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.DeviceNameJSON;
-import com.liteon.icampusguardian.util.DeviceUUIDJSON;
-import com.liteon.icampusguardian.util.GuardianApiClient;
-import com.liteon.icampusguardian.util.JSONResponse;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.UUIDResponseJSON;
-import com.liteon.icampusguardian.util.WearableInfo;
-
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -60,7 +29,26 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.BluetoothAgent;
+import com.liteon.icampusguardian.util.ClsUtils;
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.DeviceNameJSON;
+import com.liteon.icampusguardian.util.DeviceUUIDJSON;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.UUIDResponseJSON;
+import com.liteon.icampusguardian.util.WearableInfo;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import static com.liteon.icampusguardian.App.getContext;
 
@@ -144,16 +132,16 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
     }
 
     private void findViews() {
-		mCancel = (ImageView) findViewById(R.id.cancel);
-		mConfirm = (ImageView) findViewById(R.id.confirm);
-		mPinFirstDigitEditText = (EditText) findViewById(R.id.pin_first_edittext);
-        mPinSecondDigitEditText = (EditText) findViewById(R.id.pin_second_edittext);
-        mPinThirdDigitEditText = (EditText) findViewById(R.id.pin_third_edittext);
-        mPinForthDigitEditText = (EditText) findViewById(R.id.pin_forth_edittext);
-        mPinFifthDigitEditText = (EditText) findViewById(R.id.pin_fifth_edittext);
-        mPinSixthDigitEditText = (EditText) findViewById(R.id.pin_sixth_edittext);
-        mPinHiddenEditText = (EditText) findViewById(R.id.pin_hidden_edittext);
-        mBleConnectingView = (View) findViewById(R.id.ble_pairing_progress);
+		mCancel = findViewById(R.id.cancel);
+		mConfirm = findViewById(R.id.confirm);
+		mPinFirstDigitEditText = findViewById(R.id.pin_first_edittext);
+        mPinSecondDigitEditText = findViewById(R.id.pin_second_edittext);
+        mPinThirdDigitEditText = findViewById(R.id.pin_third_edittext);
+        mPinForthDigitEditText = findViewById(R.id.pin_forth_edittext);
+        mPinFifthDigitEditText = findViewById(R.id.pin_fifth_edittext);
+        mPinSixthDigitEditText = findViewById(R.id.pin_sixth_edittext);
+        mPinHiddenEditText = findViewById(R.id.pin_hidden_edittext);
+        mBleConnectingView = findViewById(R.id.ble_pairing_progress);
  	}
 	
 	private void setListener() {

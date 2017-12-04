@@ -1,7 +1,5 @@
 package com.liteon.icampusguardian;
 
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +11,8 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+
+import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 public class ChildPairingActivity extends AppCompatActivity {
 
@@ -51,9 +51,9 @@ public class ChildPairingActivity extends AppCompatActivity {
 		mPairingIndicator.setAnimation(mAnimation);
 	}
 	private void findViews() {
-		mPairingIndicator = (ImageView) findViewById(R.id.indicator_loading);
-		mStartPairing = (AppCompatButton) findViewById(R.id.pairing_watch_now);
-		mPairingLater = (AppCompatButton) findViewById(R.id.pairing_watch_later);
+		mPairingIndicator = findViewById(R.id.indicator_loading);
+		mStartPairing = findViewById(R.id.pairing_watch_now);
+		mPairingLater = findViewById(R.id.pairing_watch_later);
 	}
 	
 	private void setListener() {

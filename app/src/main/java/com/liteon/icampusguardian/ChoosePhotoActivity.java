@@ -1,30 +1,5 @@
 package com.liteon.icampusguardian;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.PhotoItem;
-import com.liteon.icampusguardian.util.PhotoItemAdapter;
-import com.liteon.icampusguardian.util.PhotoItemAdapter.ViewHolder.IPhotoViewHolderClicks;
-
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -49,11 +24,34 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.PhotoItem;
+import com.liteon.icampusguardian.util.PhotoItemAdapter;
+import com.liteon.icampusguardian.util.PhotoItemAdapter.ViewHolder.IPhotoViewHolderClicks;
+
 import org.apache.commons.io.FileUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoViewHolderClicks {
 
@@ -108,12 +106,12 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	}
 	
 	private void findViews() {
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
-		mRecyclerView = (RecyclerView) findViewById(R.id.photo_list);
-		mUsedPhoto = (ImageView) findViewById(R.id.used_img);
-		mUsedPhoto2 = (ImageView) findViewById(R.id.used_img2);
-		mUsedPhoto3 = (ImageView) findViewById(R.id.used_img3);
-		mCancel = (ImageView) findViewById(R.id.cancel);
+		mToolbar = findViewById(R.id.toolbar);
+		mRecyclerView = findViewById(R.id.photo_list);
+		mUsedPhoto = findViewById(R.id.used_img);
+		mUsedPhoto2 = findViewById(R.id.used_img2);
+		mUsedPhoto3 = findViewById(R.id.used_img3);
+		mCancel = findViewById(R.id.cancel);
 	}
 	
 	private void setListener() {

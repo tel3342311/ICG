@@ -1,13 +1,5 @@
 package com.liteon.icampusguardian;
 
-import java.util.jar.Attributes.Name;
-
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.GuardianApiClient;
-import com.liteon.icampusguardian.util.JSONResponse;
-import com.liteon.icampusguardian.util.JSONResponse.Parent;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,12 +18,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.animation.AlphaAnimation;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
+import com.liteon.icampusguardian.util.JSONResponse.Parent;
 
 public class UserInfoUpdateActivity extends AppCompatActivity {
 
@@ -111,16 +108,16 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	}
 	
 	private void findViews() {
-		mName = (EditText) findViewById(R.id.login_name);
-		mPhoneNumber = (EditText) findViewById(R.id.login_number);
-		mAccount = (EditText) findViewById(R.id.login_account);
-		mPassword = (EditText) findViewById(R.id.login_password);
-		mConfirmPassword = (EditText) findViewById(R.id.login_password_confirm);
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mName = findViewById(R.id.login_name);
+		mPhoneNumber = findViewById(R.id.login_number);
+		mAccount = findViewById(R.id.login_account);
+		mPassword = findViewById(R.id.login_password);
+		mConfirmPassword = findViewById(R.id.login_password_confirm);
+		mToolbar = findViewById(R.id.toolbar);
 		mBackBtn = findViewById(R.id.cancel);
-		mSyncView = (View) findViewById(R.id.sync_view);
-		progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
-		mPasswordHint = (TextView) findViewById(R.id.password_hint);
+		mSyncView = findViewById(R.id.sync_view);
+		progressBarHolder = findViewById(R.id.progressBarHolder);
+		mPasswordHint = findViewById(R.id.password_hint);
 	}
 	
 	private void setListener() {
@@ -137,7 +134,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		mPassword.setOnFocusChangeListener(mOnFocusChangeListener);
 		mConfirmPassword.setOnFocusChangeListener(mOnFocusChangeListener);
 		
-		AppCompatButton button = (AppCompatButton) mSyncView.findViewById(R.id.button_sync);
+		AppCompatButton button = mSyncView.findViewById(R.id.button_sync);
 		button.setOnClickListener(new OnClickListener() {
 			
 			@Override

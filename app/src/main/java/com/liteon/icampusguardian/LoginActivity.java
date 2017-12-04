@@ -1,12 +1,25 @@
 package com.liteon.icampusguardian;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.NetworkInfo.State;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -31,28 +44,13 @@ import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.NetworkInfo.State;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -118,14 +116,14 @@ public class LoginActivity extends AppCompatActivity {
 
 	}
 	private void findViews() {
-		signInButtonNormal = (AppCompatButton) findViewById(R.id.ap_login);
-		signInButtonGoogle = (AppCompatButton) findViewById(R.id.login_button_google);
-		signInButtonFacebook = (AppCompatButton) findViewById(R.id.login_button_fb);
-		mQuitButton = (AppCompatButton) findViewById(R.id.login_button_quit);
-		mUserName = (EditText) findViewById(R.id.login_account);
-		mPassword = (EditText) findViewById(R.id.login_password);
-		mCreateAccount = (TextView) findViewById(R.id.create_account);
-		mForgetPassword = (TextView) findViewById(R.id.forget_password);
+		signInButtonNormal = findViewById(R.id.ap_login);
+		signInButtonGoogle = findViewById(R.id.login_button_google);
+		signInButtonFacebook = findViewById(R.id.login_button_fb);
+		mQuitButton = findViewById(R.id.login_button_quit);
+		mUserName = findViewById(R.id.login_account);
+		mPassword = findViewById(R.id.login_password);
+		mCreateAccount = findViewById(R.id.create_account);
+		mForgetPassword = findViewById(R.id.forget_password);
 	}
 	
 	private void setListener() {

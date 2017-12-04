@@ -20,7 +20,7 @@ public class LoadingPageActivity extends AppCompatActivity {
 	}
 	
 	private void findViews() {
-		mProgressBar = (ProgressBar) findViewById(R.id.loading_progress);
+		mProgressBar = findViewById(R.id.loading_progress);
 		
 	}
 	

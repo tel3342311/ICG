@@ -1,14 +1,5 @@
 package com.liteon.icampusguardian;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.UUID;
-
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.GuardianApiClient;
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -25,9 +16,16 @@ import android.util.Patterns;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.UUID;
 
 public class UserRegistrationActivity extends AppCompatActivity implements OnClickListener {
 
@@ -56,14 +54,14 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 	}
 	
 	private void findViews() {
-		mName = (EditText) findViewById(R.id.login_name);
-		mPhone = (EditText) findViewById(R.id.login_phone);
-		mAccount = (EditText) findViewById(R.id.login_account);
-		mPassword = (EditText) findViewById(R.id.login_password);
-		mConfirmPassword = (EditText) findViewById(R.id.login_password_confirm);
+		mName = findViewById(R.id.login_name);
+		mPhone = findViewById(R.id.login_phone);
+		mAccount = findViewById(R.id.login_account);
+		mPassword = findViewById(R.id.login_password);
+		mConfirmPassword = findViewById(R.id.login_password_confirm);
 		mCancel = findViewById(R.id.cancel);
 		mConfirm = findViewById(R.id.confirm);
-		mHintText = (TextView) findViewById(R.id.error_hint);
+		mHintText = findViewById(R.id.error_hint);
 		
 	}
 	

@@ -1,14 +1,5 @@
 package com.liteon.icampusguardian;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.GuardianApiClient;
-import com.liteon.icampusguardian.util.JSONResponse;
-
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -26,6 +17,15 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class UserResetPasswordActivity extends AppCompatActivity implements OnClickListener {
 	
@@ -51,11 +51,11 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 	}
 	
 	private void findViews() {
-		mName = (EditText) findViewById(R.id.login_name);
-		mTitleView = (TextView) findViewById(R.id.login_title); 
-		mDescView = (TextView) findViewById(R.id.login_desc);
-		mSend = (AppCompatButton) findViewById(R.id.email_send);
-		mBackToLogin = (AppCompatButton) findViewById(R.id.back_to_login);
+		mName = findViewById(R.id.login_name);
+		mTitleView = findViewById(R.id.login_title);
+		mDescView = findViewById(R.id.login_desc);
+		mSend = findViewById(R.id.email_send);
+		mBackToLogin = findViewById(R.id.back_to_login);
 	}
 	
 	private void setListener() {

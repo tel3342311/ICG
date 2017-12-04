@@ -1,21 +1,5 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.AlarmItem;
-import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.TargetItem;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -23,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,7 +19,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.TargetItem;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SettingTargetFragment extends Fragment {
 	
@@ -120,35 +116,35 @@ public class SettingTargetFragment extends Fragment {
 		View sleeping = rootView.findViewById(R.id.sleeping);
 		sleeping.setOnClickListener(mClickListener);
 		
-		mTitleCarlos = (TextView) carlos.findViewById(R.id.title_text);
+		mTitleCarlos = carlos.findViewById(R.id.title_text);
 		mTitleList.add(mTitleCarlos);
-		mCarlos = (EditText) carlos.findViewById(R.id.value_text);
-		mTitleCarlosUnit = (TextView) carlos.findViewById(R.id.unit_text);
+		mCarlos = carlos.findViewById(R.id.value_text);
+		mTitleCarlosUnit = carlos.findViewById(R.id.unit_text);
 		
-		mTitleSteps = (TextView) steps.findViewById(R.id.title_text);
+		mTitleSteps = steps.findViewById(R.id.title_text);
 		mTitleList.add(mTitleSteps);
-		mStep = (EditText) steps.findViewById(R.id.value_text);
-		mTitleStepsUnit = (TextView) steps.findViewById(R.id.unit_text);
+		mStep = steps.findViewById(R.id.value_text);
+		mTitleStepsUnit = steps.findViewById(R.id.unit_text);
 		
-		mTitleWalking = (TextView) walks.findViewById(R.id.title_text);
+		mTitleWalking = walks.findViewById(R.id.title_text);
 		mTitleList.add(mTitleWalking);
-		mWalking = (EditText) walks.findViewById(R.id.value_text);
-		mTitleWalkingUnit = (TextView) walks.findViewById(R.id.unit_text);
+		mWalking = walks.findViewById(R.id.value_text);
+		mTitleWalkingUnit = walks.findViewById(R.id.unit_text);
 		
-		mTitleRunning = (TextView) running.findViewById(R.id.title_text);
+		mTitleRunning = running.findViewById(R.id.title_text);
 		mTitleList.add(mTitleRunning);
-		mRunning = (EditText) running.findViewById(R.id.value_text);
-		mTitleRunningUnit = (TextView) running.findViewById(R.id.unit_text);
+		mRunning = running.findViewById(R.id.value_text);
+		mTitleRunningUnit = running.findViewById(R.id.unit_text);
 		
-		mTitleCycling = (TextView) cycling.findViewById(R.id.title_text);
+		mTitleCycling = cycling.findViewById(R.id.title_text);
 		mTitleList.add(mTitleCycling);
-		mCycling = (EditText) cycling.findViewById(R.id.value_text);
-		mTitleCyclingUnit = (TextView) cycling.findViewById(R.id.unit_text);
+		mCycling = cycling.findViewById(R.id.value_text);
+		mTitleCyclingUnit = cycling.findViewById(R.id.unit_text);
 		
-		mTitleSleeping = (TextView) sleeping.findViewById(R.id.title_text);
+		mTitleSleeping = sleeping.findViewById(R.id.title_text);
 		mTitleList.add(mTitleSleeping);
-		mSleeping = (EditText) sleeping.findViewById(R.id.value_text);
-		mTitleSleepingUnit = (TextView) sleeping.findViewById(R.id.unit_text);
+		mSleeping = sleeping.findViewById(R.id.value_text);
+		mTitleSleepingUnit = sleeping.findViewById(R.id.unit_text);
 		
 		mTitleCarlos.setText(R.string.healthy_carlories);
 		mTitleSteps.setText(R.string.healthy_steps);
@@ -205,7 +201,7 @@ public class SettingTargetFragment extends Fragment {
         Gson gson = new GsonBuilder().create();
         mTargetMap = gson.fromJson(targetMap, typeOfHashMap);
 		if (TextUtils.isEmpty(targetMap)) {
-			mTargetMap = new HashMap<String, TargetItem>();
+			mTargetMap = new HashMap<>();
 			for (Student student : mStudents) {
 				String studentId = student.getStudent_id();
 				TargetItem item = new TargetItem();
@@ -381,9 +377,9 @@ public class SettingTargetFragment extends Fragment {
 	};
 	
 	private void requestFocus(View v) {
-		TextView title = (TextView) v.findViewById(R.id.title_text);
+		TextView title = v.findViewById(R.id.title_text);
 		title.setTextColor(getResources().getColor(R.color.color_accent));
-		EditText editText = (EditText) v.findViewById(R.id.value_text);
+		EditText editText = v.findViewById(R.id.value_text);
 		editText.requestFocus();
 		InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);

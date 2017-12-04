@@ -1,20 +1,5 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-
-import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.AlarmItemAdapter;
-import com.liteon.icampusguardian.util.AlarmManager;
-import com.liteon.icampusguardian.util.AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks;
-import com.liteon.icampusguardian.util.BluetoothAgent;
-import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -39,6 +24,20 @@ import android.view.ViewGroup;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.AlarmItemAdapter;
+import com.liteon.icampusguardian.util.AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks;
+import com.liteon.icampusguardian.util.AlarmManager;
+import com.liteon.icampusguardian.util.BluetoothAgent;
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
 
 public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 
@@ -160,10 +159,10 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	}
 	
 	public void findView(View rootView) {
-		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.alarm_view);
-		mAddAlarm = (AppCompatButton) rootView.findViewById(R.id.add_alarm);
-		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-		mTitleView = (TextView) getActivity().findViewById(R.id.toolbar_title);
+		mRecyclerView = rootView.findViewById(R.id.alarm_view);
+		mAddAlarm = rootView.findViewById(R.id.add_alarm);
+		mToolbar = getActivity().findViewById(R.id.toolbar);
+		mTitleView = getActivity().findViewById(R.id.toolbar_title);
 		mSyncView = rootView.findViewById(R.id.sync_view);
         mProgressView = rootView.findViewById(R.id.progress_view);
 	}

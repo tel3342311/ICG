@@ -1,11 +1,23 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.liteon.icampusguardian.R;
@@ -18,26 +30,12 @@ import com.liteon.icampusguardian.util.ProfileItem.TYPE;
 import com.liteon.icampusguardian.util.ProfileItemAdapter;
 import com.liteon.icampusguardian.util.ProfileItemAdapter.ViewHolder.IProfileItemClickListener;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.IInterface;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class SettingProfileFragment extends Fragment implements IProfileItemClickListener {
 
@@ -74,15 +72,15 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	}
 	
 	private void findView(View rootView) {
-		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.profile_view);
-		mCardView = (CardView) rootView.findViewById(R.id.option_wheel);
+		mRecyclerView = rootView.findViewById(R.id.profile_view);
+		mCardView = rootView.findViewById(R.id.option_wheel);
 		three_wheel = rootView.findViewById(R.id.three_wheel);
-		mWheel_left = (WheelPicker) three_wheel.findViewById(R.id.main_wheel_left);
-		mWheel_center = (WheelPicker) three_wheel.findViewById(R.id.main_wheel_center);
-		mWheel_right = (WheelPicker) three_wheel.findViewById(R.id.main_wheel_right);
+		mWheel_left = three_wheel.findViewById(R.id.main_wheel_left);
+		mWheel_center = three_wheel.findViewById(R.id.main_wheel_center);
+		mWheel_right = three_wheel.findViewById(R.id.main_wheel_right);
 		one_wheel = rootView.findViewById(R.id.one_wheel);
-		mWheel_single = (WheelPicker) one_wheel.findViewById(R.id.main_wheel_left);
-		mWheelTitle = (TextView) one_wheel.findViewById(R.id.year_title);
+		mWheel_single = one_wheel.findViewById(R.id.main_wheel_left);
+		mWheelTitle = one_wheel.findViewById(R.id.year_title);
 		
 	}
 	

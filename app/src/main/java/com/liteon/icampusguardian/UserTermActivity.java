@@ -1,7 +1,5 @@
 package com.liteon.icampusguardian;
 
-import com.liteon.icampusguardian.util.Def;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +14,8 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.liteon.icampusguardian.util.Def;
 
 public class UserTermActivity extends AppCompatActivity implements OnClickListener {
 
@@ -37,11 +37,11 @@ public class UserTermActivity extends AppCompatActivity implements OnClickListen
 	}
 	
 	private void findViews() {
-		mAgree = (TextView) findViewById(R.id.option_agree);
-		mQuit = (TextView) findViewById(R.id.option_quit);
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
-		mBottomView = (View) findViewById(R.id.bottom_bar); 
-		mRadioButton = (AppCompatCheckBox) findViewById(R.id.user_improve_plan);
+		mAgree = findViewById(R.id.option_agree);
+		mQuit = findViewById(R.id.option_quit);
+		mToolbar = findViewById(R.id.toolbar);
+		mBottomView = findViewById(R.id.bottom_bar);
+		mRadioButton = findViewById(R.id.user_improve_plan);
 		mCancel = findViewById(R.id.cancel);
 	}
 	

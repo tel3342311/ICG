@@ -1,23 +1,8 @@
 package com.liteon.icampusguardian;
 
-import org.w3c.dom.Text;
-
-import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.Def;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatRadioButton;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -35,8 +20,8 @@ public class FirmwareDownLoadingActivity extends AppCompatActivity {
 	}
 	
 	private void findViews() {
-		mProgressBar = (ProgressBar) findViewById(R.id.loading_progress);
-		mUpdateText = (TextView) findViewById(R.id.update_text);
+		mProgressBar = findViewById(R.id.loading_progress);
+		mUpdateText = findViewById(R.id.update_text);
 	}
 	
 	private void setListener() {

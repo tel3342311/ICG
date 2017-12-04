@@ -1,36 +1,5 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.lang.ref.WeakReference;
-import java.nio.ByteBuffer;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.Key;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.google.gson.Gson;
-import com.liteon.icampusguardian.App;
-import com.liteon.icampusguardian.BLEPinCodeInputActivity;
-import com.liteon.icampusguardian.ChoosePhotoActivity;
-import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.BluetoothAgent;
-import com.liteon.icampusguardian.util.CircularImageView;
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.DeviceNameJSON;
-import com.liteon.icampusguardian.util.GuardianApiClient;
-import com.liteon.icampusguardian.util.JSONResponse;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.SettingItem;
-import com.liteon.icampusguardian.util.SettingItemAdapter;
-import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
-import com.liteon.icampusguardian.util.WearableInfo;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -38,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -47,7 +15,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -65,10 +32,34 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Key;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.google.gson.Gson;
+import com.liteon.icampusguardian.App;
+import com.liteon.icampusguardian.ChoosePhotoActivity;
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.BluetoothAgent;
+import com.liteon.icampusguardian.util.CircularImageView;
+import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.DeviceNameJSON;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.SettingItem;
+import com.liteon.icampusguardian.util.SettingItemAdapter;
+import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
+
+import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -237,10 +228,10 @@ public class SettingFragment extends Fragment {
 		}
 	};
 	private void findView(View rootView) {
-		mChildIcon = (CircularImageView) rootView.findViewById(R.id.child_icon);
-		mChildName = (EditText) rootView.findViewById(R.id.child_name);
-		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.setting_view);
-		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+		mChildIcon = rootView.findViewById(R.id.child_icon);
+		mChildName = rootView.findViewById(R.id.child_name);
+		mRecyclerView = rootView.findViewById(R.id.setting_view);
+		mToolbar = getActivity().findViewById(R.id.toolbar);
 
 	}
 	

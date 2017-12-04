@@ -287,8 +287,8 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	}
     
 	private void findViews() {
-		mRecyclerView = (RecyclerView) findViewById(R.id.profile_view);
-		mCancel = (ImageView) findViewById(R.id.cancel);
+		mRecyclerView = findViewById(R.id.profile_view);
+		mCancel = findViewById(R.id.cancel);
  	}
 	
 	private void setListener() {

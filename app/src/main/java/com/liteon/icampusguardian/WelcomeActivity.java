@@ -1,23 +1,20 @@
 package com.liteon.icampusguardian;
 
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.Def;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
+
+import com.liteon.icampusguardian.util.Def;
 
 public class WelcomeActivity extends AppCompatActivity implements OnClickListener {
 
@@ -40,11 +37,11 @@ public class WelcomeActivity extends AppCompatActivity implements OnClickListene
 	}
 	
 	private void findViews() {
-		mQuit = (TextView) findViewById(R.id.option_quit);
-		mAgree = (TextView) findViewById(R.id.option_agree);
-		mUserTerm = (TextView) findViewById(R.id.user_term_click);
-		mRadioButtonImprove = (AppCompatCheckBox) findViewById(R.id.user_improve_plan);
-		mRadioButtonTeacher = (AppCompatCheckBox) findViewById(R.id.user_teacher_plan);
+		mQuit = findViewById(R.id.option_quit);
+		mAgree = findViewById(R.id.option_agree);
+		mUserTerm = findViewById(R.id.user_term_click);
+		mRadioButtonImprove = findViewById(R.id.user_improve_plan);
+		mRadioButtonTeacher = findViewById(R.id.user_teacher_plan);
 	}
 	
 	private void setListener() {

@@ -1,7 +1,26 @@
 package com.liteon.icampusguardian;
 
-import java.util.List;
-import java.util.Set;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatCheckBox;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.BluetoothAgent;
@@ -11,35 +30,8 @@ import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.AppCompatRadioButton;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import java.util.List;
+import java.util.Set;
 
 public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 
@@ -72,13 +64,13 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 	}
 	
 	private void findViews() {
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mToolbar = findViewById(R.id.toolbar);
 		mBackBtn = findViewById(R.id.cancel);
-		mTeacherCheck = (AppCompatCheckBox) findViewById(R.id.teacher_user_plan);
-		mTextViewDeviceName = (TextView) findViewById(R.id.watch_info_device_title_value);
-		mTextViewFirmwardVersion = (TextView) findViewById(R.id.watch_info_firmware_title_value);
-		progressBarHolder = (FrameLayout) findViewById(R.id.progressBarHolder);
-		mUpdateFirmwareBtn = (AppCompatButton) findViewById(R.id.watch_info_update_btn);
+		mTeacherCheck = findViewById(R.id.teacher_user_plan);
+		mTextViewDeviceName = findViewById(R.id.watch_info_device_title_value);
+		mTextViewFirmwardVersion = findViewById(R.id.watch_info_firmware_title_value);
+		progressBarHolder = findViewById(R.id.progressBarHolder);
+		mUpdateFirmwareBtn = findViewById(R.id.watch_info_update_btn);
 	}
 	
 	private void setListener() {

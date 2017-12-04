@@ -1,10 +1,18 @@
 package com.liteon.icampusguardian.fragment;
 
-import java.lang.ref.WeakReference;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
@@ -14,24 +22,11 @@ import com.liteon.icampusguardian.util.HealthyItemAdapter;
 import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 import com.liteon.icampusguardian.util.JSONResponse;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.design.widget.CoordinatorLayout.LayoutParams;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
-import android.view.ViewGroup;
-import android.widget.PopupWindow;
-import android.widget.TextView;
+import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class HealthFragment extends Fragment {
 
@@ -47,10 +42,6 @@ public class HealthFragment extends Fragment {
     private int mCurrnetStudentIdx;
 	private TextView mTitleView;
 	public HealthFragment() {}
-//	public HealthFragment(IHealthViewHolderClicks listener) {
-//		super();
-//		mOnItemClickListener = new WeakReference<IHealthViewHolderClicks>(listener);
-//	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -137,7 +128,7 @@ public class HealthFragment extends Fragment {
     }
 
 	private void findView(View rootView) {
-		mRecyclerView = (RecyclerView) rootView.findViewById(R.id.healthy_event_view);
+		mRecyclerView = rootView.findViewById(R.id.healthy_event_view);
 		mSyncView = rootView.findViewById(R.id.sync_view);
 		mTitleView = getActivity().findViewById(R.id.toolbar_title);
 
@@ -158,8 +149,8 @@ public class HealthFragment extends Fragment {
 	private void showSyncWindow() {
 		
 		View contentview = mSyncView;
-		final TextView title = (TextView) contentview.findViewById(R.id.title);
-		AppCompatButton button = (AppCompatButton) contentview.findViewById(R.id.button_sync);
+		final TextView title = contentview.findViewById(R.id.title);
+		AppCompatButton button = contentview.findViewById(R.id.button_sync);
 		button.setOnClickListener(new OnClickListener() {
 			
 			@Override

@@ -1,12 +1,6 @@
 package com.liteon.icampusguardian.fragment;
 
-import com.liteon.icampusguardian.MainActivity;
-import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.util.HealthyItem.TYPE;
-import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
-
 import android.content.Context;
-import android.icu.text.DisplayContext.Type;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.HealthyItem.TYPE;
+import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
 
 public class HealthMainFragment extends Fragment implements IHealthViewHolderClicks {
 
@@ -49,10 +47,10 @@ public class HealthMainFragment extends Fragment implements IHealthViewHolderCli
 	}
 	
 	private void findViews() {
-		mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
-		mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
-		mTitleView = (TextView) getActivity().findViewById(R.id.toolbar_title);
-		mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+		mViewPager = mRootView.findViewById(R.id.view_pager);
+		mToolbar = getActivity().findViewById(R.id.toolbar);
+		mTitleView = getActivity().findViewById(R.id.toolbar_title);
+		mDrawerLayout = getActivity().findViewById(R.id.drawer_layout);
 	}
 	
 	private void setupViewPager() {

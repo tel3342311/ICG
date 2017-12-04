@@ -1,43 +1,9 @@
 package com.liteon.icampusguardian;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Set;
-
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
-import com.liteon.icampusguardian.fragment.AlarmFragment;
-import com.liteon.icampusguardian.fragment.AlarmFragment.IAddAlarmClicks;
-import com.liteon.icampusguardian.fragment.AlarmPeriodFragment;
-import com.liteon.icampusguardian.fragment.AppInfoPrivacyFragment;
-import com.liteon.icampusguardian.fragment.DailyHealthFragment;
-import com.liteon.icampusguardian.fragment.HealthMainFragment;
-import com.liteon.icampusguardian.fragment.SafetyFragment;
-import com.liteon.icampusguardian.fragment.SettingFragment;
-import com.liteon.icampusguardian.fragment.SettingProfileFragment;
-import com.liteon.icampusguardian.fragment.SettingTargetFragment;
-import com.liteon.icampusguardian.util.AlarmItem;
-import com.liteon.icampusguardian.util.AlarmManager;
-import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
-import com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE;
-import com.liteon.icampusguardian.util.AlarmPeriodItem;
-import com.liteon.icampusguardian.util.AppInfoPrivacyItem;
-import com.liteon.icampusguardian.util.AppInfoPrivacyItemAdapter.ViewHolder.IAppInfoPrivacyViewHolderClicks;
-import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
-import com.liteon.icampusguardian.util.CircularImageView;
-import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.GuardianApiClient;
-import com.liteon.icampusguardian.util.JSONResponse;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -75,9 +40,39 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.fragment.AlarmEditingFragment;
+import com.liteon.icampusguardian.fragment.AlarmFragment;
+import com.liteon.icampusguardian.fragment.AlarmFragment.IAddAlarmClicks;
+import com.liteon.icampusguardian.fragment.AlarmPeriodFragment;
+import com.liteon.icampusguardian.fragment.AppInfoPrivacyFragment;
+import com.liteon.icampusguardian.fragment.DailyHealthFragment;
+import com.liteon.icampusguardian.fragment.HealthMainFragment;
+import com.liteon.icampusguardian.fragment.SafetyFragment;
+import com.liteon.icampusguardian.fragment.SettingFragment;
+import com.liteon.icampusguardian.fragment.SettingProfileFragment;
+import com.liteon.icampusguardian.fragment.SettingTargetFragment;
+import com.liteon.icampusguardian.util.AlarmItem;
+import com.liteon.icampusguardian.util.AlarmPeriodAdapter.ViewHolder.IAlarmPeriodViewHolderClicks;
+import com.liteon.icampusguardian.util.AlarmPeriodItem;
+import com.liteon.icampusguardian.util.AppInfoPrivacyItem;
+import com.liteon.icampusguardian.util.AppInfoPrivacyItemAdapter.ViewHolder.IAppInfoPrivacyViewHolderClicks;
+import com.liteon.icampusguardian.util.BottomNavigationViewHelper;
+import com.liteon.icampusguardian.util.CircularImageView;
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Set;
 
 import static com.liteon.icampusguardian.App.getContext;
 
@@ -282,14 +277,14 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
         }
 	}
 	private void findViews() {
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
-		mTitleView = (TextView) findViewById(R.id.toolbar_title);
-		mBottomView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		mNavigationView = (NavigationView) findViewById(R.id.navigation);
-		mChildIcon = (CircularImageView) mNavigationView.getHeaderView(0).findViewById(R.id.child_icon);
-		mChildName = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.child_name);
-		mLogoutButton = (AppCompatButton) mNavigationView.findViewById(R.id.drawer_button_logout);
+		mToolbar = findViewById(R.id.toolbar);
+		mTitleView = findViewById(R.id.toolbar_title);
+		mBottomView = findViewById(R.id.bottom_navigation);
+		mDrawerLayout = findViewById(R.id.drawer_layout);
+		mNavigationView = findViewById(R.id.navigation);
+		mChildIcon = mNavigationView.getHeaderView(0).findViewById(R.id.child_icon);
+		mChildName = mNavigationView.getHeaderView(0).findViewById(R.id.child_name);
+		mLogoutButton = mNavigationView.findViewById(R.id.drawer_button_logout);
 	}
 
 	private void setListener() {

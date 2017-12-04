@@ -1,24 +1,5 @@
 package com.liteon.icampusguardian;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.List;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.BluetoothAgent;
-import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
-import com.liteon.icampusguardian.util.CustomDialog;
-import com.liteon.icampusguardian.util.CustomSkinJSON;
-import com.liteon.icampusguardian.util.CustomSkinResponseJSON;
-import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -42,7 +23,26 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.BluetoothAgent;
+import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
+import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.CustomSkinJSON;
+import com.liteon.icampusguardian.util.CustomSkinResponseJSON;
+import com.liteon.icampusguardian.util.Def;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+
 import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class PersonalizedWatchActivity extends AppCompatActivity {
 
@@ -76,10 +76,10 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	}
 	
 	private void findViews() {
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
-		mProgressBar = (ProgressBar) findViewById(R.id.loading_progress);
-		mWatchSurface = (ImageView) findViewById(R.id.watch_surface);
-		mTitleUpdating = (TextView) findViewById(R.id.watch_surface_updating_text);
+		mToolbar = findViewById(R.id.toolbar);
+		mProgressBar = findViewById(R.id.loading_progress);
+		mWatchSurface = findViewById(R.id.watch_surface);
+		mTitleUpdating = findViewById(R.id.watch_surface_updating_text);
 		mWatchCover = findViewById(R.id.watch_cover);
 		mCancel = findViewById(R.id.cancel);
 	}

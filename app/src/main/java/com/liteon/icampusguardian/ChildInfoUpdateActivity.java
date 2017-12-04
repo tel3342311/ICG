@@ -1,20 +1,5 @@
 package com.liteon.icampusguardian;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import com.aigestudio.wheelpicker.WheelPicker;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.ProfileItem;
-import com.liteon.icampusguardian.util.ProfileItem.TYPE;
-import com.liteon.icampusguardian.util.ProfileItemAdapter;
-import com.liteon.icampusguardian.util.ProfileItemAdapter.ViewHolder.IProfileItemClickListener;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -35,6 +20,21 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.aigestudio.wheelpicker.WheelPicker;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.ProfileItem;
+import com.liteon.icampusguardian.util.ProfileItem.TYPE;
+import com.liteon.icampusguardian.util.ProfileItemAdapter;
+import com.liteon.icampusguardian.util.ProfileItemAdapter.ViewHolder.IProfileItemClickListener;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfileItemClickListener{
 
@@ -155,18 +155,18 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 	}
 	
 	private void findViews() {
-		mName = (EditText) findViewById(R.id.login_name);
-		mToolbar = (Toolbar) findViewById(R.id.toolbar);
+		mName = findViewById(R.id.login_name);
+		mToolbar = findViewById(R.id.toolbar);
 		mBackBtn = findViewById(R.id.cancel);
-		mRecyclerView = (RecyclerView) findViewById(R.id.profile_view);
-		mCardView = (CardView) findViewById(R.id.option_wheel);
+		mRecyclerView = findViewById(R.id.profile_view);
+		mCardView = findViewById(R.id.option_wheel);
 		three_wheel = findViewById(R.id.three_wheel);
-		mWheel_left = (WheelPicker) three_wheel.findViewById(R.id.main_wheel_left);
-		mWheel_center = (WheelPicker) three_wheel.findViewById(R.id.main_wheel_center);
-		mWheel_right = (WheelPicker) three_wheel.findViewById(R.id.main_wheel_right);
+		mWheel_left = three_wheel.findViewById(R.id.main_wheel_left);
+		mWheel_center = three_wheel.findViewById(R.id.main_wheel_center);
+		mWheel_right = three_wheel.findViewById(R.id.main_wheel_right);
 		one_wheel = findViewById(R.id.one_wheel);
-		mWheel_single = (WheelPicker) one_wheel.findViewById(R.id.main_wheel_left);
-		mWheelTitle = (TextView) one_wheel.findViewById(R.id.year_title);
+		mWheel_single = one_wheel.findViewById(R.id.main_wheel_left);
+		mWheelTitle = one_wheel.findViewById(R.id.year_title);
 	}
 	
 	private void setListener() {

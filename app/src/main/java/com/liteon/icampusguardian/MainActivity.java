@@ -632,7 +632,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 //				showPairingPage();
 //			}
 			//For Cloud's pair/unpair
-			if (!TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
+			if (!TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid()) && !TextUtils.isEmpty(mBtAddress)) {
 				showUnPairDialog();
 			} else {
 				showPairingPage();

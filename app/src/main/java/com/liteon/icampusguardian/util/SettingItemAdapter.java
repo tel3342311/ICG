@@ -1,34 +1,29 @@
 package com.liteon.icampusguardian.util;
 
-import java.lang.ref.WeakReference;
-import java.util.List;
-
-import com.liteon.icampusguardian.App;
-import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
-
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
 
 public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
 
 	private List<SettingItem> mDataset;
     public WeakReference<ISettingItemClickListener> mClicks;
     private Student mStudent;
-	public static class ViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder implements android.view.View.OnClickListener{
+    private String mBtAddress;
+
+    public static class ViewHolder extends android.support.v7.widget.RecyclerView.ViewHolder implements android.view.View.OnClickListener{
         // each data item is just a string in this case
         public View mRootView;
         public TextView mTitleTextView;
@@ -39,7 +34,7 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
         public ViewHolder(View v, ISettingItemClickListener clicks) {
             super(v);
             mRootView = v;
-            mClicks = new WeakReference<ISettingItemClickListener>(clicks);
+            mClicks = new WeakReference<>(clicks);
         }
         
         public static interface ISettingItemClickListener {
@@ -54,11 +49,12 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
 
     public SettingItemAdapter(List<SettingItem> healthDataset, ISettingItemClickListener clicks) {
         mDataset = healthDataset;
-        mClicks = new WeakReference<ISettingItemClickListener>(clicks);
+        mClicks = new WeakReference<>(clicks);
     }
     
-    public void setChildData(Student student) {
+    public void setChildData(Student student, String btAddress) {
     	mStudent = student;
+    	mBtAddress = btAddress;
     }
 	@Override
 	public int getItemCount() {
@@ -71,16 +67,11 @@ public class SettingItemAdapter extends Adapter<SettingItemAdapter.ViewHolder> {
         holder.mTitleTextView.setText(item.getTitle());
         if (item.getItemType() == SettingItem.TYPE.PAIRING) {
         	holder.mValueBtn.setVisibility(View.VISIBLE);
-            if (!TextUtils.isEmpty(mStudent.getUuid())) {
+            if (!TextUtils.isEmpty(mStudent.getUuid()) && !TextUtils.isEmpty(mBtAddress)) {
                 holder.mValueBtn.setText(holder.mValueBtn.getResources().getString(R.string.unbind_watch));
             } else {
                 holder.mValueBtn.setText(holder.mValueBtn.getResources().getString(R.string.bind_watch));
             }
-//        	if (mStudent != null && !TextUtils.isEmpty(mStudent.getUuid())) {
-//        		holder.mValueBtn.setText(holder.mValueBtn.getResources().getString(R.string.unbind_watch));
-//        	} else {
-//        		holder.mValueBtn.setText(holder.mValueBtn.getResources().getString(R.string.bind_watch));
-//        	}
         	holder.mMoreIcon.setVisibility(View.INVISIBLE);
         } else {
         	holder.mValueBtn.setVisibility(View.INVISIBLE);

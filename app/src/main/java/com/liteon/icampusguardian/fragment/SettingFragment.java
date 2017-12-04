@@ -76,10 +76,11 @@ public class SettingFragment extends Fragment {
 	private WeakReference<ISettingItemClickListener> mClicks;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
-	private int mCurrnetStudentIdx;
+	private int mCurrentStudentIdx;
 	private Toolbar mToolbar;
 	private boolean isEditMode;
 	private BluetoothAgent mBTAgent;
+	private String mBTAddress;
     private CustomDialog mCustomDialog;
     private View mRootView;
 	public SettingFragment() {
@@ -87,7 +88,7 @@ public class SettingFragment extends Fragment {
 	}
 
 	public SettingFragment(ISettingItemClickListener clicks) {
-		mClicks = new WeakReference<ISettingItemClickListener>(clicks);
+		mClicks = new WeakReference<>(clicks);
 	}
 	
 	@Override
@@ -100,7 +101,11 @@ public class SettingFragment extends Fragment {
 		mDbHelper = DBHelper.getInstance(getActivity());
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
-		((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrnetStudentIdx));
+        //get current bt address
+        String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
+        mBTAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
+
+		((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrentStudentIdx), mBTAddress);
 		mAdapter.notifyDataSetChanged();
 
 		mBTAgent = new BluetoothAgent(getApplicationContext(), mHandlerBTClassic);
@@ -136,8 +141,8 @@ public class SettingFragment extends Fragment {
 				exitEditMode();
 				return;
 			}
-			if (!TextUtils.equals(mStudents.get(mCurrnetStudentIdx).getNickname(), s.toString())) {
-				mStudents.get(mCurrnetStudentIdx).setNickname(s.toString());
+			if (!TextUtils.equals(mStudents.get(mCurrentStudentIdx).getNickname(), s.toString())) {
+				mStudents.get(mCurrentStudentIdx).setNickname(s.toString());
 				enterEditMode();			
 			} else {
 				exitEditMode();
@@ -174,7 +179,7 @@ public class SettingFragment extends Fragment {
 	public void updateChildInfo() {
 		
 		GuardianApiClient apiClient = new GuardianApiClient(getContext());
-		apiClient.updateChildData(mStudents.get(mCurrnetStudentIdx));
+		apiClient.updateChildData(mStudents.get(mCurrentStudentIdx));
 		
 	}
 
@@ -190,7 +195,7 @@ public class SettingFragment extends Fragment {
 
         protected String doInBackground(Void... params) {
 
-            String btAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), mStudents.get(mCurrnetStudentIdx).getStudent_id());
+            String btAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id());
             if (!TextUtils.isEmpty(btAddress)) {
                 BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
                 BluetoothDevice mBluetoothDevice = btAdapter.getRemoteDevice(btAddress);
@@ -201,7 +206,7 @@ public class SettingFragment extends Fragment {
             updateChildInfo();
         	DBHelper helper = DBHelper.getInstance(getActivity());
         	SQLiteDatabase db = helper.getWritableDatabase();
-            helper.updateChildByStudentId(db, mStudents.get(mCurrnetStudentIdx));
+            helper.updateChildByStudentId(db, mStudents.get(mCurrentStudentIdx));
         	return null;
         }
 
@@ -254,10 +259,13 @@ public class SettingFragment extends Fragment {
 		mChildIcon.addShadow();
 		
 		if (mStudents.size() > 0) {
-			if (mCurrnetStudentIdx >= mStudents.size()) {
-				mCurrnetStudentIdx =  0;
+			if (mCurrentStudentIdx >= mStudents.size()) {
+				mCurrentStudentIdx =  0;
 			}
-			mChildName.setText(mStudents.get(mCurrnetStudentIdx).getNickname());
+			mChildName.setText(mStudents.get(mCurrentStudentIdx).getNickname());
+            //get current bt address
+            String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
+            mBTAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
 			// read child image file
 			RequestOptions options = new RequestOptions();
 			options.centerCrop();
@@ -271,7 +279,7 @@ public class SettingFragment extends Fragment {
                 }
             });
             Glide.with(App.getContext()).asBitmap().load(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-					.getAbsolutePath() + "/" + mStudents.get(mCurrnetStudentIdx).getStudent_id() + ".jpg").apply(options).into(new SimpleTarget<Bitmap>() {
+					.getAbsolutePath() + "/" + mStudents.get(mCurrentStudentIdx).getStudent_id() + ".jpg").apply(options).into(new SimpleTarget<Bitmap>() {
 
 				@Override
 				public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
@@ -302,9 +310,9 @@ public class SettingFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
         mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0); 
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		initChildInfo();
-		((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrnetStudentIdx));
+		((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrentStudentIdx), mBTAddress);
 		mAdapter.notifyDataSetChanged();
 		mToolbar.setTitle("");
 	}
@@ -319,7 +327,7 @@ public class SettingFragment extends Fragment {
 
     private void syncDataToBT() {
 	    if (mBTAgent!=null) {
-	        String name = mStudents.get(mCurrnetStudentIdx).getNickname();
+	        String name = mStudents.get(mCurrentStudentIdx).getNickname();
             DeviceNameJSON deviceNameJSON = new DeviceNameJSON();
             deviceNameJSON.setName(name);
             deviceNameJSON.setType("devicename");
@@ -348,7 +356,11 @@ public class SettingFragment extends Fragment {
 
     public void notifyBTState() {
         mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
-        ((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrnetStudentIdx));
+        //get current bt address
+        String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
+        mBTAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
+
+        ((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrentStudentIdx), mBTAddress);
         mAdapter.notifyDataSetChanged();
 	}
 

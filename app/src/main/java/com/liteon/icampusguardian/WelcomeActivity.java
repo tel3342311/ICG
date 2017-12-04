@@ -56,8 +56,8 @@ public class WelcomeActivity extends AppCompatActivity implements OnClickListene
 	protected void onResume() {
 		super.onResume();
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-		boolean imporve = sp.getBoolean(Def.SP_IMPROVE_PLAN, false);
-		mRadioButtonImprove.setChecked(imporve);
+		boolean improve = sp.getBoolean(Def.SP_IMPROVE_PLAN, false);
+		mRadioButtonImprove.setChecked(improve);
 	}
 	
 	private OnCheckedChangeListener mOnCheckChangeListener = new OnCheckedChangeListener() {

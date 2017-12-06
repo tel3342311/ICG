@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,7 @@ import com.liteon.icampusguardian.util.PhotoItemAdapter;
 import com.liteon.icampusguardian.util.PhotoItemAdapter.ViewHolder.IPhotoViewHolderClicks;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -79,6 +81,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	private boolean isFromWatchTheme;
 	private final static int MAX_SAVE_ITEM = 3;
 	private ConfirmDeleteDialog mPermissionDialog;
+	File mCropping;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -392,9 +395,22 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	private void doCrop(Uri picUri) {
 	    try {
 
+			File imagePath = new File(getFilesDir(), "images");
+			if (!imagePath.exists()) {
+				imagePath.mkdir();
+			}
+			mCropping = new File(imagePath, "_crop" + ".jpg");
+			if (!mCropping.exists()) {
+				mCropping.createNewFile();
+			}
+
+
+			IOUtils.copy(getContentResolver().openInputStream(picUri), new FileOutputStream(mCropping));
+			Uri contentUri = FileProvider.getUriForFile(this, "com.liteon.icampusguardian.fileprovider", mCropping);
+
 	        Intent cropIntent = new Intent("com.android.camera.action.CROP");
 
-	        cropIntent.setDataAndType(picUri, "image/*");    
+	        cropIntent.setDataAndType(contentUri, "image/*");
 	        cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 	        cropIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 	        cropIntent.putExtra("crop", "true");           
@@ -412,7 +428,11 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	        String errorMessage = "your device doesn't support the crop action!";
 	        Toast toast = Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT);
 	        toast.show();
-	    }
+	    } catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Uri getImageUri(Context inContext, Bitmap inImage) {
@@ -427,6 +447,9 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	    super.onActivityResult(requestCode, resultCode, data);
 
 	    if (requestCode == CROP_PIC_REQUEST_CODE) {
+	    	if (mCropping != null && mCropping.exists()) {
+	    		mCropping.delete();
+			}
 	    	Bitmap bitmap = null;
 	        if (data != null) {
 	            Bundle extras = data.getExtras();

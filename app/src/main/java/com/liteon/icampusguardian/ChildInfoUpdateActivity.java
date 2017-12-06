@@ -2,6 +2,7 @@ package com.liteon.icampusguardian;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.ProfileItem;
 import com.liteon.icampusguardian.util.ProfileItem.TYPE;
@@ -67,10 +69,13 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		setupToolbar();
 		setListener();
 		initRecycleView();
-	}
+        mDbHelper = DBHelper.getInstance(this);
+
+    }
 	
 	private Student createChild() {
 		Student student = new Student();
+        student.setStudent_id((int)Calendar.getInstance().getTime().getTime());
 		student.setDob("2000-01-01");
 		student.setName("");
 		student.setGender(getString(R.string.setup_kid_male));
@@ -89,26 +94,26 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 	
 	private void setupData(){
 		mDataSet = new ArrayList<>();
-		Student student = mStudent = createChild();
+		mStudent = createChild();
         for (ProfileItem.TYPE type : ProfileItem.TYPE.values()) {
         	ProfileItem item = new ProfileItem();
         	item.setItemType(type);
         	switch(type) {
     		case BIRTHDAY:
-    			item.setValue(student.getDob());
+    			item.setValue(mStudent.getDob());
     			break;
     		case GENDER:
-    			if (TextUtils.equals(student.getGender(), getString(R.string.setup_kid_male))) {
+    			if (TextUtils.equals(mStudent.getGender(), getString(R.string.setup_kid_male))) {
     				item.setValue(getString(R.string.setup_kid_male));
     			} else {
     				item.setValue(getString(R.string.setup_kid_female));
         		}
     			break;
     		case HEIGHT:
-    			item.setValue(student.getHeight());
+    			item.setValue(mStudent.getHeight());
     			break;
     		case WEIGHT:
-    			item.setValue(student.getWeight());
+    			item.setValue(mStudent.getWeight());
     			break;
     		default:
     			break;
@@ -241,9 +246,9 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			} else if (one_wheel.getVisibility() == View.VISIBLE) {
 				if (mType == TYPE.GENDER) {
 					if (position == 0) {
-						mStudent.setGender(getString(R.string.setup_kid_male));
+						mStudent.setGender("MALE");
 					} else {
-						mStudent.setGender(getString(R.string.setup_kid_female));
+						mStudent.setGender("FEMALE");
 					}
 				} else if (mType == TYPE.HEIGHT) {
 					mStudent.setHeight((String)data);
@@ -313,6 +318,7 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		
 		@Override
 		public void afterTextChanged(Editable s) {
+
 			if (validateInput()) {
 				//mConfirm.setEnabled(true);
 			} else {
@@ -330,19 +336,32 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 	
 	private void updateAccount() {
 		String strName = mName.getText().toString();
+		mStudent.setNickname(strName);
 		new UpdateInfoTask().execute("");
 	}
 
-	class UpdateInfoTask extends AsyncTask<String, Void, String> {
+    class UpdateInfoTask extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected void onPreExecute() {
 
 
 		}
-		
+
+		@Override
         protected String doInBackground(String... args) {
-        	
+
+            mDbHelper.insertChild(mDbHelper.getWritableDatabase(), mStudent);
+            List<Student> studentList = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+            for (int idx = 0; idx < studentList.size();idx++) {
+                if (TextUtils.equals(studentList.get(idx).getStudent_id(), mStudent.getStudent_id())) {
+                    SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putInt(Def.SP_CURRENT_STUDENT, idx);
+                    editor.commit();
+                    break;
+                }
+            }
 
         	return null;
         }

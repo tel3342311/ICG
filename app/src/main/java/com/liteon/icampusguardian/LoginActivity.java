@@ -418,14 +418,6 @@ public class LoginActivity extends AppCompatActivity {
         	//get Child list
         	JSONResponse response_childList = mApiClient.getChildrenList();
         	mStudentList = Arrays.asList(response_childList.getReturn().getResults().getStudents());
-        	if (mStudentList.size() == 0) {
-        		//First use
-        		return token;
-        	}
-        	//clear child list in db 
-        	helper.clearChildList(helper.getWritableDatabase());
-        	//Save child list to db
-        	helper.insertChildList(helper.getWritableDatabase(), mStudentList);
 
     		//Send FireBase Instance token to server
         	String fcmToken = FirebaseInstanceId.getInstance().getToken();
@@ -433,8 +425,12 @@ public class LoginActivity extends AppCompatActivity {
         	Log.i(TAG, "API 11 UpdateAppToken called : FCM Token is " + fcmToken);
     		SharedPreferences.Editor editor = sp.edit();
     		editor.putString(Def.SP_LOGIN_TOKEN, token);
-        	if (mStudentList.size() > 0 && !sp.contains(Def.SP_CURRENT_STUDENT)) {
+        	if (mStudentList.size() > 0) {
         		editor.putInt(Def.SP_CURRENT_STUDENT, 0);
+                //clear child list in db
+                helper.clearChildList(helper.getWritableDatabase());
+                //Save child list to db
+                helper.insertChildList(helper.getWritableDatabase(), mStudentList);
         	}
         	editor.commit();
         	return token;

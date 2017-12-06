@@ -51,7 +51,6 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 	private boolean mScanning;
 	private Handler mHandler;
     private static final long SCAN_PERIOD = 10000;
-    private int REQUEST_ENABLE_BT = 1;
     private final static int PERMISSION_REQUEST = 3;
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
@@ -166,7 +165,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 		super.onResume();
 		if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            startActivityForResult(enableBtIntent, Def.REQUEST_ENABLE_BT);
         } else {
 			scanBTDevice();
         }

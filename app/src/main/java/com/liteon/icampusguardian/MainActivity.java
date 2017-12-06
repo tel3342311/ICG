@@ -102,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private String mBtAddress;
 	private BluetoothDevice mBTDevice;
 	@Override
+	private boolean isChangingToAlarmPageForBT;
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
@@ -860,4 +862,12 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	}
 	
 	
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+            if (mCurrentFragment instanceof AlarmFragment) {
+                isChangingToAlarmPageForBT = true;
+            }
+    }
 }

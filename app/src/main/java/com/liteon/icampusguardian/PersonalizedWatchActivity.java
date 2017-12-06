@@ -55,7 +55,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	private DBHelper mDbHelper;
 	private List<Student> mStudents;
 	private int mCurrentStudentIdx;
-	private final static int REQUEST_WATCH_SURFACE = 1;
+	private final static int REQUEST_WATCH_SURFACE = 1001;
     private ConfirmDeleteDialog mBLEFailConfirmDialog;
 	private ImageView mCancel;
 	private ImageView mConfirm;
@@ -121,9 +121,6 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 			case R.id.action_confirm:
-				mProgressBar.setVisibility(View.VISIBLE);
-				mTitleUpdating.setText(R.string.syncing_photo_to_watch);
-				mTitleUpdating.setVisibility(View.VISIBLE);
 				connectToBT();
 				break;
 		}
@@ -146,8 +143,11 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 			if (resultCode == RESULT_OK) {
 
 			}
+		} else if (requestCode == Def.REQUEST_ENABLE_BT) {
+			connectToBT();
 		}
 	};
+
 	private void setupWatchSurface() {
 		Bitmap bitmap = null;
 		if (mStudents.size() > 0) {
@@ -211,16 +211,24 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 
         //get current bt address
         String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
-        String btAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
+		BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+		if (btAdapter == null || !btAdapter.isEnabled()) {
+			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBtIntent, Def.REQUEST_ENABLE_BT);
+			return;
+		}
 
-        if (TextUtils.isEmpty(btAddress) || !mBTAgent.isBluetoothAvailable()) {
+		String btAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
+		if (TextUtils.isEmpty(btAddress) || !mBTAgent.isBluetoothAvailable()) {
             showBTErrorDialog();
             return;
         }
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         BluetoothDevice target = btAdapter.getRemoteDevice(btAddress);
 
         if (target != null) {
+			mProgressBar.setVisibility(View.VISIBLE);
+			mTitleUpdating.setText(R.string.syncing_photo_to_watch);
+			mTitleUpdating.setVisibility(View.VISIBLE);
             mBTAgent.connect(target, true);
         }
     }
@@ -347,4 +355,5 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 			}
 		}
 	};
+
 }

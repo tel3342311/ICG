@@ -151,4 +151,5 @@ public class Def {
 
 	public static final String BT_ERR_UNABLE_TO_CONNECT = "Unable to connect device";
 	public static final String EXTRA_BT_ADDR = "com.liteon.icampusguardian.EXTRA_BT_ADDR";
+	public static final int REQUEST_ENABLE_BT = 1;
 }

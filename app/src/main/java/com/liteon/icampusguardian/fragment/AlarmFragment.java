@@ -3,6 +3,7 @@ package com.liteon.icampusguardian.fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -325,19 +326,25 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		AlarmManager.saveAlarm();
 	}
 
-	private void connectToBT() {
+	public void connectToBT() {
         //get current bt address
         String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
         String btAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
+
+		BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+		if (btAdapter == null || !btAdapter.isEnabled()) {
+			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBtIntent, Def.REQUEST_ENABLE_BT);
+			return;
+		}
 
         if (TextUtils.isEmpty(btAddress) || !mBTAgent.isBluetoothAvailable()) {
             showBTErrorDialog();
             return;
         }
 
-        BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
-        BluetoothDevice target = btAdapter.getRemoteDevice(btAddress);
-
+		BluetoothDevice target = btAdapter.getRemoteDevice(btAddress);
 		if (target != null) {
 			mBTAgent.connect(target, true);
 		}

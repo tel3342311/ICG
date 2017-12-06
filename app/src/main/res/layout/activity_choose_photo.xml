@@ -24,7 +24,7 @@
 			android:layout_height="wrap_content"
 			android:layout_centerInParent="true"
 			android:layout_gravity="center"
-			android:text="@string/watch_surface"
+			android:text="@string/child_photo_photo_select_pic"
 			android:textColor="@color/md_white_1000"
 			android:textSize="@dimen/page_title_text_size"/>
 

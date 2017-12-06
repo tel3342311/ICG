@@ -1,6 +1,7 @@
 package com.liteon.icampusguardian;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
@@ -19,7 +20,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
+import com.liteon.icampusguardian.util.JSONResponse;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -165,7 +168,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 		String str = "1234";
 		UUID uuid = UUID.nameUUIDFromBytes(str.getBytes());
 
-		new RegisterTask().execute(strAccount, strPassword, "parent_admin", uuid.toString(), strName);
+		new RegisterTask().execute(strAccount, strPassword, strName, strPhone);
 		
 	}
 
@@ -197,12 +200,22 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 				return null;
 			}
 
-        	apiClient.registerUser(args[0], args[1], args[2], args[3], args[4]);
+        	JSONResponse response = apiClient.registerUser(args[0], args[1], args[2], args[3]);
+			if (response != null) {
+				if (TextUtils.equals(response.getReturn().getResponseSummary().getStatusCode(), Def.RET_SUCCESS_1)) {
+					return Def.RET_SUCCESS_1;
+				}
+			}
         	return null;
         }
 
-        protected void onPostExecute(String token) {
+        protected void onPostExecute(String ret) {
         	finish();
+        	if (TextUtils.equals(ret, Def.RET_SUCCESS_1)) {
+				Intent intent = new Intent();
+				intent.setClass(UserRegistrationActivity.this, RegisteredActivity.class);
+				startActivity(intent);
+			}
         }
     }
 	

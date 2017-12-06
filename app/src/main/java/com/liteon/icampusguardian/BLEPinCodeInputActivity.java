@@ -235,16 +235,23 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                         String studentID = Integer.toString(response.getReturn().getResults().getStudent_id());
                         String nickName = response.getReturn().getResults().getNickname();
                         String roll_no = Integer.toString(response.getReturn().getResults().getRoll_no());
+                        Student item = new Student();
+                        item.setUuid(uuid);
+                        item.setStudent_id(Integer.parseInt(studentID));
+                        item.setNickname(nickName);
+                        item.setRoll_no(Integer.parseInt(roll_no));
+                        //For New child
                         if (!TextUtils.equals(studentID, student.getStudent_id())) {
+
+                            item.setNickname(student.getNickname());
+                            item.setDob(student.getDob());
+                            item.setGender(student.getGender());
+                            item.setHeight(student.getHeight());
+                            item.setWeight(student.getWeight());
                             mDbHelper.deleteChildByStudentID(mDbHelper.getWritableDatabase(), student.getStudent_id());
-                            Student item = new Student();
-                            item.setUuid(uuid);
-                            item.setStudent_id(Integer.parseInt(studentID));
-                            item.setNickname(nickName);
-                            item.setRoll_no(Integer.parseInt(roll_no));
                             mDbHelper.insertChild(mDbHelper.getWritableDatabase(), item);
-                            mApiClient.updateChildData(item);
                         }
+                        mApiClient.updateChildData(item);
                     }
                     mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), student);
                 }

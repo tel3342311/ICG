@@ -94,34 +94,36 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	private AppCompatButton mLogoutButton;
 	private ConfirmDeleteDialog mUnPairConfirmDialog;
 	private ConfirmDeleteDialog mDeleteAccountConfirmDialog;
+    private ConfirmDeleteDialog mLogoutAccountConfirmDialog;
 	private static final int NAVIGATION_DRAWER = 1;
 	private static final int NAVIGATION_BACK = 2;
 	private SafetyFragment mSaftyFragment;
 	private TextView mTitleView;
+	private SharedPreferences mSharedPreference;
 	//For BT pairing
 	private String mBtAddress;
 	private BluetoothDevice mBTDevice;
-	@Override
 	private boolean isChangingToAlarmPageForBT;
 
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		// registerNotification();
 		mDbHelper = DBHelper.getInstance(this);
-		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mSharedPreference = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 
-		String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
+		String token = mSharedPreference.getString(Def.SP_LOGIN_TOKEN, "");
 		new checkTokenTask().execute(token, null, null);
 
-		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		mCurrentStudentIdx = mSharedPreference.getInt(Def.SP_CURRENT_STUDENT, 0);
 		//mDbHelper.getAccountToken(mDbHelper.getReadableDatabase(), name)
 		mLocalBroadcastManager = LocalBroadcastManager.getInstance(this);
 		// get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		if (mStudents.size() == 0) {
 			Intent intent = new Intent();
-			intent.setClass(this, ChildPairingActivity.class);
+			intent.setClass(this, ChildInfoUpdateActivity.class);
 			startActivity(intent);
 		}
 		findViews();
@@ -181,6 +183,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	@Override
 	protected void onResume() {
 		super.onResume();
+        mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+        mCurrentStudentIdx = mSharedPreference.getInt(Def.SP_CURRENT_STUDENT, 0);
+
 		if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
 			SettingFragment settingFragment = new SettingFragment();
 			changeFragment(settingFragment);
@@ -205,19 +210,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
                     mBottomView.setSelectedItemId(R.id.action_safty);
 				}
 			} else {
-				if (mSaftyFragment == null) {
-					mSaftyFragment = new SafetyFragment();
-				}
-				changeFragment(mSaftyFragment, getString(R.string.safty), NAVIGATION_DRAWER);
-				mBottomView.setSelectedItemId(R.id.action_safty);
+                switchPage();
 			}
-
         } else {
-        	if (mSaftyFragment == null) {
-				mSaftyFragment = new SafetyFragment();
-			}
-			changeFragment(mSaftyFragment, getString(R.string.safty), NAVIGATION_DRAWER);
-            mBottomView.setSelectedItemId(R.id.action_safty);
+            switchPage();
 		}
 		IntentFilter filter = new IntentFilter();
 		filter.addAction(Def.ACTION_NOTIFY);
@@ -264,6 +260,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				changeFragment(new SettingFragment(MainActivity.this), getString(R.string.child_setup_profile),
 						NAVIGATION_DRAWER);
 				return;
+			} else if (mCurrentFragment instanceof AppInfoPrivacyFragment) {
+                mBottomView.setSelectedItemId(R.id.action_safty);
+                return;
 			} else {
 				finish();
 				return;
@@ -301,20 +300,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		
 		@Override
 		public void onClick(View v) {
-			SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-			SharedPreferences.Editor editor = sp.edit();
-			editor.remove(Def.SP_USER_TERM_READ);
-			editor.remove(Def.SP_LOGIN_TOKEN);
-			editor.commit();
-
-
-			DBHelper helper = DBHelper.getInstance(MainActivity.this);
-			helper.deleteAccount(helper.getWritableDatabase());
-
-			finish();
-			Intent intent = new Intent();
-			intent.setClass(MainActivity.this, LoginActivity.class);
-			startActivity(intent);
+            logoutAccount();
 		}
 	};
 	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
@@ -480,7 +466,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		} else if (id == R.id.action_delete_account) {
 			deleteAccount();
 		} else if (id == R.id.action_setting) {
-			switchSetting();
+			switchToAppInfoSetting();
 		}
 		mDrawerLayout.closeDrawers();
 		return true;
@@ -535,16 +521,59 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			mDeleteAccountConfirmDialog.dismiss();
 		}
 	};
-	
+
+
+    public void logoutAccount() {
+        mLogoutAccountConfirmDialog = new ConfirmDeleteDialog();
+        mLogoutAccountConfirmDialog.setOnConfirmEventListener(mOnLogoutAccountConfirm);
+        mLogoutAccountConfirmDialog.setmOnCancelListener(mOnLogoutAccountCancel);
+        mLogoutAccountConfirmDialog.setmTitleText(getString(R.string.logout_confirm));
+        mLogoutAccountConfirmDialog.setmBtnConfirmText(getString(R.string.delete_child_confirm));
+        mLogoutAccountConfirmDialog.setmBtnCancelText(getString(R.string.delete_child_cancel));
+        mLogoutAccountConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
+    }
+
+    private View.OnClickListener mOnLogoutAccountConfirm = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+
+            mLogoutAccountConfirmDialog.dismiss();
+            SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.remove(Def.SP_USER_TERM_READ);
+            editor.remove(Def.SP_LOGIN_TOKEN);
+            editor.commit();
+
+
+            DBHelper helper = DBHelper.getInstance(MainActivity.this);
+            helper.deletaAll(helper.getWritableDatabase());
+
+            finish();
+            Intent intent = new Intent();
+            intent.setClass(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+        }
+    };
+
+    private View.OnClickListener mOnLogoutAccountCancel = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            mLogoutAccountConfirmDialog.dismiss();
+        }
+    };
+
 	public void addNewChild() {
 		finish();
 		Intent intent = new Intent();
 		intent.setClass(this, ChildInfoUpdateActivity.class);
 		startActivity(intent);
 	}
-	private void switchSetting() {
-		AppInfoPrivacyFragment frag = new AppInfoPrivacyFragment(this);
-		changeFragment(frag, getString(R.string.child_setup_profile), NAVIGATION_BACK);
+	private void switchToAppInfoSetting() {
+        AppInfoPrivacyFragment frag = new AppInfoPrivacyFragment(this);
+		changeFragment(frag, getString(R.string.app_info_setting), NAVIGATION_BACK);
 	}
 	
 	private void switchAccount() {
@@ -860,8 +889,36 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	public void onDrawerStateChanged(int arg0) {
 		
 	}
-	
-	
+
+	private void switchPage() {
+        if (mStudents.size() > 0 && mCurrentStudentIdx < mStudents.size()) {
+            Student student = mStudents.get(mCurrentStudentIdx);
+            if (!TextUtils.isEmpty(student.getUuid())) {
+                if (isChangingToAlarmPageForBT) {
+                    isChangingToAlarmPageForBT = false;
+                    if (mCurrentFragment instanceof AlarmFragment) {
+                        ((AlarmFragment)mCurrentFragment).connectToBT();
+                    }
+                } else {
+                    if (mSaftyFragment == null) {
+                        mSaftyFragment = new SafetyFragment();
+                    }
+                    changeFragment(mSaftyFragment, getString(R.string.safty), NAVIGATION_DRAWER);
+                    mBottomView.setSelectedItemId(R.id.action_safty);
+                }
+            } else {
+                SettingFragment settingFragment = new SettingFragment();
+                changeFragment(settingFragment);
+                mBottomView.setSelectedItemId(R.id.action_setting);
+            }
+        } else {
+            if (mStudents.size() == 0) {
+                Intent intent = new Intent();
+                intent.setClass(this, ChildPairingActivity.class);
+                startActivity(intent);
+            }
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

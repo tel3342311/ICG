@@ -1,21 +1,5 @@
 package com.liteon.icampusguardian.db;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.liteon.icampusguardian.App;
-import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
-import com.liteon.icampusguardian.db.ChildLocationTable.ChildLocationEntry;
-import com.liteon.icampusguardian.db.ChildTable.ChildEntry;
-import com.liteon.icampusguardian.db.EventListTable.EventListEntry;
-import com.liteon.icampusguardian.db.WearableTable.WearableEntry;
-import com.liteon.icampusguardian.util.JSONResponse;
-import com.liteon.icampusguardian.util.JSONResponse.Parent;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-import com.liteon.icampusguardian.util.WearableInfo;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -23,6 +7,20 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
+import com.liteon.icampusguardian.db.ChildLocationTable.ChildLocationEntry;
+import com.liteon.icampusguardian.db.ChildTable.ChildEntry;
+import com.liteon.icampusguardian.db.EventListTable.EventListEntry;
+import com.liteon.icampusguardian.db.WearableTable.WearableEntry;
+import com.liteon.icampusguardian.util.JSONResponse.Parent;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.WearableInfo;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class DBHelper extends SQLiteOpenHelper {
 	private static DBHelper mInstance = null;
@@ -120,7 +118,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_WEARABLE_TABLE);
 		onCreate(db);
 	}
-
 	
 	public Parent getParentByToken(SQLiteDatabase db, String token) {
 		Parent item = new Parent();
@@ -272,6 +269,10 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(ChildEntry.COLUMN_NAME_NICK_NAME, item.getNickname());
         cv.put(ChildEntry.COLUMN_NAME_ROLL_NO, item.getRoll_no());
         cv.put(ChildEntry.COLUMN_NAME_STUDENT_ID, item.getStudent_id());
+		cv.put(ChildEntry.COLUMN_NAME_GENDER, item.getGender());
+		cv.put(ChildEntry.COLUMN_NAME_DOB, item.getDob());
+		cv.put(ChildEntry.COLUMN_NAME_HEIGHT, item.getHeight());
+		cv.put(ChildEntry.COLUMN_NAME_WEIGHT, item.getWeight());
 
         long ret = db.insert(ChildEntry.TABLE_NAME, null, cv);
         Log.d(DATABASE_NAME, "insert " + item.getNickname() + "RET is " + ret);
@@ -396,5 +397,14 @@ public class DBHelper extends SQLiteOpenHelper {
             return location;
         }
         return null;
+    }
+
+    public void deletaAll(SQLiteDatabase db) {
+        db.delete(AccountEntry.TABLE_NAME, null, null);
+        db.delete(ChildEntry.TABLE_NAME, null, null);
+        db.delete(WearableEntry.TABLE_NAME, null, null);
+        db.delete(ChildLocationEntry.TABLE_NAME, null, null);
+        db.delete(WearableEntry.TABLE_NAME, null, null);
+        db.close();
     }
 }

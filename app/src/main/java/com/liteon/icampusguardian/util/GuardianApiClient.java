@@ -1,5 +1,20 @@
 package com.liteon.icampusguardian.util;
 
+import android.app.Activity;
+import android.content.Context;
+import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.liteon.icampusguardian.util.JSONResponse.Device;
+import com.liteon.icampusguardian.util.JSONResponse.Student;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,26 +26,9 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.liteon.icampusguardian.App;
-import com.liteon.icampusguardian.util.JSONResponse.Device;
-import com.liteon.icampusguardian.util.JSONResponse.Student;
-
-import android.app.Activity;
-import android.content.Context;
-import android.net.Uri;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 public class GuardianApiClient {
 
@@ -132,16 +130,7 @@ public class GuardianApiClient {
 
 				return result;
 			} else {
-				if (mContext.get() != null) {
-					((Activity) mContext.get()).runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
-									.show();
-						}
-					});
-				}
+				showError(status);
 			}
 
 		} catch (MalformedURLException e) {
@@ -185,16 +174,7 @@ public class GuardianApiClient {
         		Log.e(TAG, "status code: " + statusCode + ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
 				return result;
 			} else {
-				if (mContext.get() != null) {
-					((Activity) mContext.get()).runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
-									.show();
-						}
-					});
-				}
+				showError(status);
 			}
 
 		} catch (MalformedURLException e) {
@@ -235,16 +215,7 @@ public class GuardianApiClient {
 						JSONResponse.class);
 				return result;
 			} else {
-				if (mContext.get() != null) {
-					((Activity) mContext.get()).runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
-									.show();
-						}
-					});
-				}
+				showError(status);
 			}
 
 		} catch (MalformedURLException e) {
@@ -337,6 +308,9 @@ public class GuardianApiClient {
 			int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
             	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	if (result == null || result.getReturn() == null) {
+            	    return null;
+                }
             	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
             	if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
             		Device[] devices = result.getReturn().getResults().getDevices();
@@ -388,15 +362,7 @@ public class GuardianApiClient {
             	Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
             	return result;
             } else {
-            	if (mContext.get() != null) {
-            		((Activity)mContext.get()).runOnUiThread( new Runnable() {
-						
-						@Override
-						public void run() {
-							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT).show();
-						}
-					});
-            	}
+            	showError(status);
             }
 			
 		} catch (MalformedURLException e) {
@@ -432,16 +398,7 @@ public class GuardianApiClient {
 
 				return result;
 			} else {
-				if (mContext.get() != null) {
-					((Activity) mContext.get()).runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
-									.show();
-						}
-					});
-				}
+				showError(status);
 			}
 
 		} catch (MalformedURLException e) {
@@ -475,16 +432,7 @@ public class GuardianApiClient {
 
 				return result;
 			} else {
-				if (mContext.get() != null) {
-					((Activity) mContext.get()).runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
-									.show();
-						}
-					});
-				}
+				showError(status);
 			}
 
 		} catch (MalformedURLException e) {
@@ -503,7 +451,7 @@ public class GuardianApiClient {
 		try {
 			URL url = new URL(uri.toString());
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-			urlConnection.setRequestMethod("POST");
+			urlConnection.setRequestMethod("PUT");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
 			urlConnection.setDoOutput(true);
@@ -526,16 +474,7 @@ public class GuardianApiClient {
 
 				return result;
 			} else {
-				if (mContext.get() != null) {
-					((Activity) mContext.get()).runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							Toast.makeText(mContext.get(), "Error : Http response " + status, Toast.LENGTH_SHORT)
-									.show();
-						}
-					});
-				}
+				showError(status);
 			}
 
 		} catch (MalformedURLException e) {
@@ -605,7 +544,7 @@ public class GuardianApiClient {
 			urlConnection.setDoInput(true);
 			urlConnection.setDoOutput(false);
 			urlConnection.setUseCaches(false);
-            
+
 			int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
             	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);

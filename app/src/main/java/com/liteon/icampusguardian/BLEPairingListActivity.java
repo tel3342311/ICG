@@ -335,6 +335,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 				String btAddr = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), mStudents.get(i).getStudent_id());
 				if (TextUtils.equals(btAddr, item.getmBluetoothDevice().getAddress())) {
 					showErrorDialog(mStudents.get(i).getNickname());
+					return;
 				}
         	}
 		}

@@ -100,6 +100,8 @@ public class SettingFragment extends Fragment {
 		initRecycleView();
 		mDbHelper = DBHelper.getInstance(getActivity());
 		//get child list
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE,Context.MODE_PRIVATE);
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
         //get current bt address
         String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();

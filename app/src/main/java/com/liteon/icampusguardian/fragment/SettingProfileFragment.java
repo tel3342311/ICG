@@ -65,7 +65,9 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 		setupListener();
 		mDbHelper = DBHelper.getInstance(getActivity());
 		//get child list
-		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+        SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE,Context.MODE_PRIVATE);
+        mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+        mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		initRecycleView();
 
 		return rootView;

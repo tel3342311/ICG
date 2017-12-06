@@ -79,6 +79,8 @@ public class Def {
 	public static final String KEY_DOB = "dob";
 	public static final String KEY_GENDER = "gender";
 	public static final String KEY_UUID = "uuid";
+	public static final String KEY_PROFILE_NAME = "profile_name";
+	public static final String KEY_MOBILE_NUMBER = "mobile_number";
 	//API 33 reset password
 	public static final String REQUEST_PASSWORD_REST = "PasswordResetRequest";
 	public static final String KEY_USER_ROLE = "user_role";

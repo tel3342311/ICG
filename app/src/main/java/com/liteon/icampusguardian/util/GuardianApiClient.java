@@ -100,7 +100,7 @@ public class GuardianApiClient {
 		return null;
 	}
 	
-	public JSONResponse registerUser(String userEmail, String password, String role_type, String uuid, String account_name) {
+	public JSONResponse registerUser(String userEmail, String password, String profileName, String mobileNumber) {
 
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_REGISTRATION).build();
 		try {
@@ -115,13 +115,9 @@ public class GuardianApiClient {
 			JSONObject jsonParam = new JSONObject();
 			jsonParam.put(Def.KEY_USERNAME, userEmail);
 			jsonParam.put(Def.KEY_PASSWORD, password);
-			jsonParam.put(Def.KEY_ACCOUNT_NAME, account_name);
-			jsonParam.put(Def.KEY_UUID, uuid);
-			jsonParam.put(Def.KEY_NICKNAME, "N/A");
-			jsonParam.put(Def.KEY_GENDER, "MALE");
-			jsonParam.put(Def.KEY_DOB, "01-01-2010");
-			jsonParam.put(Def.KEY_WEIGHT, "0");
-			jsonParam.put(Def.KEY_HEIGHT, "0");
+			jsonParam.put(Def.KEY_PROFILE_NAME, profileName);
+			jsonParam.put(Def.KEY_MOBILE_NUMBER, mobileNumber);
+
 
 			OutputStream os = urlConnection.getOutputStream();
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));

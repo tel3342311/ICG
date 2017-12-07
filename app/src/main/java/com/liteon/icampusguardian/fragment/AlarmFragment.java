@@ -2,9 +2,12 @@ package com.liteon.icampusguardian.fragment;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,6 +36,7 @@ import com.liteon.icampusguardian.util.AlarmItemAdapter;
 import com.liteon.icampusguardian.util.AlarmItemAdapter.ViewHolder.IAlarmViewHolderClicks;
 import com.liteon.icampusguardian.util.AlarmManager;
 import com.liteon.icampusguardian.util.BluetoothAgent;
+import com.liteon.icampusguardian.util.ClsUtils;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
@@ -58,10 +63,14 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	private PopupWindow mPopupWindow;
 	private View mSyncView;
 	private View mProgressView;
+	private Button mSyncBtn;
 	//For bluetooth
 	private BluetoothAgent mBTAgent;
+    private BluetoothDevice mBluetoothDevice;
+    private int mLastBondState = BluetoothDevice.BOND_NONE;
     private CustomDialog mCustomDialog;
     private ProgressBar mProgressBar;
+    private boolean isAlarmEditSync;
     public AlarmFragment() {}
 
 	@Override
@@ -166,6 +175,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		mTitleView = getActivity().findViewById(R.id.toolbar_title);
 		mSyncView = rootView.findViewById(R.id.sync_view);
         mProgressView = rootView.findViewById(R.id.progress_view);
+        mSyncBtn = mSyncView.findViewById(R.id.button_sync);
+
 	}
 	
 	public void initRecycleView() {
@@ -178,6 +189,13 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	
 	private void setupListener() {
 		mAddAlarm.setOnClickListener(mAddAlarmClickListener);
+        mSyncBtn.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                startSync();
+            }
+        });
 	}
 	
 	private OnClickListener mAddAlarmClickListener = new OnClickListener() {
@@ -247,6 +265,10 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		}
 		showSyncWindow();
 		restoreAlarm();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        getActivity().registerReceiver(mReceiver, intentFilter);
 	}
 	
 	@Override
@@ -257,6 +279,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		if (mBTAgent != null) {
             mBTAgent.stop();
         }
+        getActivity().unregisterReceiver(mReceiver);
 	}
 	
 	private void hideSyncWindow() {
@@ -265,68 +288,75 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		}
 	}
 	private void showSyncWindow() {
-		View contentview = mSyncView;
         mProgressView.setVisibility(View.INVISIBLE);
-		final TextView title = (TextView) contentview.findViewById(R.id.title);
-		AppCompatButton button = (AppCompatButton) contentview.findViewById(R.id.button_sync);
-		button.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-                title.setText(R.string.alarm_syncing);
-				//connect to BT device
-                connectToBT();
+        mAddAlarm.setEnabled(true);
+    }
 
-                mProgressView.setVisibility(View.VISIBLE);
-			}
-		});
+	private void syncEditDataToBT() {
+		//sync alarm data with watch
+		String alarmString = AlarmManager.getAlarmEditContent();
+		if (!TextUtils.isEmpty(alarmString)) {
+			mBTAgent.write(alarmString.getBytes());
+		}
 	}
 
-	private void syncDataToBT() {
-        View contentview = mSyncView;
-        final TextView title = (TextView) contentview.findViewById(R.id.title);
-        //sync alarm data with watch
-        String alarmString = AlarmManager.getAlarmEditContent();
-        if (!TextUtils.isEmpty(alarmString)) {
-            mBTAgent.write(alarmString.getBytes());
-        }
-        //sync alarm state (enable/disable) with watch
-        String alarmState = AlarmManager.getAlarmStateContent();
-        if (!TextUtils.isEmpty(alarmState)) {
-            mBTAgent.write(alarmState.getBytes());
-        }
-        final Handler handler = new Handler();
-        final Runnable hideSyncView = new Runnable() {
+	private void syncStateDataToBT() {
+		//sync alarm state (enable/disable) with watch
+		String alarmState = AlarmManager.getAlarmStateContent();
+		if (!TextUtils.isEmpty(alarmState)) {
+			mBTAgent.write(alarmState.getBytes());
+		}
+	}
 
-            @Override
-            public void run() {
-                mSyncView.setVisibility(View.GONE);
-            }
-        };
-        Runnable runnable = new Runnable(){
-            @Override
-            public void run() {
-                title.setText(R.string.alarm_sync_complete);
-                handler.postDelayed(hideSyncView, 3000);
-                if (mBTAgent != null) {
-                    mBTAgent.stop();
-                }
-                mProgressView.setVisibility(View.INVISIBLE);
-            }
-        };
-        handler.postDelayed(runnable, 2000);
-    }
-	
+	private void showSynced() {
+		View contentview = mSyncView;
+		final TextView title = contentview.findViewById(R.id.title);
+		final Handler handler = new Handler();
+		final Runnable hideSyncView = new Runnable() {
+
+			@Override
+			public void run() {
+				mSyncView.setVisibility(View.GONE);
+			}
+		};
+		Runnable runnable = new Runnable(){
+			@Override
+			public void run() {
+				title.setText(R.string.alarm_sync_complete);
+				handler.postDelayed(hideSyncView, 3000);
+				if (mBTAgent != null) {
+					mBTAgent.stop();
+					isAlarmEditSync = false;
+				}
+				mProgressView.setVisibility(View.INVISIBLE);
+                mAddAlarm.setEnabled(true);
+			}
+		};
+		handler.postDelayed(runnable, 2000);
+	}
+
+
 	private void restoreAlarm() {
 	    AlarmManager.setCurrentStudentIdx(mCurrentStudentIdx);
         AlarmManager.restoreAlarm();
 	}
-	
+
 	private void saveAlarm() {
 		AlarmManager.saveAlarm();
 	}
 
-	public void connectToBT() {
+	public void startSync() {
+        View contentview = mSyncView;
+        final TextView title = contentview.findViewById(R.id.title);
+        mProgressView.setVisibility(View.VISIBLE);
+        mAddAlarm.setEnabled(false);
+        title.setText(R.string.alarm_syncing);
+        //connect to BT device
+        connectToBT();
+    }
+
+
+	private void connectToBT() {
         //get current bt address
         String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
         String btAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
@@ -344,10 +374,21 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
             return;
         }
 
-		BluetoothDevice target = btAdapter.getRemoteDevice(btAddress);
-		if (target != null) {
-			mBTAgent.connect(target, true);
-		}
+        mBluetoothDevice = btAdapter.getRemoteDevice(btAddress);
+
+        if (mBluetoothDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+            mBTAgent.connect(mBluetoothDevice, true);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mBluetoothDevice.createBond();
+            } else {
+                try {
+                    ClsUtils.createBond(mBluetoothDevice.getClass(), mBluetoothDevice);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 	}
 
     private void getAlarmFromBT() {
@@ -361,6 +402,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
         mCustomDialog.setIcon(R.drawable.ic_error_outline_black_24dp);
         mCustomDialog.setBtnText(getString(android.R.string.ok));
         mCustomDialog.setBtnConfirm(mOnBLEFailCancelClickListener);
+        mCustomDialog.setCancelable(false);
         mCustomDialog.show(getActivity().getSupportFragmentManager(), "dialog_fragment");
     }
 
@@ -372,6 +414,26 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
             TextView title = mSyncView.findViewById(R.id.title);
             title.setText(R.string.alarm_no_watch_synced);
             mProgressView.setVisibility(View.INVISIBLE);
+            mAddAlarm.setEnabled(true);
+
+        }
+    };
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                int bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE,
+                        BluetoothDevice.ERROR);
+                // New Paired device
+                Log.d(TAG, "bond state : " + bondState);
+                if (bondState == BluetoothDevice.BOND_BONDED) {
+                    mBTAgent.connect(mBluetoothDevice, true);
+                } else if (bondState == BluetoothDevice.BOND_NONE && mLastBondState == BluetoothDevice.BOND_BONDING) {
+                    showBTErrorDialog();
+                }
+                mLastBondState = bondState;
+            }
         }
     };
 
@@ -407,8 +469,15 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
                     if (readMessage.contains("getalarmdata")) {
                         AlarmManager.syncAlarmFromJSON(readMessage);
 						mAdapter.notifyDataSetChanged();
-						syncDataToBT();
+						syncEditDataToBT();
                         getActivity().invalidateOptionsMenu();
+					} else if (readMessage.contains("alarm")) {
+                    	if (!isAlarmEditSync) {
+                    		syncStateDataToBT();
+							isAlarmEditSync = true;
+						} else {
+							showSynced();
+						}
 					}
                     break;
                 case Def.MESSAGE_DEVICE_NAME:

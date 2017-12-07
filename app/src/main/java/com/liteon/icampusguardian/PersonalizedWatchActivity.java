@@ -2,11 +2,14 @@ package com.liteon.icampusguardian;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -28,6 +31,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.BluetoothAgent;
+import com.liteon.icampusguardian.util.ClsUtils;
 import com.liteon.icampusguardian.util.ConfirmDeleteDialog;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.CustomSkinJSON;
@@ -60,9 +64,11 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	private ImageView mCancel;
 	private ImageView mConfirm;
 	private BluetoothAgent mBTAgent;
-	private BluetoothDevice mBTDevice;
-	private CustomDialog mCustomDialog;
+	private BluetoothDevice mBluetoothDevice;
+    private int mLastBondState = BluetoothDevice.BOND_NONE;
+    private CustomDialog mCustomDialog;
 	private byte[] mFileBytes;
+	private boolean isEditMode;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -73,6 +79,9 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		mProgressBar.setVisibility(View.INVISIBLE);
 		mTitleUpdating.setVisibility(View.INVISIBLE);
         mBTAgent = new BluetoothAgent(this, mHandler);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(mReceiver, intentFilter);
 	}
 	
 	private void findViews() {
@@ -83,7 +92,10 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		mWatchCover = findViewById(R.id.watch_cover);
 		mCancel = findViewById(R.id.cancel);
 	}
-	
+
+	private void enterEditMode() {
+        isEditMode = true;
+    }
 	private void setListener() {
 		mWatchSurface.setOnClickListener(mOnChangeSurfaceListener);
 	}
@@ -112,8 +124,11 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	}
 
 	public boolean onPrepareOptionsMenu(Menu menu) {
-
-		menu.findItem(R.id.action_confirm).setVisible(true);
+        if (isEditMode) {
+            menu.findItem(R.id.action_confirm).setVisible(true);
+        } else {
+            menu.findItem(R.id.action_confirm).setVisible(false);
+        }
 		return true;
 	};
 
@@ -126,7 +141,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	private View.OnClickListener mOnChangeSurfaceListener = new OnClickListener() {
 		
 		@Override
@@ -141,7 +156,8 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_WATCH_SURFACE) {
 			if (resultCode == RESULT_OK) {
-
+                enterEditMode();
+                invalidateOptionsMenu();
 			}
 		} else if (requestCode == Def.REQUEST_ENABLE_BT) {
 			connectToBT();
@@ -201,11 +217,17 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 			mBLEFailConfirmDialog.dismiss();
 			Intent intent = new Intent();
         	intent.setClass(PersonalizedWatchActivity.this, MainActivity.class);
-        	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+        	intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
         	startActivity(intent);
         	finish();
 		}
 	};
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+    }
 
     private void connectToBT() {
 
@@ -223,13 +245,20 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
             showBTErrorDialog();
             return;
         }
-        BluetoothDevice target = btAdapter.getRemoteDevice(btAddress);
-
-        if (target != null) {
-			mProgressBar.setVisibility(View.VISIBLE);
-			mTitleUpdating.setText(R.string.syncing_photo_to_watch);
-			mTitleUpdating.setVisibility(View.VISIBLE);
-            mBTAgent.connect(target, true);
+        mBluetoothDevice = btAdapter.getRemoteDevice(btAddress);
+        //check if target device is bonded
+        if (mBluetoothDevice.getBondState() == BluetoothDevice.BOND_BONDED) {
+            mBTAgent.connect(mBluetoothDevice, true);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mBluetoothDevice.createBond();
+            } else {
+                try {
+                    ClsUtils.createBond(mBluetoothDevice.getClass(), mBluetoothDevice);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -356,4 +385,21 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		}
 	};
 
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+                int bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE,
+                        BluetoothDevice.ERROR);
+                // New Paired device
+                Log.d(TAG, "bond state : " + bondState);
+                if (bondState == BluetoothDevice.BOND_BONDED) {
+                    connectToBT();
+                } else if (bondState == BluetoothDevice.BOND_NONE && mLastBondState == BluetoothDevice.BOND_BONDING) {
+                    showBTErrorDialog();
+                }
+                mLastBondState = bondState;
+            }
+        }
+    };
 }

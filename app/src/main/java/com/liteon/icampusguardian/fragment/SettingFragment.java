@@ -46,6 +46,7 @@ import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.BluetoothAgent;
 import com.liteon.icampusguardian.util.CircularImageView;
+import com.liteon.icampusguardian.util.ClsUtils;
 import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.DeviceNameJSON;
@@ -126,10 +127,10 @@ public class SettingFragment extends Fragment {
 	}
 	
 	private TextWatcher mOnChildNameChangedListener = new TextWatcher() {
-		
+		private int currentEnd = 0;
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {
-			
+			currentEnd = start + count;
 		}
 		
 		@Override
@@ -142,6 +143,17 @@ public class SettingFragment extends Fragment {
 			if (TextUtils.isEmpty(s.toString())) {
 				exitEditMode();
 				return;
+			}
+			//For chinese 7 char
+			if (ClsUtils.isChinese(s.toString())) {
+				boolean isChanged = false;
+				while (s.toString().length() > 7) { // 若變化後的長度超過最大長度
+					// 刪除最後變化的字元
+					currentEnd--;
+					s.delete(currentEnd, currentEnd + 1);
+					isChanged = true;
+				}
+				enterEditMode();
 			}
 			if (!TextUtils.equals(mStudents.get(mCurrentStudentIdx).getNickname(), s.toString())) {
 				mStudents.get(mCurrentStudentIdx).setNickname(s.toString());

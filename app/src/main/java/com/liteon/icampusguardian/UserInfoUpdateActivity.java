@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.ClsUtils;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
@@ -48,6 +49,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 	private String mToken;
 	private Parent mParent;
 	private TextView mPasswordHint;
+	private TextView mPasswordConstraint;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -118,6 +120,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		mSyncView = findViewById(R.id.sync_view);
 		progressBarHolder = findViewById(R.id.progressBarHolder);
 		mPasswordHint = findViewById(R.id.password_hint);
+		mPasswordConstraint = findViewById(R.id.password_constr);
 	}
 	
 	private void setListener() {
@@ -139,7 +142,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 			
 			@Override
 			public void onClick(View v) {
-				//new UpdateTask().execute("");
+				new UpdateTask().execute("");
 			}
 		});
 
@@ -219,10 +222,17 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 			return false;
 		}
 		if (!TextUtils.equals(mParent.getPassword(), mPassword.getText())) {
+			if (mPassword.getText().length() < 8 || ClsUtils.isValidPassword(mPassword.getText().toString())) {
+				mPasswordConstraint.setVisibility(View.VISIBLE);
+				return false;
+			} else {
+				mPasswordConstraint.setVisibility(View.INVISIBLE);
+			}
 			//check if password & password confirm is match
-			if (!TextUtils.equals(mPassword.getText(), mConfirmPassword.getText()) || mPassword.getText().length() < 8) {
+			if (!TextUtils.equals(mPassword.getText(), mConfirmPassword.getText())) {
 				return false;
 			}
+
 		}
 		return true;
 	}
@@ -294,7 +304,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 
 			GuardianApiClient apiClient = new GuardianApiClient(UserInfoUpdateActivity.this);
 			JSONResponse response = apiClient.getUserDetail();
-			if (response == null || !TextUtils.equals("SUC01" ,response.getReturn().getResponseSummary().getStatusCode())) {
+			if (response == null || !TextUtils.equals(Def.RET_SUCCESS_1 ,response.getReturn().getResponseSummary().getStatusCode())) {
 			
 				return null;
 			}

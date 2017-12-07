@@ -1,25 +1,5 @@
 package com.liteon.icampusguardian.util;
 
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.liteon.icampusguardian.App;
-import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.db.DBHelper;
-import com.liteon.icampusguardian.util.HealthHistogramView.OnHistogramChangeListener;
-import com.liteon.icampusguardian.util.HealthyItem.TYPE;
-
-import android.R.string;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -35,6 +15,25 @@ import android.graphics.RectF;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.App;
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.util.HealthHistogramView.OnHistogramChangeListener;
+import com.liteon.icampusguardian.util.HealthyItem.TYPE;
+
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class HealthPieChartView extends View implements OnHistogramChangeListener{
 
@@ -300,7 +299,7 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
 		String output = sdf.format(d.getTime());
 
         drawCenter(canvas, textTargetPaint, output, mTargetOffsetY);
-        drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY);
+        drawCenter(canvas, textPaint, mCurrentDate, mDateOffsetY + 100);
         sdf.applyPattern("yyyy/MM/dd");
         Date origin = null;
         try {
@@ -317,8 +316,13 @@ public class HealthPieChartView extends View implements OnHistogramChangeListene
             sdf.applyPattern("MM/dd HH:mm");
             String sleep = sdf.format(d1.getTime());
             String wake = sdf.format(d2.getTime());
-            drawCenter(canvas, textPaint, getContext().getString(R.string.healthy_sleep)+ " " + sleep, mDateOffsetY + 50);
-            drawCenter(canvas, textPaint, getContext().getString(R.string.healthy_wake)+ " " + wake, mDateOffsetY + 100);
+            canvas.drawText(getContext().getString(R.string.healthy_sleep), (float) (mWidth * 0.35), (float) (mHeight * 0.65) , textPaint);
+			canvas.drawText(getContext().getString(R.string.healthy_wake), (float) (mWidth * 0.35), (float) (mHeight * 0.72), textPaint);
+			textPaint.setColor(getResources().getColor(R.color.color_sleep));
+			canvas.drawText(sleep, (float) (mWidth * 0.45), (float) (mHeight * 0.65) , textPaint);
+			canvas.drawText(wake, (float) (mWidth * 0.45), (float) (mHeight * 0.72), textPaint);
+			textPaint.setColor(getResources().getColor(android.R.color.black));
+
         }
         if (mCurrentValue >= 320) {
             canvas.drawText(getResources().getString(R.string.sleep_quality_good), (float) (mWidth * 0.75), (float) (mHeight * 0.9), textTargetPaint);

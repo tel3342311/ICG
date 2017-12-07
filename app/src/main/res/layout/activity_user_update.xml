@@ -92,7 +92,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/login_edit_text_height"
             android:layout_below="@id/login_account"
-            android:layout_marginBottom="@dimen/page_title_margin_bottom"
             android:hint="@string/original_password"
             android:inputType="textPassword"
             android:maxLines="1"
@@ -101,11 +100,21 @@
             android:textSize="@dimen/login_edit_text_size"
             android:maxLength="45"/>
 
+        <TextView
+            android:id="@+id/password_constr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_password"
+            android:text="@string/register_password"
+            android:textColor="@color/md_red_A700"
+            android:textSize="@dimen/password_hint_size" />
+
         <EditText
             android:id="@+id/login_password_confirm"
             android:layout_width="match_parent"
             android:layout_height="@dimen/login_edit_text_height"
             android:layout_below="@id/login_password"
+            android:layout_marginTop="@dimen/page_title_margin_bottom"
             android:hint="@string/confirm_new_password"
             android:inputType="textPassword"
             android:maxLines="1"

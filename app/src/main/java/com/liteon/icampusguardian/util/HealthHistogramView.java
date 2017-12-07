@@ -1,9 +1,20 @@
 package com.liteon.icampusguardian.util;
 
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
+import android.graphics.Paint.Cap;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,21 +24,10 @@ import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.Paint;
-import android.graphics.Paint.Cap;
-import android.graphics.Paint.Style;
-import android.text.TextUtils;
-import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HealthHistogramView extends View {
 
@@ -62,7 +62,8 @@ public class HealthHistogramView extends View {
 	private List<Student> mStudents;
 	private int mCurrentStudentIdx;
 	private DBHelper mDbHelper;
-
+	private Path mPathHeartBeat;
+	private Paint mPaintHeartBeat;
 	public HealthHistogramView(Context context) {
 		super(context);
 	}
@@ -212,12 +213,26 @@ public class HealthHistogramView extends View {
 
 			canvas.drawLine(0.f, (float) (mHeight * 0.095) + mGraphMarginVertical, (float) mWidth, (float) (mHeight * 0.095) + mGraphMarginVertical, textPaint);
 		} else {
+			Path path70 = new Path();
+			path70.moveTo(50.f, (float) (mHeight * 0.095) + mGraphMarginVertical - 20);
+			path70.lineTo(mWidth, (float) (mHeight * 0.095) + mGraphMarginVertical - 20);
+			path70.close();
+
+			Path path80 = path70;//new Path();
+			path80.moveTo(50.f, (float) (mHeight * 0.095) + mGraphMarginVertical + 50 - 20);
+			path80.lineTo(mWidth, (float) (mHeight * 0.095) + mGraphMarginVertical + 50 - 20);
+			path80.close();
+
+			Paint mPaint = new Paint();
+			mPaint.setARGB(255, 0, 0, 0);
+			mPaint.setStyle(Paint.Style.STROKE);
+			mPaint.setPathEffect(new DashPathEffect(new float[]{5, 10, 15, 20}, 0));			canvas.drawText("80", 0, (float) (mHeight * 0.095) + mGraphMarginVertical, textPaint);
+
+			canvas.drawPath(path70, mPaint);
+			canvas.drawPath(path80, mPaint);
+
 			canvas.drawText("80", 0, (float) (mHeight * 0.095) + mGraphMarginVertical, textPaint);
-			canvas.drawLine(50.f, (float) (mHeight * 0.095) + mGraphMarginVertical - 20, (float) mWidth, (float) (mHeight * 0.095) + mGraphMarginVertical - 20, textPaint2);
-
 			canvas.drawText("70", 0, (float) (mHeight * 0.095) + mGraphMarginVertical + 50, textPaint);
-			canvas.drawLine(50.f, (float) (mHeight * 0.095) + mGraphMarginVertical + 50 - 20, (float) mWidth, (float) (mHeight * 0.095) + mGraphMarginVertical + 50 - 20, textPaint2);
-
 		}
 	}
 	

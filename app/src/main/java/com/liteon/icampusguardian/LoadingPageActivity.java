@@ -1,5 +1,6 @@
 package com.liteon.icampusguardian;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -56,4 +57,12 @@ public class LoadingPageActivity extends AppCompatActivity {
         	}
         }
     };
+
+	@Override
+	public void onBackPressed() {
+		Intent intent = new Intent();
+		intent.setClass(LoadingPageActivity.this, MainActivity.class);
+		startActivity(intent);
+		finish();
+	}
 }

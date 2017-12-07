@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 				}
 			}
 		}
+        setIntent(intent);
 	}
 	
 	@Override
@@ -186,19 +187,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
         mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
         mCurrentStudentIdx = mSharedPreference.getInt(Def.SP_CURRENT_STUDENT, 0);
 
-		if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
-			SettingFragment settingFragment = new SettingFragment();
-			changeFragment(settingFragment);
-		}
-//		else if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_APP_INFO, false)) {
-//            AppInfoPrivacyFragment appFragment = new AppInfoPrivacyFragment(this);
-//            changeFragment(appFragment);
-//        }
 		if (getIntent().getExtras() != null) {
-			if (getIntent().getBooleanExtra(Def.EXTRA_GOTO_MAIN_SETTING, false)) {
-				mBottomView.setSelectedItemId(R.id.action_setting);
-				return;
-			} else if (TextUtils.equals(Def.ACTION_NOTIFY, getIntent().getAction())) {
+			if (TextUtils.equals(Def.ACTION_NOTIFY, getIntent().getAction())) {
 				String type = getIntent().getStringExtra(Def.EXTRA_NOTIFY_TYPE);
 				if (TextUtils.equals(type, "sos")) {
 					if (mSaftyFragment == null) {
@@ -617,7 +607,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 
 	public void onFinishEditPeriod(){
 		if (mCurrentFragment instanceof AlarmPeriodFragment) {
-			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_period), 0);
+			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_edit_period_add), 0);
 		}
 	}
 
@@ -626,11 +616,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		if (mCurrentFragment instanceof AlarmFragment) {
 			AlarmFragment fragment = (AlarmFragment) mCurrentFragment;
 
-			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_edit_period), 0);
-			
-			if (fragment.isEditMode()) {
-				fragment.exitEditMode();
-			}
+            if (fragment.isEditMode()) {
+                fragment.exitEditMode();
+            }
+
+			changeFragment(new AlarmEditingFragment(), getString(R.string.alarm_edit_period_add), 0);
 		}
 		
 	}
@@ -640,7 +630,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		if (item.getItemType() == AlarmPeriodItem.TYPE.CUSTOMIZE) {
 			// TODO get current AlarmItem
 			alarmItem.setPeriodItem(item);
-			changeFragment(new AlarmPeriodFragment(), getString(R.string.alarm_edit_period), NAVIGATION_BACK);
+			changeFragment(new AlarmPeriodFragment(), getString(R.string.alarm_period), NAVIGATION_BACK);
 		}
 	}
 
@@ -894,10 +884,19 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
         if (mStudents.size() > 0 && mCurrentStudentIdx < mStudents.size()) {
             Student student = mStudents.get(mCurrentStudentIdx);
             if (!TextUtils.isEmpty(student.getUuid())) {
-                if (isChangingToAlarmPageForBT) {
+                int pageId = getIntent().getIntExtra(Def.EXTRA_GOTO_PAGE_ID, -1);
+                Log.d(TAG, "PAGE ID is " + pageId);
+                if (getIntent().getIntExtra(Def.EXTRA_GOTO_PAGE_ID, -1) == Def.EXTRA_PAGE_SETTING_ID) {
+                    SettingFragment settingFragment = new SettingFragment();
+                    changeFragment(settingFragment);
+                    mBottomView.setSelectedItemId(R.id.action_setting);
+                } else if (getIntent().getIntExtra(Def.EXTRA_GOTO_PAGE_ID, -1) == Def.EXTRA_PAGE_APPINFO_ID) {
+                    AppInfoPrivacyFragment appFragment = new AppInfoPrivacyFragment(this);
+                    changeFragment(appFragment);
+                } else if (isChangingToAlarmPageForBT || mCurrentFragment instanceof AlarmFragment) {
                     isChangingToAlarmPageForBT = false;
                     if (mCurrentFragment instanceof AlarmFragment) {
-                        ((AlarmFragment)mCurrentFragment).connectToBT();
+                        ((AlarmFragment)mCurrentFragment).startSync();
                     }
                 } else {
                     if (mSaftyFragment == null) {
@@ -907,9 +906,20 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
                     mBottomView.setSelectedItemId(R.id.action_safty);
                 }
             } else {
-                SettingFragment settingFragment = new SettingFragment();
-                changeFragment(settingFragment);
-                mBottomView.setSelectedItemId(R.id.action_setting);
+                int pageId = getIntent().getIntExtra(Def.EXTRA_GOTO_PAGE_ID, -1);
+                Log.d(TAG, "PAGE ID is " + pageId);
+                if (getIntent().getIntExtra(Def.EXTRA_GOTO_PAGE_ID, -1) == Def.EXTRA_PAGE_SETTING_ID) {
+                    SettingFragment settingFragment = new SettingFragment();
+                    changeFragment(settingFragment);
+                    mBottomView.setSelectedItemId(R.id.action_setting);
+                } else if (getIntent().getIntExtra(Def.EXTRA_GOTO_PAGE_ID, -1) == Def.EXTRA_PAGE_APPINFO_ID) {
+                    AppInfoPrivacyFragment appFragment = new AppInfoPrivacyFragment(this);
+                    changeFragment(appFragment);
+                } else {
+                    SettingFragment settingFragment = new SettingFragment();
+                    changeFragment(settingFragment);
+                    mBottomView.setSelectedItemId(R.id.action_setting);
+                }
             }
         } else {
             if (mStudents.size() == 0) {

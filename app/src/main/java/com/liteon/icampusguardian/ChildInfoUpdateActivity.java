@@ -192,8 +192,15 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 			}
 		});
 	}
-	
-	public void UpdateWheelForDate(Calendar date) {
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.setClass(ChildInfoUpdateActivity.this, MainActivity.class);
+        startActivity(intent);
+	}
+
+    public void UpdateWheelForDate(Calendar date) {
 
 		int year = date.get(Calendar.YEAR);
 		int month = date.get(Calendar.MONTH);

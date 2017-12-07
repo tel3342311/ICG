@@ -349,7 +349,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 			finish();
 			Intent intent = new Intent();
 			intent.setClass(BLEPinCodeInputActivity.this, MainActivity.class);
-			intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+            intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
 			startActivity(intent);
 		}
 	};
@@ -542,19 +542,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(BluetoothDevice.ACTION_PAIRING_REQUEST)) {
-//                mBluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-//                try {
-//                    //abortBroadcast();
-//                    int pairingKey = intent.getIntExtra(BluetoothDevice.EXTRA_PAIRING_KEY,
-//                            BluetoothDevice.ERROR);
-//                    Boolean b = ClsUtils.setPin(mBluetoothDevice.getClass(), mBluetoothDevice, pairingKey);
-//                    ClsUtils.setPairingConfirmation(mBluetoothDevice.getClass(), mBluetoothDevice, true);
-//                    Log.d(TAG, "ClsUtils.setPin: " + b);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-            } else if (intent.getAction().equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
+            if (intent.getAction().equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)) {
                 int bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE,
                         BluetoothDevice.ERROR);
                 // New Paired device

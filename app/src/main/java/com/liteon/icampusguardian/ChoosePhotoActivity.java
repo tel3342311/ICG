@@ -296,7 +296,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
             finish();
             Intent intent = new Intent();
             intent.setClass(ChoosePhotoActivity.this, MainActivity.class);
-            intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+            intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
             startActivity(intent);
         }
     };
@@ -380,7 +380,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 				if (!isFromWatchTheme) {
 					Intent intent = new Intent();
 					intent.setClass(ChoosePhotoActivity.this, MainActivity.class);
-					intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+                    intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
 					startActivity(intent);
 				} else {
 					Intent intent = new Intent();
@@ -502,7 +502,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 		if (!isFromWatchTheme) {
 			Intent intent = new Intent();
 			intent.setClass(this, MainActivity.class);
-			intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+            intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
 			startActivity(intent);
 			finish();
 		} else {

@@ -126,7 +126,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
             finish();
             Intent intent = new Intent();
             intent.setClass(BLEPairingListActivity.this, MainActivity.class);
-            intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+			intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
             startActivity(intent);
         }
     };
@@ -352,7 +352,7 @@ public class BLEPairingListActivity extends AppCompatActivity implements IBLEIte
 			finish();
 			Intent intent = new Intent();
 			intent.setClass(BLEPairingListActivity.this, MainActivity.class);
-			intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+			intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
 			startActivity(intent);
 		}
 	};

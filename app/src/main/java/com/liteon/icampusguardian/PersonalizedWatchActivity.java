@@ -98,7 +98,7 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 
 				Intent intent = new Intent();
             	intent.setClass(PersonalizedWatchActivity.this, MainActivity.class);
-            	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+            	intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
             	startActivity(intent);
             	finish();
 			}

@@ -82,7 +82,7 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 
 				Intent intent = new Intent();
 				intent.setClass(WatchInfoAndPrivacyActivity.this, MainActivity.class);
-				intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+				intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
 				startActivity(intent);
 				finish();
 			}
@@ -107,7 +107,7 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 	public void onBackPressed() {
 		Intent intent = new Intent();
     	intent.setClass(WatchInfoAndPrivacyActivity.this, MainActivity.class);
-    	intent.putExtra(Def.EXTRA_GOTO_MAIN_SETTING, true);
+    	intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
     	startActivity(intent);
     	finish();		
 	}

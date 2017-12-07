@@ -1,5 +1,8 @@
 package com.liteon.icampusguardian.util;
 
+import com.liteon.icampusguardian.App;
+import com.liteon.icampusguardian.R;
+
 public class GeoEventItem {
 
 	private String Date;
@@ -7,6 +10,11 @@ public class GeoEventItem {
 	private String LeaveSchool;
 	private String Emergency;
 	private String EmergencyRelease;
+
+	public GeoEventItem() {
+		EnterSchool = App.getContext().getString(R.string.safty_no_watch_detected);
+		LeaveSchool = App.getContext().getString(R.string.safty_no_watch_detected);
+	}
 	/**
 	 * @return the date of geo event
 	 */

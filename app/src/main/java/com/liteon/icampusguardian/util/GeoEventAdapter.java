@@ -1,9 +1,5 @@
 package com.liteon.icampusguardian.util;
 
-import java.util.List;
-
-import com.liteon.icampusguardian.R;
-
 import android.graphics.Matrix;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -14,6 +10,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.liteon.icampusguardian.R;
+
+import java.util.List;
 
 public class GeoEventAdapter extends Adapter<GeoEventAdapter.ViewHolder> {
 
@@ -68,14 +68,14 @@ public class GeoEventAdapter extends Adapter<GeoEventAdapter.ViewHolder> {
                                .inflate(R.layout.component_geo_event, parent, false);
         // set the view's size, margins, paddings and layout parameters
         ViewHolder vh = new ViewHolder(v);
-        vh.mDateTextView = (TextView) v.findViewById(R.id.title_text);
-        vh.mEnterSchool = (TextView) v.findViewById(R.id.enter_text);
-        vh.mLeaveSchool = (TextView) v.findViewById(R.id.leave_text);
-        vh.mEmergencyCall = (TextView) v.findViewById(R.id.emergency_text);
-        vh.mEmergencyRelease = (TextView) v.findViewById(R.id.emergency_release_text);
+        vh.mDateTextView = v.findViewById(R.id.title_text);
+        vh.mEnterSchool = v.findViewById(R.id.enter_text);
+        vh.mLeaveSchool = v.findViewById(R.id.leave_text);
+        vh.mEmergencyCall = v.findViewById(R.id.emergency_text);
+        vh.mEmergencyRelease = v.findViewById(R.id.emergency_release_text);
         vh.mDetailInfo = v.findViewById(R.id.detail_info);
         vh.mDetailInfo.setVisibility(View.GONE);
-        vh.mCollapseIcon = (ImageView) v.findViewById(R.id.arrow);
+        vh.mCollapseIcon = v.findViewById(R.id.arrow);
         vh.mCollapseIcon.setOnClickListener(vh);
 
         return vh;

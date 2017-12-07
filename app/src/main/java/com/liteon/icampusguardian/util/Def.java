@@ -108,9 +108,10 @@ public class Def {
 
 	//Intent EXTRA
 	public static final String EXTRA_DISABLE_USERTREM_BOTTOM = "com.liteon.icampusguardian.EXTRA_DISABLE_USERTREM_BOTTOM";
-	public static final String EXTRA_GOTO_MAIN_SETTING = "com.liteon.icampusguardian.EXTRA_GOTO_MAIN_SETTING";
 	public static final String EXTRA_CHOOSE_PHOTO_TYPE = "com.liteon.icampusguardian.EXTRA_GOTO_MAIN_EXTRA_CHOOSE_PHOTO_TYPE";
-	public static final String EXTRA_GOTO_APP_INFO = "com.liteon.icampusguardian.EXTRA_GOTO_APP_INFO";
+	public static final String EXTRA_GOTO_PAGE_ID = "com.liteon.icampusguardian.EXTRA_GOTO_PAGE_ID";
+	public static final int EXTRA_PAGE_SETTING_ID = 1;
+	public static final int EXTRA_PAGE_APPINFO_ID = 2;
 	//Choose photo TYPE
 	public static final String EXTRA_CHOOSE_CHILD_ICON = "child_icon";
 	public static final String EXTRA_CHOOSE_WATCH_ICON = "watch_icon";

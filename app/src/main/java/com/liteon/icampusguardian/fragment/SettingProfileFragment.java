@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -56,7 +57,10 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	private List<Student> mStudents;
 	private int mCurrentStudentIdx;
 	private TYPE mType;
-	private AppCompatActivity mActivity; 
+	private AppCompatActivity mActivity;
+	private Toolbar mToolbar;
+	private boolean isEditMode;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
@@ -69,7 +73,13 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
         mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
         mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		initRecycleView();
+		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				getActivity().onBackPressed();
 
+			}
+		});
 		return rootView;
 	}
 	
@@ -83,7 +93,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 		one_wheel = rootView.findViewById(R.id.one_wheel);
 		mWheel_single = one_wheel.findViewById(R.id.main_wheel_left);
 		mWheelTitle = one_wheel.findViewById(R.id.year_title);
-		
+		mToolbar = getActivity().findViewById(R.id.toolbar);
 	}
 	
 	@Override
@@ -235,6 +245,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	@Override
 	public void onProfileItemClick(TYPE type) {
 		setupWheel(type);
+		enterEditMode();
 	}
 	
 	private void setupWheel(TYPE type) {
@@ -336,9 +347,21 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.action_confirm).setVisible(true);
+		if (isEditMode) {
+			menu.findItem(R.id.action_confirm).setVisible(true);
+			mToolbar.setNavigationIcon(R.drawable.ic_clear_white_24dp);
+		} else {
+            menu.findItem(R.id.action_confirm).setVisible(false);
+            mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
+        }
 	    super.onPrepareOptionsMenu(menu);
 	}
+
+	private void enterEditMode() {
+		isEditMode = true;
+		getActivity().invalidateOptionsMenu();
+	}
+
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

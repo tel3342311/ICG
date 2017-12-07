@@ -62,8 +62,8 @@ public class SettingTargetFragment extends Fragment {
 	private Map<String, TargetItem> mTargetMap;
 	private List<Student> mStudents;
 	private int mCurrentStudentIdx;
-	
 	private TargetItem mCurrentTargetItem;
+	private boolean isEditMode;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,7 +85,11 @@ public class SettingTargetFragment extends Fragment {
 
 	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.action_confirm).setVisible(true);
+		if (isEditMode) {
+			menu.findItem(R.id.action_confirm).setVisible(true);
+		} else {
+			menu.findItem(R.id.action_confirm).setVisible(false);
+		}
 		super.onPrepareOptionsMenu(menu);
 	}
 
@@ -102,6 +106,10 @@ public class SettingTargetFragment extends Fragment {
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void enterEditMode() {
+		isEditMode = true;
+		getActivity().invalidateOptionsMenu();
+	}
 	private void findView(View rootView) {
 		View carlos = rootView.findViewById(R.id.carlos);
 		carlos.setOnClickListener(mClickListener);
@@ -393,6 +401,7 @@ public class SettingTargetFragment extends Fragment {
 				title.setTextColor(getResources().getColor(R.color.md_black_1000));
 			}
 			requestFocus(v);
+			enterEditMode();
 		}
 	};
 

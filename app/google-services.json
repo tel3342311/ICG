@@ -1,27 +1,35 @@
 {
   "project_info": {
-    "project_number": "181231449362",
-    "firebase_url": "https://icg-for-parent.firebaseio.com",
-    "project_id": "icg-for-parent",
-    "storage_bucket": "icg-for-parent.appspot.com"
+    "project_number": "722705116065",
+    "firebase_url": "https://icampus-guardian-1496820423406.firebaseio.com",
+    "project_id": "icampus-guardian-1496820423406",
+    "storage_bucket": "icampus-guardian-1496820423406.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:181231449362:android:cea7d8ba15cecf2e",
+        "mobilesdk_app_id": "1:722705116065:android:cea7d8ba15cecf2e",
         "android_client_info": {
           "package_name": "com.liteon.icampusguardian"
         }
       },
       "oauth_client": [
         {
-          "client_id": "181231449362-915mgricbekk75sohmjconaveo0q569a.apps.googleusercontent.com",
+          "client_id": "722705116065-mdktacinc7e5amj1n44ov3ff79dmc5hf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.liteon.icampusguardian",
+            "certificate_hash": "dfa6bb0409f41623bc357d6965a04ef9e2343285"
+          }
+        },
+        {
+          "client_id": "722705116065-8or2j6a5n6nniv4318ddfkaae8m8ug6s.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBwTy7t55aJwxSAuxLvvqSZr55BTMtX5GI"
+          "current_key": "AIzaSyBOvdzpZ4lZXMG-5reyNczboU-uWYOdKwY"
         }
       ],
       "services": {
@@ -29,8 +37,20 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "722705116065-8or2j6a5n6nniv4318ddfkaae8m8ug6s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "722705116065-rvmrkr29t6buq0urjmcggjcuu6jr4rlo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.liteon.ICGforParents"
+              }
+            }
+          ]
         },
         "ads_service": {
           "status": 2

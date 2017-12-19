@@ -44,6 +44,7 @@ import com.liteon.icampusguardian.util.DeviceUUIDJSON;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.PetDataJSON;
 import com.liteon.icampusguardian.util.UUIDResponseJSON;
 import com.liteon.icampusguardian.util.WearableInfo;
 
@@ -295,6 +296,15 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                     deviceUUIDJSON.setType("getuuid");
                     String getUUIDJSON = gson.toJson(deviceUUIDJSON);
                     mBTAgent.write(getUUIDJSON.getBytes());
+                    Thread.sleep(1000);
+
+                    PetDataJSON petDataJSON = new PetDataJSON();
+                    petDataJSON.setType("petviewdata");
+                    petDataJSON.setAction("new");
+                    petDataJSON.setPetType("dog");
+                    petDataJSON.setPetName("Snoopy");
+                    String strPetData = gson.toJson(petDataJSON);
+                    mBTAgent.write(strPetData.getBytes());
 
                 }
             } catch (Exception e) {
@@ -585,6 +595,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
+                    Log.d(TAG, "Write data : " + writeMessage);
                     //mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
                 case Def.MESSAGE_READ:

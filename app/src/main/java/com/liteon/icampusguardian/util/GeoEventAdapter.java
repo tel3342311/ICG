@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
 
 import java.util.List;
@@ -87,8 +88,17 @@ public class GeoEventAdapter extends Adapter<GeoEventAdapter.ViewHolder> {
 
     	GeoEventItem item = mDataset.get(position);
         holder.mDateTextView.setText(item.getDate());
-        holder.mEnterSchool.setText(item.getEnterSchool());
-        holder.mLeaveSchool.setText(item.getLeavelSchool());
+        if (!TextUtils.isEmpty(item.getEnterSchool())) {
+            holder.mEnterSchool.setText(item.getEnterSchool());
+        } else {
+            holder.mEnterSchool.setText(App.getContext().getText(R.string.safty_no_watch_detected));
+        }
+
+        if (!TextUtils.isEmpty(item.getLeavelSchool())) {
+            holder.mLeaveSchool.setText(item.getLeavelSchool());
+        } else {
+            holder.mLeaveSchool.setText(App.getContext().getText(R.string.safty_no_watch_detected));
+        }
         String emergency = item.getEmergency();
         if (!TextUtils.isEmpty(emergency)) {
         	holder.mEmergencyCall.setText(emergency);

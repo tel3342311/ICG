@@ -12,8 +12,8 @@ public class GeoEventItem {
 	private String EmergencyRelease;
 
 	public GeoEventItem() {
-		EnterSchool = App.getContext().getString(R.string.safty_no_watch_detected);
-		LeaveSchool = App.getContext().getString(R.string.safty_no_watch_detected);
+//		EnterSchool = App.getContext().getString(R.string.safty_no_watch_detected);
+//		LeaveSchool = App.getContext().getString(R.string.safty_no_watch_detected);
 	}
 	/**
 	 * @return the date of geo event

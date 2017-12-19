@@ -440,8 +440,12 @@ public class SafetyFragment extends Fragment {
 			GuardianApiClient apiClient = new GuardianApiClient(getActivity());
 			JSONResponse responseEnter = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_ENTER_SCHOOL, "60");
 			parseEvent(responseEnter);
+			JSONResponse responseLeave = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_LEAVE_SCHOOL, "60");
+			parseEvent(responseLeave);
 			JSONResponse responseSOS = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_SOS_ALERT, "60");
 			parseEvent(responseSOS);
+			JSONResponse responseSOSRemove = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_SOS_REMOVE, "60");
+			parseEvent(responseSOSRemove);
 			if (mCurrentItem != null) {
 				GeoEventItem item = mEventReport.get(mCurrentItem.getDate());
 				if (item == null) {

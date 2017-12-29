@@ -1,11 +1,5 @@
 package com.liteon.icampusguardian.service;
 
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
-import com.liteon.icampusguardian.MainActivity;
-import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.util.Def;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -15,6 +9,12 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+import com.liteon.icampusguardian.MainActivity;
+import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.util.Def;
 
 public class GuardianMessagingService extends FirebaseMessagingService {
 	
@@ -43,7 +43,11 @@ public class GuardianMessagingService extends FirebaseMessagingService {
                 // Handle message within 10 seconds
                 handleNow(remoteMessage);
             }
-        }
+        } else {
+        	String message = remoteMessage.getNotification().getBody().toString();
+        	Log.d(TAG, "remoteMessage.getgetNotification " + message);
+        	handleNow(remoteMessage);
+		}
 	}
 	
 	private void scheduleJob() {
@@ -88,11 +92,12 @@ public class GuardianMessagingService extends FirebaseMessagingService {
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+				.setChannelId(Def.DEFAULT_NOTIFICATION_CHANNEL_ID);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(0, notificationBuilder.build());
 	}
 }

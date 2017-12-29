@@ -1,5 +1,6 @@
 package com.liteon.icampusguardian;
 
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.bluetooth.BluetoothAdapter;
@@ -14,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.BottomNavigationView;
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		// registerNotification();
+		registerNotification();
 		mDbHelper = DBHelper.getInstance(this);
 		mSharedPreference = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 
@@ -136,18 +138,16 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 
 	private void registerNotification() {
 
-		// if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-		// Create channel to show notifications.
-		// String channelId =
-		// getString(R.string.default_notification_channel_id);
-		// String channelName =
-		// getString(R.string.default_notification_channel_name);
-		// NotificationManager notificationManager =
-		// getSystemService(NotificationManager.class);
-		// notificationManager.createNotificationChannel(new
-		// NotificationChannel(channelId,
-		// channelName, NotificationManager.IMPORTANCE_LOW));
-		// }
+		 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+             //Create channel to show notifications.
+             String channelId = Def.DEFAULT_NOTIFICATION_CHANNEL_ID;
+             String channelName = Def.DEFAULT_NOTIFICATION_CHANNEL_NAME;
+             NotificationManager notificationManager =
+                     getSystemService(NotificationManager.class);
+             notificationManager.createNotificationChannel(new
+                     NotificationChannel(channelId,
+                     channelName, NotificationManager.IMPORTANCE_LOW));
+         }
 	}
 
 	private void setupToolbar() {
@@ -196,7 +196,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 					} else {
 						mSaftyFragment.setAlertIntent(getIntent());
 					}
-					changeFragment(mSaftyFragment);
                     mBottomView.setSelectedItemId(R.id.action_safty);
 				}
 			} else {
@@ -480,10 +479,14 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		
 		@Override
 		public void onClick(View v) {
+		    if (mStudents.size() == 0) {
+		        return;
+            }
 			Student student = mStudents.get(mCurrentStudentIdx);
 			student.setIsDelete(1);
 			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
 			mStudents.remove(student);
+            new UnPairCloudTask().execute(student);
 			mDeleteAccountConfirmDialog.dismiss();
 			final CustomDialog dialog = new CustomDialog();
 			dialog.setTitle(String.format(getString(R.string.child_deleted), mChildName.getText()));
@@ -729,7 +732,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 					if (mSaftyFragment == null) {
 						mSaftyFragment = new SafetyFragment(intent);
 					}
-					changeFragment(mSaftyFragment);
+					mSaftyFragment.setAlertIntent(intent);
+					mBottomView.setSelectedItemId(R.id.action_safty);
 				}
 			}
 		}
@@ -780,11 +784,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		};
 	}
 	//To send unpair event to cloud
-	class UnPairCloudTask extends AsyncTask<Void, Void, Void> {
+	class UnPairCloudTask extends AsyncTask<Student, Void, Void> {
 
 		@Override
-		protected Void doInBackground(Void... params) {
-            Student student = mStudents.get(mCurrentStudentIdx);
+		protected Void doInBackground(Student... params) {
+            Student student = params[0];
 			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
 			JSONResponse response = apiClient.unpairDevice(student);
 			if (response != null) {
@@ -830,7 +834,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			//call Cloud API 19 to Unpair
-            new UnPairCloudTask().execute();
+            new UnPairCloudTask().execute(mStudents.get(mCurrentStudentIdx));
 		}
 	}
 
@@ -887,8 +891,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
                 int pageId = getIntent().getIntExtra(Def.EXTRA_GOTO_PAGE_ID, -1);
                 Log.d(TAG, "PAGE ID is " + pageId);
                 if (getIntent().getIntExtra(Def.EXTRA_GOTO_PAGE_ID, -1) == Def.EXTRA_PAGE_SETTING_ID) {
-                    SettingFragment settingFragment = new SettingFragment();
-                    changeFragment(settingFragment);
                     mBottomView.setSelectedItemId(R.id.action_setting);
                 } else if (getIntent().getIntExtra(Def.EXTRA_GOTO_PAGE_ID, -1) == Def.EXTRA_PAGE_APPINFO_ID) {
                     AppInfoPrivacyFragment appFragment = new AppInfoPrivacyFragment(this);
@@ -902,7 +904,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
                     if (mSaftyFragment == null) {
                         mSaftyFragment = new SafetyFragment();
                     }
-                    changeFragment(mSaftyFragment, getString(R.string.safty), NAVIGATION_DRAWER);
                     mBottomView.setSelectedItemId(R.id.action_safty);
                 }
             } else {

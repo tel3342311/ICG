@@ -107,7 +107,6 @@ public class WelcomeActivity extends AppCompatActivity implements OnClickListene
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		if (requestCode == REQUEST_USERTERM) {
 			if (RESULT_OK == resultCode){
 				setResult(RESULT_OK);

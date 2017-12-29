@@ -145,8 +145,9 @@ public class SettingFragment extends Fragment {
 				return;
 			}
 			//For chinese 7 char
+			boolean isChanged = false;
 			if (ClsUtils.isChinese(s.toString())) {
-				boolean isChanged = false;
+
 				while (s.toString().length() > 7) { // 若變化後的長度超過最大長度
 					// 刪除最後變化的字元
 					currentEnd--;
@@ -155,7 +156,8 @@ public class SettingFragment extends Fragment {
 				}
 				enterEditMode();
 			}
-			if (!TextUtils.equals(mStudents.get(mCurrentStudentIdx).getNickname(), s.toString())) {
+			if (!TextUtils.equals(mStudents.get(mCurrentStudentIdx).getNickname(), s.toString())
+					|| s.toString().length() == 14 || isChanged) {
 				mStudents.get(mCurrentStudentIdx).setNickname(s.toString());
 				enterEditMode();			
 			} else {

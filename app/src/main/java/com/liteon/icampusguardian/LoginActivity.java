@@ -342,12 +342,61 @@ public class LoginActivity extends AppCompatActivity {
     class SocialLoginTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... strings) {
-            String name = strings[0];
+			//check network
+			if (!isNetworkConnectionAvailable()) {
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok));
+					}
+				});
+				return null;
+			}
+			//check server
+			if (!isURLReachable(LoginActivity.this, mApiClient.getServerUri().toString())) {
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok));
+					}
+				});
+				return null;
+			}
+        	String name = strings[0];
             String email = strings[1];
             String token = strings[2];
             final JSONResponse response = mApiClient.socialSignIn(name, email, token);
             if (response != null) {
-                return response.getReturn().getResults().getToken();
+                String retToken = response.getReturn().getResults().getToken();
+				DBHelper helper = DBHelper.getInstance(LoginActivity.this);
+				SharedPreferences sp = getApplicationContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+				//Account values
+				ContentValues cv = new ContentValues();
+				cv.put(AccountEntry.COLUMN_NAME_USER_NAME, email);
+				cv.put(AccountEntry.COLUMN_NAME_TOKEN, retToken);
+				helper.insertAccount(helper.getWritableDatabase(), cv);
+				//get Child list
+				mApiClient.setToken(retToken);
+				JSONResponse response_childList = mApiClient.getChildrenList();
+				mStudentList = Arrays.asList(response_childList.getReturn().getResults().getStudents());
+
+				//Send FireBase Instance token to server
+				String fcmToken = FirebaseInstanceId.getInstance().getToken();
+				mApiClient.updateAppToken(fcmToken);
+				Log.i(TAG, "API 11 UpdateAppToken called : FCM Token is " + fcmToken);
+				SharedPreferences.Editor editor = sp.edit();
+				editor.putString(Def.SP_LOGIN_TOKEN, token);
+				if (mStudentList.size() > 0) {
+					editor.putInt(Def.SP_CURRENT_STUDENT, 0);
+					//clear child list in db
+					helper.clearChildList(helper.getWritableDatabase());
+					//Save child list to db
+					helper.insertChildList(helper.getWritableDatabase(), mStudentList);
+				}
+				editor.commit();
+                return token;
             }
             return null;
         }
@@ -356,9 +405,15 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String token) {
             super.onPostExecute(token);
             if (!TextUtils.isEmpty(token)) {
-                Intent intent = new Intent();
-                intent.setClass(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+				Intent intent = new Intent();
+				//First use, pairing child
+				if (mStudentList.size() == 0) {
+					intent.setClass(getApplicationContext(), ChildInfoUpdateActivity.class);
+					startActivity(intent);
+				} else {
+					intent.setClass(getApplicationContext(), MainActivity.class);
+					startActivity(intent);
+				}
             }
         }
     }

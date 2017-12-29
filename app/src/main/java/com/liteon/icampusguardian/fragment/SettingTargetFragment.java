@@ -98,9 +98,7 @@ public class SettingTargetFragment extends Fragment {
 		switch (item.getItemId()) {
 			case R.id.action_confirm:
 				saveTarget();
-                if (getActivity() != null) {
-                    getActivity().onBackPressed();
-                }
+                exitEditMode();
 				break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -108,8 +106,18 @@ public class SettingTargetFragment extends Fragment {
 
 	private void enterEditMode() {
 		isEditMode = true;
-		getActivity().invalidateOptionsMenu();
+		if (getActivity() != null) {
+			getActivity().invalidateOptionsMenu();
+		}
 	}
+
+	private void exitEditMode() {
+		isEditMode = false;
+		if (getActivity() != null) {
+			getActivity().invalidateOptionsMenu();
+		}
+	}
+
 	private void findView(View rootView) {
 		View carlos = rootView.findViewById(R.id.carlos);
 		carlos.setOnClickListener(mClickListener);

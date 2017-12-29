@@ -359,9 +359,17 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 
 	private void enterEditMode() {
 		isEditMode = true;
-		getActivity().invalidateOptionsMenu();
+		if (getActivity() != null) {
+			getActivity().invalidateOptionsMenu();
+		}
 	}
 
+	private void exitEditMode() {
+		isEditMode = false;
+		if (getActivity() != null) {
+			getActivity().invalidateOptionsMenu();
+		}
+	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -391,9 +399,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
         }
 
         protected void onPostExecute(String token) {
-        	if (mActivity != null) {
-        		mActivity.onBackPressed();
-        	}
+			exitEditMode();
         }
     }
 	

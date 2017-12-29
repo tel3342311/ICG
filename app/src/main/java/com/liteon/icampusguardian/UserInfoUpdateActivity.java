@@ -230,7 +230,10 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 			}
 			//check if password & password confirm is match
 			if (!TextUtils.equals(mPassword.getText(), mConfirmPassword.getText())) {
+				mPasswordHint.setText(getString(R.string.password_not_match));
 				return false;
+			} else {
+				mPasswordHint.setText(getString(R.string.password_hint));
 			}
 
 		}

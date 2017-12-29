@@ -322,6 +322,11 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         		dialog.setIcon(0);
         		dialog.setBtnText(getString(android.R.string.ok));
         		dialog.setBtnConfirm(mOnBLEFailCancelClickListener);
+                try {
+                    getSupportFragmentManager().popBackStackImmediate();
+                } catch (IllegalStateException ignored) {
+                    return;
+                }
         		dialog.show(getSupportFragmentManager(), "dialog_fragment");
         	} else {
         		mBLEFailConfirmDialog = new ConfirmDeleteDialog();
@@ -330,6 +335,11 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         		mBLEFailConfirmDialog.setmTitleText(getString(R.string.pairing_watch_pin_error));
         		mBLEFailConfirmDialog.setmBtnConfirmText(getString(R.string.pairing_watch_pair));
         		mBLEFailConfirmDialog.setmBtnCancelText(getString(R.string.pairing_watch_later));
+                try {
+                    getSupportFragmentManager().popBackStackImmediate();
+                } catch (IllegalStateException ignored) {
+                    return;
+                }
         		mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
         	}
         }

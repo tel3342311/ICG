@@ -318,6 +318,11 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
         mBLEFailConfirmDialog.setmTitleText(getString(R.string.syncing_photo_to_watch_failed));
         mBLEFailConfirmDialog.setmBtnConfirmText(getString(R.string.syncing_photo_to_watch_synced));
         mBLEFailConfirmDialog.setmBtnCancelText(getString(R.string.syncing_photo_to_watch_cancel));
+		try {
+			getSupportFragmentManager().popBackStackImmediate();
+		} catch (IllegalStateException ignored) {
+			return;
+		}
         mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
     }
 

@@ -247,4 +247,5 @@
 	<string name="alarm_dialog_delete">刪除</string>
     <!-- Password hint -->
     <string name="password_hint">如有更改密碼將重新登入，請記住新密碼</string>
+	<string name="login_ok">好</string>
 </resources>

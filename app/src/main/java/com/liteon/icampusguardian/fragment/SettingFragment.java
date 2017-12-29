@@ -148,8 +148,8 @@ public class SettingFragment extends Fragment {
 			boolean isChanged = false;
 			if (ClsUtils.isChinese(s.toString())) {
 
-				while (s.toString().length() > 7) { // 若變化後的長度超過最大長度
-					// 刪除最後變化的字元
+				while (s.toString().length() > 7) { // if chinese char more than 7
+					// delete last char
 					currentEnd--;
 					s.delete(currentEnd, currentEnd + 1);
 					isChanged = true;

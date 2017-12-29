@@ -19,8 +19,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.liteon.icampusguardian.util.CustomDialog;
+import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
+import com.liteon.icampusguardian.util.Utils;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -134,53 +136,33 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 	}
 	class ResetTask extends AsyncTask<Void, Void, Boolean> {
 
-        protected Boolean doInBackground(Void... params) {
+		private String mErrorMsg;
+
+		protected Boolean doInBackground(Void... params) {
         	//check network 
         	if (!isNetworkConnectionAvailable()) {
-        		runOnUiThread(new Runnable() {
-
-    				@Override
-    				public void run() {
-    					showErrorDialog( getString(R.string.login_no_network));
-    				}
-    			});
+				mErrorMsg = getString(R.string.login_no_network);
         		return false;
         	}
         	GuardianApiClient apiClient = new GuardianApiClient(UserResetPasswordActivity.this);
         	//check server 
         	if (!isURLReachable(UserResetPasswordActivity.this, apiClient.getServerUri().toString())) {
-        		runOnUiThread(new Runnable() {
-
-    				@Override
-    				public void run() {
-    					showErrorDialog(getString(R.string.login_error_no_server_connection));
-    				}
-    			});
-        		return false;
+				mErrorMsg = getString(R.string.login_error_no_server_connection);
+				return false;
         	}
         	JSONResponse response = resetPassword();
         	if (response == null) {
-        		runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						showErrorDialog(getString(R.string.forget_account_not_exist));
-					}
-				});
+				mErrorMsg = getString(R.string.login_error_no_server_connection);
 				return false;
 			}
-			if (response.getReturn().getResults() == null) {
-				runOnUiThread(new Runnable() {
 
-					@Override
-					public void run() {
-						showErrorDialog(getString(R.string.login_error_email));
-					}
-				});
+			if (TextUtils.equals(response.getReturn().getResponseSummary().getStatusCode(), Def.RET_ERR_23)) {
+				return true;
+			} else {
+				mErrorMsg = getString(R.string.login_error_email);
 				return false;
 			}
-        	return true;
-        }
+		}
 
         protected void onPostExecute(Boolean isSuccess) {
         	if (isSuccess) {
@@ -188,7 +170,9 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 				mDescView.setText(getString(R.string.forget_check_mailbox_and_setup));
 				mSend.setVisibility(View.GONE);
 				mName.setVisibility(View.INVISIBLE);
-        	}
+        	} else {
+				Utils.showErrorDialog(mErrorMsg);
+			}
         }
     }
 	

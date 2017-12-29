@@ -54,7 +54,8 @@ public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
         public void onClick(View v) {
             if (v.getId() == R.id.icon_area) {
                 if (isEditMode) {
-                    mClicks.get().onDeleteAlarm(position);
+                    //mClicks.get().onDeleteAlarm(position);
+                    mClicks.get().onEditAlarm(position);
                 } else {
                     mClicks.get().onEditAlarm(position);
                 }
@@ -98,11 +99,11 @@ public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
         holder.mPeriodTextView.setEnabled(item.getEnabled());
         holder.mAlarmEnableView.setChecked(item.getEnabled());
         if (isEditMode) {
-            holder.mItemIcon.setBackgroundResource(R.drawable.health_btnf_cancel);
+            //holder.mItemIcon.setBackgroundResource(R.drawable.health_btnf_cancel);
             holder.mMoreIcon.setVisibility(View.VISIBLE);
             holder.mAlarmEnableView.setVisibility(View.INVISIBLE);
         } else {
-            holder.mItemIcon.setBackgroundResource(R.drawable.alarm_img_alarm);
+            //holder.mItemIcon.setBackgroundResource(R.drawable.alarm_img_alarm);
             holder.mMoreIcon.setVisibility(View.INVISIBLE);
             holder.mAlarmEnableView.setVisibility(View.VISIBLE);
         }

@@ -27,6 +27,7 @@ public class Def {
 	public static final String RET_ERR_01 = "ERR01";
 	public static final String RET_ERR_02 = "ERR02";
     public static final String RET_ERR_16 = "ERR16";
+	public static final String RET_ERR_23 = "ERR23";
 
 	//API 01 registration
 	public static final String REQUEST_USER_REGISTRATION = "ParentUserRegistration";

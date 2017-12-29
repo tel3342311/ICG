@@ -38,6 +38,7 @@ import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.PhotoItem;
 import com.liteon.icampusguardian.util.PhotoItemAdapter;
 import com.liteon.icampusguardian.util.PhotoItemAdapter.ViewHolder.IPhotoViewHolderClicks;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -408,19 +409,25 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 			IOUtils.copy(getContentResolver().openInputStream(picUri), new FileOutputStream(mCropping));
 			Uri contentUri = FileProvider.getUriForFile(this, "com.liteon.icampusguardian.fileprovider", mCropping);
 
-	        Intent cropIntent = new Intent("com.android.camera.action.CROP");
-
-	        cropIntent.setDataAndType(contentUri, "image/*");
-	        cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-	        cropIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-	        cropIntent.putExtra("crop", "true");           
-	        cropIntent.putExtra("aspectX", 1);
-	        cropIntent.putExtra("aspectY", 1);           
-	        cropIntent.putExtra("outputX", 300);
-	        cropIntent.putExtra("outputY", 300);           
-	        cropIntent.putExtra("return-data", true);
-	        cropIntent.putExtra("outputFormat", "JPEG");
-	        startActivityForResult(cropIntent, CROP_PIC_REQUEST_CODE);
+            CropImage.activity(contentUri)
+                    .start(this);
+//	        Intent cropIntent = new Intent("com.android.camera.action.CROP");
+//
+//			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//				cropIntent.setDataAndType(picUri, "image/*");
+//			} else {
+//				cropIntent.setDataAndType(contentUri, "image/*");
+//			}
+//	        cropIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//	        cropIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//	        cropIntent.putExtra("crop", "true");
+//	        cropIntent.putExtra("aspectX", 1);
+//	        cropIntent.putExtra("aspectY", 1);
+//	        cropIntent.putExtra("outputX", 300);
+//	        cropIntent.putExtra("outputY", 300);
+//	        cropIntent.putExtra("return-data", true);
+//	        cropIntent.putExtra("outputFormat", "JPEG");
+//	        startActivityForResult(cropIntent, CROP_PIC_REQUEST_CODE);
 	    }
 	    // respond to users whose devices do not support the crop action
 	    catch (ActivityNotFoundException anfe) {
@@ -446,6 +453,50 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	    super.onActivityResult(requestCode, resultCode, data);
 
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                if (mCropping != null && mCropping.exists()) {
+                    mCropping.delete();
+                }
+                Uri resultUri = result.getUri();
+                Bitmap bitmap = null;
+                try {
+                    bitmap = getThumbnail(resultUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (bitmap != null) {
+                    File f = saveBitmapAsIcon(bitmap);
+                    if (!isFromWatchTheme) {
+                        mCurrentItem = mDataSet.get(mCurrentItemIdx);
+                        mCurrentItem.filePath = f.getAbsolutePath();
+                        mPhotoMap.put(mStudents.get(mCurrnetStudentIdx).getStudent_id(), mCurrentItem);
+                    } else {
+                        PhotoItem item = mDataSet.get(mCurrentItemIdx);
+                        File temp = new File(f.getAbsolutePath() + Long.toString(Calendar.getInstance().getTimeInMillis()));
+                        try {
+                            FileUtils.copyFile(f, temp);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        item.filePath = temp.getAbsolutePath();
+                        List listPhotoItem = mPhotoMapWatchTheme.get(mStudents.get(mCurrnetStudentIdx).getStudent_id());
+                        if (listPhotoItem.size() < 3) {
+                            listPhotoItem.add(0, item);
+                        } else {
+                            listPhotoItem.remove(listPhotoItem.size() - 1);
+                            listPhotoItem.add(0, item);
+                        }
+                    }
+                    updateUsedItem();
+                    exit();
+                }
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
 	    if (requestCode == CROP_PIC_REQUEST_CODE) {
 	    	if (mCropping != null && mCropping.exists()) {
 	    		mCropping.delete();
@@ -491,7 +542,6 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 	        		updateUsedItem();
 	        	}
 	        	exit();
-				
 			}
 	    }
 

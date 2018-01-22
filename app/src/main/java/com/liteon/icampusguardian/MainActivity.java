@@ -73,6 +73,7 @@ import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -208,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		filter.addAction(Def.ACTION_NOTIFY);
 		mLocalBroadcastManager.registerReceiver(mReceiver, filter);
 		mToolbar.setTitle("");
+		new UpdateStudentList().execute();
 		initChildInfo();
 	}
 
@@ -416,6 +418,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		} else {
 			mChildIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.setup_img_picture));
 		}
+		//Show Toast when no uuid
+		if (TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
+			Toast.makeText(this, "Please go to settings and pair with your device", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	private void updateMenuItem() {
@@ -484,8 +490,11 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
             }
 			Student student = mStudents.get(mCurrentStudentIdx);
 			student.setIsDelete(1);
-			mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+			mDbHelper.deleteChildByStudentID(mDbHelper.getWritableDatabase(), student.getStudent_id());
 			mStudents.remove(student);
+			SharedPreferences.Editor editor = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE).edit();
+			editor.putInt(Def.SP_CURRENT_STUDENT, 0);
+			editor.commit();
             new UnPairCloudTask().execute(student);
 			mDeleteAccountConfirmDialog.dismiss();
 			final CustomDialog dialog = new CustomDialog();
@@ -538,7 +547,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
             editor.remove(Def.SP_LOGIN_TOKEN);
             editor.commit();
 
-
+			GuardianApiClient.getInstance(MainActivity.this).setToken(null);
             DBHelper helper = DBHelper.getInstance(MainActivity.this);
             helper.deletaAll(helper.getWritableDatabase());
 
@@ -783,6 +792,50 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			}
 		};
 	}
+
+	class UpdateStudentList extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... voids) {
+			//sync student list
+			mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+			//get student from cloud
+			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
+			JSONResponse response_childList = apiClient.getChildrenList();
+			List<Student> studentList = Arrays.asList(response_childList.getReturn().getResults().getStudents());
+
+			for (Student oldItem : mStudents) {
+				boolean isExist = false;
+				for (Student newItem : studentList) {
+					if (TextUtils.equals(newItem.getStudent_id(), oldItem.getStudent_id())) {
+						mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), newItem);
+						isExist = true;
+						break;
+					}
+				}
+				if (!isExist) {
+					oldItem.setUuid("");
+					mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), oldItem);
+				}
+			}
+			for (Student newItem : studentList) {
+				boolean isExist = false;
+				for (Student oldItem : mStudents) {
+					if (TextUtils.equals(newItem.getStudent_id(), oldItem.getStudent_id())){
+						isExist = true;
+						break;
+					}
+				}
+				if (!isExist) {
+					mDbHelper.insertChild(mDbHelper.getWritableDatabase(), newItem);
+				}
+			}
+			mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+
+			return null;
+		}
+	}
+
 	//To send unpair event to cloud
 	class UnPairCloudTask extends AsyncTask<Student, Void, Void> {
 

@@ -371,8 +371,9 @@ public class SettingFragment extends Fragment {
     };
 
     public void notifyBTState() {
-        mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
-        //get current bt address
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE,Context.MODE_PRIVATE);		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		//get current bt address
         String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
         mBTAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
 

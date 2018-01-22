@@ -205,10 +205,11 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
 		}
 	};
 
-	class UpdateUUIDToCloud extends AsyncTask<String, Void, String> {
+	class UpdateUUIDToCloud extends AsyncTask<String, Void, Boolean> {
 
+	    private String mErrorMessage;
         @Override
-        protected String doInBackground(String... strings) {
+        protected Boolean doInBackground(String... strings) {
             String uuid = strings[0];
             Student student = mStudents.get(mCurrnetStudentIdx);
             //Save Wearable info
@@ -228,8 +229,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
             if (response != null) {
                 String statusCode = response.getReturn().getResponseSummary().getStatusCode();
                 if (!TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
-                    //student.setUuid("");
-                    //mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+                    return false;
                 } else {
                     if (response.getReturn().getResults() != null) {
 
@@ -255,10 +255,29 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                         mApiClient.updateChildData(item);
                     }
                     mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), student);
+                    return true;
                 }
 
             }
-            return null;
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean bool) {
+            if (bool.booleanValue() == false) {
+                mBLEFailConfirmDialog = new ConfirmDeleteDialog();
+                mBLEFailConfirmDialog.setOnConfirmEventListener(mOnBLEFailConfirmClickListener);
+                mBLEFailConfirmDialog.setmOnCancelListener(mOnBLEFailCancelClickListener);
+                mBLEFailConfirmDialog.setmTitleText(getString(R.string.pairing_watch_pin_error));
+                mBLEFailConfirmDialog.setmBtnConfirmText(getString(R.string.pairing_watch_pair));
+                mBLEFailConfirmDialog.setmBtnCancelText(getString(R.string.pairing_watch_later));
+                try {
+                    getSupportFragmentManager().popBackStackImmediate();
+                } catch (IllegalStateException ignored) {
+                    return;
+                }
+                mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
+            }
         }
     }
 	

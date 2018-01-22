@@ -22,8 +22,8 @@ android {
         applicationId "com.liteon.icampusguardian"
         minSdkVersion 18
         targetSdkVersion 26
-        versionCode 26
-        versionName "1.15"
+        versionCode 27
+        versionName "1.16"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }

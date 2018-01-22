@@ -394,8 +394,8 @@ public class GuardianApiClient {
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
 						JSONResponse.class);
-				showStatus(result);
-
+				String statusCode = result.getReturn().getResponseSummary().getStatusCode();
+				Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
 				return result;
 			} else {
 				showError(status);
@@ -428,8 +428,8 @@ public class GuardianApiClient {
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
 						JSONResponse.class);
-				showStatus(result);
-
+				String statusCode = result.getReturn().getResponseSummary().getStatusCode();
+				Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
 				return result;
 			} else {
 				showError(status);

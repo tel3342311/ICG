@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.liteon.icampusguardian.util.JSONResponse.Device;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
 import org.json.JSONException;
@@ -57,10 +56,13 @@ public class GuardianApiClient {
 		mContext = new WeakReference<Context>(context);
 	}
 	public JSONResponse login(String user, String password) {
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USERLOGIN).build();
 		try {
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("POST");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -71,7 +73,7 @@ public class GuardianApiClient {
 			jsonParam.put(Def.KEY_USERNAME, user);
 			jsonParam.put(Def.KEY_PASSWORD, password);
 			//jsonParam.put(Def.KEY_FORCELOGIN, "yes");
-			OutputStream os = urlConnection.getOutputStream();
+			os = urlConnection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
             writer.write(jsonParam.toString());
@@ -79,7 +81,8 @@ public class GuardianApiClient {
             writer.close();
             int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
-            	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	is = urlConnection.getInputStream();
+            	JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
             	if (result.getReturn() != null) {
             		mToken = result.getReturn().getResponseSummary().getSessionId();
             	}
@@ -94,6 +97,10 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
@@ -101,9 +108,12 @@ public class GuardianApiClient {
 	public JSONResponse registerUser(String userEmail, String password, String profileName, String mobileNumber) {
 
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_REGISTRATION).build();
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("POST");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -117,11 +127,12 @@ public class GuardianApiClient {
 			jsonParam.put(Def.KEY_MOBILE_NUMBER, mobileNumber);
 
 
-			OutputStream os = urlConnection.getOutputStream();
+			os = urlConnection.getOutputStream();
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 			writer.write(jsonParam.toString());
 			writer.flush();
 			writer.close();
+			os.close();
 			final int status = urlConnection.getResponseCode();
 			if (status == HttpURLConnection.HTTP_OK) {
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
@@ -146,9 +157,12 @@ public class GuardianApiClient {
 	public JSONResponse updateParentDetail(String given_name, String account_name, String password, String phoneNumber) {
 
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_UPDATE).appendPath(mToken).build();
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("PUT");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -160,15 +174,17 @@ public class GuardianApiClient {
 			jsonParam.put(Def.KEY_ACCOUNT_NAME, account_name);
 			jsonParam.put(Def.KEY_PASSWORD, password);
 
-			OutputStream os = urlConnection.getOutputStream();
+			os = urlConnection.getOutputStream();
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 			writer.write(jsonParam.toString());
 			writer.flush();
 			writer.close();
+			os.close();
 			final int status = urlConnection.getResponseCode();
 			if (status == HttpURLConnection.HTTP_OK) {
-				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
-						JSONResponse.class);
+				is = urlConnection.getInputStream();
+				JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+				is.close();
 				//showStatus(result);
             	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
         		Log.e(TAG, "status code: " + statusCode + ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
@@ -183,6 +199,10 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
@@ -190,9 +210,12 @@ public class GuardianApiClient {
 	public JSONResponse resetPassword(String userEmail) {
 
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_PASSWORD_REST).build();
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("POST");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -203,16 +226,17 @@ public class GuardianApiClient {
 			jsonParam.put(Def.KEY_USERNAME, userEmail);
 			jsonParam.put(Def.KEY_USER_ROLE, "parent_admin");
 
-
-			OutputStream os = urlConnection.getOutputStream();
+			os = urlConnection.getOutputStream();
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 			writer.write(jsonParam.toString());
 			writer.flush();
 			writer.close();
+			os.close();
 			final int status = urlConnection.getResponseCode();
 			if (status == HttpURLConnection.HTTP_OK) {
-				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
-						JSONResponse.class);
+				is = urlConnection.getInputStream();
+				JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+				is.close();
 				return result;
 			} else {
 				showError(status);
@@ -227,6 +251,10 @@ public class GuardianApiClient {
 			return null;
 		} catch (JSONException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
@@ -247,11 +275,14 @@ public class GuardianApiClient {
 	
 	public JSONResponse getChildrenList() {
 
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_CHILDREN_LIST).
 				appendPath(mToken).build();
 		try {
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -260,7 +291,9 @@ public class GuardianApiClient {
             
 			int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
-            	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	is = urlConnection.getInputStream();
+            	JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+				is.close();
             	if (!TextUtils.isEmpty(result.getReturn().getResponseSummary().getStatusCode())) {
             		return result;
             	}
@@ -272,6 +305,10 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
@@ -295,10 +332,13 @@ public class GuardianApiClient {
 				appendPath(event_id).
 				appendPath(startDate).
                 appendPath(endDate).build();
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -307,13 +347,14 @@ public class GuardianApiClient {
             
 			int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
-            	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	is = urlConnection.getInputStream();
+            	JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+				is.close();
             	if (result == null || result.getReturn() == null) {
             	    return null;
                 }
             	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
             	if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
-            		Device[] devices = result.getReturn().getResults().getDevices();
             		return result;
             	} else {
             		Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
@@ -324,6 +365,10 @@ public class GuardianApiClient {
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
@@ -332,9 +377,12 @@ public class GuardianApiClient {
 
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_UPDATE_CHILD_INFO).
 					appendPath(mToken).build();
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("PUT");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -349,15 +397,18 @@ public class GuardianApiClient {
 			jsonParam.put(Def.KEY_DOB, student.getDob());
 			jsonParam.put(Def.KEY_GENDER, student.getGender());
 			
-			OutputStream os = urlConnection.getOutputStream();
+			os = urlConnection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
             writer.write(jsonParam.toString());
             writer.flush();
             writer.close();
+			os.close();
             final int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
-            	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	is = urlConnection.getInputStream();
+            	JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+            	is.close();
             	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
             	Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
             	return result;
@@ -371,7 +422,11 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} catch (JSONException e) {
             e.printStackTrace();
-        }
+        } finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
+		}
 		return null;
 	}
 	
@@ -380,10 +435,12 @@ public class GuardianApiClient {
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_PAIR_NEW_DEVICE).
 				appendPath(mToken).
 				appendPath(student.getUuid()).build();
-		
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -392,8 +449,10 @@ public class GuardianApiClient {
 
 			final int status = urlConnection.getResponseCode();
 			if (status == HttpURLConnection.HTTP_OK) {
+				is = urlConnection.getInputStream();
 				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
 						JSONResponse.class);
+				is.close();
 				String statusCode = result.getReturn().getResponseSummary().getStatusCode();
 				Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
 				return result;
@@ -405,6 +464,10 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
@@ -414,10 +477,12 @@ public class GuardianApiClient {
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_UNPAIR_DEVICE).
 				appendPath(mToken).
 				appendPath(student.getUuid()).build();
-		
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("POST");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -426,8 +491,9 @@ public class GuardianApiClient {
 
 			final int status = urlConnection.getResponseCode();
 			if (status == HttpURLConnection.HTTP_OK) {
-				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
-						JSONResponse.class);
+				is = urlConnection.getInputStream();
+				JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+				is.close();
 				String statusCode = result.getReturn().getResponseSummary().getStatusCode();
 				Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
 				return result;
@@ -439,6 +505,10 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
@@ -447,10 +517,12 @@ public class GuardianApiClient {
 
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_UPDATE_APP_TOKEN).
 				appendPath(mToken).build();
-		
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("PUT");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -462,16 +534,17 @@ public class GuardianApiClient {
 			jsonParam.put(Def.KEY_APP_TOKEN, fireBaseInstanceToken);
 			jsonParam.put(Def.KEY_APP_TYPE, Def.KEY_APP_TYPE_ANDROID);
 
-			OutputStream os = urlConnection.getOutputStream();
+			os = urlConnection.getOutputStream();
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 			writer.write(jsonParam.toString());
 			writer.flush();
 			writer.close();
+			os.close();
 			final int status = urlConnection.getResponseCode();
 			if (status == HttpURLConnection.HTTP_OK) {
-				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
-						JSONResponse.class);
-
+				is = urlConnection.getInputStream();
+				JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+				is.close();
 				return result;
 			} else {
 				showError(status);
@@ -483,16 +556,23 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
 
 	public JSONResponse socialSignIn(String name, String email, String token) {
         Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_FEDERATEDLOGIN).build();
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
         try {
 
             URL url = new URL(uri.toString());
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setDoInput(true);
@@ -505,15 +585,18 @@ public class GuardianApiClient {
             jsonParam.put(Def.KEY_SOCIAL_EMAIL, email);
             jsonParam.put(Def.KEY_SOCIAL_TOKEN, token);
             jsonParam.put(Def.KEY_SOCIAL_USERAGENT, Def.VALUE_SOCIAL_USERAGENT);
-            OutputStream os = urlConnection.getOutputStream();
+			os = urlConnection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
             writer.write(jsonParam.toString());
             writer.flush();
             writer.close();
+            os.close();
             int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
-                JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	is = urlConnection.getInputStream();
+                JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+				is.close();
                 if (result.getReturn() != null) {
                     mToken = result.getReturn().getResponseSummary().getSessionId();
                 }
@@ -526,8 +609,12 @@ public class GuardianApiClient {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-        return null;
+        } finally {
+        	if (urlConnection != null) {
+        		urlConnection.disconnect();
+			}
+		}
+		return null;
     }
 
 	public JSONResponse getStudentLocation(Student student) {
@@ -535,10 +622,13 @@ public class GuardianApiClient {
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GET_CHILDREN_LOCATION).
 				appendPath(mToken).
 				appendPath(student.getUuid()).build();
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -547,7 +637,9 @@ public class GuardianApiClient {
 
 			int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
-            	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	is = urlConnection.getInputStream();
+            	JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+            	is.close();
             	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
             	if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
                     if (result.getReturn().getResults() != null) {
@@ -565,6 +657,10 @@ public class GuardianApiClient {
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
@@ -573,10 +669,13 @@ public class GuardianApiClient {
 
 		Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_USER_DETAIL).
 				appendPath(mToken).build();
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
 		try {
 
 			URL url = new URL(uri.toString());
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.setRequestProperty("Content-Type", "application/json");
 			urlConnection.setDoInput(true);
@@ -585,7 +684,9 @@ public class GuardianApiClient {
             
 			int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
-            	JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	is = urlConnection.getInputStream();
+            	JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+            	is.close();
             	String statusCode = result.getReturn().getResponseSummary().getStatusCode();
             	if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
             		Log.e(TAG, "lat: " + result.getReturn().getResults().getLatitude() + ", longtitude " + result.getReturn().getResults().getLongitude());
@@ -599,6 +700,10 @@ public class GuardianApiClient {
 			
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
 		}
 		return null;
 	}
@@ -607,10 +712,13 @@ public class GuardianApiClient {
         Uri uri = mUri.buildUpon().appendPath(Def.REQUEST_GRANT_TEDETAIL).
                 appendPath(mToken).
                 appendPath(student.getStudent_id()).build();
+		HttpURLConnection urlConnection = null;
+		OutputStream os = null;
+		InputStream is = null;
         try {
 
             URL url = new URL(uri.toString());
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type", "application/json");
             urlConnection.setDoInput(true);
@@ -619,7 +727,9 @@ public class GuardianApiClient {
 
             int status = urlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
-                JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(), JSONResponse.class);
+            	is = urlConnection.getInputStream();
+                JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+                is.close();
                 String statusCode = result.getReturn().getResponseSummary().getStatusCode();
                 if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
 
@@ -633,20 +743,18 @@ public class GuardianApiClient {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        } finally {
+        	if (urlConnection != null) {
+				urlConnection.disconnect();
+			}
+		}
         return null;
     }
 
 	private void showError(int status) {
 		final int status_code = status; 
 		if (mContext.get() != null) {
-    		((Activity)mContext.get()).runOnUiThread( new Runnable() {
-				
-				@Override
-				public void run() {
-					Toast.makeText(mContext.get(), "Error : Http response " + status_code, Toast.LENGTH_SHORT).show();
-				}
-			});
+    		((Activity)mContext.get()).runOnUiThread(() -> Toast.makeText(mContext.get(), "Error : Http response " + status_code, Toast.LENGTH_SHORT).show());
     	}
 	}
 	
@@ -654,13 +762,7 @@ public class GuardianApiClient {
 		final String errorCode = result.getReturn().getResponseSummary().getStatusCode();
     	final String errorMessage = result.getReturn().getResponseSummary().getErrorMessage();
     	if (mContext.get() != null) {
-    		((Activity)mContext.get()).runOnUiThread( new Runnable() {
-				
-				@Override
-				public void run() {
-					Toast.makeText(mContext.get(), "Error Code " + errorCode + ", Message: " + errorMessage, Toast.LENGTH_SHORT).show();
-				}
-			});
+    		((Activity)mContext.get()).runOnUiThread(() -> Toast.makeText(mContext.get(), "Error Code " + errorCode + ", Message: " + errorMessage, Toast.LENGTH_SHORT).show());
     	}
 	}
 	

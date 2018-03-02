@@ -210,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		mLocalBroadcastManager.registerReceiver(mReceiver, filter);
 		mToolbar.setTitle("");
 		new UpdateStudentList().execute();
-		initChildInfo();
 	}
 
 	@Override
@@ -833,6 +832,12 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 
 			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void aVoid) {
+			super.onPostExecute(aVoid);
+			initChildInfo();
 		}
 	}
 

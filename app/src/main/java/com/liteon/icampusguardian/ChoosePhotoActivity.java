@@ -405,7 +405,6 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 				mCropping.createNewFile();
 			}
 
-
 			IOUtils.copy(getContentResolver().openInputStream(picUri), new FileOutputStream(mCropping));
 			Uri contentUri = FileProvider.getUriForFile(this, "com.liteon.icampusguardian.fileprovider", mCropping);
 

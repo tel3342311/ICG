@@ -4,9 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.NetworkInfo.State;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -43,11 +40,8 @@ import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.Utils;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -343,25 +337,13 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... strings) {
 			//check network
-			if (!isNetworkConnectionAvailable()) {
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok));
-					}
-				});
+			if (!Utils.isNetworkConnectionAvailable()) {
+				runOnUiThread(() -> showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok)));
 				return null;
 			}
 			//check server
-			if (!isURLReachable(LoginActivity.this, mApiClient.getServerUri().toString())) {
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok));
-					}
-				});
+			if (!Utils.isURLReachable(mApiClient.getServerUri().toString())) {
+				runOnUiThread(() -> showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok)));
 				return null;
 			}
         	String name = strings[0];
@@ -427,25 +409,14 @@ public class LoginActivity extends AppCompatActivity {
         	//Account values
         	ContentValues cv = new ContentValues();
         	//check network 
-        	if (!isNetworkConnectionAvailable()) {
-        		runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok));
-					}
-				});
+        	if (!Utils.isNetworkConnectionAvailable()) {
+        		runOnUiThread(() -> showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok)));
         		return null;
         	}
-        	//check server 
-        	if (!isURLReachable(LoginActivity.this, mApiClient.getServerUri().toString())) {
-        		runOnUiThread(new Runnable() {
 
-					@Override
-					public void run() {
-						showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok));
-					}
-				});
+        	//check server 
+        	if (!Utils.isURLReachable(mApiClient.getServerUri().toString())) {
+        		runOnUiThread(() -> showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok)));
         		return null;
         	}
 			final JSONResponse response = mApiClient.login(args[0], args[1]);
@@ -453,13 +424,7 @@ public class LoginActivity extends AppCompatActivity {
 				return null;
 			}
 			if (TextUtils.equals(Def.RET_ERR_01, response.getReturn().getResponseSummary().getStatusCode())) {
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						showLoginErrorDialog(getString(R.string.login_error_email), getString(android.R.string.ok));
-					}
-				});
+				runOnUiThread(() -> showLoginErrorDialog(getString(R.string.login_error_email), getString(android.R.string.ok)));
 				return null;
 			}
 			token = response.getReturn().getResponseSummary().getSessionId();
@@ -505,39 +470,5 @@ public class LoginActivity extends AppCompatActivity {
         		}
         	}
         }
-    }
-	
-	public boolean isNetworkConnectionAvailable() {  
-	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo info = cm.getActiveNetworkInfo();     
-	    if (info == null) return false;
-	    State network = info.getState();
-	    return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
-	} 
-	
-	public boolean isURLReachable(Context context, String Url) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnected()) {
-            try {
-                URL url = new URL(Url);   // Change to "http://google.com" for www  test.
-                HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
-                urlc.setConnectTimeout(1000);          // 1 s.
-                urlc.connect();
-                int responseCode = urlc.getResponseCode();
-                if (responseCode == 200 || responseCode == 404) {        // 200 = "OK" code (http connection is fine).
-                    Log.i(TAG, "Connect to "+ Url +" Success !");
-                    return true;
-                } else {
-                    Log.i(TAG, "Connect to " + Url + " Fail ! Response code is " + responseCode);
-                    return false;
-                }
-            } catch (MalformedURLException e1) {
-                return false;
-            } catch (IOException e) {
-                return false;
-            }
-        }
-        return false;
     }
 }

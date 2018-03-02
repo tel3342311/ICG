@@ -1,9 +1,5 @@
 package com.liteon.icampusguardian;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.NetworkInfo.State;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +7,6 @@ import android.support.v7.widget.AppCompatButton;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,11 +18,6 @@ import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.Utils;
-
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class UserResetPasswordActivity extends AppCompatActivity implements OnClickListener {
 	
@@ -140,13 +130,13 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 
 		protected Boolean doInBackground(Void... params) {
         	//check network 
-        	if (!isNetworkConnectionAvailable()) {
+        	if (!Utils.isNetworkConnectionAvailable()) {
 				mErrorMsg = getString(R.string.login_no_network);
         		return false;
         	}
         	GuardianApiClient apiClient = new GuardianApiClient(UserResetPasswordActivity.this);
         	//check server 
-        	if (!isURLReachable(UserResetPasswordActivity.this, apiClient.getServerUri().toString())) {
+        	if (!Utils.isURLReachable(apiClient.getServerUri().toString())) {
 				mErrorMsg = getString(R.string.login_error_no_server_connection);
 				return false;
         	}
@@ -174,39 +164,5 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 				Utils.showErrorDialog(mErrorMsg);
 			}
         }
-    }
-	
-	public boolean isNetworkConnectionAvailable() {  
-	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo info = cm.getActiveNetworkInfo();     
-	    if (info == null) return false;
-	    State network = info.getState();
-	    return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
-	} 
-	
-	public boolean isURLReachable(Context context, String Url) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnected()) {
-            try {
-                URL url = new URL(Url);   // Change to "http://google.com" for www  test.
-                HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
-                urlc.setConnectTimeout(1000);          // 1 s.
-                urlc.connect();
-                int responseCode = urlc.getResponseCode();
-                if (responseCode == 200 || responseCode == 404) {        // 200 = "OK" code (http connection is fine).
-                    Log.i(TAG, "Connect to "+ Url +" Success !");
-                    return true;
-                } else {
-                    Log.i(TAG, "Connect to " + Url + " Fail ! Response code is " + responseCode);
-                    return false;
-                }
-            } catch (MalformedURLException e1) {
-                return false;
-            } catch (IOException e) {
-                return false;
-            }
-        }
-        return false;
     }
 }

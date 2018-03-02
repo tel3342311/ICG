@@ -34,13 +34,14 @@ public class Utils {
         return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
     }
 
-    public boolean isURLReachable(String Url) {
+    public static boolean isURLReachable(String Url) {
         ConnectivityManager cm = (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        HttpURLConnection urlc = null;
         if (netInfo != null && netInfo.isConnected()) {
             try {
                 URL url = new URL(Url);   // Change to "http://google.com" for www  test.
-                HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
+                urlc = (HttpURLConnection) url.openConnection();
                 urlc.setConnectTimeout(1000);          // 1 s.
                 urlc.connect();
                 int responseCode = urlc.getResponseCode();
@@ -55,6 +56,10 @@ public class Utils {
                 return false;
             } catch (IOException e) {
                 return false;
+            } finally {
+                if (urlc != null) {
+                    urlc.disconnect();
+                }
             }
         }
         return false;

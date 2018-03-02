@@ -1,10 +1,6 @@
 package com.liteon.icampusguardian;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.NetworkInfo.State;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +8,6 @@ import android.support.v7.widget.AppCompatImageView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,11 +18,8 @@ import com.liteon.icampusguardian.util.CustomDialog;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
+import com.liteon.icampusguardian.util.Utils;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.UUID;
 
 public class UserRegistrationActivity extends AppCompatActivity implements OnClickListener {
@@ -178,25 +170,13 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 
 			GuardianApiClient apiClient = new GuardianApiClient(UserRegistrationActivity.this);
 			//check network
-			if (!isNetworkConnectionAvailable()) {
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok));
-					}
-				});
+			if (!Utils.isNetworkConnectionAvailable()) {
+				runOnUiThread(() -> showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok)));
 				return null;
 			}
 			//check server
-			if (!isURLReachable(UserRegistrationActivity.this, apiClient.getServerUri().toString())) {
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-						showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok));
-					}
-				});
+			if (!Utils.isURLReachable(apiClient.getServerUri().toString())) {
+				runOnUiThread(() -> showLoginErrorDialog(getString(R.string.login_error_no_server_connection), getString(android.R.string.ok)));
 				return null;
 			}
 
@@ -217,39 +197,5 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 				startActivity(intent);
 			}
         }
-    }
-	
-	public boolean isNetworkConnectionAvailable() {  
-	    ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-	    NetworkInfo info = cm.getActiveNetworkInfo();     
-	    if (info == null) return false;
-	    State network = info.getState();
-	    return (network == NetworkInfo.State.CONNECTED || network == NetworkInfo.State.CONNECTING);
-	} 
-	
-	public boolean isURLReachable(Context context, String Url) {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnected()) {
-            try {
-                URL url = new URL(Url);   // Change to "http://google.com" for www  test.
-                HttpURLConnection urlc = (HttpURLConnection) url.openConnection();
-                urlc.setConnectTimeout(1000);          // 1 s.
-                urlc.connect();
-                int responseCode = urlc.getResponseCode();
-                if (responseCode == 200 || responseCode == 404) {        // 200 = "OK" code (http connection is fine).
-                    Log.i(TAG, "Connect to "+ Url +" Success !");
-                    return true;
-                } else {
-                    Log.i(TAG, "Connect to " + Url + " Fail ! Response code is " + responseCode);
-                    return false;
-                }
-            } catch (MalformedURLException e1) {
-                return false;
-            } catch (IOException e) {
-                return false;
-            }
-        }
-        return false;
     }
 }

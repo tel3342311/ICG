@@ -182,22 +182,27 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
 		mWheel_center.setOnItemSelectedListener(mWheelClickListener);
 		mWheel_right.setOnItemSelectedListener(mWheelClickListener);
 		mWheel_single.setOnItemSelectedListener(mWheelClickListener);
-		mBackBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-				Intent intent = new Intent();
-				intent.setClass(ChildInfoUpdateActivity.this, MainActivity.class);
-				startActivity(intent);
-			}
-		});
+		mBackBtn.setOnClickListener(v -> onBackPressed());
 	}
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent();
-        intent.setClass(ChildInfoUpdateActivity.this, MainActivity.class);
-        startActivity(intent);
+		List<Student> students = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
+		if (students.size() == 0) {
+			SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = sp.edit();
+			editor.remove(Def.SP_LOGIN_TOKEN);
+			editor.commit();
+
+			Intent intent = new Intent();
+			intent.setClass(this, LoginActivity.class);
+			startActivity(intent);
+		} else {
+			Intent intent = new Intent();
+			intent.setClass(ChildInfoUpdateActivity.this, MainActivity.class);
+			startActivity(intent);
+		}
+        finish();
 	}
 
     public void UpdateWheelForDate(Calendar date) {

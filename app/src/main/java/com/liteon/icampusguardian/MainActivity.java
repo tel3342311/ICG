@@ -157,13 +157,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		getSupportActionBar().setHomeButtonEnabled(true);
 
 		mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
-		mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-
-				mDrawerLayout.openDrawer(Gravity.LEFT);
-			}
-		});
+		mToolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.LEFT));
 	}
 
 	@Override
@@ -286,13 +280,8 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 	}
 	
 	
-	private OnClickListener mOnLogoutClickListener = new OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-            logoutAccount();
-		}
-	};
+	private OnClickListener mOnLogoutClickListener = v -> logoutAccount();
+
 	private OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new OnNavigationItemSelectedListener() {
 
 		@Override
@@ -335,13 +324,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		dialog.setTitle("請輸入週期");
 		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
 		dialog.setBtnText("好");
-		dialog.setBtnConfirm(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
+		dialog.setBtnConfirm(v -> dialog.dismiss());
 		dialog.show(getSupportFragmentManager(), "dialog_fragment");
 	}
 	
@@ -366,21 +349,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			mTitleView.setText(title);
 			if (navigation == NAVIGATION_BACK) {
 				mToolbar.setNavigationIcon(R.drawable.ic_navigate_before_white_24dp);
-				mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						onBackPressed();
-					}
-				});
+				mToolbar.setNavigationOnClickListener(v -> onBackPressed());
 			} else if (navigation == NAVIGATION_DRAWER) {
 				mToolbar.setNavigationIcon(R.drawable.ic_dehaze_white_24dp);
-				mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-
-						mDrawerLayout.openDrawer(Gravity.LEFT);
-					}
-				});
+				mToolbar.setNavigationOnClickListener(v -> mDrawerLayout.openDrawer(Gravity.LEFT));
 			}
 		}
 	}
@@ -410,16 +382,16 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
             //get current bt address
             String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
             mBtAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
-		}
 
-		if (bitmap != null) {
-			mChildIcon.setImageBitmap(bitmap);
-		} else {
-			mChildIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.setup_img_picture));
-		}
-		//Show Toast when no uuid
-		if (TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
-			Toast.makeText(this, "Please go to settings and pair with your device", Toast.LENGTH_LONG).show();
+            if (bitmap != null) {
+                mChildIcon.setImageBitmap(bitmap);
+            } else {
+                mChildIcon.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.setup_img_picture));
+            }
+            //Show Toast when no uuid
+            if (TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
+                Toast.makeText(this, "Please go to settings and pair with your device", Toast.LENGTH_LONG).show();
+            }
 		}
 	}
 
@@ -499,18 +471,14 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			final CustomDialog dialog = new CustomDialog();
 			dialog.setTitle(String.format(getString(R.string.child_deleted), mChildName.getText()));
 			dialog.setBtnText(getString(android.R.string.ok));
-			dialog.setBtnConfirm(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					dialog.dismiss();
-					if (mStudents.size() == 0) {
-						mLogoutButton.callOnClick(); 
-					} else {
-						switchAccount();
-					}
-				}
-			});
+			dialog.setBtnConfirm(v1 -> {
+                dialog.dismiss();
+                if (mStudents.size() == 0) {
+                    mLogoutButton.callOnClick();
+                } else {
+                    switchAccount();
+                }
+            });
 			dialog.show(getSupportFragmentManager(), "dialog_fragment");
 		}
 	};
@@ -801,6 +769,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			//get student from cloud
 			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
 			JSONResponse response_childList = apiClient.getChildrenList();
+			if (response_childList == null) {
+			    Log.d(TAG, "[UpdateStudentList] get child list null");
+			    return null;
+            }
 			List<Student> studentList = Arrays.asList(response_childList.getReturn().getResults().getStudents());
 
 			for (Student oldItem : mStudents) {
@@ -983,7 +955,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
         } else {
             if (mStudents.size() == 0) {
                 Intent intent = new Intent();
-                intent.setClass(this, ChildPairingActivity.class);
+                intent.setClass(this, ChildInfoUpdateActivity.class);
                 startActivity(intent);
             }
         }

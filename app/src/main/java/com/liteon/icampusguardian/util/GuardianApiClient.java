@@ -99,7 +99,12 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} finally {
 			if (urlConnection != null) {
-				urlConnection.disconnect();
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
 			}
 		}
 		return null;
@@ -135,8 +140,9 @@ public class GuardianApiClient {
 			os.close();
 			final int status = urlConnection.getResponseCode();
 			if (status == HttpURLConnection.HTTP_OK) {
-				JSONResponse result = (JSONResponse) getResponseJSON(urlConnection.getInputStream(),
-						JSONResponse.class);
+			    is = urlConnection.getInputStream();
+				JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+				is.close();
 				showStatus(result);
 
 				return result;
@@ -150,8 +156,17 @@ public class GuardianApiClient {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
-		}
-		return null;
+		} finally {
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
+        }
+        return null;
 	}
 	
 	public JSONResponse updateParentDetail(String given_name, String account_name, String password, String phoneNumber) {
@@ -200,9 +215,14 @@ public class GuardianApiClient {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -252,9 +272,14 @@ public class GuardianApiClient {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -306,9 +331,14 @@ public class GuardianApiClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -366,9 +396,14 @@ public class GuardianApiClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -423,9 +458,14 @@ public class GuardianApiClient {
 		} catch (JSONException e) {
             e.printStackTrace();
         } finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -465,9 +505,14 @@ public class GuardianApiClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -506,9 +551,14 @@ public class GuardianApiClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -557,9 +607,14 @@ public class GuardianApiClient {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -610,9 +665,14 @@ public class GuardianApiClient {
         } catch (JSONException e) {
             e.printStackTrace();
         } finally {
-        	if (urlConnection != null) {
-        		urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
     }
@@ -658,9 +718,14 @@ public class GuardianApiClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -701,9 +766,14 @@ public class GuardianApiClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
 		return null;
 	}
@@ -744,9 +814,14 @@ public class GuardianApiClient {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-        	if (urlConnection != null) {
-				urlConnection.disconnect();
-			}
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
 		}
         return null;
     }

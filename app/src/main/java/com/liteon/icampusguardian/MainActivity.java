@@ -113,9 +113,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		registerNotification();
+		GuardianApiClient.getInstance(MainActivity.this);
 		mDbHelper = DBHelper.getInstance(this);
 		mSharedPreference = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
-
 		String token = mSharedPreference.getString(Def.SP_LOGIN_TOKEN, "");
 		new checkTokenTask().execute(token, null, null);
 
@@ -734,7 +734,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		@Override
 		protected String doInBackground(String... params) {
 			String token = params[0];
-			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
+			GuardianApiClient apiClient = GuardianApiClient.getInstance(MainActivity.this);
 			apiClient.setToken(token);
 			JSONResponse response = apiClient.getChildrenList();
 			if (response == null || TextUtils.equals("ERR01", response.getReturn().getResponseSummary().getStatusCode())) {
@@ -767,9 +767,9 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			//sync student list
 			mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 			//get student from cloud
-			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
+			GuardianApiClient apiClient = GuardianApiClient.getInstance(MainActivity.this);
 			JSONResponse response_childList = apiClient.getChildrenList();
-			if (response_childList == null) {
+			if (response_childList == null || response_childList.getReturn().getResults() == null) {
 			    Log.d(TAG, "[UpdateStudentList] get child list null");
 			    return null;
             }
@@ -819,7 +819,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		@Override
 		protected Void doInBackground(Student... params) {
             Student student = params[0];
-			GuardianApiClient apiClient = new GuardianApiClient(MainActivity.this);
+			GuardianApiClient apiClient = GuardianApiClient.getInstance(MainActivity.this);
 			JSONResponse response = apiClient.unpairDevice(student);
 			if (response != null) {
 				if (response.getReturn() != null) {

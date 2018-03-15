@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/md_white_1000">
+           
+	<TextView
+	    android:id="@+id/title"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/activity_horizontal_margin"
+		android:layout_marginEnd="@dimen/activity_horizontal_margin"
+	    android:gravity="center"
+	    android:layout_centerInParent="true"
+	    android:text="Select Domain"
+	    style="@style/list_item_big"/>
+
+	<View
+		android:id="@+id/sep_line1"
+		android:layout_width="match_parent"
+		android:layout_height="1px"
+		android:layout_below="@+id/title"
+		android:background="@color/md_black_1000"/>
+
+	<android.support.v7.widget.AppCompatButton
+		android:id="@+id/url1"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/dialog_confirm_btn_height"
+		android:layout_below="@+id/title"
+		android:text="icg.aricentcoe.com"
+		android:textColor="@drawable/btn_text_color"
+		style="@style/list_item" />
+	<View
+		android:id="@+id/sep_line2"
+		android:layout_width="match_parent"
+		android:layout_height="1px"
+		android:layout_below="@+id/url1"
+		android:background="@color/md_black_1000"/>
+
+	<android.support.v7.widget.AppCompatButton
+		android:id="@+id/url2"
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/dialog_confirm_btn_height"
+		android:layout_below="@+id/url1"
+		android:text="www.icareguardian.com"
+		android:textColor="@drawable/btn_text_color"
+		style="@style/list_item" />
+
+	<View
+		android:id="@+id/sep_line3"
+		android:layout_width="match_parent"
+		android:layout_height="1px"
+		android:layout_below="@+id/url2"
+		android:background="@color/md_black_1000"/>
+        
+</RelativeLayout>

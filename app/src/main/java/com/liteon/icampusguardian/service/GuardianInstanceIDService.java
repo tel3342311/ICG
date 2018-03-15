@@ -2,6 +2,7 @@ package com.liteon.icampusguardian.service;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 
@@ -39,7 +40,7 @@ public class GuardianInstanceIDService extends FirebaseInstanceIdService {
     	SharedPreferences sp = getApplicationContext().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
     	String loginToken = sp.getString(Def.SP_LOGIN_TOKEN, "");
     	if (!TextUtils.isEmpty(loginToken)) {
-    		GuardianApiClient apiClient = new GuardianApiClient(getApplicationContext());
+    		GuardianApiClient apiClient = GuardianApiClient.getInstance(getApplicationContext());
     		apiClient.setToken(loginToken);
     		apiClient.updateAppToken(fireBaseToken);
     	}

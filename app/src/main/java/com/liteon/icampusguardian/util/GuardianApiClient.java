@@ -2,6 +2,7 @@ package com.liteon.icampusguardian.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,7 +35,7 @@ public class GuardianApiClient {
 	private static final String TAG = GuardianApiClient.class.getName();
 	private static String mSessionId;
 	private static String mToken;
-	private Uri mUri;
+	private static Uri mUri;
 	private WeakReference<Context> mContext;
 
 	private static GuardianApiClient mApiClient;
@@ -48,13 +49,12 @@ public class GuardianApiClient {
 
 	public GuardianApiClient(Context context) {
 		//Current url "http://icg.aricentcoe.com:8080/icgcloud/mobile/%s"
-		Uri.Builder builder = new Uri.Builder();
-		mUri = builder.scheme("http")
-		    .encodedAuthority("icg.aricentcoe.com:8080")
-		    .appendPath("icgcloud")
-		    .appendPath("mobile").build();
-		mContext = new WeakReference<Context>(context);
+		SharedPreferences sp = context.getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		String url = sp.getString(Def.SP_URL, "icg.aricentcoe.com:8080");
+		setServerUri(url);
+		mContext = new WeakReference<>(context);
 	}
+
 	public JSONResponse login(String user, String password) {
 		HttpURLConnection urlConnection = null;
 		OutputStream os = null;
@@ -841,7 +841,15 @@ public class GuardianApiClient {
     	}
 	}
 	
-	public Uri getServerUri() {
+	public static Uri getServerUri() {
 		return mUri;
 	}
+
+	public static void setServerUri(String url) {
+        Uri.Builder builder = new Uri.Builder();
+        mUri = builder.scheme("http")
+                .encodedAuthority(url)
+                .appendPath("icgcloud")
+                .appendPath("mobile").build();
+    }
 }

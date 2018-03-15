@@ -383,7 +383,7 @@ public class SettingProfileFragment extends Fragment implements IProfileItemClic
 	
 	public void updateChildInfo() {
 		
-		GuardianApiClient apiClient = new GuardianApiClient(getContext());
+		GuardianApiClient apiClient = GuardianApiClient.getInstance(getContext());
 		apiClient.updateChildData(mStudents.get(mCurrentStudentIdx));
 		
 	}

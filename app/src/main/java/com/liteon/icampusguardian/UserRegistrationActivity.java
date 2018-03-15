@@ -168,7 +168,7 @@ public class UserRegistrationActivity extends AppCompatActivity implements OnCli
 
         protected String doInBackground(String... args) {
 
-			GuardianApiClient apiClient = new GuardianApiClient(UserRegistrationActivity.this);
+			GuardianApiClient apiClient = GuardianApiClient.getInstance(UserRegistrationActivity.this);
 			//check network
 			if (!Utils.isNetworkConnectionAvailable()) {
 				runOnUiThread(() -> showLoginErrorDialog( getString(R.string.login_no_network), getString(android.R.string.ok)));

@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.LoginActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
@@ -378,7 +379,7 @@ public class SafetyFragment extends Fragment {
 			}
 			SharedPreferences sp = mContext.getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 			String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
-			GuardianApiClient apiClient = new GuardianApiClient(getActivity());
+			GuardianApiClient apiClient = GuardianApiClient.getInstance(App.getContext());
 			apiClient.setToken(token);
 			JSONResponse response = apiClient.getStudentLocation(mStudents.get(mCurrnetStudentIdx));
 			if (response == null) {
@@ -437,7 +438,7 @@ public class SafetyFragment extends Fragment {
 
 		@Override
 		protected Boolean doInBackground(String... args) {
-			GuardianApiClient apiClient = new GuardianApiClient(getActivity());
+			GuardianApiClient apiClient = GuardianApiClient.getInstance(App.getContext());
 			JSONResponse responseEnter = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_ENTER_SCHOOL, "60");
 			parseEvent(responseEnter);
 			JSONResponse responseLeave = apiClient.getDeviceEventReport(args[0], Def.EVENT_ID_LEAVE_SCHOOL, "60");
@@ -456,14 +457,7 @@ public class SafetyFragment extends Fragment {
 			}
 			myDataset.clear();
 			myDataset.addAll(mEventReport.values());
-			Collections.sort(myDataset, new Comparator<GeoEventItem>() {
-		        @Override
-		        public int compare(GeoEventItem item1, GeoEventItem item2)
-		        {
-
-		            return  item2.getDate().compareTo(item1.getDate());
-		        }
-		    });
+			Collections.sort(myDataset, (item1, item2) -> item2.getDate().compareTo(item1.getDate()));
 			return null;
 		}
 		

@@ -42,6 +42,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.ChoosePhotoActivity;
+import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.BluetoothAgent;
@@ -194,7 +195,7 @@ public class SettingFragment extends Fragment {
 	
 	public void updateChildInfo() {
 		
-		GuardianApiClient apiClient = new GuardianApiClient(getContext());
+		GuardianApiClient apiClient = GuardianApiClient.getInstance(App.getContext());
 		apiClient.updateChildData(mStudents.get(mCurrentStudentIdx));
 		
 	}

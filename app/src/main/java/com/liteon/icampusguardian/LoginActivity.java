@@ -40,6 +40,7 @@ import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
+import com.liteon.icampusguardian.util.SelectURLDialog;
 import com.liteon.icampusguardian.util.Utils;
 
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
 		findViews();
 		setListener();
 		
-		mApiClient = new GuardianApiClient(this);
+		mApiClient = GuardianApiClient.getInstance(LoginActivity.this);
 
 		SharedPreferences sp = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 		String token = sp.getString(Def.SP_LOGIN_TOKEN, "");
@@ -185,7 +186,12 @@ public class LoginActivity extends AppCompatActivity {
 		
 		@Override
 		public void onClick(View v) {
-			new LoginTask().execute(mUserName.getText().toString(), mPassword.getText().toString());
+			SelectURLDialog dialog = new SelectURLDialog();
+			dialog.setBtnConfirm(view -> {
+                new LoginTask().execute(mUserName.getText().toString(), mPassword.getText().toString());
+            });
+			dialog.show(getSupportFragmentManager(), "dialog_fragment");
+			//new LoginTask().execute(mUserName.getText().toString(), mPassword.getText().toString());
 		}
 	};
 	private void setupGoogleSignIn(){
@@ -302,13 +308,7 @@ public class LoginActivity extends AppCompatActivity {
 	    }
 	}
 	
-	private OnClickListener mOnQuitClickListener = new OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-		onBackPressed();
-		}
-	};
+	private OnClickListener mOnQuitClickListener = v -> onBackPressed();
 
 	public void onBackPressed() {
 		Intent startMain = new Intent(Intent.ACTION_MAIN);
@@ -323,13 +323,7 @@ public class LoginActivity extends AppCompatActivity {
 		dialog.setTitle(title);
 		dialog.setIcon(R.drawable.ic_error_outline_black_24dp);
 		dialog.setBtnText(btnText);
-		dialog.setBtnConfirm(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				dialog.dismiss();
-			}
-		});
+		dialog.setBtnConfirm(v -> dialog.dismiss());
 		dialog.show(getSupportFragmentManager(), "dialog_fragment");
 	}
 

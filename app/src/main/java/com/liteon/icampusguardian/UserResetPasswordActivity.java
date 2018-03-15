@@ -104,7 +104,7 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 	
 	private JSONResponse resetPassword() {
 		String strName = mName.getText().toString();
-		GuardianApiClient apiClient = new GuardianApiClient(this);
+		GuardianApiClient apiClient = GuardianApiClient.getInstance(UserResetPasswordActivity.this);
 		return apiClient.resetPassword(strName);
 	}
 
@@ -134,7 +134,7 @@ public class UserResetPasswordActivity extends AppCompatActivity implements OnCl
 				mErrorMsg = getString(R.string.login_no_network);
         		return false;
         	}
-        	GuardianApiClient apiClient = new GuardianApiClient(UserResetPasswordActivity.this);
+        	GuardianApiClient apiClient = GuardianApiClient.getInstance(UserResetPasswordActivity.this);
         	//check server 
         	if (!Utils.isURLReachable(apiClient.getServerUri().toString())) {
 				mErrorMsg = getString(R.string.login_error_no_server_connection);

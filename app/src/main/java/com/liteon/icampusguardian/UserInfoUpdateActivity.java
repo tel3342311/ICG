@@ -259,7 +259,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		
         protected String doInBackground(String... args) {
         	
-        	GuardianApiClient apiClient = new GuardianApiClient(UserInfoUpdateActivity.this);
+        	GuardianApiClient apiClient = GuardianApiClient.getInstance(UserInfoUpdateActivity.this);
         	apiClient.updateParentDetail(args[0], args[1], args[2], args[3]);
 			mParent = new Parent();
 			mParent.setAccount_name(args[0]);
@@ -305,7 +305,7 @@ public class UserInfoUpdateActivity extends AppCompatActivity {
 		@Override
 		protected Boolean doInBackground(String... params) {
 
-			GuardianApiClient apiClient = new GuardianApiClient(UserInfoUpdateActivity.this);
+			GuardianApiClient apiClient = GuardianApiClient.getInstance(UserInfoUpdateActivity.this);
 			JSONResponse response = apiClient.getUserDetail();
 			if (response == null || !TextUtils.equals(Def.RET_SUCCESS_1 ,response.getReturn().getResponseSummary().getStatusCode())) {
 			

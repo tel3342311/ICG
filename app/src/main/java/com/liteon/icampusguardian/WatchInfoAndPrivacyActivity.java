@@ -179,7 +179,7 @@ public class WatchInfoAndPrivacyActivity extends AppCompatActivity {
 	class GrantTeacherTask extends AsyncTask<Void, Void, Void> {
 		@Override
 		protected Void doInBackground(Void... voids) {
-			GuardianApiClient mApiClient = new GuardianApiClient(WatchInfoAndPrivacyActivity.this);
+			GuardianApiClient mApiClient = GuardianApiClient.getInstance(WatchInfoAndPrivacyActivity.this);
 			mApiClient.grantTeacherAccessToSleepData(mStudents.get(mCurrnetStudentIdx));
 			return null;
 		}

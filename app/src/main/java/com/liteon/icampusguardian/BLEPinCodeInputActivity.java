@@ -223,7 +223,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                 mDbHelper.updateWearableData(mDbHelper.getWritableDatabase(), info);
             }
 
-            GuardianApiClient mApiClient = new GuardianApiClient(BLEPinCodeInputActivity.this);
+            GuardianApiClient mApiClient = GuardianApiClient.getInstance(BLEPinCodeInputActivity.this);
             student.setUuid(uuid);
             JSONResponse response = mApiClient.pairNewDevice(mStudents.get(mCurrnetStudentIdx));
             if (response != null) {

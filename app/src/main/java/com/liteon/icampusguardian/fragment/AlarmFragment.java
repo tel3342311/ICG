@@ -71,6 +71,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
     private CustomDialog mCustomDialog;
     private ProgressBar mProgressBar;
     private boolean isAlarmEditSync;
+    private boolean isAlarmTimeChanged;
+	private boolean isAlarmStateChange;
+	private boolean isAlarmSyncedWithDevice;
     public AlarmFragment() {}
 
 	@Override
@@ -84,6 +87,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		mBTAgent = new BluetoothAgent(getContext(), mHandler);
+
 		return rootView;
 	}
 
@@ -91,7 +95,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	public void onAttach(Context context) {
 		super.onAttach(context);
 		mAddAlarmClicks = new WeakReference<>((IAddAlarmClicks)context);
-
+		SharedPreferences sp = context.getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		isAlarmSyncedWithDevice = sp.getBoolean(Def.SP_ALARM_SYNCED, false);
 	}
 
 	@Override
@@ -189,13 +194,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	
 	private void setupListener() {
 		mAddAlarm.setOnClickListener(mAddAlarmClickListener);
-        mSyncBtn.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                startSync();
-            }
-        });
+        mSyncBtn.setOnClickListener(v -> startSync());
 	}
 	
 	private OnClickListener mAddAlarmClickListener = new OnClickListener() {
@@ -209,6 +208,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			mAddAlarmClicks.get().onAddAlarmClick();
 			AlarmManager.setCurrentAction(AlarmManager.ACTION_ADDING);
             getActivity().invalidateOptionsMenu();
+			isAlarmTimeChanged = true;
 		}
 	};
 
@@ -240,6 +240,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 	public void onEnableAlarm(int position, boolean enable) {
 		AlarmManager.getDataSet().get(position).setEnabled(enable);
 		mSyncView.setVisibility(View.VISIBLE);
+		isAlarmStateChange = true;
 	}
 	
 	private View.OnClickListener mOnConfirmDelete = new OnClickListener() {
@@ -461,11 +462,21 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
                         AlarmManager.syncAlarmFromJSON(readMessage);
 						mAdapter.notifyDataSetChanged();
 						syncEditDataToBT();
+						SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+						SharedPreferences.Editor editor = sp.edit();
+						editor.putBoolean(Def.SP_ALARM_SYNCED, true);
+						editor.commit();
+						isAlarmSyncedWithDevice = true;
                         getActivity().invalidateOptionsMenu();
 					} else if (readMessage.contains("alarm")) {
-                    	if (!isAlarmEditSync) {
-                    		syncStateDataToBT();
-							isAlarmEditSync = true;
+                    	if (isAlarmStateChange) {
+							try {
+								Thread.sleep(2000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							syncStateDataToBT();
+							isAlarmStateChange = false;
 						} else {
 							showSynced();
 						}
@@ -474,7 +485,15 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
                 case Def.MESSAGE_DEVICE_NAME:
                     //Connected device's name
                     //String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
-					getAlarmFromBT();
+					if (!isAlarmSyncedWithDevice) {
+						getAlarmFromBT();
+					} else if (isAlarmStateChange) {
+						syncStateDataToBT();
+						isAlarmStateChange = false;
+					} else if (isAlarmTimeChanged) {
+                    	syncEditDataToBT();
+                    	isAlarmTimeChanged = false;
+					}
                     break;
                 case Def.MESSAGE_TOAST:
                     String message = msg.getData().getString(Def.TOAST);

@@ -24,6 +24,7 @@ public class Def {
 	public static final String SP_GEO_ITEM_MAP = "com.liteon.icampusguardian.SP_GEO_ITEM_MAP";
 	public static final String SP_BT_WATCH_ADDRESS = "com.liteon.icampusguardian.SP_BT_WATCH_ADDRESS";
     public static final String SP_URL = "com.liteon.icampusguardian.SP_URL";
+    public static final String SP_ALARM_SYNCED = "com.liteon.icampusguardian.SP_ALARM_SYNCED";
 
 	//RET CODE there are two kind of success code
 	public static final String RET_SUCCESS_1 = "SUC01";

@@ -512,6 +512,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
             SharedPreferences.Editor editor = sp.edit();
             editor.remove(Def.SP_USER_TERM_READ);
             editor.remove(Def.SP_LOGIN_TOKEN);
+            editor.remove(Def.SP_ALARM_SYNCED);
             editor.commit();
 
 			GuardianApiClient.getInstance(MainActivity.this).setToken(null);

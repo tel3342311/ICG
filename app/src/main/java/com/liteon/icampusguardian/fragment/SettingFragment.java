@@ -1,5 +1,6 @@
 package com.liteon.icampusguardian.fragment;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +44,6 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.Gson;
 import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.ChoosePhotoActivity;
-import com.liteon.icampusguardian.MainActivity;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.BluetoothAgent;
@@ -119,7 +120,7 @@ public class SettingFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mClicks = new WeakReference<ISettingItemClickListener>((ISettingItemClickListener)context);
+        mClicks = new WeakReference<>((ISettingItemClickListener)context);
 	}
 
     private void setOnClickListener() {
@@ -175,14 +176,19 @@ public class SettingFragment extends Fragment {
 	
 	private void enterEditMode() {
 		isEditMode = true;
-		getActivity().invalidateOptionsMenu();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            activity.invalidateOptionsMenu();
+        }
 
 	}
 	
 	private void exitEditMode() {
 		isEditMode = false;
-		getActivity().invalidateOptionsMenu();
-
+        FragmentActivity activity = getActivity();
+        if (activity != null){
+            activity.invalidateOptionsMenu();
+        }
 	}
 	
 	@Override
@@ -240,15 +246,11 @@ public class SettingFragment extends Fragment {
 			menu.findItem(R.id.action_confirm).setVisible(false);
 		}
 	}
-	private OnClickListener mOnClickListener = new OnClickListener() {
-		
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(getActivity(), ChoosePhotoActivity.class);
-			startActivity(intent);
-		}
-	};
+	private OnClickListener mOnClickListener = v -> {
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), ChoosePhotoActivity.class);
+        startActivity(intent);
+    };
 	private void findView(View rootView) {
 		mChildIcon = rootView.findViewById(R.id.child_icon);
 		mChildName = rootView.findViewById(R.id.child_name);
@@ -355,12 +357,16 @@ public class SettingFragment extends Fragment {
     }
 
     private void showBTErrorDialog() {
-        mCustomDialog = new CustomDialog();
-        mCustomDialog.setTitle(getString(R.string.alarm_sync_failed));
-        mCustomDialog.setIcon(R.drawable.ic_error_outline_black_24dp);
-        mCustomDialog.setBtnText(getString(android.R.string.ok));
-        mCustomDialog.setBtnConfirm(mOnBLEFailCancelClickListener);
-        mCustomDialog.show(getActivity().getSupportFragmentManager(), "dialog_fragment");
+		FragmentActivity activity = getActivity();
+		if (activity != null){
+			mCustomDialog = new CustomDialog();
+			mCustomDialog.setTitle(activity.getString(R.string.alarm_sync_failed));
+			mCustomDialog.setIcon(R.drawable.ic_error_outline_black_24dp);
+			mCustomDialog.setBtnText(getString(android.R.string.ok));
+			mCustomDialog.setBtnConfirm(mOnBLEFailCancelClickListener);
+			mCustomDialog.show(activity.getSupportFragmentManager(), "dialog_fragment");
+		}
+
     }
 
     private View.OnClickListener mOnBLEFailCancelClickListener = new View.OnClickListener() {

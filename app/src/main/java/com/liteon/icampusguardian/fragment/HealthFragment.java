@@ -197,14 +197,14 @@ public class HealthFragment extends Fragment {
                                 break;
                             case CALORIES_BURNED:
                                 if (calories.length > 0) {
-                                    item.setValue(fitness[0].getValue());
+                                    item.setValue(calories[0].getValue());
                                 } else {
                                     item.setValue(0);
                                 }
                                 break;
                             case TOTAL_STEPS:
                                 if (steps.length > 0) {
-                                    item.setValue(fitness[0].getValue());
+                                    item.setValue(steps[0].getValue());
                                 } else {
                                     item.setValue(0);
                                 }

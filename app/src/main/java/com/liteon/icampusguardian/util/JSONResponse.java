@@ -117,6 +117,68 @@ public class JSONResponse {
 	}
 	
 	public static class Results {
+
+		@SerializedName("fitness")
+		private HealthyData[] fitness;
+		@SerializedName("steps")
+		private HealthyData[] steps;
+		@SerializedName("activity")
+		private HealthyData[] activity;
+		@SerializedName("heartrate")
+		private HealthyData[] heartrate;
+		@SerializedName("calories")
+		private HealthyData[] calories;
+		@SerializedName("sleep")
+		private HealthyData[] sleep;
+
+		public HealthyData[] getFitness() {
+			return fitness;
+		}
+
+		public void setFitness(HealthyData[] fitness) {
+			this.fitness = fitness;
+		}
+
+		public HealthyData[] getSteps() {
+			return steps;
+		}
+
+		public void setSteps(HealthyData[] steps) {
+			this.steps = steps;
+		}
+
+		public HealthyData[] getActivity() {
+			return activity;
+		}
+
+		public void setActivity(HealthyData[] activity) {
+			this.activity = activity;
+		}
+
+		public HealthyData[] getHeartrate() {
+			return heartrate;
+		}
+
+		public void setHeartrate(HealthyData[] heartrate) {
+			this.heartrate = heartrate;
+		}
+
+		public HealthyData[] getCalories() {
+			return calories;
+		}
+
+		public void setCalories(HealthyData[] calories) {
+			this.calories = calories;
+		}
+
+		public HealthyData[] getSleep() {
+			return sleep;
+		}
+
+		public void setSleep(HealthyData[] sleep) {
+			this.sleep = sleep;
+		}
+
 		@SerializedName("students")
 		private Student[] students;
 		@SerializedName("token")
@@ -705,6 +767,49 @@ public class JSONResponse {
 		 */
 		public void setEvent_occured_date(String event_occured_date) {
 			this.event_occured_date = event_occured_date;
+		}
+	}
+
+	public static class HealthyData {
+		@SerializedName("date")
+		private long date;
+		@SerializedName("value")
+		private int value;
+		@SerializedName("situation")
+		private int situation;
+		@SerializedName("duration")
+		private int duration;
+
+		public long getDate() {
+			return date;
+		}
+
+		public void setDate(long date) {
+			this.date = date;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		public void setValue(int value) {
+			this.value = value;
+		}
+
+		public int getSituation() {
+			return situation;
+		}
+
+		public void setSituation(int situation) {
+			this.situation = situation;
+		}
+
+		public int getDuration() {
+			return duration;
+		}
+
+		public void setDuration(int duration) {
+			this.duration = duration;
 		}
 	}
 }

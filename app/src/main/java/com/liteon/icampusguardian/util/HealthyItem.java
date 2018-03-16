@@ -1,12 +1,7 @@
 package com.liteon.icampusguardian.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.liteon.icampusguardian.R;
-import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.App;
+import com.liteon.icampusguardian.R;
 
 public class HealthyItem {
 
@@ -80,31 +75,51 @@ public class HealthyItem {
 		String output = "";
 		switch(itemType) {
 			case ACTIVITY:
-				output = Integer.toString(value);
+				if (value == 0){
+					output = "--";
+				} else {
+					output = Integer.toString(value);
+				}
 				break;
 			case CALORIES_BURNED:
-				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_cal);
+				if (value == 0){
+					output = "--" + App.getContext().getString(R.string.healthy_cal);
+				} else {
+					output = Integer.toString(value) + App.getContext().getString(R.string.healthy_cal);
+				}
 				break;
 			case WALKING_TIME:
 			case RUNNING_TIME:
 			case CYCLING_TIME:	
-				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_minutes);
-				break;
-			case SLEEP_TIME:
-				SimpleDateFormat sdf = new SimpleDateFormat("mm");
-				try {
-					Date date = sdf.parse(Integer.toString(value));
-					sdf.applyPattern(App.getContext().getString(R.string.healthy_hour_mins));
-					output = sdf.format(date);
-				} catch (ParseException e) {
-					e.printStackTrace();
+				if (value == 0){
+					output = "--" + App.getContext().getString(R.string.healthy_minutes);
+				} else {
+					output = Integer.toString(value) + App.getContext().getString(R.string.healthy_minutes);
 				}
 				break;
+			case SLEEP_TIME:
+                int ALLTIME_IN_MINUTES = value;
+                int hour = ALLTIME_IN_MINUTES / 60;
+                int min = ALLTIME_IN_MINUTES % 60;
+                if (value == 0 ){
+                    output = App.getContext().getString(R.string.healthy_hour_mins).replace("hh", "--").replace("mm", "--");
+                } else {
+                    output = App.getContext().getString(R.string.healthy_hour_mins).replace("hh", Integer.toString(hour)).replace("mm", Integer.toString(min));
+                }
+                break;
 			case HEART_RATE:
-				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_bpm);
+				if (value == 0){
+					output = "--" + App.getContext().getString(R.string.healthy_bpm);
+				} else {
+					output = Integer.toString(value) + App.getContext().getString(R.string.healthy_bpm);
+				}
 				break;
 			case TOTAL_STEPS:
-				output = Integer.toString(value) + App.getContext().getString(R.string.healthy_step);
+				if (value == 0){
+					output = "--" + App.getContext().getString(R.string.healthy_step);
+				} else {
+					output = Integer.toString(value) + App.getContext().getString(R.string.healthy_step);
+				}
 				break;
 			default:
 				output = "";

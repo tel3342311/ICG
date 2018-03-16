@@ -312,26 +312,17 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 		View contentview = mSyncView;
 		final TextView title = contentview.findViewById(R.id.title);
 		final Handler handler = new Handler();
-		final Runnable hideSyncView = new Runnable() {
-
-			@Override
-			public void run() {
-				mSyncView.setVisibility(View.GONE);
-			}
-		};
-		Runnable runnable = new Runnable(){
-			@Override
-			public void run() {
-				title.setText(R.string.alarm_sync_complete);
-				handler.postDelayed(hideSyncView, 3000);
-				if (mBTAgent != null) {
-					mBTAgent.stop();
-					isAlarmEditSync = false;
-				}
-				mProgressView.setVisibility(View.INVISIBLE);
-                mAddAlarm.setEnabled(true);
-			}
-		};
+		final Runnable hideSyncView = () -> mSyncView.setVisibility(View.GONE);
+		Runnable runnable = () -> {
+            title.setText(R.string.alarm_sync_complete);
+            handler.postDelayed(hideSyncView, 3000);
+            if (mBTAgent != null) {
+                mBTAgent.stop();
+                isAlarmEditSync = false;
+            }
+            mProgressView.setVisibility(View.INVISIBLE);
+			mAddAlarm.setEnabled(true);
+        };
 		handler.postDelayed(runnable, 2000);
 	}
 

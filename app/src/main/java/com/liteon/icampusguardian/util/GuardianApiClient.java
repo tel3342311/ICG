@@ -826,6 +826,77 @@ public class GuardianApiClient {
         return null;
     }
 
+    public JSONResponse getHealthyData(Student student, String startDate , String endDate) {
+        Uri.Builder builder = new Uri.Builder();
+        //To use Web API 02 StudentActivity
+	    Uri uri = builder.scheme("http")
+                .encodedAuthority(mUri.getEncodedAuthority())
+                .appendPath("icgcloud")
+                .appendPath("web")
+                .appendPath(Def.REQUEST_STUDENT_ACTIVITY)
+                .appendPath(mToken).build();
+
+        HttpURLConnection urlConnection = null;
+        OutputStream os = null;
+        InputStream is = null;
+        try {
+
+            URL url = new URL(uri.toString());
+            urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+            urlConnection.setUseCaches(false);
+
+            JSONObject jsonParam = new JSONObject();
+
+            jsonParam.put(Def.KEY_MEASURE_TYPE, "fitness, steps, activity, heartrate, calories, sleep");
+            jsonParam.put(Def.KEY_START_DATE, startDate);
+            jsonParam.put(Def.KEY_END_DATE, endDate);
+            jsonParam.put(Def.KEY_STUDENT_ID, student.getStudent_id());
+
+            os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonParam.toString());
+            writer.flush();
+            writer.close();
+            os.close();
+
+            int status = urlConnection.getResponseCode();
+            if (status == HttpURLConnection.HTTP_OK) {
+                is = urlConnection.getInputStream();
+                JSONResponse result = (JSONResponse) getResponseJSON(is, JSONResponse.class);
+                is.close();
+                String statusCode = result.getReturn().getResponseSummary().getStatusCode();
+                if (TextUtils.equals(statusCode, Def.RET_SUCCESS_2) || TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+
+                } else {
+                    Log.e(TAG, "status code: " + statusCode+ ", Error message: " + result.getReturn().getResponseSummary().getErrorMessage());
+                }
+                return result;
+            } else {
+                showError(status);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                try {
+                    urlConnection.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                urlConnection.disconnect();
+            }
+        }
+        return null;
+    }
+
 	private void showError(int status) {
 		final int status_code = status; 
 		if (mContext.get() != null) {

@@ -94,6 +94,12 @@ public class Def {
 	public static final String REQUEST_USER_DETAIL = "UserDetails";
 	//API 36 GrantTeacherAccessToSleepData
     public static final String REQUEST_GRANT_TEDETAIL = "GrantTeacherAccessToSleepData";
+    //Web API StudentActivity
+    public static final String REQUEST_STUDENT_ACTIVITY = "StudentActivity";
+    public static final String KEY_MEASURE_TYPE = "measure_type";
+    public static final String KEY_START_DATE = "start_date";
+    public static final String KEY_END_DATE = "end_date";
+
 	//EVENT ID LIST
 	public static final String EVENT_ID_ENTER_SCHOOL = "1";
 	public static final String EVENT_ID_LEAVE_SCHOOL = "2";

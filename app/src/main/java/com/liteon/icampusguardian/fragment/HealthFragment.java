@@ -79,7 +79,7 @@ public class HealthFragment extends Fragment {
 			for (HealthyItem.TYPE type : HealthyItem.TYPE.values()) {
 				HealthyItem item = new HealthyItem();
 				item.setItemType(type);
-				item.setValue(getTestValue(type, mCurrentStudentIdx));
+				//item.setValue(getTestValue(type, mCurrentStudentIdx));
 				myDataset.add(item);
 			}
 		}
@@ -146,6 +146,7 @@ public class HealthFragment extends Fragment {
         mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
         myDataset.clear();
         testData();
+        new SyncHealthyData().execute();
         mAdapter.notifyDataSetChanged();
     }
 	

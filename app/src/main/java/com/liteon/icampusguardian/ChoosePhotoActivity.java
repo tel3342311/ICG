@@ -409,6 +409,7 @@ public class ChoosePhotoActivity extends AppCompatActivity implements IPhotoView
 			Uri contentUri = FileProvider.getUriForFile(this, "com.liteon.icampusguardian.fileprovider", mCropping);
 
             CropImage.activity(contentUri)
+					.setAspectRatio(1,1)
                     .start(this);
 //	        Intent cropIntent = new Intent("com.android.camera.action.CROP");
 //

@@ -104,17 +104,14 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		setSupportActionBar(mToolbar);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getSupportActionBar().setHomeButtonEnabled(false);
-		mCancel.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
+		mCancel.setOnClickListener(v -> {
 
-				Intent intent = new Intent();
-            	intent.setClass(PersonalizedWatchActivity.this, MainActivity.class);
-            	intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
-            	startActivity(intent);
-            	finish();
-			}
-		});
+            Intent intent = new Intent();
+            intent.setClass(PersonalizedWatchActivity.this, MainActivity.class);
+            intent.putExtra(Def.EXTRA_GOTO_PAGE_ID, Def.EXTRA_PAGE_SETTING_ID);
+            startActivity(intent);
+            finish();
+        });
 	}
 
 	@Override
@@ -290,21 +287,14 @@ public class PersonalizedWatchActivity extends AppCompatActivity {
 		}
 
         final Handler handler = new Handler();
-        final Runnable hideSyncView = new Runnable() {
-
-            @Override
-            public void run() {
-                mProgressBar.setVisibility(View.INVISIBLE);
-           		mTitleUpdating.setText(R.string.syncing_photo_to_watch_complete);
-            }
+        final Runnable hideSyncView = () -> {
+            mProgressBar.setVisibility(View.INVISIBLE);
+			mTitleUpdating.setText(R.string.syncing_photo_to_watch_complete);
         };
-        Runnable runnable = new Runnable(){
-            @Override
-            public void run() {
-                handler.postDelayed(hideSyncView, 3000);
-                if (mBTAgent != null) {
-                    mBTAgent.stop();
-                }
+        Runnable runnable = () -> {
+            handler.postDelayed(hideSyncView, 3000);
+            if (mBTAgent != null) {
+                mBTAgent.stop();
             }
         };
         handler.postDelayed(runnable, 2000);

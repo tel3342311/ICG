@@ -187,9 +187,7 @@ public class LoginActivity extends AppCompatActivity {
 		@Override
 		public void onClick(View v) {
 			SelectURLDialog dialog = new SelectURLDialog();
-			dialog.setBtnConfirm(view -> {
-                new LoginTask().execute(mUserName.getText().toString(), mPassword.getText().toString());
-            });
+			dialog.setBtnConfirm(view -> new LoginTask().execute(mUserName.getText().toString(), mPassword.getText().toString()));
 			dialog.show(getSupportFragmentManager(), "dialog_fragment");
 			//new LoginTask().execute(mUserName.getText().toString(), mPassword.getText().toString());
 		}

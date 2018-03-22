@@ -217,11 +217,11 @@ public class HealthFragment extends Fragment {
                                     for (int i = 0; i < activity.length; i++) {
 
                                         if (activity[i].getSituation() == 2 && item.getItemType() == HealthyItem.TYPE.WALKING_TIME) {
-                                            item.setValue(activity[i].getValue());
+                                            item.setValue(activity[i].getDuration());
                                         } else if (activity[i].getSituation() == 3 && item.getItemType() == HealthyItem.TYPE.RUNNING_TIME) {
-                                            item.setValue(activity[i].getValue());
+                                            item.setValue(activity[i].getDuration());
                                         } else if (activity[i].getSituation() == 4 && item.getItemType() == HealthyItem.TYPE.CYCLING_TIME) {
-                                            item.setValue(activity[i].getValue());
+                                            item.setValue(activity[i].getDuration());
                                         }
                                     }
                                 } else {

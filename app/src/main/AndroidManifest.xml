@@ -160,7 +160,9 @@
             android:name=".service.DataSyncService"
             android:exported="false" />
 
-        <activity android:name=".RegisteredActivity"></activity>
+        <activity android:name=".RegisteredActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"/>
 
         <provider
             android:name="android.support.v4.content.FileProvider"

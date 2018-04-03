@@ -494,7 +494,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 					} else if (isAlarmTimeChanged) {
                     	syncEditDataToBT();
                     	isAlarmTimeChanged = false;
-					}
+					} else {
+                        showSynced();
+                    }
                     break;
                 case Def.MESSAGE_TOAST:
                     String message = msg.getData().getString(Def.TOAST);

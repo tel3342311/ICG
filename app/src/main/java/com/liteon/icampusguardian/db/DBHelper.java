@@ -294,6 +294,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.insert(WearableEntry.TABLE_NAME, null, cv);
     }
 
+    public long deleteWearableData(SQLiteDatabase db, String uuid) {
+		return db.delete(WearableEntry.TABLE_NAME, "uuid=?", new String[]{uuid});
+	}
+
     public String getBlueToothAddrByStudentId(SQLiteDatabase db, String student_id) {
         Cursor c = db.query(WearableEntry.TABLE_NAME, new String[] { WearableEntry.COLUMN_NAME_ADDR}, "student_id =?",
                 new String[] { student_id }, null, null, null, null);

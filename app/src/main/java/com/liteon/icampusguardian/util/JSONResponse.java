@@ -196,14 +196,94 @@ public class JSONResponse {
          */
         @SerializedName("student_id")
         private int student_id;
+        @SerializedName("student_name")
+        private String student_name;
         @SerializedName("nickname")
         private String nickname;
         @SerializedName("roll_no")
         private int roll_no;
         @SerializedName("uuid")
         private String uuid;
+		@SerializedName("registration_no")
+		private String registration_no;
+		@SerializedName("dob")
+		private String dob;
+		@SerializedName("gender")
+		private String gender;
+		@SerializedName("weight")
+		private String weight;
+		@SerializedName("height")
+		private String height;
+		@SerializedName("emergency_contact")
+		private String emergency_contact;
+		@SerializedName("allergies")
+		private String allergies;
 
-        public int getStudent_id() {
+        public String getStudent_name() {
+            return student_name;
+        }
+
+        public void setStudent_name(String student_name) {
+            this.student_name = student_name;
+        }
+
+		public String getRegistration_no() {
+			return registration_no;
+		}
+
+		public void setRegistration_no(String registration_no) {
+			this.registration_no = registration_no;
+		}
+
+		public String getDob() {
+			return dob;
+		}
+
+		public void setDob(String dob) {
+			this.dob = dob;
+		}
+
+		public String getGender() {
+			return gender;
+		}
+
+		public void setGender(String gender) {
+			this.gender = gender;
+		}
+
+		public String getWeight() {
+			return weight;
+		}
+
+		public void setWeight(String weight) {
+			this.weight = weight;
+		}
+
+		public String getHeight() {
+			return height;
+		}
+
+		public void setHeight(String height) {
+			this.height = height;
+		}
+
+		public String getEmergency_contact() {
+			return emergency_contact;
+		}
+
+		public void setEmergency_contact(String emergency_contact) {
+			this.emergency_contact = emergency_contact;
+		}
+
+		public String getAllergies() {
+			return allergies;
+		}
+
+		public void setAllergies(String allergies) {
+			this.allergies = allergies;
+		}
+
+		public int getStudent_id() {
             return student_id;
         }
 
@@ -529,9 +609,39 @@ public class JSONResponse {
 		@SerializedName("gender")
 		private String gender;
 		@SerializedName("uuid")
-		private String uuid; 
-		
-		private int isDelete;
+		private String uuid;
+        @SerializedName("registration_no")
+        private String registration_no;
+        @SerializedName("emergency_contact")
+        private String emergency_contact;
+        @SerializedName("allergies")
+        private String allergies;
+
+        public String getRegistration_no() {
+            return registration_no;
+        }
+
+        public void setRegistration_no(String registration_no) {
+            this.registration_no = registration_no;
+        }
+
+        public String getEmergency_contact() {
+            return emergency_contact;
+        }
+
+        public void setEmergency_contact(String emergency_contact) {
+            this.emergency_contact = emergency_contact;
+        }
+
+        public String getAllergies() {
+            return allergies;
+        }
+
+        public void setAllergies(String allergies) {
+            this.allergies = allergies;
+        }
+
+        private int isDelete;
 		
 		/**
 		 * @return the isDelete

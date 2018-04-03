@@ -425,7 +425,9 @@ public class GuardianApiClient {
 			urlConnection.setUseCaches(false);
 
 			JSONObject jsonParam = new JSONObject();
+			jsonParam.put(Def.KEY_UUID, student.getUuid());
 			jsonParam.put(Def.KEY_STUDENT_ID, student.getStudent_id());
+			jsonParam.put(Def.KEY_ROLL_NO, student.getRoll_no());
 			jsonParam.put(Def.KEY_NICKNAME, student.getNickname());
 			jsonParam.put(Def.KEY_HEIGHT, student.getHeight());
 			jsonParam.put(Def.KEY_WEIGHT, student.getWeight());

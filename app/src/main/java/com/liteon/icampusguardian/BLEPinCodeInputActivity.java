@@ -228,19 +228,36 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
             JSONResponse response = mApiClient.pairNewDevice(mStudents.get(mCurrnetStudentIdx));
             if (response != null) {
                 String statusCode = response.getReturn().getResponseSummary().getStatusCode();
-                if (!TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+                if (!TextUtils.equals(statusCode, Def.RET_SUCCESS_1) && !TextUtils.equals(statusCode, Def.RET_ERR_14) ) {
                     return false;
                 } else {
                     if (response.getReturn().getResults() != null) {
 
                         String studentID = Integer.toString(response.getReturn().getResults().getStudent_id());
+                        String studentName = response.getReturn().getResults().getStudent_name();
                         String nickName = response.getReturn().getResults().getNickname();
                         String roll_no = Integer.toString(response.getReturn().getResults().getRoll_no());
+                        String registration_no = response.getReturn().getResults().getRegistration_no();
+                        String dob = response.getReturn().getResults().getDob();
+                        String gender = response.getReturn().getResults().getGender();
+                        String weight = response.getReturn().getResults().getWeight();
+                        String height = response.getReturn().getResults().getHeight();
+                        String emergency_contact = response.getReturn().getResults().getEmergency_contact();
+                        String allergies = response.getReturn().getResults().getAllergies();
+
                         Student item = new Student();
                         item.setUuid(uuid);
                         item.setStudent_id(Integer.parseInt(studentID));
                         item.setNickname(nickName);
                         item.setRoll_no(Integer.parseInt(roll_no));
+                        item.setName(studentName);
+                        item.setRegistration_no(registration_no);
+                        item.setDob(dob);
+                        item.setGender(gender);
+                        item.setWeight(weight);
+                        item.setHeight(height);
+                        item.setEmergency_contact(emergency_contact);
+                        item.setAllergies(allergies);
                         //For New child
                         if (!TextUtils.equals(studentID, student.getStudent_id())) {
 
@@ -277,6 +294,19 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                     return;
                 }
                 mBLEFailConfirmDialog.show(getSupportFragmentManager(), "dialog_fragment");
+            } else {
+                CustomDialog dialog = new CustomDialog();
+                String title = String.format(getString(R.string.pairing_watch_success), mStudents.get(mCurrnetStudentIdx).getNickname());
+                dialog.setTitle(title);
+                dialog.setIcon(0);
+                dialog.setBtnText(getString(android.R.string.ok));
+                dialog.setBtnConfirm(mOnBLEFailCancelClickListener);
+                try {
+                    getSupportFragmentManager().popBackStackImmediate();
+                } catch (IllegalStateException ignored) {
+                    return;
+                }
+                dialog.show(getSupportFragmentManager(), "dialog_fragment");
             }
         }
     }
@@ -333,21 +363,9 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         }
 
         protected void onPostExecute(Boolean success) {
-        	mBleConnectingView.setVisibility(View.INVISIBLE);
-        	if (success.booleanValue() == true) {
-        		CustomDialog dialog = new CustomDialog();
-        		String title = String.format(getString(R.string.pairing_watch_success), mStudents.get(mCurrnetStudentIdx).getNickname());
-        		dialog.setTitle(title);
-        		dialog.setIcon(0);
-        		dialog.setBtnText(getString(android.R.string.ok));
-        		dialog.setBtnConfirm(mOnBLEFailCancelClickListener);
-                try {
-                    getSupportFragmentManager().popBackStackImmediate();
-                } catch (IllegalStateException ignored) {
-                    return;
-                }
-        		dialog.show(getSupportFragmentManager(), "dialog_fragment");
-        	} else {
+
+        	if (success.booleanValue() == false) {
+                mBleConnectingView.setVisibility(View.INVISIBLE);
         		mBLEFailConfirmDialog = new ConfirmDeleteDialog();
         		mBLEFailConfirmDialog.setOnConfirmEventListener(mOnBLEFailConfirmClickListener);
         		mBLEFailConfirmDialog.setmOnCancelListener(mOnBLEFailCancelClickListener);

@@ -27,7 +27,6 @@
 			android:text="@string/child_photo_photo_select_pic"
 			android:textColor="@color/md_white_1000"
 			android:textSize="@dimen/page_title_text_size"/>
-
     </android.support.v7.widget.Toolbar>
      
      <TextView

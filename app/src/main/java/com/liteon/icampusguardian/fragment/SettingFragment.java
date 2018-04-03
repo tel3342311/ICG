@@ -105,14 +105,19 @@ public class SettingFragment extends Fragment {
 		//get child list
 		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE,Context.MODE_PRIVATE);
 		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		if (mCurrentStudentIdx >= mStudents.size()) {
+			mCurrentStudentIdx =  0;
+		}
+
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
         //get current bt address
-        String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
-        mBTAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
+		if (mStudents.size() > 0) {
+			String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();
+			mBTAddress = mDbHelper.getBlueToothAddrByStudentId(mDbHelper.getReadableDatabase(), studentID);
 
-		((SettingItemAdapter)mAdapter).setChildData(mStudents.get(mCurrentStudentIdx), mBTAddress);
-		mAdapter.notifyDataSetChanged();
-
+			((SettingItemAdapter) mAdapter).setChildData(mStudents.get(mCurrentStudentIdx), mBTAddress);
+			mAdapter.notifyDataSetChanged();
+		}
 		mBTAgent = new BluetoothAgent(getApplicationContext(), mHandlerBTClassic);
 		return mRootView;
 	}
@@ -418,7 +423,6 @@ public class SettingFragment extends Fragment {
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Log.d(TAG, "Response : " + readMessage);break;
                 case Def.MESSAGE_DEVICE_NAME:
-                    // save the connected device's name
                     // save the connected device's name
                     String mConnectedDeviceName = msg.getData().getString(Def.DEVICE_NAME);
                     //Toast.makeText(App.getContext(), "Connected to "

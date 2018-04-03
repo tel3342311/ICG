@@ -822,6 +822,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
             Student student = params[0];
 			GuardianApiClient apiClient = GuardianApiClient.getInstance(MainActivity.this);
 			JSONResponse response = apiClient.unpairDevice(student);
+			String uuid = student.getUuid();
 			if (response != null) {
 				if (response.getReturn() != null) {
 					String statusCode = response.getReturn().getResponseSummary().getStatusCode(); 
@@ -832,6 +833,7 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
                         student.setUuid("");
                         mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
                     }
+                    mDbHelper.deleteWearableData(mDbHelper.getWritableDatabase(), uuid);
 				}
 			}
 			return null;

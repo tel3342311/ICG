@@ -105,11 +105,10 @@ public class SettingFragment extends Fragment {
 		//get child list
 		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE,Context.MODE_PRIVATE);
 		mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		if (mCurrentStudentIdx >= mStudents.size()) {
 			mCurrentStudentIdx =  0;
 		}
-
-		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
         //get current bt address
 		if (mStudents.size() > 0) {
 			String studentID = mStudents.get(mCurrentStudentIdx).getStudent_id();

@@ -44,6 +44,7 @@ public class HealthFragment extends Fragment {
     private List<JSONResponse.Student> mStudents;
     private int mCurrentStudentIdx;
 	private TextView mTitleView;
+	private static boolean isFirstLaunch = true;
 	public HealthFragment() {}
 	
 	@Override
@@ -146,7 +147,10 @@ public class HealthFragment extends Fragment {
         mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
         myDataset.clear();
         testData();
-        new SyncHealthyData().execute();
+        if (isFirstLaunch) {
+            new SyncHealthyData().execute();
+            isFirstLaunch = false;
+        }
         mAdapter.notifyDataSetChanged();
     }
 	
@@ -162,6 +166,7 @@ public class HealthFragment extends Fragment {
             super.onPreExecute();
             TextView title = mSyncView.findViewById(R.id.title);
             title.setText(getString(R.string.alarm_syncing));
+            mTitleView.setText(R.string.healthy_today_reocrd);
         }
 
         @Override
@@ -252,20 +257,21 @@ public class HealthFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            TextView title = mSyncView.findViewById(R.id.title);
-            SimpleDateFormat sdf = new SimpleDateFormat(getString(R.string.healthy_update_time));
-            final String currentDateandTime = sdf.format(Calendar.getInstance().getTime());
-            final Handler handler= new Handler();
-            final Runnable hideSyncView = () -> mSyncView.setVisibility(View.GONE);
-            Runnable runnable = () -> {
-                if (!isDetached()) {
-                    title.setText(currentDateandTime);
-                    handler.postDelayed(hideSyncView, 3000);
-                    mTitleView.setText(R.string.healthy_today_reocrd);
-                    mAdapter.notifyDataSetChanged();
-                }
-            };
-            handler.postDelayed(runnable, 2000);
+            if (HealthFragment.this.isAdded()) {
+                TextView title = mSyncView.findViewById(R.id.title);
+                SimpleDateFormat sdf = new SimpleDateFormat(getString(R.string.healthy_update_time));
+                final String currentDateandTime = sdf.format(Calendar.getInstance().getTime());
+                final Handler handler = new Handler();
+                final Runnable hideSyncView = () -> mSyncView.setVisibility(View.GONE);
+                Runnable runnable = () -> {
+                    if (!isDetached()&& !isHidden()) {
+                        title.setText(currentDateandTime);
+                        handler.postDelayed(hideSyncView, 3000);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                };
+                handler.postDelayed(runnable, 2000);
+            }
         }
     }
 }

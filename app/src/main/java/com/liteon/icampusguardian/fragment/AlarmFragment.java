@@ -71,8 +71,8 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
     private CustomDialog mCustomDialog;
     private ProgressBar mProgressBar;
     private boolean isAlarmEditSync;
-    private boolean isAlarmTimeChanged;
-	private boolean isAlarmStateChange;
+    private static boolean isAlarmTimeChanged;
+	private static boolean isAlarmStateChange;
 	private boolean isAlarmSyncedWithDevice;
     public AlarmFragment() {}
 
@@ -223,6 +223,7 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 			mAddAlarmClicks.get().onEditAlarm(position);
 			AlarmManager.setCurrentAction(AlarmManager.ACTION_EDITING);
 			AlarmManager.setCurrentItem(AlarmManager.getDataSet().get(position), position);
+			isAlarmTimeChanged = true;
 		}
 	}
 	

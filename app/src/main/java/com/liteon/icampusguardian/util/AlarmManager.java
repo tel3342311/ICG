@@ -1,12 +1,8 @@
 package com.liteon.icampusguardian.util;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,17 +11,15 @@ import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.db.DBHelper;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.text.TextUtils;
-
-import org.w3c.dom.Text;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.CUSTOMIZE;
-import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.EVERYDAY;
-import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.ONCE;
-import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.WEEKEND;
-import static com.liteon.icampusguardian.util.AlarmPeriodItem.TYPE.WEEK_DAY;
 
 public class AlarmManager {
 
@@ -52,6 +46,7 @@ public class AlarmManager {
 	
 	public static void setCurrentItem(AlarmItem item, int idx) {
 		mCurrentItem = item;
+        mCurrentItem.setTimeChange(true);
 		Gson gson = new Gson();
 		mOriginItem = gson.toJson(mCurrentItem);
 		mIdx = idx;
@@ -66,6 +61,7 @@ public class AlarmManager {
 		mCurrentItem.setPeriod(item.Period);
 		mCurrentItem.setPeriodItem(item.getPeriodItem());
 		mCurrentItem.setTitle(item.getTitle());
+		mCurrentItem.setTimeChange(item.isTimeChange());
 		return mCurrentItem;
 	}
 	
@@ -111,6 +107,10 @@ public class AlarmManager {
 		alarmDataJSON.setType("alarm");
 		List<AlarmDataJSON.AlarmData> data = new ArrayList<>();
 		for (AlarmItem item : myDataset) {
+		    if (!item.isTimeChange()) {
+		        continue;
+            }
+            item.setTimeChange(false);
 			AlarmDataJSON.AlarmData alarmInfo = new AlarmDataJSON.AlarmData();
 			if (!item.isAdded()) {
 			    alarmInfo.setAction("add");

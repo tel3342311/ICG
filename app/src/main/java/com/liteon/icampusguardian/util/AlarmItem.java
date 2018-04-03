@@ -18,6 +18,20 @@ public class AlarmItem {
 	public String Period;
 	public boolean Enabled;
 	public boolean isStateChange;
+	public boolean isTimeChange;
+
+	public boolean isEnabled() {
+		return Enabled;
+	}
+
+	public boolean isTimeChange() {
+		return isTimeChange;
+	}
+
+	public void setTimeChange(boolean timeChange) {
+		isTimeChange = timeChange;
+	}
+
 	public boolean isAdded;
 
 	public boolean isAdded() {

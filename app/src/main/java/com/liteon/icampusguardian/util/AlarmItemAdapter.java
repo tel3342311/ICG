@@ -97,7 +97,10 @@ public class AlarmItemAdapter extends Adapter<AlarmItemAdapter.ViewHolder> {
         holder.mTitleTextView.setEnabled(item.getEnabled());
         holder.mDateTextView.setEnabled(item.getEnabled());
         holder.mPeriodTextView.setEnabled(item.getEnabled());
+        holder.mAlarmEnableView.setOnCheckedChangeListener(null);
         holder.mAlarmEnableView.setChecked(item.getEnabled());
+        holder.mAlarmEnableView.setOnCheckedChangeListener(holder);
+
         if (isEditMode) {
             //holder.mItemIcon.setBackgroundResource(R.drawable.health_btnf_cancel);
             holder.mMoreIcon.setVisibility(View.VISIBLE);

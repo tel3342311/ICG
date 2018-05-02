@@ -2,13 +2,21 @@ package com.liteon.icampusguardian.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
+import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.db.HealthDataTable;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
+
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class DataSyncService extends IntentService {
     private final static String TAG = DataSyncService.class.getName();
@@ -63,7 +71,73 @@ public class DataSyncService extends IntentService {
                 case Def.ACTION_UPDATE_PARENT_DETAIL:
                     handleUpdateParentDetail(intent);
                     break;
+                case Def.ACTION_GET_HEALTHY_DATA:
+                    handleGetHealthyData(intent);
+                    break;
             }
+        }
+    }
+
+    private void handleGetHealthyData(Intent intent) {
+
+        JSONResponse.HealthyData[] fitness;
+        JSONResponse.HealthyData[] activity;
+        JSONResponse.HealthyData[] calories;
+        JSONResponse.HealthyData[] heartrate;
+        JSONResponse.HealthyData[] sleep;
+        JSONResponse.HealthyData[] steps;
+
+        Date end = Calendar.getInstance().getTime();
+        Calendar c = Calendar.getInstance();
+        c.setTime(end);
+        c.add(Calendar.DAY_OF_YEAR, -7);
+        Date start = c.getTime();
+        SimpleDateFormat sdfQurey = new SimpleDateFormat("yyyy-MM-dd");
+        String startDate = sdfQurey.format(start);
+        String endDate = sdfQurey.format(end);
+
+        String student_id = intent.getStringExtra(Def.KEY_STUDENT_ID);
+        JSONResponse response = mApiClient.getHealthyData(student_id, startDate, endDate);
+        //Parse Event
+        if (response != null) {
+            JSONResponse.Results results = response.getReturn().getResults();
+            if (results != null) {
+                if (response.getReturn() != null && response.getReturn().getResults() != null) {
+                    fitness = response.getReturn().getResults().getFitness();
+                    activity = response.getReturn().getResults().getActivity();
+                    calories = response.getReturn().getResults().getCalories();
+                    heartrate = response.getReturn().getResults().getHeartrate();
+                    sleep = response.getReturn().getResults().getSleep();
+                    steps = response.getReturn().getResults().getSteps();
+                    //For Activity, use situation in data
+                    writeDataToDB(activity, student_id);
+                    //For Other healthy data
+                    writeDataToDB(fitness, HealthDataTable.HealthDataEntry.SITUATION_FITNESS, student_id);
+                    writeDataToDB(calories, HealthDataTable.HealthDataEntry.SITUATION_CALOS, student_id);
+                    writeDataToDB(heartrate, HealthDataTable.HealthDataEntry.SITUATION_HEART, student_id);
+                    writeDataToDB(sleep, HealthDataTable.HealthDataEntry.SITUATION_SLEEP, student_id);
+                    writeDataToDB(steps, HealthDataTable.HealthDataEntry.SITUATION_STEPS, student_id);
+                    sendBroadcast(new Intent(Def.ACTION_GET_HEALTHY_DATA));
+                }
+            }
+        }
+    }
+
+    private void writeDataToDB(JSONResponse.HealthyData[] data, int situation, String studentId) {
+
+        DBHelper dbHelper = DBHelper.getInstance(App.getContext());
+        if (data != null && data.length > 0) {
+            List<JSONResponse.HealthyData> list = Arrays.asList(data);
+            dbHelper.updateHealthyData(dbHelper.getWritableDatabase(), list, situation, studentId);
+        }
+    }
+
+    private void writeDataToDB(JSONResponse.HealthyData[] data, String studentId) {
+
+        DBHelper dbHelper = DBHelper.getInstance(App.getContext());
+        if (data != null && data.length > 0) {
+            List<JSONResponse.HealthyData> list = Arrays.asList(data);
+            dbHelper.updateHealthyData(dbHelper.getWritableDatabase(), list, studentId);
         }
     }
 
@@ -123,6 +197,11 @@ public class DataSyncService extends IntentService {
         if (response == null) {
             sendBrocastToAp(getString(R.string.login_error_no_server_connection));
         }
+    }
+
+    public void sendBroadcast(Intent intent) {
+
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     public void sendBrocastToAp(String message) {

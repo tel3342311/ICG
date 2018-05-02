@@ -13,7 +13,9 @@ import com.liteon.icampusguardian.db.AccountTable.AccountEntry;
 import com.liteon.icampusguardian.db.ChildLocationTable.ChildLocationEntry;
 import com.liteon.icampusguardian.db.ChildTable.ChildEntry;
 import com.liteon.icampusguardian.db.EventListTable.EventListEntry;
+import com.liteon.icampusguardian.db.HealthDataTable.HealthDataEntry;
 import com.liteon.icampusguardian.db.WearableTable.WearableEntry;
+import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Parent;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.WearableInfo;
@@ -80,6 +82,19 @@ public class DBHelper extends SQLiteOpenHelper {
             + WearableEntry.COLUMN_NAME_STUDENT_ID + TEXT_TYPE   + " )";
     private static final String SQL_DELETE_WEARABLE_TABLE = "DROP TABLE IF EXISTS " + WearableEntry.TABLE_NAME;
 
+    //Healthy data
+    public static final String SQL_QUERY_ALL_HEALTHY_DATA = "SELET * FROM " + HealthDataEntry.TABLE_NAME;
+    private static final String SQL_CREATE_HEALTHY_DATA_TABLE = "CREATE TABLE " + HealthDataEntry.TABLE_NAME + " ("
+            + HealthDataEntry.COLUMN_NAME_STUDENTID + TEXT_TYPE + COMMA_SEP
+            + HealthDataEntry.COLUMN_NAME_DATE + INTEGER_TYPE + COMMA_SEP
+            + HealthDataEntry.COLUMN_NAME_DURATION + INTEGER_TYPE + COMMA_SEP
+            + HealthDataEntry.COLUMN_NAME_VALUE + INTEGER_TYPE + COMMA_SEP
+            + HealthDataEntry.COLUMN_NAME_SITUATION + INTEGER_TYPE + COMMA_SEP
+            + "PRIMARY KEY (" + HealthDataEntry.COLUMN_NAME_STUDENTID + COMMA_SEP
+            + HealthDataEntry.COLUMN_NAME_DATE + COMMA_SEP
+            + HealthDataEntry.COLUMN_NAME_SITUATION + " ))";
+    private static final String SQL_DELETE_HEALTHY_TABLE = "DROP TABLE IF EXISTS " + HealthDataEntry.TABLE_NAME;
+
 	public static DBHelper getInstance(Context ctx) {
 		if (mInstance == null) {
 			mInstance = new DBHelper(ctx.getApplicationContext());
@@ -107,6 +122,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_CREATE_EVENT_TABLE);
 		db.execSQL(SQL_CREATE_CHILD_LOCAITON_TABLE);
 		db.execSQL(SQL_CREATE_WEARABLE_TABLE);
+		db.execSQL(SQL_CREATE_HEALTHY_DATA_TABLE);
 	}
 
 	@Override
@@ -116,6 +132,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		db.execSQL(SQL_DELETE_EVENT_TABLE);
 		db.execSQL(SQL_DELETE_CHILD_LOCATION_TABLE);
         db.execSQL(SQL_DELETE_WEARABLE_TABLE);
+        db.execSQL(SQL_DELETE_HEALTHY_TABLE);
 		onCreate(db);
 	}
 	
@@ -291,14 +308,44 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(WearableEntry.COLUMN_NAME_UUID, info.getUuid());
         cv.put(WearableEntry.COLUMN_NAME_ADDR, info.getBtAddr());
         cv.put(WearableEntry.COLUMN_NAME_STUDENT_ID, info.getStudentID());
-        return db.insert(WearableEntry.TABLE_NAME, null, cv);
+        long ret = db.insert(WearableEntry.TABLE_NAME, null, cv);
+        db.close();
+        return ret;
     }
 
     public long deleteWearableData(SQLiteDatabase db, String uuid) {
-		return db.delete(WearableEntry.TABLE_NAME, "uuid=?", new String[]{uuid});
+		long ret = db.delete(WearableEntry.TABLE_NAME, "uuid=?", new String[]{uuid});
+		db.close();
+		return ret;
 	}
 
-    public String getBlueToothAddrByStudentId(SQLiteDatabase db, String student_id) {
+	public void replaceWearableData(SQLiteDatabase db, WearableInfo info) {
+		ContentValues cv = new ContentValues();
+		cv.put(WearableEntry.COLUMN_NAME_ADDR, info.getBtAddr());
+		cv.put(WearableEntry.COLUMN_NAME_STUDENT_ID, info.getStudentID());
+		cv.put(WearableEntry.COLUMN_NAME_UUID, info.getUuid());
+		db.replace(WearableEntry.TABLE_NAME, null ,cv);
+		db.close();
+	}
+
+	public WearableInfo getWearableInfoByUuid(SQLiteDatabase db, String uuid) {
+		if (TextUtils.isEmpty(uuid)) {
+			return null;
+		}
+		Cursor c = db.query(WearableEntry.TABLE_NAME, null, "uuid =?", new String[] { uuid }, null, null, null, null);
+		if (c.moveToFirst()) { // if the row exist then return the id
+			WearableInfo info = new WearableInfo();
+			info.setUuid(uuid);
+			info.setBtAddr(c.getString(c.getColumnIndex(WearableEntry.COLUMN_NAME_ADDR)));
+			info.setStudentID(c.getString(c.getColumnIndex(WearableEntry.COLUMN_NAME_STUDENT_ID)));
+			c.close();
+			return info;
+		}
+		c.close();
+		return null;
+	}
+
+	public String getBlueToothAddrByStudentId(SQLiteDatabase db, String student_id) {
         Cursor c = db.query(WearableEntry.TABLE_NAME, new String[] { WearableEntry.COLUMN_NAME_ADDR}, "student_id =?",
                 new String[] { student_id }, null, null, null, null);
         if (c.moveToFirst()) // if the row exist then return the id
@@ -326,6 +373,67 @@ public class DBHelper extends SQLiteOpenHelper {
         c.close();
         return false;
     }
+
+    public JSONResponse.HealthyData getLastHealthyData(SQLiteDatabase db, String studentId, String situation) {
+	    Cursor c = db.query(HealthDataEntry.TABLE_NAME, null, "student_id=? and situation=?", new String[] {studentId, situation}, null, null, HealthDataEntry.COLUMN_NAME_DATE+" DESC", "1");
+        JSONResponse.HealthyData data = new JSONResponse.HealthyData();
+	    if (c.moveToFirst()) {
+            data.setDate(c.getInt(c.getColumnIndex(HealthDataEntry.COLUMN_NAME_DATE)));
+            data.setDuration(c.getInt(c.getColumnIndex(HealthDataEntry.COLUMN_NAME_DURATION)));
+            data.setSituation(c.getInt(c.getColumnIndex(HealthDataEntry.COLUMN_NAME_SITUATION)));
+            data.setValue(c.getInt(c.getColumnIndex(HealthDataEntry.COLUMN_NAME_VALUE)));
+            c.close();
+        }
+        db.close();
+	    return data;
+    }
+
+    public List<JSONResponse.HealthyData> getHealthyDataByDuration(SQLiteDatabase db, String studentId, String situation) {
+        Cursor c = db.query(HealthDataEntry.TABLE_NAME, null, "student_id=? and situation=?", new String[] {studentId, situation}, null, null, HealthDataEntry.COLUMN_NAME_DATE+" desc", "7");
+        List<JSONResponse.HealthyData> list = new ArrayList<>();
+        if (c.moveToFirst()) {
+            do {
+                JSONResponse.HealthyData data = new JSONResponse.HealthyData();
+                data.setDate(c.getInt(c.getColumnIndex(HealthDataEntry.COLUMN_NAME_DATE)));
+                data.setDuration(c.getInt(c.getColumnIndex(HealthDataEntry.COLUMN_NAME_DURATION)));
+                data.setSituation(c.getInt(c.getColumnIndex(HealthDataEntry.COLUMN_NAME_SITUATION)));
+                data.setValue(c.getInt(c.getColumnIndex(HealthDataEntry.COLUMN_NAME_VALUE)));
+                list.add(0, data);
+            } while(c.moveToNext());
+            c.close();
+        }
+        db.close();
+        return list;
+    }
+
+    public void updateHealthyData(SQLiteDatabase db, List<JSONResponse.HealthyData> data, int situation, String studentId) {
+
+	    for (JSONResponse.HealthyData item : data) {
+            ContentValues cv = new ContentValues();
+            cv.put(HealthDataEntry.COLUMN_NAME_DATE, item.getDate());
+            cv.put(HealthDataEntry.COLUMN_NAME_SITUATION, situation);
+            cv.put(HealthDataEntry.COLUMN_NAME_VALUE, item.getValue());
+            cv.put(HealthDataEntry.COLUMN_NAME_DURATION, item.getDuration());
+            cv.put(HealthDataEntry.COLUMN_NAME_STUDENTID, studentId);
+            db.replace(HealthDataEntry.TABLE_NAME, null, cv);
+        }
+        db.close();
+    }
+
+    public void updateHealthyData(SQLiteDatabase db, List<JSONResponse.HealthyData> data, String studentId) {
+
+        for (JSONResponse.HealthyData item : data) {
+            ContentValues cv = new ContentValues();
+            cv.put(HealthDataEntry.COLUMN_NAME_DATE, item.getDate());
+            cv.put(HealthDataEntry.COLUMN_NAME_SITUATION, item.getSituation());
+            cv.put(HealthDataEntry.COLUMN_NAME_VALUE, item.getValue());
+            cv.put(HealthDataEntry.COLUMN_NAME_DURATION, item.getDuration());
+            cv.put(HealthDataEntry.COLUMN_NAME_STUDENTID, studentId);
+            db.replace(HealthDataEntry.TABLE_NAME, null, cv);
+        }
+        db.close();
+    }
+
 
 	private void createDummyData(SQLiteDatabase db) {
 

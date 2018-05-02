@@ -828,7 +828,7 @@ public class GuardianApiClient {
         return null;
     }
 
-    public JSONResponse getHealthyData(Student student, String startDate , String endDate) {
+    public JSONResponse getHealthyData(String student_id, String startDate , String endDate) {
         Uri.Builder builder = new Uri.Builder();
         //To use Web API 02 StudentActivity
 	    Uri uri = builder.scheme("http")
@@ -856,7 +856,7 @@ public class GuardianApiClient {
             jsonParam.put(Def.KEY_MEASURE_TYPE, "fitness, steps, activity, heartrate, calories, sleep");
             jsonParam.put(Def.KEY_START_DATE, startDate);
             jsonParam.put(Def.KEY_END_DATE, endDate);
-            jsonParam.put(Def.KEY_STUDENT_ID, student.getStudent_id());
+            jsonParam.put(Def.KEY_STUDENT_ID, student_id);
 
             os = urlConnection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(

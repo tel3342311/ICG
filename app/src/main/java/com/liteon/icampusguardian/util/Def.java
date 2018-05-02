@@ -108,7 +108,7 @@ public class Def {
 	public static final String EVENT_ID_SOS_ALERT = "13";
 	public static final String EVENT_ID_SOS_REMOVE = "14";
 	public static final String EVENT_ID_GPS_LOCATION = "19";
-	
+
 	//EVENT DURATION
 	public static final String EVENT_DURATION_ONE_DAY = "1";
 	public static final String EVENT_DURATION_WEEK = "7";
@@ -148,6 +148,7 @@ public class Def {
 	public static final String ACTION_UPDATE_STUDENT_DETAIL = "com.liteon.icampusguardian.ACTION_UPDATE_STUDENT_DETAIL";
 	public static final String ACTION_UPDATE_PARENT_DETAIL = "com.liteon.icampusguardian.ACTION_UPDATE_PARENT_DETAIL";
 	public static final String ACTION_RESET_PASSWORD = "com.liteon.icampusguardian.ACTION_RESET_PASSWORD";
+	public static final String ACTION_GET_HEALTHY_DATA = "com.liteon.icampusguardian.ACTION_GET_HEALTHY_DATA";
 
 	//Action fro reponse of DataSync Service
 	public static final String ACTION_ERROR_NOTIFY = "com.liteon.icampusguardian.ACTION_ERROR_NOTIFY";

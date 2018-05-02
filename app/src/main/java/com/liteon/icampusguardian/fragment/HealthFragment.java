@@ -1,14 +1,19 @@
 package com.liteon.icampusguardian.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +22,9 @@ import android.widget.TextView;
 import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.db.HealthDataTable;
+import com.liteon.icampusguardian.service.DataSyncService;
 import com.liteon.icampusguardian.util.Def;
-import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.HealthyItem;
 import com.liteon.icampusguardian.util.HealthyItemAdapter;
 import com.liteon.icampusguardian.util.HealthyItemAdapter.ViewHolder.IHealthViewHolderClicks;
@@ -28,7 +34,6 @@ import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class HealthFragment extends Fragment {
@@ -45,7 +50,9 @@ public class HealthFragment extends Fragment {
     private int mCurrentStudentIdx;
 	private TextView mTitleView;
 	private static boolean isFirstLaunch = true;
-	public HealthFragment() {}
+    private LocalBroadcastManager mLocalBroadcastManager;
+
+    public HealthFragment() {}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +61,7 @@ public class HealthFragment extends Fragment {
         mDbHelper = DBHelper.getInstance(getActivity());
         //get child list
         mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
-
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(App.getContext());
 		initRecycleView();
 		return mRootView;
 	}
@@ -145,15 +152,64 @@ public class HealthFragment extends Fragment {
         SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 
         mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
-        myDataset.clear();
-        testData();
+        getHealthyDataFromDB();
         if (isFirstLaunch) {
             new SyncHealthyData().execute();
             isFirstLaunch = false;
         }
         mAdapter.notifyDataSetChanged();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Def.ACTION_GET_HEALTHY_DATA);
+        mLocalBroadcastManager.registerReceiver(mReceiver, filter);
     }
-	
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mLocalBroadcastManager.unregisterReceiver(mReceiver);
+    }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (TextUtils.equals(Def.ACTION_GET_HEALTHY_DATA, intent.getAction())) {
+                getHealthyDataFromDB();
+            }
+        }
+    };
+
+    private JSONResponse.HealthyData getHealthyData(HealthyItem.TYPE type) {
+        JSONResponse.HealthyData data = null;
+        switch(type) {
+
+            case ACTIVITY:
+                data = mDbHelper.getLastHealthyData(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id(), Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_FITNESS));
+                break;
+            case CALORIES_BURNED:
+                data = mDbHelper.getLastHealthyData(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id(), Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_CALOS));
+                break;
+            case TOTAL_STEPS:
+                data = mDbHelper.getLastHealthyData(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id(), Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_STEPS));
+                break;
+            case WALKING_TIME:
+                data = mDbHelper.getLastHealthyData(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id(), Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_WALKING));
+                break;
+            case RUNNING_TIME:
+                data = mDbHelper.getLastHealthyData(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id(), Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_RUNNING));
+                break;
+            case CYCLING_TIME:
+                data = mDbHelper.getLastHealthyData(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id(), Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_CYCLING));
+                break;
+            case HEART_RATE:
+                data = mDbHelper.getLastHealthyData(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id(), Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_HEART));
+                break;
+            case SLEEP_TIME:
+                data = mDbHelper.getLastHealthyData(mDbHelper.getReadableDatabase(), mStudents.get(mCurrentStudentIdx).getStudent_id(), Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_SLEEP));
+                break;
+        }
+        return data;
+    }
 	private void showSyncWindow() {
 		AppCompatButton button = mSyncView.findViewById(R.id.button_sync);
 		button.setOnClickListener(v -> new SyncHealthyData().execute());
@@ -172,85 +228,10 @@ public class HealthFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            Date end = Calendar.getInstance().getTime();
-            Calendar c = Calendar.getInstance();
-            c.setTime(end);
-            c.add(Calendar.DAY_OF_YEAR, -7);
-            Date start = c.getTime();
-            SimpleDateFormat sdfQurey = new SimpleDateFormat("yyyy-MM-dd");
-            String startDate = sdfQurey.format(start);
-            String endDate = sdfQurey.format(end);
-
-            GuardianApiClient apiClient = GuardianApiClient.getInstance(App.getContext());
-            JSONResponse jsonResponse = apiClient.getHealthyData(mStudents.get(mCurrentStudentIdx), startDate, endDate);
-            if (jsonResponse != null) {
-                if (jsonResponse.getReturn() != null && jsonResponse.getReturn().getResults() != null) {
-                    JSONResponse.HealthyData[] fitness = jsonResponse.getReturn().getResults().getFitness();
-                    JSONResponse.HealthyData[] activity = jsonResponse.getReturn().getResults().getActivity();
-                    JSONResponse.HealthyData[] calories = jsonResponse.getReturn().getResults().getCalories();
-                    JSONResponse.HealthyData[] heartrate = jsonResponse.getReturn().getResults().getHeartrate();
-                    JSONResponse.HealthyData[] sleep = jsonResponse.getReturn().getResults().getSleep();
-                    JSONResponse.HealthyData[] steps = jsonResponse.getReturn().getResults().getSteps();
-                    for (HealthyItem item : myDataset) {
-                        switch (item.getItemType()) {
-
-                            case ACTIVITY:
-                                if (fitness.length > 0) {
-                                    item.setValue(fitness[0].getValue());
-                                } else {
-                                    item.setValue(0);
-                                }
-                                break;
-                            case CALORIES_BURNED:
-                                if (calories.length > 0) {
-                                    item.setValue(calories[0].getValue());
-                                } else {
-                                    item.setValue(0);
-                                }
-                                break;
-                            case TOTAL_STEPS:
-                                if (steps.length > 0) {
-                                    item.setValue(steps[0].getValue());
-                                } else {
-                                    item.setValue(0);
-                                }
-                                break;
-                            case WALKING_TIME:
-                            case RUNNING_TIME:
-                            case CYCLING_TIME:
-                                if (activity.length > 0) {
-                                    for (int i = 0; i < activity.length; i++) {
-
-                                        if (activity[i].getSituation() == 2 && item.getItemType() == HealthyItem.TYPE.WALKING_TIME) {
-                                            item.setValue(activity[i].getDuration());
-                                        } else if (activity[i].getSituation() == 3 && item.getItemType() == HealthyItem.TYPE.RUNNING_TIME) {
-                                            item.setValue(activity[i].getDuration());
-                                        } else if (activity[i].getSituation() == 4 && item.getItemType() == HealthyItem.TYPE.CYCLING_TIME) {
-                                            item.setValue(activity[i].getDuration());
-                                        }
-                                    }
-                                } else {
-                                    item.setValue(0);
-                                }
-                                break;
-                            case HEART_RATE:
-                                if (heartrate.length > 0) {
-                                    item.setValue(heartrate[0].getValue());
-                                } else {
-                                    item.setValue(0);
-                                }
-                                break;
-                            case SLEEP_TIME:
-                                if (sleep.length > 0) {
-                                    item.setValue(sleep[0].getValue());
-                                } else {
-                                    item.setValue(0);
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
+            Intent startIntent = new Intent(App.getContext(), DataSyncService.class);
+            startIntent.setAction(Def.ACTION_GET_HEALTHY_DATA);
+            startIntent.putExtra(Def.KEY_STUDENT_ID, mStudents.get(mCurrentStudentIdx).getStudent_id());
+            getActivity().startService(startIntent);
             return null;
         }
 
@@ -273,5 +254,41 @@ public class HealthFragment extends Fragment {
                 handler.postDelayed(runnable, 2000);
             }
         }
+    }
+
+    private void getHealthyDataFromDB() {
+        myDataset.clear();
+        for (HealthyItem.TYPE type : HealthyItem.TYPE.values()) {
+            HealthyItem item = new HealthyItem();
+            item.setItemType(type);
+            JSONResponse.HealthyData data = getHealthyData(type);
+            if (data.getSituation() == HealthDataTable.HealthDataEntry.SITUATION_WALKING) {
+                item.setItemType(HealthyItem.TYPE.WALKING_TIME);
+                item.setValue(data.getDuration() / 60);
+            } else if (data.getSituation() == HealthDataTable.HealthDataEntry.SITUATION_RUNNING) {
+                item.setItemType(HealthyItem.TYPE.RUNNING_TIME);
+                item.setValue(data.getDuration() / 60);
+            } else if (data.getSituation() == HealthDataTable.HealthDataEntry.SITUATION_CYCLING) {
+                item.setItemType(HealthyItem.TYPE.CYCLING_TIME);
+                item.setValue(data.getDuration() / 60);
+            } else if (data.getSituation() == HealthDataTable.HealthDataEntry.SITUATION_SLEEP) {
+                item.setItemType(HealthyItem.TYPE.SLEEP_TIME);
+                item.setValue(data.getValue() / 60);
+            } else if (data.getSituation() == HealthDataTable.HealthDataEntry.SITUATION_FITNESS) {
+                item.setItemType(HealthyItem.TYPE.ACTIVITY);
+                item.setValue(data.getValue());
+            } else if (data.getSituation() == HealthDataTable.HealthDataEntry.SITUATION_HEART) {
+                item.setItemType(HealthyItem.TYPE.HEART_RATE);
+                item.setValue(data.getValue());
+            } else if (data.getSituation() == HealthDataTable.HealthDataEntry.SITUATION_STEPS) {
+                item.setItemType(HealthyItem.TYPE.TOTAL_STEPS);
+                item.setValue(data.getValue());
+            } else if (data.getSituation() == HealthDataTable.HealthDataEntry.SITUATION_CALOS) {
+                item.setItemType(HealthyItem.TYPE.CALORIES_BURNED);
+                item.setValue(data.getValue());
+            }
+            myDataset.add(item);
+        }
+        mAdapter.notifyDataSetChanged();
     }
 }

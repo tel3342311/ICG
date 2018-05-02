@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import com.liteon.icampusguardian.App;
 import com.liteon.icampusguardian.R;
 import com.liteon.icampusguardian.db.DBHelper;
+import com.liteon.icampusguardian.db.HealthDataTable;
 import com.liteon.icampusguardian.util.Def;
 import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.HealthHistogramView;
@@ -20,7 +22,8 @@ import com.liteon.icampusguardian.util.HealthyItem;
 import com.liteon.icampusguardian.util.HealthyItem.TYPE;
 import com.liteon.icampusguardian.util.JSONResponse;
 
-import java.text.ParseException;
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +49,6 @@ public class DailyHealthFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_daily_healthy, container, false);
 		findView(rootView);
-		testData();
 		return rootView;
 	}
 
@@ -58,10 +60,10 @@ public class DailyHealthFragment extends Fragment {
 		mDbHelper = DBHelper.getInstance(getActivity());
 		//get child list
 		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
-		testData();
+		getDataFromDB();
 		setupPieChart();
 		setupHistogram();
-		new SyncHealthyData().execute();
+		//new SyncHealthyData().execute();
 	}
 
 	private void setupHistogram() {
@@ -79,9 +81,9 @@ public class DailyHealthFragment extends Fragment {
 		mHistogramView = rootView.findViewById(R.id.healthy_histogram_view);
 		mPiechartView = rootView.findViewById(R.id.pie_chart_view);
 	}
-	private void testData() {
+	private void getDataFromDB() {
 
-		mDataList = getTestValue(mType, mCurrentStudentIdx);
+
 		mDateList = new ArrayList<>(7);
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
@@ -89,8 +91,9 @@ public class DailyHealthFragment extends Fragment {
 			calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
 			String format = simpleDateFormat.format(calendar.getTime());
 			mDateList.add(0, format);
-			
 		}
+
+		mDataList = getHealthyValue(mType, mCurrentStudentIdx);
 		
 	}
 	
@@ -136,86 +139,112 @@ public class DailyHealthFragment extends Fragment {
 		return target;
 	}
 
-	private List<Integer> getTestValue(HealthyItem.TYPE type, int idx) {
-		List<Integer> list = new ArrayList<>();
+	private List<Integer> getHealthyValue(HealthyItem.TYPE type, int idx) {
+		List<Integer> list = new ArrayList<>(Arrays.asList(new Integer[] { 0,0,0,0,0,0,0}));
+		List<JSONResponse.HealthyData> tmp;
+		String student_id = mStudents.get(idx).getStudent_id();
 		switch(type) {
 			case ACTIVITY:
-				if (idx == 0) {
-					Integer[] data = {85,83,80,82,88,85,86};
-					list.addAll(Arrays.asList(data));
-				} else {
-					Integer[] data = {76,78,80,76,72,70,76};
-					list.addAll(Arrays.asList(data));
+				tmp = mDbHelper.getHealthyDataByDuration(mDbHelper.getReadableDatabase(), student_id, Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_FITNESS));
+				for (String date : mDateList) {
+					list.set(mDateList.indexOf(date), 0);
+					for (JSONResponse.HealthyData data : tmp) {
+						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
+						if (TextUtils.equals(date, tmpDate)) {
+							list.set(mDateList.indexOf(date), data.getValue());
+						}
+					}
 				}
 				break;
 			case CALORIES_BURNED:
-				if (idx == 0) {
-					Integer[] data = {1060,1020,988,1005,1250,1190,1200};
-					list.addAll(Arrays.asList(data));
-				} else {
-					Integer[] data = {830,980,1100,920,940,932,860};
-					list.addAll(Arrays.asList(data));
+				tmp = mDbHelper.getHealthyDataByDuration(mDbHelper.getReadableDatabase(), student_id, Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_CALOS));
+				for (String date : mDateList) {
+					list.set(mDateList.indexOf(date), 0);
+					for (JSONResponse.HealthyData data : tmp) {
+						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
+						if (TextUtils.equals(date, tmpDate)) {
+							list.set(mDateList.indexOf(date), data.getValue());
+						}
+					}
 				}
 				break;
 			case CYCLING_TIME:
-				if (idx == 0) {
-					Integer[] data = {15,10,20,30,15,25,20};
-					list.addAll(Arrays.asList(data));
-				} else {
-					Integer[] data = {15,20,10,10,25,10,15};
-					list.addAll(Arrays.asList(data));
+				tmp = mDbHelper.getHealthyDataByDuration(mDbHelper.getReadableDatabase(), student_id, Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_CYCLING));
+				for (String date : mDateList) {
+					list.set(mDateList.indexOf(date), 0);
+					for (JSONResponse.HealthyData data : tmp) {
+						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
+						if (TextUtils.equals(date, tmpDate)) {
+							list.set(mDateList.indexOf(date), data.getDuration());
+						}
+					}
 				}
 				break;
 			case HEART_RATE:
-				if (idx == 0) {
-					Integer[] data = {81,80,82,81,83,79,80};
-					list.addAll(Arrays.asList(data));
-				} else {
-					Integer[] data = {85,87,86,85,83,84,86};
-					list.addAll(Arrays.asList(data));
+				tmp = mDbHelper.getHealthyDataByDuration(mDbHelper.getReadableDatabase(), student_id, Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_HEART));
+				for (String date : mDateList) {
+					list.set(mDateList.indexOf(date), 0);
+					for (JSONResponse.HealthyData data : tmp) {
+						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
+						if (TextUtils.equals(date, tmpDate)) {
+							list.set(mDateList.indexOf(date), data.getValue());
+						}
+					}
 				}
 				break;
 			case RUNNING_TIME:
-				if (idx == 0) {
-					Integer[] data = {40,15,15,32,30,18,20};
-					list.addAll(Arrays.asList(data));
-				} else {
-					Integer[] data = {25,12,30,15,18,22,23};
-					list.addAll(Arrays.asList(data));
+				tmp = mDbHelper.getHealthyDataByDuration(mDbHelper.getReadableDatabase(), student_id, Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_RUNNING));
+				for (String date : mDateList) {
+					list.set(mDateList.indexOf(date), 0);
+					for (JSONResponse.HealthyData data : tmp) {
+						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
+						if (TextUtils.equals(date, tmpDate)) {
+							list.set(mDateList.indexOf(date), data.getDuration());
+						}
+					}
 				}
 				break;
 			case SLEEP_TIME:
-				if (idx == 0) {
-					Integer[] data = {560,575,560,573,590,610,535};
-					list.addAll(Arrays.asList(data));
-				} else {
-					Integer[] data = {530,523,515,520,560,592,490};
-					list.addAll(Arrays.asList(data));
+				tmp = mDbHelper.getHealthyDataByDuration(mDbHelper.getReadableDatabase(), student_id, Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_SLEEP));
+				for (String date : mDateList) {
+					list.set(mDateList.indexOf(date), 0);
+					for (JSONResponse.HealthyData data : tmp) {
+						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
+						if (TextUtils.equals(date, tmpDate)) {
+							list.set(mDateList.indexOf(date), data.getValue());
+						}
+					}
 				}
 				break;
 			case TOTAL_STEPS:
-				if (idx == 0) {
-					Integer[] data = {7600,8200,7500,6691,5682,5498,6687};
-					list.addAll(Arrays.asList(data));
-				} else {
-					Integer[] data = {6400,5250,7123,4451,5338,5409,6127};
-					list.addAll(Arrays.asList(data));
+				tmp = mDbHelper.getHealthyDataByDuration(mDbHelper.getReadableDatabase(), student_id, Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_STEPS));
+				for (String date : mDateList) {
+					list.set(mDateList.indexOf(date), 0);
+					for (JSONResponse.HealthyData data : tmp) {
+						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
+						if (TextUtils.equals(date, tmpDate)) {
+							list.set(mDateList.indexOf(date), data.getValue());
+						}
+					}
 				}
 				break;
 			case WALKING_TIME:
-				if (idx == 0) {
-					Integer[] data = {25,42,37,27,22,20,27};
-					list.addAll(Arrays.asList(data));
-				} else {
-					Integer[] data = {23,18,35,18,22,23,20};
-					list.addAll(Arrays.asList(data));
+				tmp = mDbHelper.getHealthyDataByDuration(mDbHelper.getReadableDatabase(), student_id, Integer.toString(HealthDataTable.HealthDataEntry.SITUATION_WALKING));
+				for (String date : mDateList) {
+					list.set(mDateList.indexOf(date), 0);
+					for (JSONResponse.HealthyData data : tmp) {
+						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
+						if (TextUtils.equals(date, tmpDate)) {
+							list.set(mDateList.indexOf(date), data.getDuration());
+						}
+					}
 				}
 				break;
 			default:
 				break;
 
 		}
-        Collections.reverse(list);
+        //Collections.reverse(list);
 		return list;
     }
 
@@ -246,7 +275,7 @@ public class DailyHealthFragment extends Fragment {
 			String endDate = sdfQurey.format(end);
 
 			GuardianApiClient apiClient = GuardianApiClient.getInstance(App.getContext());
-			JSONResponse jsonResponse = apiClient.getHealthyData(mStudents.get(mCurrentStudentIdx), startDate, endDate);
+			JSONResponse jsonResponse = apiClient.getHealthyData(mStudents.get(mCurrentStudentIdx).getStudent_id(), startDate, endDate);
 			if (jsonResponse != null) {
 				if (jsonResponse.getReturn() != null && jsonResponse.getReturn().getResults() != null) {
 					fitness = jsonResponse.getReturn().getResults().getFitness();

@@ -211,29 +211,38 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
         @Override
         protected Boolean doInBackground(String... strings) {
             String uuid = strings[0];
+            String address = strings[1];
             Student student = mStudents.get(mCurrnetStudentIdx);
-            //Save Wearable info
-            WearableInfo info = new WearableInfo();
-            info.setUuid(uuid);
-            info.setBtAddr(mBluetoothDevice.getAddress());
-            info.setStudentID(mStudents.get(mCurrnetStudentIdx).getStudent_id());
-            if (!mDbHelper.isWearableExist(mDbHelper.getReadableDatabase(), uuid)){
-                mDbHelper.insertWearableData(mDbHelper.getWritableDatabase(), info);
-            } else {
-                mDbHelper.updateWearableData(mDbHelper.getWritableDatabase(), info);
-            }
+            String studentID = student.getStudent_id();
 
-            GuardianApiClient mApiClient = GuardianApiClient.getInstance(BLEPinCodeInputActivity.this);
+            GuardianApiClient mApiClient = GuardianApiClient.getInstance(App.getContext());
+            //Current Student uuid and Bt device uuid is not the same
+            if (!TextUtils.isEmpty(student.getUuid())&&!TextUtils.equals(student.getUuid(), uuid)){
+                mErrorMessage = getString(R.string.already_paired);
+                return false;
+            } else if (TextUtils.isEmpty(student.getUuid())) {
+                //uuid is store in other child
+                if (mDbHelper.getChildByUUID(mDbHelper.getReadableDatabase(), uuid) != null) {
+                    mErrorMessage = getString(R.string.already_paired);
+                    return false;
+                }
+            }
+            Boolean isNewChild = false;
+            if (TextUtils.isEmpty(student.getUuid())) {
+                isNewChild = true;
+            }
             student.setUuid(uuid);
-            JSONResponse response = mApiClient.pairNewDevice(mStudents.get(mCurrnetStudentIdx));
+
+            JSONResponse response = mApiClient.pairNewDevice(student);
             if (response != null) {
                 String statusCode = response.getReturn().getResponseSummary().getStatusCode();
                 if (!TextUtils.equals(statusCode, Def.RET_SUCCESS_1) && !TextUtils.equals(statusCode, Def.RET_ERR_14) ) {
+                    mErrorMessage = getString(R.string.pairing_watch_pin_error);
                     return false;
                 } else {
                     if (response.getReturn().getResults() != null) {
 
-                        String studentID = Integer.toString(response.getReturn().getResults().getStudent_id());
+                        studentID = Integer.toString(response.getReturn().getResults().getStudent_id());
                         String studentName = response.getReturn().getResults().getStudent_name();
                         String nickName = response.getReturn().getResults().getNickname();
                         String roll_no = Integer.toString(response.getReturn().getResults().getRoll_no());
@@ -245,7 +254,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                         String emergency_contact = response.getReturn().getResults().getEmergency_contact();
                         String allergies = response.getReturn().getResults().getAllergies();
 
-                        Student item = new Student();
+                        JSONResponse.Student item = new JSONResponse.Student();
                         item.setUuid(uuid);
                         item.setStudent_id(Integer.parseInt(studentID));
                         item.setNickname(nickName);
@@ -259,8 +268,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                         item.setEmergency_contact(emergency_contact);
                         item.setAllergies(allergies);
                         //For New child
-                        if (!TextUtils.equals(studentID, student.getStudent_id())) {
-
+                        if (isNewChild) {
                             item.setNickname(student.getNickname());
                             item.setDob(student.getDob());
                             item.setGender(student.getGender());
@@ -268,14 +276,23 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                             item.setWeight(student.getWeight());
                             mDbHelper.deleteChildByStudentID(mDbHelper.getWritableDatabase(), student.getStudent_id());
                             mDbHelper.insertChild(mDbHelper.getWritableDatabase(), item);
+                            studentID = item.getStudent_id();
                         }
                         mApiClient.updateChildData(item);
                     }
+                    //Update Wearable info
+                    WearableInfo info = new WearableInfo();
+                    info.setUuid(uuid);
+                    info.setBtAddr(address);
+                    info.setStudentID(studentID);
+                    mDbHelper.replaceWearableData(mDbHelper.getWritableDatabase(), info);
+
                     mDbHelper.updateChildByStudentId(mDbHelper.getWritableDatabase(), student);
+
                     return true;
                 }
-
             }
+            mErrorMessage = getString(R.string.login_error_no_server_connection);
             return false;
         }
 
@@ -285,7 +302,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                 mBLEFailConfirmDialog = new ConfirmDeleteDialog();
                 mBLEFailConfirmDialog.setOnConfirmEventListener(mOnBLEFailConfirmClickListener);
                 mBLEFailConfirmDialog.setmOnCancelListener(mOnBLEFailCancelClickListener);
-                mBLEFailConfirmDialog.setmTitleText(getString(R.string.pairing_watch_pin_error));
+                mBLEFailConfirmDialog.setmTitleText(mErrorMessage);
                 mBLEFailConfirmDialog.setmBtnConfirmText(getString(R.string.pairing_watch_pair));
                 mBLEFailConfirmDialog.setmBtnCancelText(getString(R.string.pairing_watch_later));
                 try {
@@ -657,7 +674,7 @@ public class BLEPinCodeInputActivity extends AppCompatActivity implements View.O
                         UUIDResponseJSON responseJSON = gson.fromJson(readMessage, typeOfUUIDRepsonse);
                         String uuid = responseJSON.getUuid();
                         Log.d(TAG, "Device UUID : " + uuid);
-                        new UpdateUUIDToCloud().execute(uuid);
+                        new UpdateUUIDToCloud().execute(uuid, mBluetoothDevice.getAddress());
 
                     }
                     //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);

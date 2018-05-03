@@ -252,6 +252,30 @@ public class DBHelper extends SQLiteOpenHelper {
 		return false;
 	}
 
+	public Student getChildByUUID(SQLiteDatabase db, String uuid) {
+	    Cursor cursor = db.query(ChildEntry.TABLE_NAME, null,"uuid=?", new String[]{uuid}, null,null,null,null);
+        Student item = null;
+	    if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            do {
+                item = new Student();
+                item.setUuid(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_UUID)));
+                item.setName(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_GIVEN_NAME)));
+                item.setNickname(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_NICK_NAME)));
+                item.setGender(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_GENDER)));
+                item.setDob(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_DOB)));
+                item.setHeight(Integer.toString(cursor.getInt(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_HEIGHT))));
+                item.setWeight(Integer.toString(cursor.getInt(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_WEIGHT))));
+                item.setRoll_no(Integer.parseInt(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_ROLL_NO))));
+                item.set_class(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_CLASS)));
+                item.setStudent_id(Integer.parseInt(cursor.getString(cursor.getColumnIndex(ChildEntry.COLUMN_NAME_STUDENT_ID))));
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+	    db.close();
+	    return item;
+	}
+
 	public List<Student> queryChildList(SQLiteDatabase db) {
 		List<Student> list = new ArrayList<>();
 		Cursor cursor = db.rawQuery(SQL_QUERY_ALL_CHILDREN_DATA, null);

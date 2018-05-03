@@ -71,6 +71,7 @@ import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 import com.liteon.icampusguardian.util.JSONResponse.Student;
 import com.liteon.icampusguardian.util.SettingItemAdapter.ViewHolder.ISettingItemClickListener;
+import com.liteon.icampusguardian.util.Utils;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -287,6 +288,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		@Override
 		public boolean onNavigationItemSelected(MenuItem item) {
 			Fragment fragment = null;
+			if (TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid())) {
+                Utils.showErrorDialog(getString(R.string.pairing_watch_pair));
+                return false;
+            }
 			String title = "";
 			switch (item.getItemId()) {
 			case R.id.action_safty:
@@ -459,8 +464,13 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 		    if (mStudents.size() == 0) {
 		        return;
             }
+
 			Student student = mStudents.get(mCurrentStudentIdx);
 			student.setIsDelete(1);
+			new Thread( () -> {
+				GuardianApiClient apiClient = GuardianApiClient.getInstance(MainActivity.this);
+				JSONResponse response = apiClient.unpairDevice(student);
+			}).start();
 			mDbHelper.deleteChildByStudentID(mDbHelper.getWritableDatabase(), student.getStudent_id());
 			mStudents.remove(student);
 			SharedPreferences.Editor editor = getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE).edit();
@@ -624,16 +634,10 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 			changeFragment(new SettingTargetFragment(), getString(R.string.child_goal_setting), NAVIGATION_BACK);
 			break;
 		case PAIRING:
-			//TODO For BT Testing
-			//Get BT device and check if the device is BONDED
-
-//			if (!TextUtils.isEmpty(mBtAddress)) {
-//				showUnPairDialog();
-//			} else {
-//				showPairingPage();
-//			}
 			//For Cloud's pair/unpair
-			if (!TextUtils.isEmpty(mStudents.get(mCurrentStudentIdx).getUuid()) && !TextUtils.isEmpty(mBtAddress)) {
+            String uuid = mStudents.get(mCurrentStudentIdx).getUuid();
+
+			if (!TextUtils.isEmpty(uuid) && mDbHelper.getWearableInfoByUuid(mDbHelper.getReadableDatabase(),uuid) != null) {
 				showUnPairDialog();
 			} else {
 				showPairingPage();
@@ -819,23 +823,27 @@ public class MainActivity extends AppCompatActivity implements IAddAlarmClicks,
 
 		@Override
 		protected Void doInBackground(Student... params) {
-            Student student = params[0];
-			GuardianApiClient apiClient = GuardianApiClient.getInstance(MainActivity.this);
-			JSONResponse response = apiClient.unpairDevice(student);
+
+			Student student = params[0];
 			String uuid = student.getUuid();
-			if (response != null) {
-				if (response.getReturn() != null) {
-					String statusCode = response.getReturn().getResponseSummary().getStatusCode(); 
-					if (TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
-                        student.setUuid("");
-                        mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
-					} else if (TextUtils.equals(statusCode, Def.RET_ERR_16)) {
-                        student.setUuid("");
-                        mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
-                    }
-                    mDbHelper.deleteWearableData(mDbHelper.getWritableDatabase(), uuid);
-				}
-			}
+			mDbHelper.deleteWearableData(mDbHelper.getWritableDatabase(), uuid);
+
+//			GuardianApiClient apiClient = GuardianApiClient.getInstance(MainActivity.this);
+//			JSONResponse response = apiClient.unpairDevice(student);
+//
+//			if (response != null) {
+//				if (response.getReturn() != null) {
+//					String statusCode = response.getReturn().getResponseSummary().getStatusCode();
+//					if (TextUtils.equals(statusCode, Def.RET_SUCCESS_1)) {
+//                        student.setUuid("");
+//                        mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+//					} else if (TextUtils.equals(statusCode, Def.RET_ERR_16)) {
+//                        student.setUuid("");
+//                        mDbHelper.updateChildData(mDbHelper.getWritableDatabase(), student);
+//                    }
+//                    mDbHelper.deleteWearableData(mDbHelper.getWritableDatabase(), uuid);
+//				}
+//			}
 			return null;
 		}
 		@Override

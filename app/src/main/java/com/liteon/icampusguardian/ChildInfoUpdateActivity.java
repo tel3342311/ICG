@@ -355,12 +355,6 @@ public class ChildInfoUpdateActivity extends AppCompatActivity implements IProfi
     class UpdateInfoTask extends AsyncTask<String, Void, String> {
 
 		@Override
-		protected void onPreExecute() {
-
-
-		}
-
-		@Override
         protected String doInBackground(String... args) {
 
             mDbHelper.insertChild(mDbHelper.getWritableDatabase(), mStudent);

@@ -152,6 +152,7 @@ public class HealthFragment extends Fragment {
         SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
 
         mCurrentStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+        mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
         getHealthyDataFromDB();
         if (isFirstLaunch) {
             new SyncHealthyData().execute();
@@ -231,7 +232,9 @@ public class HealthFragment extends Fragment {
             Intent startIntent = new Intent(App.getContext(), DataSyncService.class);
             startIntent.setAction(Def.ACTION_GET_HEALTHY_DATA);
             startIntent.putExtra(Def.KEY_STUDENT_ID, mStudents.get(mCurrentStudentIdx).getStudent_id());
-            getActivity().startService(startIntent);
+            if (getActivity() != null && isAdded()) {
+                getActivity().startService(startIntent);
+            }
             return null;
         }
 

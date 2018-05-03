@@ -257,7 +257,9 @@ public class SafetyFragment extends Fragment {
 		if (mMapView != null) {
 			mMapView.onResume();
 		}
-		
+		SharedPreferences sp = getActivity().getSharedPreferences(Def.SHARE_PREFERENCE, Context.MODE_PRIVATE);
+		mCurrnetStudentIdx = sp.getInt(Def.SP_CURRENT_STUDENT, 0);
+		mStudents = mDbHelper.queryChildList(mDbHelper.getReadableDatabase());
 		restoreGeoEvent();
 		if (mStudents.size() > 0) {
 			String id = mStudents.get(mCurrnetStudentIdx).getStudent_id();
@@ -404,7 +406,9 @@ public class SafetyFragment extends Fragment {
 		}
 
 		protected void onPostExecute(String result) {
-			mMapView.setVisibility(View.VISIBLE);
+			if (mMapView != null) {
+				mMapView.setVisibility(View.VISIBLE);
+			}
 			if (TextUtils.equals(Def.RET_ERR_02, result)) {
 				Toast.makeText(mContext, "Token provided is expired, need to re-login", Toast.LENGTH_LONG).show();
 				return;

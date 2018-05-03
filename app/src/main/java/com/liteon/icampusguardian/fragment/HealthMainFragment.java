@@ -120,24 +120,27 @@ public class HealthMainFragment extends Fragment implements IHealthViewHolderCli
 		public Fragment getItem(int position) {
 			if (position == HEALTHY_MAIN) {
 				return new HealthFragment();
-			} else if (position == HEALTHY_ACTIVITY) {
-				return new DailyHealthFragment(TYPE.ACTIVITY);
-			} else if (position == HEALTHY_CALORIES) {
-				return new DailyHealthFragment(TYPE.CALORIES_BURNED);
-			} else if (position == HEALTHY_STEPS) {
-				return new DailyHealthFragment(TYPE.TOTAL_STEPS);
-			} else if (position == HEALTHY_WALKING) {
-				return new DailyHealthFragment(TYPE.WALKING_TIME);
-			} else if (position == HEALTHY_RUNNING) {
-				return new DailyHealthFragment(TYPE.RUNNING_TIME);
-			} else if (position == HEALTHY_CYCLING) {
-				return new DailyHealthFragment(TYPE.CYCLING_TIME);
-			} else if (position == HEALTHY_HEART_RATE) {
-				return new DailyHealthFragment(TYPE.HEART_RATE);
-			} else if (position == HEALTHY_SLEEPING) {
-				return new DailyHealthFragment(TYPE.SLEEP_TIME);
+			} else {
+				DailyHealthFragment fragment = new DailyHealthFragment();
+				if (position == HEALTHY_ACTIVITY) {
+					fragment.setType(TYPE.ACTIVITY);
+				} else if (position == HEALTHY_CALORIES) {
+					fragment.setType(TYPE.CALORIES_BURNED);
+				} else if (position == HEALTHY_STEPS) {
+					fragment.setType(TYPE.TOTAL_STEPS);
+				} else if (position == HEALTHY_WALKING) {
+					fragment.setType(TYPE.WALKING_TIME);
+				} else if (position == HEALTHY_RUNNING) {
+					fragment.setType(TYPE.RUNNING_TIME);
+				} else if (position == HEALTHY_CYCLING) {
+					fragment.setType(TYPE.CYCLING_TIME);
+				} else if (position == HEALTHY_HEART_RATE) {
+					fragment.setType(TYPE.HEART_RATE);
+				} else if (position == HEALTHY_SLEEPING) {
+					fragment.setType(TYPE.SLEEP_TIME);
+				}
+				return fragment;
 			}
-			return null;
 		}
 
 		@Override

@@ -82,15 +82,14 @@ public class DailyHealthFragment extends Fragment {
 		mPiechartView = rootView.findViewById(R.id.pie_chart_view);
 	}
 	private void getDataFromDB() {
-
-
 		mDateList = new ArrayList<>(7);
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		for (int i = 0; i < 7; i++) {
-			calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
+
 			String format = simpleDateFormat.format(calendar.getTime());
 			mDateList.add(0, format);
+            calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) - 1);
 		}
 
 		mDataList = getHealthyValue(mType, mCurrentStudentIdx);
@@ -175,7 +174,7 @@ public class DailyHealthFragment extends Fragment {
 					for (JSONResponse.HealthyData data : tmp) {
 						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
 						if (TextUtils.equals(date, tmpDate)) {
-							list.set(mDateList.indexOf(date), data.getDuration());
+							list.set(mDateList.indexOf(date), data.getDuration() / 60);
 						}
 					}
 				}
@@ -199,7 +198,7 @@ public class DailyHealthFragment extends Fragment {
 					for (JSONResponse.HealthyData data : tmp) {
 						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
 						if (TextUtils.equals(date, tmpDate)) {
-							list.set(mDateList.indexOf(date), data.getDuration());
+							list.set(mDateList.indexOf(date), data.getDuration() / 60);
 						}
 					}
 				}
@@ -211,7 +210,7 @@ public class DailyHealthFragment extends Fragment {
 					for (JSONResponse.HealthyData data : tmp) {
 						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
 						if (TextUtils.equals(date, tmpDate)) {
-							list.set(mDateList.indexOf(date), data.getValue());
+							list.set(mDateList.indexOf(date), data.getValue() / 60);
 						}
 					}
 				}
@@ -235,7 +234,7 @@ public class DailyHealthFragment extends Fragment {
 					for (JSONResponse.HealthyData data : tmp) {
 						String tmpDate = new SimpleDateFormat("yyyy/MM/dd").format(new Date(data.getDate() * 1000L));
 						if (TextUtils.equals(date, tmpDate)) {
-							list.set(mDateList.indexOf(date), data.getDuration());
+							list.set(mDateList.indexOf(date), data.getDuration() / 60);
 						}
 					}
 				}

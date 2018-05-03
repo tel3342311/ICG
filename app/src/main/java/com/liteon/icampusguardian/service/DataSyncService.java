@@ -13,9 +13,11 @@ import com.liteon.icampusguardian.util.GuardianApiClient;
 import com.liteon.icampusguardian.util.JSONResponse;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class DataSyncService extends IntentService {
@@ -128,7 +130,21 @@ public class DataSyncService extends IntentService {
         DBHelper dbHelper = DBHelper.getInstance(App.getContext());
         if (data != null && data.length > 0) {
             List<JSONResponse.HealthyData> list = Arrays.asList(data);
-            dbHelper.updateHealthyData(dbHelper.getWritableDatabase(), list, situation, studentId);
+            //if situation is carloies or Steps, sum up
+            if (situation == HealthDataTable.HealthDataEntry.SITUATION_STEPS || situation == HealthDataTable.HealthDataEntry.SITUATION_CALOS) {
+                HashMap<Long, JSONResponse.HealthyData> map = new HashMap<>();
+                for (JSONResponse.HealthyData currentData : list) {
+                    if (map.get(new Long(currentData.getDate())) != null) {
+                        JSONResponse.HealthyData tmp = map.get(new Long(currentData.getDate()));
+                        tmp.setValue(tmp.getValue() + currentData.getValue());
+                        continue;
+                    }
+                    map.put(new Long(currentData.getDate()), currentData);
+                }
+                dbHelper.updateHealthyData(dbHelper.getWritableDatabase(), new ArrayList(map.values()), situation, studentId);
+            } else {
+                dbHelper.updateHealthyData(dbHelper.getWritableDatabase(), list, situation, studentId);
+            }
         }
     }
 

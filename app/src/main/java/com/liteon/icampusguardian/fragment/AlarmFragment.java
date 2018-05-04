@@ -478,10 +478,9 @@ public class AlarmFragment extends Fragment  implements IAlarmViewHolderClicks {
 							}
 							syncStateDataToBT();
 							isAlarmStateChange = false;
-						} else {
-							showSynced();
 						}
 					}
+					showSynced();
                     break;
                 case Def.MESSAGE_DEVICE_NAME:
                     //Connected device's name
